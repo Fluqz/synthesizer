@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ToneJs Demo</title>
+
+        <style>
+
+        </style>
+
+
+    </head>
+
+    <body>
+
+        <div id="keyboard"></div>
+
+        <div id="volume" title="Shift + A">
+            <label for="volume">Volume</label>
+            <input type="slider" name="volume"/>
+        </div>
+
+        <div id="bpm" title="Shift + A">
+            <label for="bpm">BPM</label>
+            <input type="number" pattern="[0-1]" min="1" max="300" name="bpm"/>
+        </div>
+
+        <div id="octave-down" class="btn" title="ArrowLeft"""><</div>
+        <div id="octave-up" class="btn" title="ArrowRight">></div>
+
+        <div id="arp" title="Shift + A">
+            <label for="arp">Arp</label>
+            <input type="checkbox" name="arp"/>
+        </div>
+
+        <div id="delay" title="Shift + D">
+            <label for="delay">Delay</label>
+            <input type="checkbox" name="delay"/>
+        </div>
+
+        <div id="tremolo" title="Shift + T">
+            <label for="tremolo">Tremolo</label>
+            <input type="checkbox" name="tremolo"/>
+        </div>
+
+        <div id="chorus" title="Shift + C">
+            <label for="chorus">Chorus</label>
+            <input type="checkbox" name="chorus"/>
+        </div>
+
+
+        <div id="record" class="btn">Record</div>
+
+
+        <script type="module" src="./bundle.js"></script>
+        
+    </body>
+</html>
