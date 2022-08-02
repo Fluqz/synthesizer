@@ -158,34 +158,8 @@ export class Keyboard {
     /** Arppegiator mode */
     arp
 
-    /** Delay effect */
-    delay
-    /** Delay flag */
-    delayEnabled
-    /** How fast the delay is played in seconds */
-    delayTime 
-    /** How long the delay is played. [0-1] */
-    delayFeedback
+    effectChain
 
-    /** Chorus effect */
-    chorus
-    /** Chorus flag */
-    chorusEnabled
-    /** Chorus amplitude */
-    chorusFrequency
-    /** Chorus delay */
-    chorusDelayTime 
-    /** Chorus depth */
-    chorusDepth
-
-    /** Tremolo effect */
-    tremolo
-    /** Tremolo flag */
-    tremoloEnabled
-    /** Tremolo amplitude */
-    tremoloFrequency 
-    /** Trempolo depth */
-    tremoloDepth
 
     /** ToneJs Recorder instance */
     recorder
@@ -206,34 +180,34 @@ export class Keyboard {
         this.isRecording = false
 
         this.synth = new Tone.PolySynth(Keyboard.synths.DuoSynth)
+        this.synth.toDestination()
 
         // Delay
-        this.delayEnabled = false
-        this.delayTime = .3
-        this.delayFeedback= .8
-        this.delay = new Tone.FeedbackDelay(this.delayTime, this.delayFeedback).toDestination()
-        this.synth.connect(this.delay).toDestination()
-        this.setDelay(this.delayEnabled)
+        // this.delayTime = .3
+        // this.delayFeedback= .8
+        // this.delay = new Tone.FeedbackDelay(this.delayTime, this.delayFeedback).toDestination()
+        // this.synth.connect(this.delay).toDestination()
+        // this.setDelay(this.delayEnabled)
 
-        let d = new Tone.FeedbackDelay(2, 1).toDestination()
-        this.synth.connect(d).toDestination()
+        // let d = new Tone.FeedbackDelay(2, 1).toDestination()
+        // this.synth.connect(d).toDestination()
 
         // Chorus
-        this.chorusEnabled = false
-        this.chorusFrequency = 4
-        this.chorusDelayTime = 2.5
-        this.chorusDepth = .5
-        this.chorus = new Tone.Chorus(this.chorusFrequency, this.chorusDelayTime, this.chorusDepth).toDestination().start()
-        this.synth.connect(this.chorus).toDestination()
-        this.setChorus(this.chorusEnabled)
+        // this.chorusEnabled = false
+        // this.chorusFrequency = 4
+        // this.chorusDelayTime = 2.5
+        // this.chorusDepth = .5
+        // this.chorus = new Tone.Chorus(this.chorusFrequency, this.chorusDelayTime, this.chorusDepth).toDestination().start()
+        // this.synth.connect(this.chorus).toDestination()
+        // this.setChorus(this.chorusEnabled)
 
         // Tremolo
-        this.tremoloEnabled = false
-        this.tremoloFrequency = 5
-        this.tremoloDepth = 1
-        this.tremolo = new Tone.Tremolo(this.tremoloFrequency, this.tremoloDepth).toDestination().start()
-        this.synth.connect(this.tremolo).toDestination()
-        this.setTremolo(this.tremoloEnabled)
+        // this.tremoloEnabled = false
+        // this.tremoloFrequency = 5
+        // this.tremoloDepth = 1
+        // this.tremolo = new Tone.Tremolo(this.tremoloFrequency, this.tremoloDepth).toDestination().start()
+        // this.synth.connect(this.tremolo).toDestination()
+        // this.setTremolo(this.tremoloEnabled)
 
 
         // Create Keys
@@ -276,42 +250,42 @@ export class Keyboard {
 
     }
 
-    setDelay(enabled, time, feedback) {
+    // setDelay(enabled, time, feedback) {
 
-        if(enabled == false) this.delay.disconnect()
-        else {
+    //     if(enabled == false) this.delay.disconnect()
+    //     else {
 
-            this.delay.delayTime.set(time ? time : this.delayTime)
-            this.delay.feedback.set(feedback ? feedback : this.delayFeedback)
+    //         this.delay.delayTime.set(time ? time : this.delayTime)
+    //         this.delay.feedback.set(feedback ? feedback : this.delayFeedback)
 
-            this.delay.toDestination()
-        }
-    }
+    //         this.delay.toDestination()
+    //     }
+    // }
 
-    setChorus(enabled, frequency, delayTime, depth) {
+    // setChorus(enabled, frequency, delayTime, depth) {
 
-        if(enabled == false) this.chorus.disconnect()
-        else {
+    //     if(enabled == false) this.chorus.disconnect()
+    //     else {
 
-            this.chorus.frequency.set(frequency ? frequency : this.chorusFrequency)
-            // this.chorus.delayTime.setValueAtTime(delayTime ? delayTime : this.chorusdelayTime)
-            this.chorus.depth.set(depth ? depth : this.chorusDepth)
+    //         this.chorus.frequency.set(frequency ? frequency : this.chorusFrequency)
+    //         // this.chorus.delayTime.setValueAtTime(delayTime ? delayTime : this.chorusdelayTime)
+    //         this.chorus.depth.set(depth ? depth : this.chorusDepth)
 
-            this.chorus.toDestination().start()
-        }
-    }
+    //         this.chorus.toDestination().start()
+    //     }
+    // }
 
-    setTremolo(enabled, frequency, depth) {
+    // setTremolo(enabled, frequency, depth) {
 
-        if(enabled == false) this.tremolo.disconnect()
-        else {
+    //     if(enabled == false) this.tremolo.disconnect()
+    //     else {
 
-            this.tremolo.frequency.set(frequency ? frequency : this.tremoloFrequency)
-            this.tremolo.depth.set(depth ? depth : this.tremoloDepth)
+    //         this.tremolo.frequency.set(frequency ? frequency : this.tremoloFrequency)
+    //         this.tremolo.depth.set(depth ? depth : this.tremoloDepth)
 
-            this.tremolo.toDestination().start()
-        }
-    }
+    //         this.tremolo.toDestination().start()
+    //     }
+    // }
 
     /** Set the octave number */
     setOctave(o) {
@@ -381,7 +355,6 @@ export class Keyboard {
             this.synth.disconnect(this.recorder)
 
         }, 0)
-
     }
 
 
