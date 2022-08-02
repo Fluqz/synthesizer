@@ -80,6 +80,7 @@ export class Keyboard {
 
     /** Array of keys on the keyboard */
     static keyMap = [
+        // Upper
         'q',
         '2',
         'w',
@@ -98,6 +99,7 @@ export class Keyboard {
         '0',
         'p',
 
+        //lower
         '<',
         'a',
         'y',
@@ -185,7 +187,9 @@ export class Keyboard {
     /** Trempolo depth */
     tremoloDepth
 
+    /** ToneJs Recorder instance */
     recorder
+    /** Recording flag */
     isRecording
 
     /** DOM element container */
