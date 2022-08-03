@@ -6,15 +6,23 @@
     font-family:Arial, Helvetica, sans-serif;
 
     box-sizing: border-box;
+
+    width: auto;
+    height: auto;
 }
 
 body {
     background-color: #ffe600;
+
+    transition: 1s all;
 }
 
 html {
     font-size: 14px;
 }
+
+
+/* Keyboard */
 
 #keyboard {
 
@@ -63,6 +71,37 @@ html {
 }
 
 
+/* Effects */
+#effect-chain {
+
+    width: 100%;
+}
+
+#effects {
+
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+.effect {
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    background-color: #dc0d78;
+
+    min-width: 70px;
+    min-height: 70px;
+}
+
+
+
+/* UI */
+
+
 .btn {
 
     display: inline-block;
@@ -79,7 +118,7 @@ html {
 
     border-radius: 3px;
 
-    transition: .2s background-color;
+    transition: .1s background-color;
 
     cursor: pointer;
 }

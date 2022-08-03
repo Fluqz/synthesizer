@@ -4,6 +4,7 @@ import './style.css'
 import * as Tone from 'tone'
 import { Keyboard } from './app/keyboard'
 import { Knob } from './app/knob'
+import { Storage } from './app/storage'
 
 // Create Keyboard
 const dom = document.querySelector('#keyboard')
@@ -36,42 +37,22 @@ arp.addEventListener('click', (e) => {
     Keyboard.arp = e.target.checked
 })
 
-// Set delay button event
-const delay = document.querySelector('#delay input')
+// Container of effects
+const effects = document.querySelector('#effects')
+// Effect select element
+const effectSelect = document.querySelector('#effect-select')
 
-delay.addEventListener('click', (e) => {
+effectSelect.addEventListener('change', (e) => {
 
-    console.log('delay', e.target.checked)
+    console.log('select', e)
 
-    keyboard.setDelay(e.target.checked)
+    let ef = Keyboard.getEffect(e.target.value)
+    keyboard.addEffect(ef)
+
+    effects.appendChild(ef.dom)
 })
 
-delay.checked = keyboard.delayEnabled
 
-// Set tremolo button event
-const tremolo = document.querySelector('#tremolo input')
-
-tremolo.addEventListener('click', (e) => {
-
-    console.log('tremolo', e.target.checked)
-
-    keyboard.setTremolo(e.target.checked)
-})
-
-tremolo.checked = keyboard.tremoloEnabled
-
-
-// Set tremolo button event
-const chorus = document.querySelector('#chorus input')
-
-chorus.addEventListener('click', (e) => {
-
-    console.log('chorus', e.target.checked)
-
-    keyboard.setChorus(e.target.checked)
-})
-
-chorus.checked = keyboard.chorusEnabled
 
 
 
@@ -89,15 +70,58 @@ record.addEventListener('mousedown', (e) => {
     keyboard.toggleRecording()
 })
 
+const reset = document.querySelector('#reset')
+
+reset.addEventListener('mousedown', (e) => {
+
+    keyboard.reset()
+})
 
 
 
+
+// Serialize
+
+const serializeIn = file => {
+
+    if(!file) return
+
+    let o = JSON.parse(file)
+
+    console.log('SERIALIZE IN', o)
+
+    keyboard.serializeIn(o)
+
+    // TODO THIS IS NOT RIGHT
+    for(let ef of keyboard.effectChain) effects.appendChild(ef.dom)
+
+}
+
+const serializeOut = () => {
+
+    let o = keyboard.serializeOut()
+
+    console.log('SERIALIZE OUT', o)
+
+    return JSON.stringify(o)
+}
+
+
+document.addEventListener('DOMContentLoaded', (e) => {
+
+    console.log('STORAGE', Storage.load())
+
+    serializeIn(Storage.load())
+
+})
 
 
 
 // Unload
 
 window.onbeforeunload = () => {
+
+    Storage.save(serializeOut())
 
     keyboard.dispose()
 }

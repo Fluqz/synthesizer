@@ -4,6 +4,11 @@ import * as Tone from 'tone'
 import * as RxJs from 'rxjs'
 
 import { G } from './globals'
+import { Delay } from './effects/delay'
+import { Tremolo } from './effects/tremolo'
+import { Reverb } from './effects/reverb'
+import { Chorus } from './effects/chorus'
+import { Distortion } from './effects/distortion'
 
 /** Represents a single Key on a Keyboard */
 export class Key {
@@ -144,6 +149,15 @@ export class Keyboard {
         MembraneSynth: Tone.MembraneSynth,
     }
 
+    static getEffect(name) {
+
+        if(name === 'delay') return new Delay(1, .12, .8)
+        else if(name === 'tremolo') return new Tremolo(1, 5, 1)
+        // else if(name === 'reverb') return new Reverb()
+        else if(name === 'distortion') return new Distortion(1, .5)
+        // else if(name === 'chorus') return new Chorus()
+    }
+
     /** Array of created Key objects */
     static keys = []
 
@@ -175,39 +189,17 @@ export class Keyboard {
 
         this.octave = octave ? octave : 2
 
+        this.volume = new Tone.Gain(1)
+        this.volume.toDestination()
+
+        this.effectChain = []
+
         this.arp = false
 
         this.isRecording = false
 
         this.synth = new Tone.PolySynth(Keyboard.synths.DuoSynth)
-        this.synth.toDestination()
-
-        // Delay
-        // this.delayTime = .3
-        // this.delayFeedback= .8
-        // this.delay = new Tone.FeedbackDelay(this.delayTime, this.delayFeedback).toDestination()
-        // this.synth.connect(this.delay).toDestination()
-        // this.setDelay(this.delayEnabled)
-
-        // let d = new Tone.FeedbackDelay(2, 1).toDestination()
-        // this.synth.connect(d).toDestination()
-
-        // Chorus
-        // this.chorusEnabled = false
-        // this.chorusFrequency = 4
-        // this.chorusDelayTime = 2.5
-        // this.chorusDepth = .5
-        // this.chorus = new Tone.Chorus(this.chorusFrequency, this.chorusDelayTime, this.chorusDepth).toDestination().start()
-        // this.synth.connect(this.chorus).toDestination()
-        // this.setChorus(this.chorusEnabled)
-
-        // Tremolo
-        // this.tremoloEnabled = false
-        // this.tremoloFrequency = 5
-        // this.tremoloDepth = 1
-        // this.tremolo = new Tone.Tremolo(this.tremoloFrequency, this.tremoloDepth).toDestination().start()
-        // this.synth.connect(this.tremolo).toDestination()
-        // this.setTremolo(this.tremoloEnabled)
+        this.synth.connect(this.volume)
 
 
         // Create Keys
@@ -250,43 +242,6 @@ export class Keyboard {
 
     }
 
-    // setDelay(enabled, time, feedback) {
-
-    //     if(enabled == false) this.delay.disconnect()
-    //     else {
-
-    //         this.delay.delayTime.set(time ? time : this.delayTime)
-    //         this.delay.feedback.set(feedback ? feedback : this.delayFeedback)
-
-    //         this.delay.toDestination()
-    //     }
-    // }
-
-    // setChorus(enabled, frequency, delayTime, depth) {
-
-    //     if(enabled == false) this.chorus.disconnect()
-    //     else {
-
-    //         this.chorus.frequency.set(frequency ? frequency : this.chorusFrequency)
-    //         // this.chorus.delayTime.setValueAtTime(delayTime ? delayTime : this.chorusdelayTime)
-    //         this.chorus.depth.set(depth ? depth : this.chorusDepth)
-
-    //         this.chorus.toDestination().start()
-    //     }
-    // }
-
-    // setTremolo(enabled, frequency, depth) {
-
-    //     if(enabled == false) this.tremolo.disconnect()
-    //     else {
-
-    //         this.tremolo.frequency.set(frequency ? frequency : this.tremoloFrequency)
-    //         this.tremolo.depth.set(depth ? depth : this.tremoloDepth)
-
-    //         this.tremolo.toDestination().start()
-    //     }
-    // }
-
     /** Set the octave number */
     setOctave(o) {
 
@@ -314,6 +269,55 @@ export class Keyboard {
 
         this.synth.triggerRelease(note + octave);
     }
+
+
+
+    addEffect(e) {
+
+        this.effectChain.push(e)
+
+        this.connectEffectChain()
+    }
+
+    connectEffectChain() {
+
+        if(this.effectChain.length == 0) return
+
+        this.synth.disconnect()
+        this.synth.connect(this.volume)
+        // this.synth.connect(this.effectChain[0].instance)
+
+        // for(let i = 0; i < this.effectChain.length; i++) {
+
+        //     this.effectChain[i].disconnect()
+        //     this.effectChain[i].connect(i == this.effectChain.length-1 ? this.volume : this.effectChain[i+1])
+        // }
+
+
+
+        let nodes = []
+
+        for(let ef of this.effectChain) {
+
+            nodes.push(ef.instance)
+        }
+
+        nodes.push(this.volume)
+
+        this.synth.chain(...nodes)
+    }
+
+    removeEffect(e) {
+
+        // this.effectChain.indexOf(e)
+    }
+
+
+
+
+
+
+
 
 
 
@@ -368,17 +372,17 @@ export class Keyboard {
     /** Keydown event */
     onKeyDown(e) {
 
-        if(G.debug) console.log('onKeyDown: key', e.key)
+console.log('onKeyDown: key', e.key)
 
         if(!e) return
         if(e.repeat) return
 
-        if(e.key == 'ArrowRight') this.setOctave(this.octave + 1)
-        if(e.key == 'ArrowLeft') this.setOctave(this.octave - 1)
+        if(e.key == 'ArrowRight') return this.setOctave(this.octave + 1)
+        if(e.key == 'ArrowLeft') return this.setOctave(this.octave - 1)
 
         for(let k of Keyboard.keys) {
 
-            if(k.key === e.key) {
+            if(k.key === e.key || k.key === e.key.toLowerCase()) {
 
                 k.trigger()
             }
@@ -394,11 +398,26 @@ export class Keyboard {
 
         for(let k of Keyboard.keys) {
 
-            if(k.key === e.key) {
+            if(k.key === e.key || k.key === e.key.toLowerCase()) {
 
                 k.release()
             }
         }
+    }
+
+    reset() {
+
+        this.volume.gain.value = 1
+
+        for(let ef of this.effectChain) {
+
+            ef.disconnect()
+            ef.dom.parentNode.removeChild(ef.dom)
+        }
+
+        this.effectChain = []
+
+        // TODO - UPDATE DOM????
     }
 
     dispose() {
@@ -412,6 +431,33 @@ export class Keyboard {
             // key.onRelease.unsubscribe()
 
             key.dispose()
+        }
+    }
+
+
+
+
+    serializeIn = o => {
+
+        if(o['effectChain'] && o['effectChain'].length > 0) {
+
+            for(let ef of o['effectChain']) {
+
+                let e = Keyboard.getEffect(ef['name'])
+                e.serializeIn(ef)
+                this.addEffect(e)
+            }
+        }
+    }
+
+    serializeOut = () => {
+
+        let effectChain = []
+        for(let ef of this.effectChain) effectChain.push(ef.serializeOut())
+
+        return {
+            effectChain: effectChain,
+            octave: this.octave
         }
     }
 }

@@ -14,6 +14,8 @@ export class Chorus extends Effect {
 
     constructor(frequency, delayTime, depth) {
 
+        super('chorus')
+
         this.frequency = frequency
         this.delayTime = delayTime
         this.depth = depth

@@ -35,23 +35,36 @@
             <input type="checkbox" name="arp"/>
         </div>
 
-        <div id="delay" title="Shift + D">
-            <label for="delay">Delay</label>
-            <input type="checkbox" name="delay"/>
+
+
+
+        <div id="effect-chain">
+
+            <div>
+
+                <label for="effects">Effect Chain</label>
+                <select id="effect-select" name="effects">
+                    <option value="delay">Delay</option>
+                    <option value="tremolo">Tremolo</option>
+                    <option value="distortion">Distortion</option>
+                </select>
+
+            </div>
+
+            <div id="effects">
+
+
+            </div>
+
         </div>
 
-        <div id="tremolo" title="Shift + T">
-            <label for="tremolo">Tremolo</label>
-            <input type="checkbox" name="tremolo"/>
-        </div>
 
-        <div id="chorus" title="Shift + C">
-            <label for="chorus">Chorus</label>
-            <input type="checkbox" name="chorus"/>
-        </div>
+
 
 
         <div id="record" class="btn">Record</div>
+        
+        <div id="reset" class="btn">Reset</div>
 
 
         <script type="module" src="./bundle.js"></script>

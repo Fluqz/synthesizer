@@ -7,6 +7,7 @@ import { M } from "./math"
 export class Knob {
 
     value
+    prevValue
 
     min
     max
@@ -19,8 +20,8 @@ export class Knob {
     clickPosition
     clientRect
     angle
-    lastMoveAngle
-    moveAngle
+    prevAngle
+    newAngle
 
     isMouseDown
     isKeyDown
@@ -29,12 +30,13 @@ export class Knob {
 
     constructor(value, min, max, division) {
 
-        this.value = value ? value : 0
+        this.prevValue = this.value = value ? value : 0
         this.min = min ? min : 0
         this.max = max ? max : 1
-        this.division = division ? division : .01
+        this.division = division ? division : 100
 
         this.angle = 0
+        this.prevAngle = -Math.PI / 2
 
         this.isMouseDown = false
         this.isKeyDown = false
@@ -45,36 +47,54 @@ export class Knob {
         pointer.classList.add('knob-pointer')
         this.dom.append(pointer)
 
-        this.dom.addEventListener('mousedown', this.onMouseDown.bind(this), false)
-        this.dom.addEventListener('mousemove', this.onMouseMove.bind(this), false)
-        this.dom.addEventListener('mouseup', this.onMouseUp.bind(this), false)
-        this.dom.addEventListener('touchstart', this.onTouchStart.bind(this), false)
-        this.dom.addEventListener('touchmove', this.onTouchMove.bind(this), false)
-        this.dom.addEventListener('touchend', this.onTouchEnd.bind(this), false)
+        this.dom.addEventListener('mousedown', this.onMouseDown.bind(this))
+        document.addEventListener('mousemove', this.onMouseMove.bind(this))
+        document.addEventListener('mouseup', this.onMouseUp.bind(this))
+        this.dom.addEventListener('touchstart', this.onTouchStart.bind(this))
+        document.addEventListener('touchmove', this.onTouchMove.bind(this))
+        document.addEventListener('touchend', this.onTouchEnd.bind(this))
 
-        document.addEventListener('keydown', this.onKeyDown.bind(this), false)
-        document.addEventListener('keyup', this.onKeyUp.bind(this), false)
+        document.addEventListener('keydown', this.onKeyDown.bind(this))
+        document.addEventListener('keyup', this.onKeyUp.bind(this))
 
         this.onChange = new Subject()
     }
 
     setValue() {
 
-        this.value = this.angle / 360
+        this.angle += Math.PI
 
-        this.dom.innerHTML = Math.abs(Math.round(this.value * 100) / 100)
+        this.value = this.angle / Math.PI / 2
+
+        console.log('VALUE', this.value)
+
+
+        this.value = Math.round(this.value * this.division) / this.division
+
+        // console.log('val', this.value, this.angle, this.prevAngle)
+
+
+        if(this.value > this.max) this.value = this.max
+        else if(this.value < this.min) this.value = this.min
+
+        this.dom.innerHTML = this.value
 
         this.rotateDOM()
+
+        this.onChange.next(this.value)
     }
 
     rotateDOM() {
 
-        this.dom.style.transform = 'rotate('+Math.round(this.angle)+'deg)';
+        this.dom.style.transform = 'rotate('+Math.round(this.angle*(180/Math.PI))+'deg)';
     }
 
     onMouseDown(e) {
 
-        console.log('mousedown', e)
+        // console.log('mousedown', e)
+
+        e.preventDefault()
+        e.stopPropagation()
 
         this.isMouseDown = true
 
@@ -85,33 +105,43 @@ export class Knob {
 
         this.centerPosition = { x: this.clientRect.x + (this.clientRect.width / 2), y: this.clientRect.y + (this.clientRect.height / 2) }
 
-        this.lastMoveAngle = M.getAngle(this.centerPosition.x, this.centerPosition.y, this.clickPosition.x, this.clickPosition.y)
+        // this.prevAngle = M.getAngle(this.centerPosition.x, this.centerPosition.y, this.clickPosition.x, this.clickPosition.y)
 
-        this.setValue()
+        // this.setValue()
     }
     onMouseMove(e) {
 
+        e.preventDefault()
+        e.stopPropagation()
+        
         if(!this.isMouseDown) return
 
-        console.log('mousemove', e)
+        // console.log('mousemove', e)
 
         this.mousePosition = { x: e.clientX, y: e.clientY }
 
-        this.moveAngle = M.getAngle(this.centerPosition.x, this.centerPosition.y, this.mousePosition.x, this.mousePosition.y)
+        this.newAngle = M.getAngle(this.centerPosition.x, this.centerPosition.y, this.mousePosition.x, this.mousePosition.y)
 
-        this.angle += (this.moveAngle - this.lastMoveAngle)
+        this.angle = this.newAngle - this.prevAngle
 
-        this.angle = Math.abs(this.angle)
+        // this.prevAngle = this.newAngle
 
-        this.lastMoveAngle = this.moveAngle
+        if (this.angle < 0) {
+            this.angle += Math.PI * 2;
+        }
+        if (this.angle > Math.PI) {
+            this.angle -= Math.PI * 2;
+        }
 
-        console.log('ANGLE', this.angle, this.lastMoveAngle, this.moveAngle)
 
         this.setValue()
+
     }
     onMouseUp(e) {
 
-        console.log('mouseup', e)
+        this.prevAngle = this.angle
+
+        // console.log('mouseup', e)
 
         this.isMouseDown = false
     }
@@ -123,13 +153,13 @@ export class Knob {
 
     onKeyDown(e) {
 
-        console.log('keydown', e)
+        // console.log('keydown', e)
 
         this.isKeyDown = true
     }
     onKeyUp(e) {
 
-        console.log('keyup', e)
+        // console.log('keyup', e)
 
         this.isKeyDown = false
 
