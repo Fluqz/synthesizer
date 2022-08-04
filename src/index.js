@@ -3,12 +3,10 @@ import './style.css'
 
 import * as Tone from 'tone'
 import { Keyboard } from './app/keyboard'
-import { Knob } from './app/knob'
 import { Storage } from './app/storage'
 
 // Create Keyboard
 const dom = document.querySelector('#keyboard')
-
 const keyboard = new Keyboard(dom)
 
 // Set octave buttons events
@@ -37,6 +35,17 @@ arp.addEventListener('click', (e) => {
     Keyboard.arp = e.target.checked
 })
 
+// Synth select element
+const synthSelect = document.querySelector('#synth-select')
+
+synthSelect.addEventListener('change', (e) => {
+
+    console.log('select', e)
+
+    keyboard.setSynth(e.target.value)
+})
+
+
 // Container of effects
 const effects = document.querySelector('#effects')
 // Effect select element
@@ -54,15 +63,7 @@ effectSelect.addEventListener('change', (e) => {
 
 
 
-
-
-
-let knob = new Knob()
-
-document.body.append(knob.dom)
-
-
-
+// Toggle recording button
 const record = document.querySelector('#record')
 
 record.addEventListener('mousedown', (e) => {
@@ -70,6 +71,7 @@ record.addEventListener('mousedown', (e) => {
     keyboard.toggleRecording()
 })
 
+// Reset keyboard button
 const reset = document.querySelector('#reset')
 
 reset.addEventListener('mousedown', (e) => {
@@ -81,18 +83,15 @@ reset.addEventListener('mousedown', (e) => {
 
 
 // Serialize
-
 const serializeIn = file => {
 
     if(!file) return
 
     let o = JSON.parse(file)
 
-    console.log('SERIALIZE IN', o)
-
     keyboard.serializeIn(o)
 
-    // TODO THIS IS NOT RIGHT
+    // TODO - THIS IS NOT RIGHT
     for(let ef of keyboard.effectChain) effects.appendChild(ef.dom)
 
 }
@@ -101,12 +100,10 @@ const serializeOut = () => {
 
     let o = keyboard.serializeOut()
 
-    console.log('SERIALIZE OUT', o)
-
     return JSON.stringify(o)
 }
 
-
+// ON LOAD
 document.addEventListener('DOMContentLoaded', (e) => {
 
     console.log('STORAGE', Storage.load())
@@ -115,10 +112,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
 
 })
 
-
-
-// Unload
-
+// ON UNLOAD
 window.onbeforeunload = () => {
 
     Storage.save(serializeOut())

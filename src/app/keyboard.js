@@ -34,7 +34,6 @@ export class Key {
         this.dom.classList.add('key')
         if(this.note[1] == '#' | this.note[1] === 'b') this.dom.classList.add('black')
 
-        this.updateText()
 
         this.onTrigger = new RxJs.Subject()
         this.onRelease = new RxJs.Subject()
@@ -42,11 +41,29 @@ export class Key {
         this.dom.addEventListener('mousedown', this.trigger.bind(this), false)
         this.dom.addEventListener('mouseleave', this.release.bind(this), false)
         this.dom.addEventListener('mouseup', this.release.bind(this), false)
+
+        this.updateText()
+        this.transformDOM()
     }
 
     updateText() {
 
         this.dom.innerHTML = this.key.toUpperCase() + '</br>' + this.note + ' ' + this.octave
+    }
+
+    transformDOM() {
+
+        let r = (Math.random() - .5) * 10 * this.octave
+        this.dom.style.transform = 'rotate(' + r + 'deg) translateY(' + r / 2 + 'px)'
+    }
+
+    setOctave(o) {
+
+        this.onRelease.next(this)
+
+        this.octave = o
+
+        this.transformDOM()
     }
 
     /** On Key down */
@@ -142,6 +159,14 @@ export class Keyboard {
         'B',
     ]
 
+    /** 
+     * This array is used to keep track which notes are currently triggered. 
+     * There are some issues with polyphonic synths and releasing the note. 
+     * In some occasions you can lose track and wont be able to release the note anymore.
+     * The note will play for eternity.
+     */
+    static activeNotes
+
     static synths = {
         synth: Tone.Synth,
         FMSynth: Tone.FMSynth,
@@ -193,6 +218,7 @@ export class Keyboard {
         this.volume.toDestination()
 
         this.effectChain = []
+        this.activeNotes = []
 
         this.arp = false
 
@@ -234,8 +260,15 @@ export class Keyboard {
         document.addEventListener('keyup', this.onKeyUp.bind(this), false)
     }
 
+    /** Set one of the few synths of ToneJs. */
     setSynth(synth) {
 
+        this.stopAll()
+
+        this.synth = new Tone.PolySynth(Keyboard.synths[synth])
+        this.synth.connect(this.volume)
+
+        this.connectEffectChain()
     }
 
     toggleArpMode(m) {
@@ -250,7 +283,7 @@ export class Keyboard {
         let i = 0
         for(let k of Keyboard.keys) {
 
-            k.octave = this.octave + Math.floor(i / Keyboard.notes.length)
+            k.setOctave(this.octave + Math.floor(i / Keyboard.notes.length))
             k.updateText()
 
             i++
@@ -261,30 +294,41 @@ export class Keyboard {
     playNote(note, octave) {
 
         this.synth.triggerAttack(note + octave);
-
+        this.activeNotes.push(note + octave)
     }
 
     /** Release note */
     releaseNote(note, octave) {
 
         this.synth.triggerRelease(note + octave);
+        this.activeNotes.splice(this.activeNotes.indexOf(note + octave), 1)
+    }
+
+    /** Will release all triggered notes that are stored in [activeNotes] */
+    stopAll() {
+
+        for(let an of this.activeNotes) this.releaseNote(an)
     }
 
 
-
+    /** Adds a effect to the effect chain */
     addEffect(e) {
 
         this.effectChain.push(e)
 
+        e.onDelete.subscribe(this.removeEffect.bind(this))
+
         this.connectEffectChain()
     }
 
+    /** Connects all effects in a chain */
     connectEffectChain() {
 
         if(this.effectChain.length == 0) return
 
         this.synth.disconnect()
         this.synth.connect(this.volume)
+
         // this.synth.connect(this.effectChain[0].instance)
 
         // for(let i = 0; i < this.effectChain.length; i++) {
@@ -292,8 +336,6 @@ export class Keyboard {
         //     this.effectChain[i].disconnect()
         //     this.effectChain[i].connect(i == this.effectChain.length-1 ? this.volume : this.effectChain[i+1])
         // }
-
-
 
         let nodes = []
 
@@ -307,9 +349,18 @@ export class Keyboard {
         this.synth.chain(...nodes)
     }
 
+    /** Remove a effect from the effect chain */
     removeEffect(e) {
 
-        // this.effectChain.indexOf(e)
+        let i = this.effectChain.indexOf(e)
+
+        if(i == -1) return
+
+        e.disconnect()
+
+        this.effectChain.splice(i, 1)
+
+        this.connectEffectChain()
     }
 
 
@@ -320,7 +371,7 @@ export class Keyboard {
 
 
 
-
+    /** Toggles the recording mode */
     toggleRecording() {
 
         this.isRecording = !this.isRecording
@@ -329,13 +380,14 @@ export class Keyboard {
         else this.stopRecording()
     }
 
+    /** Will start recording  */
     startRecording() {
 
         console.log('START RECORDING')
 
         if(!this.recorder) this.recorder = new Tone.Recorder()
 
-        this.synth.connect(this.recorder)
+        Tone.Destination.connect(this.recorder)
 
         this.recorder.start()
     }
@@ -356,7 +408,7 @@ export class Keyboard {
             anchor.href = url;
             anchor.click();
 
-            this.synth.disconnect(this.recorder)
+            Tone.Destination.disconnect(this.recorder)
 
         }, 0)
     }
@@ -405,6 +457,7 @@ console.log('onKeyDown: key', e.key)
         }
     }
 
+    /** Resets the keyboard to standard settings */
     reset() {
 
         this.volume.gain.value = 1
@@ -420,6 +473,7 @@ console.log('onKeyDown: key', e.key)
         // TODO - UPDATE DOM????
     }
 
+    /** Disconnects everything and removes all event listeners */
     dispose() {
 
         document.removeEventListener('keydown', this.onKeyDown.bind(this), false)
@@ -436,7 +490,7 @@ console.log('onKeyDown: key', e.key)
 
 
 
-
+    /** Load settings */
     serializeIn = o => {
 
         if(o['effectChain'] && o['effectChain'].length > 0) {
@@ -448,8 +502,11 @@ console.log('onKeyDown: key', e.key)
                 this.addEffect(e)
             }
         }
+
+        if(o['octave']) this.setOctave(o['octave'])
     }
 
+    /** Save settings */
     serializeOut = () => {
 
         let effectChain = []

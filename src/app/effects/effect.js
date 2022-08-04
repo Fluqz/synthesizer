@@ -1,3 +1,4 @@
+import { Subject } from 'rxjs'
 import * as Tone from 'tone'
 
 
@@ -17,6 +18,7 @@ export class Effect {
     /** HTML element */
     dom
 
+    onDelete
     
 
     constructor(name) {
@@ -30,6 +32,17 @@ export class Effect {
         this.dom = document.createElement('div')
         this.dom.classList.add('effect', this.name)
         this.dom.innerHTML = this.name[0].toUpperCase() + this.name.substr(1);
+
+        let x = document.createElement('div')
+        x.classList.add('delete')
+        x.innerHTML = 'x'
+        this.dom.append(x)
+        this.onDelete = new Subject()
+        x.addEventListener('click', (e) => {
+
+            this.dom.parentNode.removeChild(this.dom)
+            this.onDelete.next(this)
+        })
     }
 
     connect(e) {
@@ -45,7 +58,7 @@ export class Effect {
 
     serializeIn(o) {
 
-
+        if(o['enabled']) this.enabled = o['enabled']
     }
 
     serializeOut() {

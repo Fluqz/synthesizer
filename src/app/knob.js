@@ -71,6 +71,7 @@ export class Knob {
         if(this.value > this.max) this.value = this.max
         else if(this.value < this.min) this.value = this.min
 
+
         this.dom.innerHTML = this.value
 
         this.rotateDOM()
