@@ -1,4 +1,4 @@
-import { Subject } from "rxjs"
+import { fromEvent, Subject, throttleTime } from "rxjs"
 import { M } from "./math"
 
 
@@ -57,22 +57,16 @@ export class Knob {
         document.addEventListener('keydown', this.onKeyDown.bind(this))
         document.addEventListener('keyup', this.onKeyUp.bind(this))
 
+        fromEvent(this.dom, 'wheel', { bubbles: false }).pipe(throttleTime(50)).subscribe(this.onScroll.bind(this))
+
         this.onChange = new Subject()
     }
 
-    setValue() {
-
-        this.angle += Math.PI
-
-        this.value = this.angle / Math.PI / 2
-
-        console.log('VALUE', this.value)
-
+    setValue(v) {
+        
+        this.value = v
 
         this.value = Math.round(this.value * this.division) / this.division
-
-        // console.log('val', this.value, this.angle, this.prevAngle)
-
 
         if(this.value > this.max) this.value = this.max
         else if(this.value < this.min) this.value = this.min
@@ -82,6 +76,15 @@ export class Knob {
         this.rotateDOM()
 
         this.onChange.next(this.value)
+    }
+
+    setValueFromAngle() {
+
+        this.angle += Math.PI
+
+        this.value = this.angle / Math.PI / 2
+
+        this.setValue(this.value)
     }
 
     rotateDOM() {
@@ -107,7 +110,7 @@ export class Knob {
 
         // this.prevAngle = M.getAngle(this.centerPosition.x, this.centerPosition.y, this.clickPosition.x, this.clickPosition.y)
 
-        // this.setValue()
+        // this.setValueFromAngle()
     }
     onMouseMove(e) {
 
@@ -134,7 +137,7 @@ export class Knob {
         }
 
 
-        this.setValue()
+        this.setValueFromAngle()
 
     }
     onMouseUp(e) {
@@ -165,7 +168,13 @@ export class Knob {
 
     }
 
-    onScroll() {
-        
+    onScroll(e) {
+
+        e.preventDefault()
+        e.stopPropagation()
+        console.log('SCROLL', e.wheelDelta, e)
+
+        if(e.wheelDelta > 0) this.setValue(this.value - (1 / this.division))
+        else if(e.wheelDelta < 0) this.setValue(this.value + (1 / this.division))
     }
 }
