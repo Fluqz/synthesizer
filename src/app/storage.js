@@ -1,13 +1,13 @@
 
 export class Storage {
 
-    static baseName = "synthesizer"
-  
-    static load() {
-      return window.localStorage.getItem(Storage.baseName + "-save")
-    }
+    static storeName = "synthesizer"
   
     static save(file) {
-      window.localStorage.setItem(Storage.baseName + "-save", file)
+      window.localStorage.setItem(Storage.storeName + "-save", file)
+    }
+
+    static load() {
+      return window.localStorage.getItem(Storage.storeName + "-save")
     }
   }

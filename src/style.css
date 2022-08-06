@@ -74,6 +74,7 @@ html {
     /* border-radius: 3px; */
 
     transition: .2s transform;
+    z-index: 0;
 }
 
 .black {
@@ -85,6 +86,7 @@ html {
 .pressed {
 
     background-color: var(--c-o);
+    z-index: 1;
 }
 
 #record.recording {

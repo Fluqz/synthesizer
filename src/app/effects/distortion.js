@@ -4,8 +4,6 @@ import { Knob } from '../knob';
 import { Effect } from "./effect";
 
 
-
-
 export class Distortion extends Effect {
 
     /** Intensity */
@@ -25,16 +23,13 @@ export class Distortion extends Effect {
 
         let wetKnob = new Knob(this.wet, 0, 1)
         this.dom.appendChild(wetKnob.dom)
-
         wetKnob.onChange.subscribe(v => this.setWet(v))
 
         let gainKnob = new Knob(this.gain, 0, 20)
         this.dom.appendChild(gainKnob.dom)
-
         gainKnob.onChange.subscribe(v => this.setGain(v))
 
     }
-
 
     setWet(w) {
 

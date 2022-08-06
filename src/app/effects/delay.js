@@ -26,20 +26,16 @@ export class Delay extends Effect {
         this.instance = new Tone.FeedbackDelay(this.time, this.feedback)
         
         this.setWet(this.wet)
-
         let wetKnob = new Knob(this.wet, 0, 1)
         this.dom.appendChild(wetKnob.dom)
-
         wetKnob.onChange.subscribe(v => this.setWet(v))
 
         let timeKnob = new Knob(this.time, 0, 20)
         this.dom.appendChild(timeKnob.dom)
-
         timeKnob.onChange.subscribe(v => this.setTime(v))
 
         let feedbackKnob = new Knob(this.feedback, 0, 1)
         this.dom.appendChild(feedbackKnob.dom)
-
         feedbackKnob.onChange.subscribe(v => this.setFeedback(v))
     }
 

@@ -28,17 +28,14 @@ export class Tremolo extends Effect {
 
         let wetKnob = new Knob(this.wet, 0, 1)
         this.dom.appendChild(wetKnob.dom)
-
         wetKnob.onChange.subscribe(v => this.setWet(v))
 
         let frequencyKnob = new Knob(this.frequency, 0, 20)
         this.dom.appendChild(frequencyKnob.dom)
-
         frequencyKnob.onChange.subscribe(v => this.setFrequency(v))
 
         let depthKnob = new Knob(this.depth, 0, 1)
         this.dom.appendChild(depthKnob.dom)
-
         depthKnob.onChange.subscribe(v => this.setDepth(v))
 
     }

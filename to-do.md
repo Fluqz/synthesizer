@@ -2,29 +2,31 @@
 
 #BUGS
 
-I think the effects are not really chaining correctly. The sound on play sounds different than the delayed sound.??
+- I think the effects are not really chaining correctly. The sound on play sounds different than the delayed sound.??
 
 #Unfinished
 
-Record and export not working
-Knob is still weird
-Knob rotation not updating on scroll
+- Knob is still weird
+- Knob scroll speed needs to be calculated by how far its been scrolled. Small steps are slow, large are fast
 
 
 #NiceToHave
 
-change wave
+- change wave
 
-Would be nice to have channels. Basicly having multple keyboards with a effectchain and properties for each.
+- Would be nice to have channels. Basicly having multple keyboards with a effectchain and properties for each.
 
-Record what you playing like midi notes?
+- Record what you playing like midi notes?
 
-Loop recordings?
+- Loop recordings?
 
-Envelope
+- Envelope
 
+- Add filters
 
-Add filters
+- Add different colors for different octaves (only for black keys?)
 
-Add knob automation with filters
-Add arppegiator mode
+- Add knob automation with filters
+- Add arppegiator mode
+
+- Pressing keys changes the color of the background/keys. Colors are chose by my synesthesis palette

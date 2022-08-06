@@ -57,7 +57,7 @@ export class Knob {
         document.addEventListener('keydown', this.onKeyDown.bind(this))
         document.addEventListener('keyup', this.onKeyUp.bind(this))
 
-        fromEvent(this.dom, 'wheel', { bubbles: false }).pipe(throttleTime(50)).subscribe(this.onScroll.bind(this))
+        fromEvent(this.dom, 'wheel', { bubbles: false }).subscribe(this.onScroll.bind(this))
 
         this.onChange = new Subject()
     }
@@ -71,8 +71,9 @@ export class Knob {
         if(this.value > this.max) this.value = this.max
         else if(this.value < this.min) this.value = this.min
 
-
         this.dom.innerHTML = this.value
+
+        this.angle = this.value / ((this.max - this.min) / (Math.PI * 2))
 
         this.rotateDOM()
 
@@ -169,13 +170,23 @@ export class Knob {
 
     }
 
+    wheelDelta = 0
+    t = 1
+    time = Date.now()
     onScroll(e) {
 
         e.preventDefault()
         e.stopPropagation()
-        console.log('SCROLL', e.wheelDelta, e)
 
-        if(e.wheelDelta > 0) this.setValue(this.value - (1 / this.division))
-        else if(e.wheelDelta < 0) this.setValue(this.value + (1 / this.division))
+        // console.log(this.wheelDelta, this.time - Date.now())
+        // if(this.wheelDelta <= this.time - Date.now()) return
+        // console.log('YPOOO')
+
+        // this.time = Date.now()
+        // this.wheelDelta = Math.abs(e.wheelDelta)
+
+        // console.log('SCROLL', e.wheelDelta, ((1 / this.division)))
+        if(e.wheelDelta > 0) this.setValue(this.value - ((1 / this.division)))
+        else if(e.wheelDelta < 0) this.setValue(this.value + ((1 / this.division)))
     }
 }
