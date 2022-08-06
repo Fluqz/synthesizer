@@ -53,8 +53,8 @@ export class Distortion extends Effect {
     serializeIn(o) {
 
         if(o['enabled']) this.enabled = o['enabled']
-        if(o['wet']) this.wet = o['wet']
-        if(o['gain']) this.gain = o['gain']
+        if(o['wet']) this.setWet(o['wet'])
+        if(o['gain']) this.setGain(o['gain'])
     }
 
     serializeOut() {

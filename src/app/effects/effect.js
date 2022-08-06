@@ -31,9 +31,13 @@ export class Effect {
 
         this.dom = document.createElement('div')
         this.dom.classList.add('effect', this.name)
-        this.dom.innerHTML = this.name[0].toUpperCase() + this.name.substr(1);
 
-        let x = document.createElement('div')
+        const text = document.createElement('div')
+        text.classList.add('effect-title')
+        text.innerHTML = this.name[0].toUpperCase() + this.name.substr(1);
+        this.dom.append(text)
+
+        const x = document.createElement('div')
         x.classList.add('delete')
         x.innerHTML = 'x'
         this.dom.append(x)

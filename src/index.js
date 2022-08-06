@@ -4,10 +4,18 @@ import './style.css'
 import * as Tone from 'tone'
 import { Keyboard } from './app/keyboard'
 import { Storage } from './app/storage'
+import { Knob } from './app/knob'
 
 // Create Keyboard
 const dom = document.querySelector('#keyboard')
 const keyboard = new Keyboard(dom)
+
+// Volume Button
+const volume = document.querySelector('#volume')
+const volumeKnob = new Knob(keyboard.volume.gain.value, 0, 1, 360)
+volumeKnob.onChange.subscribe((v) => { keyboard.setVolume(v) })
+volume.append(volumeKnob.dom)
+
 
 // Set octave buttons events
 const octaveDown = document.querySelector('#octave-down')
@@ -25,15 +33,15 @@ octaveUp.addEventListener('click', () => {
     keyboard.setOctave(keyboard.octave + 1)
 })
 
-// Set arp button event
-const arp = document.querySelector('#arp input')
+// // Set arp button event
+// const arp = document.querySelector('#arp input')
 
-arp.addEventListener('click', (e) => {
+// arp.addEventListener('click', (e) => {
 
-    console.log('ARP', e.target.checked)
+//     console.log('ARP', e.target.checked)
 
-    Keyboard.arp = e.target.checked
-})
+//     Keyboard.arp = e.target.checked
+// })
 
 // Synth select element
 const synthSelect = document.querySelector('#synth-select')
@@ -69,6 +77,16 @@ const record = document.querySelector('#record')
 record.addEventListener('mousedown', (e) => {
 
     keyboard.toggleRecording()
+
+})
+
+keyboard.onRecordingStart.subscribe(() => {
+
+    record.classList[keyboard.isRecording ? 'add' : 'remove']('recording')
+})
+keyboard.onRecordingEnd.subscribe(() => {
+
+    record.classList[keyboard.isRecording ? 'add' : 'remove']('recording')
 })
 
 // Reset keyboard button

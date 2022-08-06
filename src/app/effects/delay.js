@@ -68,9 +68,9 @@ export class Delay extends Effect {
     serializeIn(o) {
 
         if(o['enabled']) this.enabled = o['enabled']
-        if(o['wet']) this.wet = o['wet']
-        if(o['time']) this.time = o['time']
-        if(o['feedback']) this.feedback = o['feedback']
+        if(o['wet']) this.setWet(o['wet'])
+        if(o['time']) this.setTime(o['time'])
+        if(o['feedback']) this.setFeedback(o['feedback'])
     }
 
     serializeOut() {

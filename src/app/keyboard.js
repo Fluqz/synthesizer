@@ -32,6 +32,7 @@ export class Key {
         this.key = key
         this.dom = document.createElement('div')
         this.dom.classList.add('key')
+        this.dom.title = 'key'
         if(this.note[1] == '#' | this.note[1] === 'b') this.dom.classList.add('black')
 
 
@@ -43,7 +44,6 @@ export class Key {
         this.dom.addEventListener('mouseup', this.release.bind(this), false)
 
         this.updateText()
-        this.transformDOM()
     }
 
     updateText() {
@@ -53,8 +53,22 @@ export class Key {
 
     transformDOM() {
 
-        let r = (Math.random() - .5) * 10 * this.octave
-        this.dom.style.transform = 'rotate(' + r + 'deg) translateY(' + r / 2 + 'px)'
+        const r = (Math.random() - .5) * 50 * this.octave
+        this.dom.style.transform = 'rotate(' + r + 'deg)' // translateY(' + r / 2 + 'px)'
+        this.dom.style.transformOrigin = 'center'
+    }
+
+    resetTransformDOM() {
+
+        this.dom.style.transform = 'rotate(0deg)'
+        this.dom.style.transformOrigin = 'center'
+    }
+
+
+
+    setVolume(v) {
+
+        this.volume.gain.value = v
     }
 
     setOctave(o) {
@@ -62,8 +76,6 @@ export class Key {
         this.onRelease.next(this)
 
         this.octave = o
-
-        this.transformDOM()
     }
 
     /** On Key down */
@@ -74,6 +86,8 @@ export class Key {
         this.dom.classList.add('pressed')
 
         this.onTrigger.next(this)
+
+        this.transformDOM()
     }
 
     /** On Key up */
@@ -84,6 +98,8 @@ export class Key {
         this.dom.classList.remove('pressed')
 
         this.onRelease.next(this)
+
+        this.resetTransformDOM()
     }
 
     dispose() {
@@ -208,6 +224,14 @@ export class Keyboard {
     /** DOM element container */
     dom
 
+
+    // Events
+    onKeyDownEvent
+    onKeyUpEvent
+    onRecordingStart
+    onRecordingEnd
+
+
     constructor(dom, octave) {
 
         this.dom = dom
@@ -258,6 +282,9 @@ export class Keyboard {
 
         document.addEventListener('keydown', this.onKeyDown.bind(this), false)
         document.addEventListener('keyup', this.onKeyUp.bind(this), false)
+
+        this.onRecordingStart = new RxJs.Subject()
+        this.onRecordingEnd = new RxJs.Subject()
     }
 
     /** Set one of the few synths of ToneJs. */
@@ -327,7 +354,7 @@ export class Keyboard {
         if(this.effectChain.length == 0) return
 
         this.synth.disconnect()
-        this.synth.connect(this.volume)
+        // this.synth.connect(this.volume)
 
         // this.synth.connect(this.effectChain[0].instance)
 
@@ -374,14 +401,14 @@ export class Keyboard {
     /** Toggles the recording mode */
     toggleRecording() {
 
-        this.isRecording = !this.isRecording
-
-        if(this.isRecording) this.startRecording()
+        if(!this.isRecording) this.startRecording()
         else this.stopRecording()
     }
 
     /** Will start recording  */
     startRecording() {
+
+        this.isRecording = true
 
         console.log('START RECORDING')
 
@@ -390,9 +417,13 @@ export class Keyboard {
         Tone.Destination.connect(this.recorder)
 
         this.recorder.start()
+
+        this.onRecordingStart.next()
     }
 
     stopRecording() {
+
+        this.isRecording = false
 
         console.log('STOP RECORDING')
 
@@ -400,11 +431,13 @@ export class Keyboard {
 
             const recording = await this.recorder.stop()
 
+            this.onRecordingEnd.next()
+
             console.log('RECORDING', recording)
 
             const url = URL.createObjectURL(recording);
             const anchor = document.createElement("a");
-            anchor.download = "recording.webm";
+            anchor.download = "web-synth-recording.webm";
             anchor.href = url;
             anchor.click();
 
@@ -429,8 +462,9 @@ console.log('onKeyDown: key', e.key)
         if(!e) return
         if(e.repeat) return
 
-        if(e.key == 'ArrowRight') return this.setOctave(this.octave + 1)
-        if(e.key == 'ArrowLeft') return this.setOctave(this.octave - 1)
+        if(e.key == 'ArrowRight') this.setOctave(this.octave + 1)
+        if(e.key == 'ArrowLeft') this.setOctave(this.octave - 1)
+        if(e.key == ' ') this.toggleRecording()
 
         for(let k of Keyboard.keys) {
 
