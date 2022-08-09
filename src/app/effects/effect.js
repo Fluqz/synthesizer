@@ -42,11 +42,7 @@ export class Effect {
         x.innerHTML = 'x'
         this.dom.append(x)
         this.onDelete = new Subject()
-        x.addEventListener('click', (e) => {
-
-            this.dom.parentNode.removeChild(this.dom)
-            this.onDelete.next(this)
-        })
+        x.addEventListener('click', this.delete.bind(this))
     }
 
     connect(e) {
@@ -58,6 +54,13 @@ export class Effect {
 
         if(e) this.instance.disconnect(e instanceof Effect ? e.instance : e)
         else this.instance.disconnect()
+    }
+
+    delete() {
+
+        this.disconnect()
+        this.dom.parentNode.removeChild(this.dom)
+        this.onDelete.next(this)
     }
 
     serializeIn(o) {

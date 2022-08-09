@@ -1,32 +1,24 @@
-
-
 #BUGS
 
 - I think the effects are not really chaining correctly. The sound on play sounds different than the delayed sound.??
 
+
 #Unfinished
 
 - Knob is still weird
-- Knob scroll speed needs to be calculated by how far its been scrolled. Small steps are slow, large are fast
+- Knob scroll speed needs to be calculated by how far its been scrolled. - Small steps are slow, large are fast
 
 
 #NiceToHave
 
+- loop mode recording - set a loop length and start record and play. loop runns and playing will overdub. also make undo 
 - change wave
-
 - Would be nice to have channels. Basicly having multple keyboards with a effectchain and properties for each.
-
 - Record what you playing like midi notes?
-
 - Loop recordings?
-
 - Envelope
-
 - Add filters
-
 - Add different colors for different octaves (only for black keys?)
-
 - Add knob automation with filters
 - Add arppegiator mode
-
 - Pressing keys changes the color of the background/keys. Colors are chose by my synesthesis palette

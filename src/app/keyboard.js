@@ -94,27 +94,24 @@ export class Keyboard {
 
         if(name === 'delay') return new Delay(1, .12, .8)
         else if(name === 'tremolo') return new Tremolo(1, 5, 1)
-        // else if(name === 'reverb') return new Reverb()
         else if(name === 'distortion') return new Distortion(1, .5)
         else if(name === 'chorus') return new Chorus(1, 4, 20, 1, 1)
     }
 
     /** Array of created Key objects */
     static keys = []
-
     /** Octave number */
     octave
-
     /** Master volume node */
     volume
-
     /** Synth that is used */
     synth
     /** Arppegiator mode */
     arp
-
+    /** Array of added effects. Effects are chained in array order  */
     effectChain
-
+    /** Presets */
+    presets
 
     /** ToneJs Recorder instance */
     recorder
@@ -130,6 +127,10 @@ export class Keyboard {
     onKeyUpEvent
     onRecordingStart
     onRecordingEnd
+    onSavePreset
+    onRemovePreset
+    onAddEffect
+    onRemoveEffect
 
 
     constructor(dom, octave) {
@@ -143,6 +144,7 @@ export class Keyboard {
 
         this.effectChain = []
         this.activeNotes = []
+        this.presets = []
 
         this.arp = false
 
@@ -151,6 +153,7 @@ export class Keyboard {
         this.synth = new Tone.PolySynth(Keyboard.synths.DuoSynth)
         this.synth.connect(this.volume)
 
+        this.connectEffectChain()
 
         // Create Keys
         let key
@@ -185,6 +188,12 @@ export class Keyboard {
 
         this.onRecordingStart = new RxJs.Subject()
         this.onRecordingEnd = new RxJs.Subject()
+
+        this.onSavePreset = new RxJs.Subject()
+        this.onRemovePreset = new RxJs.Subject()
+
+        this.onAddEffect = new RxJs.Subject()
+        this.onRemoveEffect = new RxJs.Subject()
     }
 
     /** Set one of the few synths of ToneJs. */
@@ -192,15 +201,14 @@ export class Keyboard {
 
         this.stopAll()
 
+        this.synth.disconnect()
+        console.log('snyth', synth)
         this.synth = new Tone.PolySynth(Keyboard.synths[synth])
-        this.synth.connect(this.volume)
 
         this.connectEffectChain()
     }
 
-    toggleArpMode(m) {
-
-    }
+    toggleArpMode(m) {}
 
     /** Set Master Volume */
     setVolume(v) {
@@ -253,6 +261,8 @@ export class Keyboard {
         e.onDelete.subscribe(this.removeEffect.bind(this))
 
         this.connectEffectChain()
+
+        this.onAddEffect.next(e)
     }
 
     /** Connects all effects in a chain */
@@ -261,15 +271,6 @@ export class Keyboard {
         if(this.effectChain.length == 0) return
 
         this.synth.disconnect()
-        // this.synth.connect(this.volume)
-
-        // this.synth.connect(this.effectChain[0].instance)
-
-        // for(let i = 0; i < this.effectChain.length; i++) {
-
-        //     this.effectChain[i].disconnect()
-        //     this.effectChain[i].connect(i == this.effectChain.length-1 ? this.volume : this.effectChain[i+1])
-        // }
 
         let nodes = []
 
@@ -295,6 +296,8 @@ export class Keyboard {
         this.effectChain.splice(i, 1)
 
         this.connectEffectChain()
+
+        this.onRemoveEffect.next(e)
     }
 
 
@@ -328,6 +331,7 @@ export class Keyboard {
         this.onRecordingStart.next()
     }
 
+    /** Will stop recording and download the webm file  */
     stopRecording() {
 
         this.isRecording = false
@@ -403,10 +407,9 @@ console.log('onKeyDown: key', e.key)
 
         this.volume.gain.value = 1
 
-        for(let ef of this.effectChain) {
+        for(let i = this.effectChain.length-1; i >= 0; i--) {
 
-            ef.disconnect()
-            ef.dom.parentNode.removeChild(ef.dom)
+            this.effectChain[i].delete()
         }
 
         this.effectChain = []
@@ -429,14 +432,83 @@ console.log('onKeyDown: key', e.key)
         }
     }
 
+    presetID = 0
+    savePreset(name) {
 
+        console.log('SAVE PRESET', name)
+
+        for(let p of this.presets) { if(p.name === name) return }
+
+        const p = this.getSessionObject()
+        p.id = this.presetID + 1,
+        p.name = name
+        this.presets.push(p)
+
+        this.onSavePreset.next(this.presets[this.presets.length-1])
+    }
+
+    loadPreset(name) {
+
+        let preset
+        for(let p of this.presets) {
+
+            if(p.name == name) { 
+                preset = p
+                break
+            }
+        }
+
+        if(!preset) return
+
+        this.serializeIn({
+            currentSession: preset,
+            presets: this.presets
+        })
+    }
+
+    removePreset(name) {
+
+        if(!id && !name) return
+
+        for(let i = 0; i < this.presets.length; i++) {
+
+            if(name && this.presets[i].name == name) {
+                this.presets.splice(index, 1)
+                this.onRemovePreset.next()
+            }
+        }
+    }
+
+    getSessionObject() {
+
+        let effectChain = []
+        for(let ef of this.effectChain) effectChain.push(ef.serializeOut())
+
+        return {
+            volume: this.volume.gain.value,
+            octave: this.octave,
+            synth: this.synth._dummyVoice.name,
+            effectChain: effectChain,
+        }
+    }
 
     /** Load settings */
     serializeIn = o => {
 
-        if(o['effectChain'] && o['effectChain'].length > 0) {
+        console.log('SerializeIn', o)
 
-            for(let ef of o['effectChain']) {
+        this.reset()
+
+        const c = o['currentSession']
+
+        if(c['volume']) this.setVolume(c['volume'])
+        if(c['octave']) this.setOctave(c['octave'])
+
+        if(c['synth']) this.setSynth(c['synth'])
+
+        if(c['effectChain'] && c['effectChain'].length > 0) {
+
+            for(let ef of c['effectChain']) {
 
                 let e = Keyboard.getEffect(ef['name'])
                 e.serializeIn(ef)
@@ -444,18 +516,20 @@ console.log('onKeyDown: key', e.key)
             }
         }
 
-        if(o['octave']) this.setOctave(o['octave'])
+        if(o['presets'] && o['presets'].length > 0) {
+
+            this.presets = o['presets']
+        }
     }
 
     /** Save settings */
     serializeOut = () => {
-
-        let effectChain = []
-        for(let ef of this.effectChain) effectChain.push(ef.serializeOut())
+        
+        console.log('SerializeOut')
 
         return {
-            effectChain: effectChain,
-            octave: this.octave
+            presets: this.presets,
+            currentSession: this.getSessionObject()
         }
     }
 }

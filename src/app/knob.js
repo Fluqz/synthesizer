@@ -14,11 +14,11 @@ export class Knob {
     division
 
     dom
+    clientRect
 
     centerPosition
     mousePosition
     clickPosition
-    clientRect
     angle
     prevAngle
     newAngle
@@ -60,6 +60,8 @@ export class Knob {
         fromEvent(this.dom, 'wheel', { bubbles: false }).subscribe(this.onScroll.bind(this))
 
         this.onChange = new Subject()
+
+        this.setValue(this.value)
     }
 
     setValue(v) {
@@ -92,6 +94,8 @@ export class Knob {
     rotateDOM() {
 
         this.dom.style.transform = 'rotate('+Math.round(this.angle*(180/Math.PI))+'deg)';
+
+        // window.setTimeout(() => { this.dom.innerHTML = '' }, 200)
     }
 
     onMouseDown(e) {
@@ -186,7 +190,7 @@ export class Knob {
         // this.wheelDelta = Math.abs(e.wheelDelta)
 
         // console.log('SCROLL', e.wheelDelta, ((1 / this.division)))
-        if(e.wheelDelta > 0) this.setValue(this.value - ((1 / this.division)))
-        else if(e.wheelDelta < 0) this.setValue(this.value + ((1 / this.division)))
+        if(e.wheelDelta > 0) this.setValue(this.value - ((1 / this.division) * Math.round(Math.abs(e.wheelDelta / 10))))
+        else if(e.wheelDelta < 0) this.setValue(this.value + ((1 / this.division) * Math.round(Math.abs(e.wheelDelta / 10))))
     }
 }
