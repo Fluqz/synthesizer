@@ -198,8 +198,6 @@ export class Keyboard {
     /** Set one of the few synths of ToneJs. */
     setSynth(synth) {
 
-        console.log('set synth', synth, Keyboard.synths[synth])
-
         this.stopAll()
 
         this.synth.disconnect()
@@ -263,8 +261,6 @@ export class Keyboard {
         this.connectEffectChain()
 
         this.onAddEffect.next(e)
-
-        console.log('effect',e, this.effectChain)
     }
 
     /** Connects all effects in a chain */
@@ -435,8 +431,6 @@ console.log('onKeyDown: key', e.key)
     presetID = 0
     savePreset(name) {
 
-        console.log('SAVE PRESET', name)
-
         for(let p of this.presets) { if(p.name === name) return }
 
         const p = this.getSessionObject()
@@ -504,10 +498,7 @@ console.log('onKeyDown: key', e.key)
         if(c['volume']) this.setVolume(c['volume'])
         if(c['octave']) this.setOctave(c['octave'])
 
-        if(c['synth']) {
-            console.log(c['synth'])
-            this.setSynth(c['synth'])
-        }
+        if(c['synth']) this.setSynth(c['synth'])
 
         if(c['effectChain'] && c['effectChain'].length > 0) {
 
@@ -528,8 +519,6 @@ console.log('onKeyDown: key', e.key)
     /** Save settings */
     serializeOut = () => {
         
-        console.log('SerializeOut')
-
         return {
             presets: this.presets,
             currentSession: this.getSessionObject()

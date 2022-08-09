@@ -71,7 +71,6 @@ export class Dropdown {
 
     add(v) {
 
-        console.log('add', v)
         this.array.push(v)
 
         this.set(this.array)
@@ -92,8 +91,6 @@ export class Dropdown {
 
         let o
         for(let a of this.array) {
-
-            console.log(a)
 
             o = document.createElement('div')
             this.dropdownDOM.appendChild(o)

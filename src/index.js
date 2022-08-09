@@ -193,7 +193,7 @@ const serializeIn = file => {
     keyboard.serializeIn(o)
 
     // TODO - THIS IS NOT RIGHT
-    for(let ef of keyboard.effectChain) effects.appendChild(ef.dom)
+    // for(let ef of keyboard.effectChain) effects.appendChild(ef.dom)
 }
 
 const serializeOut = () => {
@@ -211,8 +211,6 @@ document.addEventListener('visibilitychange', (e) => {
 })
 
 window.addEventListener('resize', () => {
-
-    // Change p5 canvas size
 
     G.w = window.innerWidth
     G.h = window.innerHeight

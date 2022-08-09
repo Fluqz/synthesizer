@@ -43,6 +43,7 @@ export class Knob {
 
         this.dom = document.createElement('div')
         this.dom.classList.add('knob')
+        this.dom.title = 'Scroll'
         const pointer = document.createElement('div')
         pointer.classList.add('knob-pointer')
         this.dom.append(pointer)
