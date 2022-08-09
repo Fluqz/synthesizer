@@ -1,5 +1,5 @@
 import * as Tone from 'tone'
-import { Knob } from '../knob';
+import { Knob } from '../view/knob';
 
 import { Effect } from "./effect";
 

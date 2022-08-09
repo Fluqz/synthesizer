@@ -84,18 +84,17 @@ export class Keyboard {
     static activeNotes
 
     static synths = {
-        synth: Tone.Synth,
+        Synth: Tone.Synth,
         FMSynth: Tone.FMSynth,
         DuoSynth: Tone.DuoSynth,
         MembraneSynth: Tone.MembraneSynth,
     }
 
-    static getEffect(name) {
-
-        if(name === 'delay') return new Delay(1, .12, .8)
-        else if(name === 'tremolo') return new Tremolo(1, 5, 1)
-        else if(name === 'distortion') return new Distortion(1, .5)
-        else if(name === 'chorus') return new Chorus(1, 4, 20, 1, 1)
+    static effects = {
+        delay: () => { return new Delay(1, .12, .8) },
+        tremolo: () => { return new Tremolo(1, 5, 1) },
+        distortion: () => { return new Distortion(1, .5) },
+        chorus: () => { return new Chorus(1, 4, 20, 1, 1) },
     }
 
     /** Array of created Key objects */
@@ -199,10 +198,11 @@ export class Keyboard {
     /** Set one of the few synths of ToneJs. */
     setSynth(synth) {
 
+        console.log('set synth', synth, Keyboard.synths[synth])
+
         this.stopAll()
 
         this.synth.disconnect()
-        console.log('snyth', synth)
         this.synth = new Tone.PolySynth(Keyboard.synths[synth])
 
         this.connectEffectChain()
@@ -263,12 +263,12 @@ export class Keyboard {
         this.connectEffectChain()
 
         this.onAddEffect.next(e)
+
+        console.log('effect',e, this.effectChain)
     }
 
     /** Connects all effects in a chain */
     connectEffectChain() {
-
-        if(this.effectChain.length == 0) return
 
         this.synth.disconnect()
 
@@ -379,7 +379,7 @@ console.log('onKeyDown: key', e.key)
 
         for(let k of Keyboard.keys) {
 
-            if(k.key === e.key || k.key === e.key.toLowerCase()) {
+            if(k.mapping === e.key || k.mapping === e.key.toLowerCase()) {
 
                 k.trigger()
             }
@@ -395,7 +395,7 @@ console.log('onKeyDown: key', e.key)
 
         for(let k of Keyboard.keys) {
 
-            if(k.key === e.key || k.key === e.key.toLowerCase()) {
+            if(k.mapping === e.key || k.mapping === e.key.toLowerCase()) {
 
                 k.release()
             }
@@ -487,7 +487,7 @@ console.log('onKeyDown: key', e.key)
         return {
             volume: this.volume.gain.value,
             octave: this.octave,
-            synth: this.synth._dummyVoice.name,
+            synth: this.synth.voice.name,
             effectChain: effectChain,
         }
     }
@@ -504,13 +504,16 @@ console.log('onKeyDown: key', e.key)
         if(c['volume']) this.setVolume(c['volume'])
         if(c['octave']) this.setOctave(c['octave'])
 
-        if(c['synth']) this.setSynth(c['synth'])
+        if(c['synth']) {
+            console.log(c['synth'])
+            this.setSynth(c['synth'])
+        }
 
         if(c['effectChain'] && c['effectChain'].length > 0) {
 
             for(let ef of c['effectChain']) {
 
-                let e = Keyboard.getEffect(ef['name'])
+                let e = Keyboard.effects[ef.name]()
                 e.serializeIn(ef)
                 this.addEffect(e)
             }

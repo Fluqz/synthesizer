@@ -1,5 +1,5 @@
 import { fromEvent, Subject, throttleTime } from "rxjs"
-import { M } from "./math"
+import { M } from "../math"
 
 
 
@@ -190,7 +190,7 @@ export class Knob {
         // this.wheelDelta = Math.abs(e.wheelDelta)
 
         // console.log('SCROLL', e.wheelDelta, ((1 / this.division)))
-        if(e.wheelDelta > 0) this.setValue(this.value - ((1 / this.division) * Math.round(Math.abs(e.wheelDelta / 10))))
-        else if(e.wheelDelta < 0) this.setValue(this.value + ((1 / this.division) * Math.round(Math.abs(e.wheelDelta / 10))))
+        if(e.wheelDelta > 0) this.setValue(this.value - ((1 / this.division) * Math.round(Math.abs(e.wheelDelta / 5))))
+        else if(e.wheelDelta < 0) this.setValue(this.value + ((1 / this.division) * Math.round(Math.abs(e.wheelDelta / 5))))
     }
 }

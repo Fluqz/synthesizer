@@ -6,7 +6,6 @@
 #Unfinished
 
 - Knob is still weird
-- Knob scroll speed needs to be calculated by how far its been scrolled. - Small steps are slow, large are fast
 
 
 #NiceToHave
@@ -16,7 +15,7 @@
 - Would be nice to have channels. Basicly having multple keyboards with a effectchain and properties for each.
 - Record what you playing like midi notes?
 - Loop recordings?
-- Envelope
+- Envelope - Every synth has different envelopes and/or multiple. Cannot access them consitently
 - Add filters
 - Add different colors for different octaves (only for black keys?)
 - Add knob automation with filters

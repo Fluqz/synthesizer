@@ -8,4 +8,6 @@ export class G {
 
     static w
     static h
+
+    static keyboard
 }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +10,6 @@
         <style>
 
         </style>
-
 
     </head>
 
@@ -27,9 +27,8 @@
                 <input id="save-preset" type="text" name="savePreset"/>
             </div>
 
-            <div>
+            <div id="load-preset">
                 <label for="loadPreset">Load Preset</label>
-                <select id="load-preset" type="text" name="loadPreset"></select>
             </div>
         </div>
 
@@ -47,30 +46,18 @@
         </div>
 
 
-        <div id="synth-selection">
+        <div id="synth-dropdown">
 
             <label for="synths">Synths</label>
-            <select id="synth-select" name="synths">
-                <option value="synth">Standard Synth</option>
-                <option value="FMSynth">FM Synth</option>
-                <option value="DuoSynth">Duo Synth</option>
-                <option value="MembraneSynth">Membrane Synth</option>
-            </select>
 
         </div>
 
 
         <div id="effect-chain">
 
-            <div>
+            <div id="effect-dropdown">
 
                 <label for="effects">Effect Chain</label>
-                <select id="effect-select" name="effects">
-                    <option value="delay">Delay</option>
-                    <option value="tremolo">Tremolo</option>
-                    <option value="distortion">Distortion</option>
-                    <option value="chorus">Chorus</option>
-                </select>
 
             </div>
 

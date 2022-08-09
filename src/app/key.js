@@ -10,18 +10,18 @@ export class Key {
     /** Octave of this Key */
     octave
     /** Keyboard mapping  */
-    key
+    mapping
     /** Key DOM element */
     dom
 
     onTrigger
     onRelease
 
-    constructor(note, octave, key) {
+    constructor(note, octave, mapping) {
 
         this.note = note
         this.octave = octave
-        this.key = key
+        this.mapping = mapping
         this.dom = document.createElement('div')
         this.dom.classList.add('key')
         this.dom.title = 'key'
@@ -40,7 +40,7 @@ export class Key {
 
     updateText() {
 
-        this.dom.innerHTML = this.key.toUpperCase() + '</br>' + this.note + ' ' + this.octave
+        this.dom.innerHTML = this.mapping.toUpperCase() + '</br>' + this.note + ' ' + this.octave
     }
 
     transformDOM() {
@@ -67,7 +67,7 @@ export class Key {
     /** On Key down */
     trigger() {
 
-        if(G.debug) console.log(`Trigger | key: ${this.key} note: ${this.note} octave: ${this.octave}`)
+        if(G.debug) console.log(`Trigger | mapping: ${this.mapping} note: ${this.note} octave: ${this.octave}`)
 
         this.dom.classList.add('pressed')
 
@@ -79,7 +79,7 @@ export class Key {
     /** On Key up */
     release() {
 
-        if(G.debug) console.log(`Release | key: ${this.key} note: ${this.note} octave: ${this.octave}`)
+        if(G.debug) console.log(`Release | mapping: ${this.mapping} note: ${this.note} octave: ${this.octave}`)
 
         this.dom.classList.remove('pressed')
 

@@ -34,7 +34,7 @@ export class Effect {
 
         const text = document.createElement('div')
         text.classList.add('effect-title')
-        text.innerHTML = this.name[0].toUpperCase() + this.name.substr(1);
+        text.innerHTML = this.name[0].toUpperCase() + this.name.substr(1)
         this.dom.append(text)
 
         const x = document.createElement('div')
