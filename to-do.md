@@ -10,6 +10,7 @@
 - dropdown delete with ::after
 - dropdown label text variable instead of selected
 - two tween functions combine
+- osc is stopping itself when going from one key to another
 
 #NiceToHave
 

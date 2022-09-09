@@ -88,6 +88,15 @@ document.addEventListener('DOMContentLoaded', (e) => {
         keyboard.setOctave(keyboard.octave + 1)
     })
 
+    // Arpeggiator
+    const arpeggiator = document.querySelector('#arpeggiator')
+
+    arpeggiator.addEventListener('click', () => {
+
+        console.log('arpeggiator')
+        keyboard.toggleArpMode()
+    })
+
 
 
     // Synth select element

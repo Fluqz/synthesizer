@@ -303,7 +303,11 @@ export class Keyboard {
 
     toggleArpMode(m) {
 
-        this.arpEnabled = m == undefined ? this.arpEnabled : m
+        this.arpEnabled = m == undefined ? !this.arpEnabled : m
+
+        this.setArpSequence([])
+
+        Tone.Transport.stop()
     }
 
     setArpSequence(sequence, onTrigger, onRelease) {
@@ -312,11 +316,7 @@ export class Keyboard {
 
         const length = 60 / this.bpm
 
-        if(this.arp) {
-            this.arp.stop()
-            this.arp.cancel()
-            this.arp.dispose()
-        }
+        this.stopArpeggiator()
 
         if(!sequence || sequence.length == 0) return
 
@@ -332,6 +332,14 @@ export class Keyboard {
         Tone.Transport.start()
     }
 
+    stopArpeggiator() {
+
+        if(this.arp) {
+            this.arp.stop()
+            this.arp.cancel()
+            this.arp.dispose()
+        }
+    }
 
 
 
