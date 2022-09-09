@@ -115,7 +115,7 @@ export class Keyboard {
     /** Arpeggiator array */
     arpPattern = []
     /** Arpeggiator mode */
-    arpEnabled = true
+    arpMode = false
     /** Array of added nodes. Nodes are chained in array order  */
     nodeChain
     /** Presets */
@@ -266,7 +266,7 @@ export class Keyboard {
         Keyboard.activeNotes.push(note + octave)
 
         console.log('Keyboard.trigger', Keyboard.activeNotes)
-        if(this.arpEnabled) {
+        if(this.arpMode) {
 
             this.setArpSequence(Keyboard.activeNotes, (time, note, length) => {
 
@@ -284,7 +284,7 @@ export class Keyboard {
 
         for(let tr of this.tracks) tr.instrument.releaseNote(note + octave)
 
-        if(this.arpEnabled) {
+        if(this.arpMode) {
             
             this.setArpSequence(Keyboard.activeNotes, (time, note, length) => {
 
@@ -303,7 +303,7 @@ export class Keyboard {
 
     toggleArpMode(m) {
 
-        this.arpEnabled = m == undefined ? !this.arpEnabled : m
+        this.arpMode = m == undefined ? !this.arpMode : m
 
         this.setArpSequence([])
 
