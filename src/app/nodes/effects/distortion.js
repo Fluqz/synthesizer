@@ -1,14 +1,14 @@
 import * as Tone from 'tone'
-import { Knob } from '../view/knob';
+import { Knob } from '../../view/knob';
 
-import { Effect } from "./effect";
+import { Node } from "../node";
 
 
-export class Distortion extends Effect {
+export class Distortion extends Node {
 
     /** Intensity */
     wet
-    /** Amoung of distortion */
+    /** Amound of distortion */
     gain
 
 

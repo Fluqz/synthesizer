@@ -1,5 +1,5 @@
 import { fromEvent, Subject, throttleTime } from "rxjs"
-import { M } from "../math"
+import { M } from "../core/math"
 
 
 
@@ -163,16 +163,19 @@ export class Knob {
 
     onKeyDown(e) {
 
-        // console.log('keydown', e)
+        if(e.key === 'Shift') this.division *= 40
+        if(e.key === 'Meta') this.division /= 4
 
         this.isKeyDown = true
     }
     onKeyUp(e) {
 
         // console.log('keyup', e)
+    
+        if(e.key === 'Shift') this.division /= 40
+        if(e.key === 'Meta') this.division *= 4
 
         this.isKeyDown = false
-
     }
 
     wheelDelta = 0

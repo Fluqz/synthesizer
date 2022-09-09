@@ -1,12 +1,12 @@
 import * as Tone from 'tone'
 
-import { Effect } from "./effect"
-import { Knob } from "../view/knob"
+import { Node } from "../node"
+import { Knob } from "../../view/knob"
 
 
 
-/** Chorus effect */
-export class Chorus extends Effect {
+/** Chorus node */
+export class Chorus extends Node {
 
     /** How much of the chorus is misxed into the output */
     wet

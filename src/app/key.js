@@ -1,6 +1,6 @@
 import * as RxJs from 'rxjs'
 
-import { G } from './globals'
+import { G } from './core/globals'
 
 /** Represents a single Key on a Keyboard */
 export class Key {
@@ -13,6 +13,8 @@ export class Key {
     mapping
     /** Key DOM element */
     dom
+    domKey
+    domNote
 
     onTrigger
     onRelease
@@ -22,11 +24,19 @@ export class Key {
         this.note = note
         this.octave = octave
         this.mapping = mapping
+
         this.dom = document.createElement('div')
         this.dom.classList.add('key')
         this.dom.title = 'key'
-        if(this.note[1] == '#' | this.note[1] === 'b') this.dom.classList.add('black')
+        
+        this.domKey = document.createElement('span')
+        this.domKey.classList.add('key-text')
+        this.dom.appendChild(this.domKey)
+        this.domNote = document.createElement('span')
+        this.domNote.classList.add('note-text')
+        this.dom.appendChild(this.domNote)
 
+        if(this.note[1] == '#' | this.note[1] === 'b') this.dom.classList.add('black')
 
         this.onTrigger = new RxJs.Subject()
         this.onRelease = new RxJs.Subject()
@@ -40,14 +50,15 @@ export class Key {
 
     updateText() {
 
-        this.dom.innerHTML = this.mapping.toUpperCase() + '</br>' + this.note + ' ' + this.octave
+        this.domKey.innerHTML = this.mapping.toUpperCase() + '<br/>'
+        this.domNote.innerHTML = this.note + ' ' + this.octave
     }
 
     transformDOM() {
 
         // const r = (Math.random() - .5) * 50 * this.octave
         // this.dom.style.transform = 'rotate(' + r + 'deg)' // translateY(' + r / 2 + 'px)'
-        const r = ((Math.random() * 2) + 1) 
+        const r = 1.5 // ((Math.random() * 2) + 1) 
         this.dom.style.transform = 'scale(' + r + ')' // translateY(' + r / 2 + 'px)'
         this.dom.style.transformOrigin = 'center'
     }
@@ -95,6 +106,6 @@ export class Key {
         this.dom.removeEventListener('mouseup', this.release.bind(this), false)
 
         this.onTrigger.complete()
-        this.onTrigger.complete()
+        this.onRelease.complete()
     }
 }

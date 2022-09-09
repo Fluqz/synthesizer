@@ -1,12 +1,12 @@
 import * as Tone from 'tone'
-import { Knob } from '../view/knob';
+import { Knob } from '../../view/knob';
 
-import { Effect } from "./effect";
+import { Node } from "../node";
 
 
 
-/** Delay effect */
-export class Delay extends Effect {
+/** LFO filter node */
+export class LFOFilter extends Node {
 
     /** Intensity */
     wet

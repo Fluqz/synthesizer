@@ -1,12 +1,12 @@
 import * as Tone from 'tone'
 
-import { Effect } from "./effect"
-import { Knob } from '../view/knob';
+import { Node } from "../node"
+import { Knob } from '../../view/knob';
 
 
 
-/** Tremolo effect */
-export class Tremolo extends Effect {
+/** Tremolo node */
+export class Tremolo extends Node {
 
     /** Intensity */
     wet

@@ -7,9 +7,13 @@
 
 - Knob is still weird
 
+- dropdown delete with ::after
+- dropdown label text variable instead of selected
+- two tween functions combine
 
 #NiceToHave
 
+- random octaves on keys
 - loop mode recording - set a loop length and start record and play. loop runns and playing will overdub. also make undo 
 - change wave
 - Would be nice to have channels. Basicly having multple keyboards with a effectchain and properties for each.
@@ -20,4 +24,4 @@
 - Add different colors for different octaves (only for black keys?)
 - Add knob automation with filters
 - Add arppegiator mode
-- Pressing keys changes the color of the background/keys. Colors are chose by my synesthesis palette
+- Pressing keys changes the color of the background/keys. Colors are chose by my synesthesia palette

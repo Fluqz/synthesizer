@@ -5,13 +5,16 @@ import * as RxJs from 'rxjs'
 
 import { Key } from './key'
 
-import { G } from './globals'
+import { G } from './core/globals'
 
-import { Delay } from './effects/delay'
-import { Tremolo } from './effects/tremolo'
-import { Reverb } from './effects/reverb'
-import { Chorus } from './effects/chorus'
-import { Distortion } from './effects/distortion'
+import { Delay } from './nodes/effects/delay'
+import { Tremolo } from './nodes/effects/tremolo'
+import { Reverb } from './nodes/effects/reverb'
+import { Chorus } from './nodes/effects/chorus'
+import { Distortion } from './nodes/effects/distortion'
+import { Oscillator } from './nodes/source/oscillator'
+import { Synth } from './nodes/source/synth'
+import { Track } from './track'
 
 /** Keyboard */
 export class Keyboard {
@@ -90,11 +93,13 @@ export class Keyboard {
         MembraneSynth: Tone.MembraneSynth,
     }
 
-    static effects = {
+    static nodes = {
         delay: () => { return new Delay(1, .12, .8) },
         tremolo: () => { return new Tremolo(1, 5, 1) },
         distortion: () => { return new Distortion(1, .5) },
         chorus: () => { return new Chorus(1, 4, 20, 1, 1) },
+        oscillator: () => { return new Oscillator(50) },
+        synth: () => { return new Synth(50) }
     }
 
     /** Array of created Key objects */
@@ -103,14 +108,20 @@ export class Keyboard {
     octave
     /** Master volume node */
     volume
-    /** Synth that is used */
-    synth
-    /** Arppegiator mode */
+    /** ToneJs Gain Node as Master Gain */
+    gain
+    /** Arpeggiator Tone.Pattern */
     arp
-    /** Array of added effects. Effects are chained in array order  */
-    effectChain
+    /** Arpeggiator array */
+    arpPattern = []
+    /** Arpeggiator mode */
+    arpEnabled = true
+    /** Array of added nodes. Nodes are chained in array order  */
+    nodeChain
     /** Presets */
     presets
+    /** Beats per minute */
+    bpm = 200
 
     /** ToneJs Recorder instance */
     recorder
@@ -128,8 +139,8 @@ export class Keyboard {
     onRecordingEnd
     onSavePreset
     onRemovePreset
-    onAddEffect
-    onRemoveEffect
+    onAddNode
+    onRemoveNode
 
 
     constructor(dom, octave) {
@@ -138,21 +149,24 @@ export class Keyboard {
 
         this.octave = octave ? octave : 2
 
-        this.volume = new Tone.Gain(1)
-        this.volume.toDestination()
+        this.volume = .7
 
-        this.effectChain = []
-        this.activeNotes = []
+        this.gain = new Tone.Gain(this.volume)
+        this.gain.toDestination()
+
+        this.nodeChain = []
         this.presets = []
+        Keyboard.activeNotes = []
 
-        this.arp = false
 
         this.isRecording = false
 
-        this.synth = new Tone.PolySynth(Keyboard.synths.DuoSynth)
-        this.synth.connect(this.volume)
+        this.tracks = []
+        // this.addTrack()
+        // this.addTrack()
+        this.addTrack(new Track(Keyboard.nodes.oscillator()))
+        // this.addTrack(new Track(Keyboard.nodes.oscillator()))
 
-        this.connectEffectChain()
 
         // Create Keys
         let key
@@ -171,7 +185,7 @@ export class Keyboard {
 
             key.onTrigger.subscribe(k => {
 
-                this.playNote(k.note, k.octave)
+                this.triggerNote(k.note, k.octave)
             })
 
             key.onRelease.subscribe(k => {
@@ -191,27 +205,18 @@ export class Keyboard {
         this.onSavePreset = new RxJs.Subject()
         this.onRemovePreset = new RxJs.Subject()
 
-        this.onAddEffect = new RxJs.Subject()
-        this.onRemoveEffect = new RxJs.Subject()
+        this.onAddNode = new RxJs.Subject()
+        this.onRemoveNode = new RxJs.Subject()
+
     }
 
-    /** Set one of the few synths of ToneJs. */
-    setSynth(synth) {
 
-        this.stopAll()
-
-        this.synth.disconnect()
-        this.synth = new Tone.PolySynth(Keyboard.synths[synth])
-
-        this.connectEffectChain()
-    }
-
-    toggleArpMode(m) {}
 
     /** Set Master Volume */
     setVolume(v) {
 
-        this.volume.gain.value = v
+        this.volume = v
+        this.gain.gain.value = this.volume
     }
 
     /** Set the octave number */
@@ -229,75 +234,103 @@ export class Keyboard {
         }
     }
 
+    /** Add a instrument to the keyboard. */
+    addTrack(track) {
+
+        this.stopAll()
+
+        if(track == undefined) track = new Track(Keyboard.nodes.synth())
+        
+        if(this.tracks.indexOf(track) == -1) this.tracks.push(track)
+
+        track.connect(this.gain)
+
+        let cont = document.querySelector('#tracks')
+
+        for(let track of this.tracks)
+            cont.append(track.dom)
+    }
+
+    removeTrack(track) {
+
+        this.tracks.splice(this.tracks.indexOf(track), 1)
+
+        track.disconnect(this.gain)
+
+        track.dom.parentNode.removeChild(track.dom)
+    }
+
     /** Trigger note */
-    playNote(note, octave) {
+    triggerNote(note, octave) {
 
-        this.activeNotes.push(note + octave)
+        Keyboard.activeNotes.push(note + octave)
 
-        this.synth.triggerAttack(note + octave);
+        console.log('Keyboard.trigger', Keyboard.activeNotes)
+        if(this.arpEnabled) {
+
+            this.setArpSequence(Keyboard.activeNotes, (time, note, length) => {
+
+                for(let tr of this.tracks) tr.instrument.triggerNote(note, length)
+            })
+        }
+        else 
+            for(let tr of this.tracks) tr.instrument.triggerNote(note + octave)
     }
 
     /** Release note */
     releaseNote(note, octave) {
 
-        this.synth.triggerRelease(note + octave);
-        this.activeNotes.splice(this.activeNotes.indexOf(note + octave), 1)
+        Keyboard.activeNotes.splice(Keyboard.activeNotes.indexOf(note + octave), 1)
+
+        for(let tr of this.tracks) tr.instrument.releaseNote(note + octave)
+
+        if(this.arpEnabled) {
+            
+            this.setArpSequence(Keyboard.activeNotes, (time, note, length) => {
+
+                for(let tr of this.tracks) tr.instrument.triggerNote(note, length)
+            })
+        }
     }
 
     /** Will release all triggered notes that are stored in [activeNotes] */
     stopAll() {
 
-        for(let an of this.activeNotes) this.releaseNote(an)
+        for(let an of Keyboard.activeNotes) this.releaseNote(an)
     }
 
 
-    /** Adds a effect to the effect chain */
-    addEffect(e) {
 
-        this.effectChain.push(e)
+    toggleArpMode(m) {
 
-        e.onDelete.subscribe(this.removeEffect.bind(this))
-
-        this.connectEffectChain()
-
-        this.onAddEffect.next(e)
+        this.arpEnabled = m == undefined ? this.arpEnabled : m
     }
 
-    /** Connects all effects in a chain */
-    connectEffectChain() {
+    setArpSequence(sequence, onTrigger, onRelease) {
 
-        this.synth.disconnect()
+        console.log('Set ARP', sequence)
 
-        let nodes = []
+        const length = 60 / this.bpm
 
-        for(let ef of this.effectChain) {
-
-            nodes.push(ef.instance)
+        if(this.arp) {
+            this.arp.stop()
+            this.arp.cancel()
+            this.arp.dispose()
         }
 
-        nodes.push(this.volume)
+        if(!sequence || sequence.length == 0) return
 
-        this.synth.chain(...nodes)
+        this.arp = new Tone.Pattern((time, note) => {
+
+            if(onTrigger) onTrigger(time, note, time * length)
+
+        }, sequence)
+
+        // this.arp.interval = length
+        this.arp.start()
+        Tone.Transport.bpm.value = this.bpm
+        Tone.Transport.start()
     }
-
-    /** Remove a effect from the effect chain */
-    removeEffect(e) {
-
-        let i = this.effectChain.indexOf(e)
-
-        if(i == -1) return
-
-        e.disconnect()
-
-        this.effectChain.splice(i, 1)
-
-        this.connectEffectChain()
-
-        this.onRemoveEffect.next(e)
-    }
-
-
-
 
 
 
@@ -360,14 +393,19 @@ export class Keyboard {
 
 
 
-
+    isRunning = false
     /** Keydown event */
     onKeyDown(e) {
 
-console.log('onKeyDown: key', e.key)
-
         if(!e) return
         if(e.repeat) return
+
+        if(this.isRunning == false) {
+            Tone.start()
+            this.isRunning = true
+        }
+
+        console.log('onKeyDown: key', e.key)
 
         if(e.key == 'ArrowRight') this.setOctave(this.octave + 1)
         if(e.key == 'ArrowLeft') this.setOctave(this.octave - 1)
@@ -401,14 +439,17 @@ console.log('onKeyDown: key', e.key)
     /** Resets the keyboard to standard settings */
     reset() {
 
-        this.volume.gain.value = 1
+        this.gain.gain.value = this.volume
 
-        for(let i = this.effectChain.length-1; i >= 0; i--) {
+        for(let i = this.nodeChain.length-1; i >= 0; i--) {
 
-            this.effectChain[i].delete()
+            this.nodeChain[i].delete()
         }
 
-        this.effectChain = []
+        this.nodeChain = []
+
+        for(let n of Keyboard.activeNotes) this.releaseNote(n)
+        Keyboard.activeNotes = []
 
         // TODO - UPDATE DOM????
     }
@@ -462,27 +503,26 @@ console.log('onKeyDown: key', e.key)
 
     removePreset(name) {
 
-        if(!id && !name) return
+        if(!name) return
 
         for(let i = 0; i < this.presets.length; i++) {
 
             if(name && this.presets[i].name == name) {
-                this.presets.splice(index, 1)
-                this.onRemovePreset.next()
+                this.onRemovePreset.next(this.presets[i])
+                this.presets.splice(i, 1)
             }
         }
     }
 
     getSessionObject() {
 
-        let effectChain = []
-        for(let ef of this.effectChain) effectChain.push(ef.serializeOut())
+        let tracks = []
+        for(let t of this.tracks) tracks.push(t.serializeOut())
 
         return {
-            volume: this.volume.gain.value,
+            volume: this.volume,
             octave: this.octave,
-            synth: this.synth.voice.name,
-            effectChain: effectChain,
+            tracks: tracks
         }
     }
 
@@ -500,13 +540,13 @@ console.log('onKeyDown: key', e.key)
 
         if(c['synth']) this.setSynth(c['synth'])
 
-        if(c['effectChain'] && c['effectChain'].length > 0) {
+        if(c['tracks'] && c['tracks'].length > 0) {
 
-            for(let ef of c['effectChain']) {
+            for(let t of c['tracks']) {
 
-                let e = Keyboard.effects[ef.name]()
-                e.serializeIn(ef)
-                this.addEffect(e)
+                let track = new Track()
+                track.serializeIn(t)
+                this.addTrack(track)
             }
         }
 

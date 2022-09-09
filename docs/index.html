@@ -17,10 +17,6 @@
 
         <div id="keyboard"></div>
 
-        <div id="volume" title="Shift + A">
-            <label for="volume">Volume</label>
-        </div>
-
         <div id="presets">
             <div>
                 <label for="savePreset">Save Preset</label>
@@ -32,10 +28,16 @@
             </div>
         </div>
 
-        <div id="bpm" title="Shift + A">
+
+
+
+        <div id="volume" title="Shift + A">
+            <label for="volume">Volume</label>
+        </div>
+        <!-- <div id="bpm" title="Shift + A">
             <label for="bpm">BPM</label>
             <input type="number" pattern="[0-1]" min="1" max="300" name="bpm"/>
-        </div>
+        </div> -->
 
         <div id="octave-down" class="btn" title="ArrowLeft"""><</div>
         <div id="octave-up" class="btn" title="ArrowRight">></div>
@@ -45,7 +47,13 @@
             <input type="checkbox" name="arp"/>
         </div>
 
+        <div id="record" class="btn" title="Space">Record</div>
+        
+        <div id="reset" class="btn">Reset</div>
 
+
+        
+<!-- 
         <div id="synth-dropdown">
 
             <label for="synths">Synths</label>
@@ -53,28 +61,20 @@
         </div>
 
 
-        <div id="effect-chain">
+        <div id="node-dropdown">
 
-            <div id="effect-dropdown">
+            <label for="nodes">Node Chain</label>
 
-                <label for="effects">Effect Chain</label>
+        </div> -->
 
-            </div>
-
-            <div id="effects">
-
-
-            </div>
+        <div id="tracks">
 
         </div>
 
+        <div id="track-menu">
+            
+        </div>
 
-
-
-
-        <div id="record" class="btn" title="Space">Record</div>
-        
-        <div id="reset" class="btn">Reset</div>
 
 
         <script type="module" src="./bundle.js"></script>

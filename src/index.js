@@ -1,18 +1,18 @@
 
 import './style.css'
 
-import * as Tone from 'tone'
 import * as P5 from 'p5'
+import * as Tone from 'tone'
 
 import { Keyboard } from './app/keyboard'
-import { Storage } from './app/storage'
+import { Storage } from './app/core/storage'
 import { Knob } from './app/view/knob'
-import { G } from './app/globals'
-import { Grid } from './app/grid'
+import { G } from './app/core/globals'
 import { moireShader } from './app/p5/moire-shader'
 import { keyVisualizer } from './app/p5/background'
 import { envelope } from './app/p5/envelope'
 import { Dropdown } from './app/view/dropdown'
+
 
 let keyboard
 let dom
@@ -26,12 +26,11 @@ document.addEventListener('DOMContentLoaded', (e) => {
     dom = document.querySelector('#keyboard')
     keyboard = G.keyboard = new Keyboard(dom)
 
-    serializeIn(Storage.load())
-
+    // serializeIn(Storage.load())
 
     // Volume Button
     const volume = document.querySelector('#volume')
-    const volumeKnob = new Knob(keyboard.volume.gain.value, 0, 1)
+    const volumeKnob = new Knob(keyboard.volume, 0, 1)
     volumeKnob.onChange.subscribe((v) => { keyboard.setVolume(v) })
     volume.append(volumeKnob.dom)
 
@@ -54,10 +53,14 @@ document.addEventListener('DOMContentLoaded', (e) => {
     let ps = []
     for(let p of keyboard.presets) ps.push(p.name)
 
-    let presetDropdown = new Dropdown(ps)
+    let presetDropdown = new Dropdown(ps, undefined, false, true)
     presetDropdown.onSelectOption.subscribe((o) => {
 
         keyboard.loadPreset(o)
+    })
+    presetDropdown.onDeleteOption.subscribe((o) => {
+
+        keyboard.removePreset(o)
     })
     loadPreset.appendChild(presetDropdown.dom)
 
@@ -85,47 +88,59 @@ document.addEventListener('DOMContentLoaded', (e) => {
         keyboard.setOctave(keyboard.octave + 1)
     })
 
-    // // Set arp button event
-    // const arp = document.querySelector('#arp input')
 
-    // arp.addEventListener('click', (e) => {
-
-    //     console.log('ARP', e.target.checked)
-
-    //     Keyboard.arp = e.target.checked
-    // })
 
     // Synth select element
-    const synthsDropdownElement = document.querySelector('#synth-dropdown')
+    // const synthsDropdownElement = document.querySelector('#synth-dropdown')
 
-    let synths = []
-    for(let s in Keyboard.synths) synths.push(s)
+    // let synths = []
+    // for(let s in Keyboard.synths) synths.push(s)
 
-    let synthsDropdown = new Dropdown(synths, keyboard.synth.voice.name)
-    synthsDropdown.onSelectOption.subscribe((o) => {
+    // let synthsDropdown = new Dropdown(synths, keyboard.synth.voice.name)
+    // synthsDropdown.onSelectOption.subscribe((o) => {
 
-        keyboard.setSynth(o)
-    })
-    synthsDropdownElement.appendChild(synthsDropdown.dom)
+    //     keyboard.setSynth(o)
+    // })
+    // synthsDropdownElement.appendChild(synthsDropdown.dom)
 
 
-    // Container of effects
-    const effectsCont = document.querySelector('#effects')
-    // Effect select element
-    const effectDropdown = document.querySelector('#effect-dropdown')
 
-    let effects = []
-    for(let e in Keyboard.effects) effects.push(e)
 
-    let effectsDropdown = new Dropdown(effects)
-    effectsDropdown.onSelectOption.subscribe((o) => {
 
-        keyboard.addEffect(Keyboard.effects[o]())
-    })
-    effectDropdown.appendChild(effectsDropdown.dom)
+    // Container of Tracks
+    const tracksCont = document.querySelector('#tracks')
 
-    keyboard.onAddEffect.subscribe((e) => { effectsCont.appendChild(e.dom) })
-    keyboard.onRemoveEffect.subscribe((e) => { if(e.dom.parentNode) e.dom.parentNode.removeChild(e.dom) })
+
+
+
+
+
+
+
+
+
+
+
+
+    // Node select element
+    // const nodeDropdown = document.querySelector('#node-dropdown')
+
+    // let nodes = []
+    // for(let e in Keyboard.nodes) nodes.push(e)
+
+    // let nodesDropdown = new Dropdown(nodes, undefined, true)
+    // nodesDropdown.onSelectOption.subscribe((o) => {
+
+    //     keyboard.addNode(Keyboard.nodes[o]())
+    // })
+    // nodeDropdown.appendChild(nodesDropdown.dom)
+
+    // keyboard.onAddNode.subscribe((e) => { console.log('onaddnode');tracksCont.appendChild(e.dom) })
+    // keyboard.onRemoveNode.subscribe((e) => { if(e.dom.parentNode) e.dom.parentNode.removeChild(e.dom) })
+
+
+
+
 
 
 
@@ -180,20 +195,19 @@ document.addEventListener('DOMContentLoaded', (e) => {
     // document.body.append(releaseKnob.dom)
 
 
+    // serializeIn(Storage.load())
 })
 
 
 // Serialize
 const serializeIn = file => {
 
+    // file = ''
     if(!file) return
 
     let o = JSON.parse(file)
 
     keyboard.serializeIn(o)
-
-    // TODO - THIS IS NOT RIGHT
-    // for(let ef of keyboard.effectChain) effects.appendChild(ef.dom)
 }
 
 const serializeOut = () => {
@@ -206,8 +220,14 @@ const serializeOut = () => {
 // ON CHANGE TAB
 document.addEventListener('visibilitychange', (e) => {
 
-    if (document.visibilityState == "visible") {}
-    else keyboard.stopAll()  // TODO - NOT WORKING?????
+    if (document.visibilityState == "visible") {
+
+    }
+    else {
+        keyboard.stopAll()
+    }  // TODO - NOT WORKING?????
+
+    
 })
 
 window.addEventListener('resize', () => {
@@ -219,7 +239,7 @@ window.addEventListener('resize', () => {
 // ON UNLOAD
 window.onbeforeunload = () => {
 
-    Storage.save(serializeOut())
+    // Storage.save(serializeOut())
 
     keyboard.dispose()
 }

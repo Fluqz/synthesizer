@@ -1,11 +1,11 @@
-import { G } from '../globals'
+import { G } from '../core/globals'
 
 export const envelope = (p5) => {
 
     p5.setup = () => {
 
         p5.createCanvas(G.w, G.h)
-        p5.background('#FFFFFF00')
+        p5.background('#FFFFFF')
 
         p5.canvas.style.position = 'absolute'
         p5.canvas.style.top = '0px'

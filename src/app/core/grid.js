@@ -1,8 +1,4 @@
 
-
-
-
-
 export class Grid {
 
     width
@@ -23,20 +19,14 @@ export class Grid {
         this.cols = cols
     }
 
-    getCellSizeX() { return this.width / this.rows }
-    getCellSizeY() { return this.height / this.cols }
+    getCellSizeW() { return this.width / this.rows }
+    getCellSizeH() { return this.height / this.cols }
 
     getCellPosByNr(n) {
 
-        let x = 0
-        let y = 0
-
-        x = n % this.rows
-        y = Math.floor(n / this.rows)
-
         return {
-            x: (x * this.getCellSizeX()) + (this.getCellSizeX() / 2),
-            y: (y * this.getCellSizeY()) + (this.getCellSizeY() / 2)
+            x: (n % this.rows * this.getCellSizeW()) + (this.getCellSizeW() / 2),
+            y: (Math.floor(n / this.rows) * this.getCellSizeH()) + (this.getCellSizeH() / 2)
         }
     }
 }

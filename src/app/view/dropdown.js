@@ -11,20 +11,26 @@ export class Dropdown {
 
     array
 
+    capitalize
+
+    deletable
+
     onSelectOption
+    onDeleteOption
 
     /**
      * 
      * @param {*} array - Array of options
      */
-    constructor(array, selected) {
+    constructor(array, selected, capitalize, deletable) {
 
         this.array = array
-
-        if(!selected && this.array.length > 0) this.selected = this.array[0]
-        else this.selected = selected
+        this.selected = selected == null ? 'None' : selected
+        this.capitalize = capitalize
+        this.deletable = deletable
 
         this.onSelectOption = new Subject()
+        this.onDeleteOption = new Subject()
 
         this.create()
     }
@@ -66,7 +72,7 @@ export class Dropdown {
 
         this.selected = v
 
-        this.selectedDOM.innerHTML = this.selected[0].toUpperCase() + this.selected.substr(1)
+        this.selectedDOM.innerHTML = this.capitalize ? this.selected[0].toUpperCase() + this.selected.substr(1) : this.selected
     }
 
     add(v) {
@@ -95,14 +101,23 @@ export class Dropdown {
             o = document.createElement('div')
             this.dropdownDOM.appendChild(o)
             o.classList.add('dropdown-option')
-            o.innerHTML = a[0].toUpperCase() + a.substr(1)
-            o.innerHTML = a
+            o.innerHTML = this.capitalize ? a[0].toUpperCase() + a.substr(1) : a
 
             o.setAttribute('value', a)
 
             this.optionDOMs.push(o)
 
             o.addEventListener('mouseup', this.onSelect.bind(this))
+
+            if(this.deletable) {
+
+                let d = document.createElement('div')
+                d.classList.add('dropdown-option-delete')
+                d.innerHTML = 'x'
+                o.append(d)
+        
+                d.addEventListener('mouseup', this.onDelete.bind(this))
+            }
         }
     }
 
@@ -123,5 +138,12 @@ export class Dropdown {
         this.onSelectOption.next(this.selected)
 
         this.closeDropdown()
+    }
+
+    onDelete(e) {
+
+        e.stopPropagation()
+
+        this.onDeleteOption.next(e.target.parentElement.getAttribute('value'))
     }
 }
