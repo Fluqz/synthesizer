@@ -182,11 +182,11 @@ document.addEventListener('DOMContentLoaded', (e) => {
 
 
 
-    let p5Shader = new P5(moireShader)
+    // let p5Shader = new P5(moireShader)
 
     let p5Background = new P5(keyVisualizer)
 
-    let p5Envelope = new P5(envelope)
+    // let p5Envelope = new P5(envelope)
 
 
 

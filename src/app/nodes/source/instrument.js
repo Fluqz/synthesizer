@@ -37,13 +37,11 @@ export class Instrument extends Node {
         this.onRelease.next(this)
     }
 
-    delete() {
+    destroy() {
+
+        super.destroy()
 
         this.onTrigger.complete()
         this.onTrigger.complete()
-
-        this.instance.dispose()
-
-        super.delete()
     }
 }

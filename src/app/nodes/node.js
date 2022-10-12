@@ -24,7 +24,9 @@ export class Node {
 
     /** OnDelete Observable */
     onDelete
-    
+
+    /** Array of knobs */
+    knobs
 
     constructor(name) {
 
@@ -48,6 +50,8 @@ export class Node {
         this.dom.append(x)
         this.onDelete = new Subject()
         x.addEventListener('click', this.delete.bind(this))
+
+        this.knobs = []
     }
 
     /** Connects this Nodes Output to [e]'s Input */
@@ -70,11 +74,22 @@ export class Node {
 
     delete() {
 
-        this.disconnect()
         // this.dom.parentNode.removeChild(this.dom)
         this.onDelete.next(this)
+
+        this.destroy()
     }
 
+    destroy() {
+
+        this.disconnect()
+
+        this.onDelete.unsubscribe()
+
+        this.instance.dispose()
+
+        for(let k of this.knobs) k.destroy()
+    }
 
     serializeIn(o) {
 

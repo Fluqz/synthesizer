@@ -32,23 +32,28 @@ export class Chorus extends Node {
         this.instance = new Tone.Chorus(this.frequency, this.delayTime, this.depth)
         
         this.setWet(this.wet)
-
         let wetKnob = new Knob(this.wet, 0, 1)
         this.dom.appendChild(wetKnob.dom)
         wetKnob.onChange.subscribe(v => this.setWet(v))
+        this.knobs.push(wetKnob)
 
+        this.setFeedback(this.feedback)
         let feedbackKnob = new Knob(this.feedback, 0, 1)
         this.dom.appendChild(feedbackKnob.dom)
         feedbackKnob.onChange.subscribe(v => this.setFeedback(v))
+        this.knobs.push(feedbackKnob)
 
+        this.setDelayTime(this.delayTime)
         let delayTimeKnob = new Knob(this.delayTime, 0, 20, 1)
         this.dom.appendChild(delayTimeKnob.dom)
         delayTimeKnob.onChange.subscribe(v => this.setDelayTime(v))
+        this.knobs.push(delayTimeKnob)
 
+        this.setDepth(this.depth)
         let depthKnob = new Knob(this.depth, 0, 1)
         this.dom.appendChild(depthKnob.dom)
         depthKnob.onChange.subscribe(v => this.setDepth(v))
-
+        this.knobs.push(depthKnob)
     }
 
     setWet(w) {

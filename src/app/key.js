@@ -51,7 +51,7 @@ export class Key {
     updateText() {
 
         this.domKey.innerHTML = this.mapping.toUpperCase() + '<br/>'
-        this.domNote.innerHTML = this.note + ' ' + this.octave
+        this.domNote.innerHTML = this.note + this.octave
     }
 
     transformDOM() {

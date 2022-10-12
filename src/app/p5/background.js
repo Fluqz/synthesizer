@@ -52,6 +52,7 @@ export const keyVisualizer = (p5) => {
     p5.preload = () => {
 
         img = p5.loadImage("./assets/imgs/idioma.jpg");
+
     }
 
     p5.setup = () => {
@@ -63,6 +64,8 @@ export const keyVisualizer = (p5) => {
         p5.canvas.style.top = '0px'
         p5.canvas.style.left = '0px'
         p5.canvas.style.zIndex = '-4'
+
+        p5.loadPixels();
     }
 
     const resizeImage = (w1, h1, img) => {
@@ -76,12 +79,41 @@ export const keyVisualizer = (p5) => {
     p5.draw = () => {
 
         p5.clear()
+        // p5.loadPixels()
 
         let r = img.width / img.height
-        // console.log(r)
-        p5.image(img, 0, 300 -(Math.abs(img.height - G.h)) / 2, G.w, G.w / r)
+        p5.image(img, 0, -(Math.abs(G.w / r - G.h)) / 2, G.w, G.w / r)
 
-        // -(img.width - G.w) / 2, -(img.height - G.h) / 2
+
+
+        // // Loop through every pixel column
+        // for (let x = 0; x < G.w; x++) {
+
+        //     // Loop through every pixel row
+        //     for (let y = 0; y < G.h; y++) {
+
+        //         // Use the formula to find the 1D location
+        //         let index = x + y * G.w;
+        //         if (x % 2 == 0) { // If we are an even column
+        //             p5.pixels[index] = p5.color(255);
+        //         } else { // If we are an odd column
+        //             p5.pixels[index] = p5.color(0);
+        //         }
+        //     }
+        // }
+
+        // p5.updatePixels()
+
+
+
+
+
+
+
+
+
+
+
 
         // p5.fill('#fea5caff')
         // p5.fill('#181818')

@@ -37,7 +37,7 @@ export class Track {
     /** Instrument used */
     instrument 
 
-    /** Node Chain */
+    /** Array of added nodes. Nodes are chained in array order  */
     nodeChain
 
     /** Mute this track */
@@ -73,13 +73,13 @@ export class Track {
         options.append(this.muteBtn)
 
         this.instrument = instrument
-        this.dom.append(this.instrument.dom)
+        if(instrument) this.dom.append(this.instrument.dom)
 
         this.nodeChain = []
 
         this.connectNodeChain()
 
-        // this.addNode(Keyboard.nodes['delay']())
+        this.addNode(Keyboard.nodes['delay']())
     }
 
     get volume() { return this._volume }
@@ -121,6 +121,8 @@ export class Track {
 
         let nodes = []
 
+        if(!this.instrument) return
+        
         this.instrument.disconnect()
 
         for(let n of this.nodeChain) {
@@ -147,9 +149,9 @@ export class Track {
 
         this.nodeChain.splice(i, 1)
 
+        n.destroy()
+        
         this.connectNodeChain()
-
-        // this.onRemoveNode.next(n)
     }
 
     connect(i) {
@@ -168,11 +170,25 @@ export class Track {
         this.gain.disconnect(i instanceof Node ? i.instance : i)
     }
 
+    destroy() {
+
+        for(let i = this.nodeChain.length; i >= 0; i--) this.removeNode(this.nodeChain[i])
+
+        if(this.instrument) this.instrument.destroy()
+
+        this.muteBtn.remove()
+    }
 
     serializeIn(o) {
 
         if(o['mute']) this.mute(o['mute'])
         if(o['volume']) this.volume = o['volume']
+
+        if(o['instrument']) {
+
+            this.instrument = Keyboard.nodes[o['instrument']['name']]()
+            this.dom.append(this.instrument.dom)
+        }
         
         if(o['nodes'] && o['nodes'].length > 0) {
             
@@ -194,7 +210,7 @@ export class Track {
 
         return {
             muted: this.isMuted,
-            oscillator: this.oscillator.serializeOut(),
+            oscillator: this.instrument.serializeOut(),
             nodes: nodes,
             volume: this.volume
         }

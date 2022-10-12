@@ -25,7 +25,7 @@ export class Grid {
     getCellPosByNr(n) {
 
         return {
-            x: (n % this.rows * this.getCellSizeW()) + (this.getCellSizeW() / 2),
+            x: ((n % this.rows) * this.getCellSizeW()) + (this.getCellSizeW() / 2),
             y: (Math.floor(n / this.rows) * this.getCellSizeH()) + (this.getCellSizeH() / 2)
         }
     }

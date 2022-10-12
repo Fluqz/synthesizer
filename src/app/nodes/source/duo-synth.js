@@ -6,7 +6,7 @@ import { Keyboard } from '../../keyboard';
 
 
 /**  */
-export class Synth extends Instrument {
+export class DuoSynth extends Instrument {
 
     /** How loud */
     volume
@@ -29,12 +29,12 @@ export class Synth extends Instrument {
 
         super('synth')
 
-        this.frequency = frequency ? frequency : 1
-        this.volume = volume ? volume : 3
-        this.detune = detune ? detune : .5
+        this.frequency = frequency ? frequency : 300
+        this.volume = volume ? volume : 1
+        this.detune = detune ? detune : 0
         this.phase = phase ? phase : 0
 
-        this.instance = new Tone.PolySynth(Tone.Synth)
+        this.instance = new Tone.PolySynth(Tone.DuoSynth)
 
         this.gain = new Tone.Gain(this.volume)
 
@@ -56,13 +56,16 @@ export class Synth extends Instrument {
         let phaseKnob = new Knob(this.phase, 0, 1)
         this.dom.appendChild(phaseKnob.dom)
         phaseKnob.onChange.subscribe(v => this.setPhase(v))
+
+        this.setFrequency(this.frequency)
+        this.setVolume(this.volume)
+        this.setDetune(this.detune)
+        this.setPhase(this.phase)
     }
 
     setFrequency(f) {
 
         this.frequency = f
-
-        // this.instance.frequency.value = this.frequency
     }
 
     setVolume(v) {
@@ -96,6 +99,8 @@ export class Synth extends Instrument {
 
         this.setFrequency(note)
 
+        this.setVolume(this.volume)
+
         this.instance.triggerAttackRelease(note, time)
     }
 
@@ -104,7 +109,8 @@ export class Synth extends Instrument {
         console.log('release')
 
         this.instance.triggerRelease(note)
-        // this.gain.gain.linearRampToValueAtTime(0, this.releaseTime)
+
+        this.gain.gain.linearRampToValueAtTime(0, this.releaseTime)
     }
 
     connect(n) {

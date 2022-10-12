@@ -24,6 +24,9 @@ export class Oscillator extends Instrument {
     /** Necessary release time to prevent clicking */
     releaseTime = 1
 
+    /** Is the osc already playing */
+    isPlaying
+
     /** freq, detune, volume, waveform,  */
     constructor(frequency, volume, detune, phase, ) {
 
@@ -45,23 +48,28 @@ export class Oscillator extends Instrument {
         // this.dom.appendChild(frequencyKnob.dom)
         // frequencyKnob.onChange.subscribe(v => this.setFrequency(v))
 
+        this.isPlaying = false
+
+        this.setVolume(this.volume)
         let volumeKnob = new Knob(this.volume, 0, 1)
         this.dom.appendChild(volumeKnob.dom)
         volumeKnob.onChange.subscribe(v => this.setVolume(v))
+        this.knobs.push(volumeKnob)
 
+        this.setDetune(this.detune)
         let detuneKnob = new Knob(this.detune, 0, 1)
         this.dom.appendChild(detuneKnob.dom)
         detuneKnob.onChange.subscribe(v => this.setDetune(v))
+        this.knobs.push(detuneKnob)
 
+        this.setPhase(this.phase)
         let phaseKnob = new Knob(this.phase, 0, 1)
         this.dom.appendChild(phaseKnob.dom)
         phaseKnob.onChange.subscribe(v => this.setPhase(v))
+        this.knobs.push(phaseKnob)
     }
 
     setFrequency(f) {
-
-        for(let c of f.split()) {
-        }
 
         this.frequency = f
 
@@ -82,12 +90,11 @@ export class Oscillator extends Instrument {
         this.instance.detune.value = this.detune
     }
 
-
     setPhase(p) {
 
         this.phase = p
 
-        this.instance.phase.value = this.phase
+        // this.instance.phase.value = this.phase
     }
 
     triggerNote(note, time) {
@@ -97,15 +104,22 @@ export class Oscillator extends Instrument {
 
         this.setFrequency(note)
 
-        this.instance.stop()
+        if(!this.isPlaying) {
 
-        this.instance.start()
+            this.instance.stop()
+
+            this.instance.start()
+        }
+
+        this.isPlaying = true
     }
 
     releaseNote(note) {
 
         this.instance.stop()
         // this.gain.gain.linearRampToValueAtTime(0, this.releaseTime)
+
+        this.isPlaying = false
     }
 
     connect(n) {

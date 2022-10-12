@@ -116,12 +116,10 @@ export class Keyboard {
     arpPattern = []
     /** Arpeggiator mode */
     arpMode = false
-    /** Array of added nodes. Nodes are chained in array order  */
-    nodeChain
     /** Presets */
     presets
     /** Beats per minute */
-    bpm = 200
+    bpm = 400
 
     /** ToneJs Recorder instance */
     recorder
@@ -154,7 +152,6 @@ export class Keyboard {
         this.gain = new Tone.Gain(this.volume)
         this.gain.toDestination()
 
-        this.nodeChain = []
         this.presets = []
         Keyboard.activeNotes = []
 
@@ -258,6 +255,8 @@ export class Keyboard {
         track.disconnect(this.gain)
 
         track.dom.parentNode.removeChild(track.dom)
+
+        track.destroy()
     }
 
     /** Trigger note */
@@ -308,6 +307,8 @@ export class Keyboard {
         this.setArpSequence([])
 
         Tone.Transport.stop()
+
+        console.log('ARP', this.arpMode)
     }
 
     setArpSequence(sequence, onTrigger, onRelease) {
@@ -449,15 +450,11 @@ export class Keyboard {
 
         this.gain.gain.value = this.volume
 
-        for(let i = this.nodeChain.length-1; i >= 0; i--) {
-
-            this.nodeChain[i].delete()
-        }
-
-        this.nodeChain = []
-
         for(let n of Keyboard.activeNotes) this.releaseNote(n)
         Keyboard.activeNotes = []
+
+        for(let t of this.tracks) 
+            this.removeTrack(t)
 
         // TODO - UPDATE DOM????
     }

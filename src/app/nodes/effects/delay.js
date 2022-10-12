@@ -29,14 +29,19 @@ export class Delay extends Node {
         let wetKnob = new Knob(this.wet, 0, 1)
         this.dom.appendChild(wetKnob.dom)
         wetKnob.onChange.subscribe(v => this.setWet(v))
+        this.knobs.push(wetKnob)
 
+        this.setTime(this.time)
         let timeKnob = new Knob(this.time, 0, 20)
         this.dom.appendChild(timeKnob.dom)
-        timeKnob.onChange.subscribe(v => this.setTime(v))
+        // timeKnob.onChange.subscribe(v => this.setTime(v))
+        this.knobs.push(timeKnob)
 
+        this.setFeedback(this.feedback)
         let feedbackKnob = new Knob(this.feedback, 0, 1)
         this.dom.appendChild(feedbackKnob.dom)
         feedbackKnob.onChange.subscribe(v => this.setFeedback(v))
+        this.knobs.push(feedbackKnob)
     }
 
     setWet(w) {
@@ -59,7 +64,7 @@ export class Delay extends Node {
 
         this.instance.feedback.value = this.feedback
     }
-
+    
 
     serializeIn(o) {
 
