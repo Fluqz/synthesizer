@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
 
     // Volume Button
     const volume = document.querySelector('#volume')
-    const volumeKnob = new Knob(keyboard.volume, 0, 1)
+    const volumeKnob = new Knob('Volume', keyboard.volume, 0, 1)
     volumeKnob.onChange.subscribe((v) => { keyboard.setVolume(v) })
     volume.append(volumeKnob.dom)
 
@@ -91,10 +91,9 @@ document.addEventListener('DOMContentLoaded', (e) => {
     // Arpeggiator
     const arpeggiator = document.querySelector('#arpeggiator')
 
-    arpeggiator.addEventListener('click', () => {
+    arpeggiator.addEventListener('change', (e) => {
 
-        console.log('arpeggiator')
-        keyboard.toggleArpMode()
+        keyboard.toggleArpMode(e.target.checked)
     })
 
 
@@ -190,16 +189,16 @@ document.addEventListener('DOMContentLoaded', (e) => {
 
 
 
-    // const attackKnob = new Knob(keyboard.synth.options.voice0.envelope.attack, 0, 2)
+    // const attackKnob = new Knob('', keyboard.synth.options.voice0.envelope.attack, 0, 2)
     // attackKnob.onChange.subscribe((v) => { keyboard.synth.options.voice0.envelope.attack = v })
     // document.body.append(attackKnob.dom)
-    // const decayKnob = new Knob(keyboard.synth.options.voice0.envelope.decay, 0, 2)
+    // const decayKnob = new Knob('', keyboard.synth.options.voice0.envelope.decay, 0, 2)
     // decayKnob.onChange.subscribe((v) => { keyboard.synth.options.voice0.envelope.decay = v })
     // document.body.append(decayKnob.dom)
-    // const sustainKnob = new Knob(keyboard.synth.options.voice0.envelope.sustain, 0, 1)
+    // const sustainKnob = new Knob('', keyboard.synth.options.voice0.envelope.sustain, 0, 1)
     // sustainKnob.onChange.subscribe((v) => { keyboard.synth.options.voice0.envelope.sustain = v })
     // document.body.append(sustainKnob.dom)
-    // const releaseKnob = new Knob(keyboard.synth.options.voice0.envelope.release, 0, 5)
+    // const releaseKnob = new Knob('', keyboard.synth.options.voice0.envelope.release, 0, 5)
     // releaseKnob.onChange.subscribe((v) => { keyboard.synth.options.voice0.envelope.release = v })
     // document.body.append(releaseKnob.dom)
 

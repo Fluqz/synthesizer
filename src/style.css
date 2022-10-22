@@ -140,6 +140,35 @@ html {
     align-items: center;
 }
 
+
+#track-menu {
+
+    display: none;
+
+    position: absolute;
+
+    top: 0px;
+    left: 0px;
+
+    min-height: 20px;
+
+    padding: 20px;
+
+    background-color: aqua;
+    color: #000;
+
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
+    
+}
+
+#track-menu.open {
+
+    display: block;
+}
+
 .node {
 
     position: relative;

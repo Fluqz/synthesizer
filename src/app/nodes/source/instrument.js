@@ -5,11 +5,6 @@ import { Node } from '../node'
 /** Represents a instrument  */
 export class Instrument extends Node {
 
-    // /** Note string of this Key */
-    // note
-    // /** Octave of this Key */
-    // octave
-
     onTrigger
     onRelease
 

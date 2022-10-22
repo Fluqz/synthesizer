@@ -22,72 +22,75 @@ export class Oscillator extends Instrument {
     octave = 2
 
     /** Necessary release time to prevent clicking */
-    releaseTime = 1
+    releaseTime = .2
 
     /** Is the osc already playing */
     isPlaying
 
+
     /** freq, detune, volume, waveform,  */
-    constructor(frequency, volume, detune, phase, ) {
+    constructor(frequency, detune, phase, ) {
 
         super('oscillator')
 
         this.frequency = frequency ? frequency : 1
-        this.volume = volume ? volume : 3
         this.detune = detune ? detune : .5
         this.phase = phase ? phase : 0
 
         this.instance = new Tone.Oscillator(this.frequency)
+        this.instance.disconnect()
 
         this.gain = new Tone.Gain(this.volume)
 
-        this.instance.connect(this.gain)
+        // this.instance.connect(this.gain)
         
         // this.setFrequency(this.frequency)
-        // let frequencyKnob = new Knob(this.frequency, 0, 1)
+        // let frequencyKnob = new Knob('', this.frequency, 0, 1)
         // this.dom.appendChild(frequencyKnob.dom)
         // frequencyKnob.onChange.subscribe(v => this.setFrequency(v))
 
         this.isPlaying = false
 
-        this.setVolume(this.volume)
-        let volumeKnob = new Knob(this.volume, 0, 1)
+        this.setVolume(0)
+        let volumeKnob = new Knob('Volume', this.volume, 0, 1)
         this.dom.appendChild(volumeKnob.dom)
         volumeKnob.onChange.subscribe(v => this.setVolume(v))
         this.knobs.push(volumeKnob)
 
         this.setDetune(this.detune)
-        let detuneKnob = new Knob(this.detune, 0, 1)
+        let detuneKnob = new Knob('Detune', this.detune, 0, 1)
         this.dom.appendChild(detuneKnob.dom)
         detuneKnob.onChange.subscribe(v => this.setDetune(v))
         this.knobs.push(detuneKnob)
 
         this.setPhase(this.phase)
-        let phaseKnob = new Knob(this.phase, 0, 1)
+        let phaseKnob = new Knob('Phase', this.phase, 0, 1)
         this.dom.appendChild(phaseKnob.dom)
         phaseKnob.onChange.subscribe(v => this.setPhase(v))
         this.knobs.push(phaseKnob)
+
+        this.instance.start()
     }
 
     setFrequency(f) {
 
         this.frequency = f
 
-        this.instance.frequency.value = this.frequency
+        this.instance.frequency.setValueAtTime(this.frequency, Tone.context.currentTime)
     }
 
     setVolume(v) {
 
         this.volume = v
 
-        this.gain.gain.value = this.volume
+        this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
     }
 
     setDetune(d) {
 
         this.detune = d
 
-        this.instance.detune.value = this.detune
+        this.instance.detune.setValueAtTime(this.detune, Tone.context.currentTime)
     }
 
     setPhase(p) {
@@ -97,32 +100,56 @@ export class Oscillator extends Instrument {
         // this.instance.phase.value = this.phase
     }
 
-    triggerNote(note, time) {
+    triggerNote(note, time, length) {
 
-        // this.gain.gain.setValueAtTime(this.volume, 0)
-        // this.gain.gain.value = this.volume
+        time = time == undefined ? Tone.context.currentTime : time
+
+        console.log('PLAY', note)
+
+        window.clearTimeout(this.TO)
+
+        this.gain.gain.cancelScheduledValues(time)
 
         this.setFrequency(note)
 
-        if(!this.isPlaying) {
+        this.setVolume(1)
 
-            this.instance.stop()
-
-            this.instance.start()
-        }
+        console.log('state', this.instance.state)
+        if(this.instance.state == 'stopped') this.instance.start(time)
 
         this.isPlaying = true
     }
 
+    TO
     releaseNote(note) {
 
-        this.instance.stop()
-        // this.gain.gain.linearRampToValueAtTime(0, this.releaseTime)
-
         this.isPlaying = false
+
+        if(this.isPlaying || Keyboard.activeNotes.length > 0) {
+
+            // console.log('play other note', Keyboard.activeNotes)
+            this.triggerNote(Keyboard.activeNotes[Keyboard.activeNotes.length-1])
+            return
+        }
+
+        console.log('STOP', note)
+
+        this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
+        this.volume = 0
+
+        this.gain.gain.linearRampToValueAtTime(this.volume, Tone.context.currentTime + this.releaseTime)
+
+        // window.clearTimeout(this.TO)
+        // this.TO = window.setTimeout(() => {
+            
+        //     this.instance.stop(Tone.context.currentTime)
+
+        // }, this.releaseTime + .01)
     }
 
     connect(n) {
+
+        this.instance.connect(this.gain)
 
         this.gain.connect(n instanceof Node ? n.gain : n)
     }
@@ -133,7 +160,18 @@ export class Oscillator extends Instrument {
         else this.gain.disconnect()
     }
 
+    destroy() {
 
+        this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
+        this.volume = 0
+
+        this.gain.gain.linearRampToValueAtTime(this.volume, Tone.context.currentTime + this.releaseTime)
+
+        this.instance.stop(Tone.context.currentTime + this.releaseTime + .02)
+        
+        super.destroy()
+    }
+ 
     serializeIn(o) {
 
         if(o['enabled']) this.enabled = o['enabled']

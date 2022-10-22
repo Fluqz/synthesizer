@@ -57,6 +57,8 @@ export class Node {
     /** Connects this Nodes Output to [e]'s Input */
     connect(e) {
 
+        if(!e) return
+
         this.instance.connect(e instanceof Node ? e.instance : e)
 
         this.output = e
@@ -65,11 +67,26 @@ export class Node {
     /** Disconnects this Output from [e]'s/all Input(s) */
     disconnect(e) {
 
+        if(!e) return
+
         if(e) this.instance.disconnect(e instanceof Node ? e.instance : e)
         else this.instance.disconnect()
 
         this.output = null
         if(e) e.input = null
+    }
+
+    chain(nodes) {
+
+        if(!nodes.length) return this.connect(nodes)
+
+        this.connect(nodes[0])
+
+        for(let i = 0; i < nodes.length; i++) {
+
+            if(nodes[i + 1] != null)
+                nodes[i].connect(nodes[i + 1])
+        }
     }
 
     delete() {

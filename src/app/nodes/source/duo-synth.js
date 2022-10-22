@@ -25,42 +25,44 @@ export class DuoSynth extends Instrument {
     releaseTime = 1
 
     /** freq, detune, volume, waveform,  */
-    constructor(frequency, volume, detune, phase, ) {
+    constructor(options = {}) {
 
-        super('synth')
+        super('duosynth')
+        
 
-        this.frequency = frequency ? frequency : 300
-        this.volume = volume ? volume : 1
-        this.detune = detune ? detune : 0
-        this.phase = phase ? phase : 0
+        this.frequency = options.frequency ? options.frequency : 300
+        this.volume = options.volume ? options.volume : 1
+        this.detune = options.detune ? options.detune : 0
+        this.phase = options.phase ? options.phase : 0
 
-        this.instance = new Tone.PolySynth(Tone.DuoSynth)
+        this.instance = new Tone.PolySynth(Tone.DuoSynth, options)
+        console.log(this.name, this.instance)
 
         this.gain = new Tone.Gain(this.volume)
 
         this.instance.connect(this.gain)
         
         // this.setFrequency(this.frequency)
-        // let frequencyKnob = new Knob(this.frequency, 0, 1)
+        // let frequencyKnob = new Knob('', this.frequency, 0, 1)
         // this.dom.appendChild(frequencyKnob.dom)
         // frequencyKnob.onChange.subscribe(v => this.setFrequency(v))
 
-        let volumeKnob = new Knob(this.volume, 0, 1)
+        let volumeKnob = new Knob('Volume', this.volume, 0, 1)
         this.dom.appendChild(volumeKnob.dom)
         volumeKnob.onChange.subscribe(v => this.setVolume(v))
 
-        let detuneKnob = new Knob(this.detune, 0, 1)
+        let detuneKnob = new Knob('Detune', this.detune, 0, 1)
         this.dom.appendChild(detuneKnob.dom)
         detuneKnob.onChange.subscribe(v => this.setDetune(v))
 
-        let phaseKnob = new Knob(this.phase, 0, 1)
+        let phaseKnob = new Knob('phase', this.phase, 0, 1)
         this.dom.appendChild(phaseKnob.dom)
         phaseKnob.onChange.subscribe(v => this.setPhase(v))
 
-        this.setFrequency(this.frequency)
-        this.setVolume(this.volume)
-        this.setDetune(this.detune)
-        this.setPhase(this.phase)
+        // this.setFrequency(this.frequency)
+        // this.setVolume(this.volume)
+        // this.setDetune(this.detune)
+        // this.setPhase(this.phase)
     }
 
     setFrequency(f) {
@@ -72,14 +74,14 @@ export class DuoSynth extends Instrument {
 
         this.volume = v
 
-        this.gain.gain.value = this.volume
+        this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
     }
 
     setDetune(d) {
 
         this.detune = d
 
-        this.instance.detune.value = this.detune
+        this.instance.detune.setValueAtTime(this.detune, Tone.context.currentTime)
     }
 
 
@@ -87,7 +89,7 @@ export class DuoSynth extends Instrument {
 
         this.phase = p
 
-        this.instance.phase.value = this.phase
+        this.instance.phase.setValueAtTime(this.phase, Tone.context.currentTime)
     }
 
     triggerNote(note, time) {
@@ -95,7 +97,17 @@ export class DuoSynth extends Instrument {
         // this.gain.gain.setValueAtTime(this.volume, 0)
         // this.gain.gain.value = this.volume
 
-        console.log('trigger', note, Keyboard.activeNotes)
+        // console.log('trigger', note, Keyboard.activeNotes)
+
+        // this.instance.detune = 50
+        // this.instance.harmonicity = 50
+
+        // setInterval(() => {
+            
+        //     this.instance.detune += 1
+        //     console.log('detune', this.instance.detune)
+
+        // }, 400)
 
         this.setFrequency(note)
 
@@ -106,7 +118,7 @@ export class DuoSynth extends Instrument {
 
     releaseNote(note) {
 
-        console.log('release')
+        // console.log('release')
 
         this.instance.triggerRelease(note)
 

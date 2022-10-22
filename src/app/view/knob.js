@@ -8,6 +8,8 @@ import { M } from "../core/math"
  */
 export class Knob {
 
+
+    name
     /** Initial value */
     value
 
@@ -64,14 +66,16 @@ export class Knob {
 
     /**
      * 
+     * @param {string} name Title
      * @param {number} value Initiale value
      * @param {number} min Max value
      * @param {number} max Min value
      * @param {number} division Steps to increase/decrease
      * @param {boolean} turnEndlessly Turn the knob endlessly or stop at 0
      */
-    constructor(value, min, max, division, turnEndlessly) {
+    constructor(name, value, min, max, division, turnEndlessly) {
 
+        this.name = name ? name : ''
         this.value = value ? value : 0
         this.min = min ? min : 0
         this.max = max ? max : 1
@@ -86,7 +90,7 @@ export class Knob {
 
         this.dom = document.createElement('div')
         this.dom.classList.add('knob')
-        this.dom.title = 'Scroll'
+        this.dom.title = this.name
         const pointer = document.createElement('div')
         pointer.classList.add('knob-pointer')
         this.dom.append(pointer)

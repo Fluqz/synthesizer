@@ -4,23 +4,7 @@ import { Keyboard } from "./keyboard"
 import { Oscillator } from "./nodes/source/oscillator"
 import { Knob } from './view/knob'
 import { Node } from './nodes/node'
-
-export class TrackMenu {
-
-    /** DOM Element */
-    dom
-
-    constructor() {
-
-        this.dom = document.querySelector('#track-menu')
-
-
-    }
-
-    open() {}
-    close() {}
-    select() {}
-}
+import { TrackMenu } from './view/track-menu'
 
 
 export class Track {
@@ -32,7 +16,7 @@ export class Track {
     gain
      
     /** Volume property */
-    _volume 
+    _volume
 
     /** Instrument used */
     instrument 
@@ -47,10 +31,13 @@ export class Track {
     muteBtn
 
 
+    mouseDownEvent
+
     constructor(instrument) {
 
         this.dom = document.createElement('div')
         this.dom.classList.add('track')
+        this.dom.addEventListener('mousedown', this.mouseDownEvent = this.onMouseDown.bind(this))
 
         let options = document.createElement('div')
         options.classList.add('track-options')
@@ -60,7 +47,7 @@ export class Track {
 
         this.gain = new Tone.Gain(this._volume)
 
-        let volumeKnob = new Knob(this.volume, 0, 1)
+        let volumeKnob = new Knob(instrument.name, this.volume, 0, 1)
         options.appendChild(volumeKnob.dom)
         volumeKnob.onChange.subscribe(v => this.volume = v)
 
@@ -79,7 +66,7 @@ export class Track {
 
         this.connectNodeChain()
 
-        this.addNode(Keyboard.nodes['delay']())
+        // this.addNode(Keyboard.nodes.effects.distortion())
     }
 
     get volume() { return this._volume }
@@ -95,10 +82,8 @@ export class Track {
         
         this.isMuted = m === true ? true : false
 
-        if(this.isMuted) this.gain.gain.value = 0
-        else this.gain.gain.value = this.volume
-
-        console.log('mute', this.volume, this.gain.gain.value)
+        if(this.isMuted) this.gain.gain.setValueAtTime(0, Tone.context.currentTime)
+        else this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
 
         this.muteBtn.classList[this.isMuted ? 'add' : 'remove']('active')
     }
@@ -133,7 +118,7 @@ export class Track {
 
         nodes.push(this.gain)
 
-        this.instrument.instance.chain(...nodes)
+        this.instrument.chain(nodes)
     }
 
     /** Remove a node from the node chain */
@@ -172,6 +157,8 @@ export class Track {
 
     destroy() {
 
+        this.dom.removeEventListener('mousedown', this.mouseDownEvent)
+
         for(let i = this.nodeChain.length; i >= 0; i--) this.removeNode(this.nodeChain[i])
 
         if(this.instrument) this.instrument.destroy()
@@ -195,6 +182,7 @@ export class Track {
             for(let n of o['nodes']) {
 
                 let node = Keyboard.nodes[n.name]()
+                if(!node) { console.error('Track Serialize Node Error: Node is undefined. Node.name no match.'); continue}
                 node.serializeIn(n)
                 this.addNode(node)
             }
@@ -214,5 +202,20 @@ export class Track {
             nodes: nodes,
             volume: this.volume
         }
+    }
+
+
+
+
+
+
+    onMouseDown(e) {
+
+
+        if(e.target === this.dom) {
+
+            TrackMenu.open(this, e.clientX, e.clientY)
+        }
+        else TrackMenu.close()
     }
 }

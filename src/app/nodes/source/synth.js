@@ -25,35 +25,37 @@ export class Synth extends Instrument {
     releaseTime = 1
 
     /** freq, detune, volume, waveform,  */
-    constructor(frequency, volume, detune, phase, ) {
+    constructor(options = {}) {
 
         super('synth')
 
-        this.frequency = frequency ? frequency : 1
-        this.volume = volume ? volume : 3
-        this.detune = detune ? detune : .5
-        this.phase = phase ? phase : 0
+        this.frequency = options.frequency ? options.frequency : 1
+        this.volume = options.volume ? options.volume : 3
+        this.detune = options.detune ? options.detune : .5
+        this.phase = options.phase ? options.phase : 0
 
         this.instance = new Tone.PolySynth(Tone.Synth)
 
         this.gain = new Tone.Gain(this.volume)
 
         this.instance.connect(this.gain)
+
+        console.log('synth', this.instance)
         
         // this.setFrequency(this.frequency)
-        // let frequencyKnob = new Knob(this.frequency, 0, 1)
+        // let frequencyKnob = new Knob('', this.frequency, 0, 1)
         // this.dom.appendChild(frequencyKnob.dom)
         // frequencyKnob.onChange.subscribe(v => this.setFrequency(v))
 
-        let volumeKnob = new Knob(this.volume, 0, 1)
+        let volumeKnob = new Knob('Volume', this.volume, 0, 1)
         this.dom.appendChild(volumeKnob.dom)
         volumeKnob.onChange.subscribe(v => this.setVolume(v))
 
-        let detuneKnob = new Knob(this.detune, 0, 1)
+        let detuneKnob = new Knob('Detune', this.detune, 0, 1)
         this.dom.appendChild(detuneKnob.dom)
         detuneKnob.onChange.subscribe(v => this.setDetune(v))
 
-        let phaseKnob = new Knob(this.phase, 0, 1)
+        let phaseKnob = new Knob('Phase', this.phase, 0, 1)
         this.dom.appendChild(phaseKnob.dom)
         phaseKnob.onChange.subscribe(v => this.setPhase(v))
     }
@@ -69,14 +71,14 @@ export class Synth extends Instrument {
 
         this.volume = v
 
-        this.gain.gain.value = this.volume
+        this.gain.gain.value.setValueAtTime(this.volume, Tone.context.currentTime)
     }
 
     setDetune(d) {
 
         this.detune = d
 
-        this.instance.detune.value = this.detune
+        this.instance.detune.setValueAtTime(this.detune, Tone.context.currentTime)
     }
 
 
@@ -84,7 +86,8 @@ export class Synth extends Instrument {
 
         this.phase = p
 
-        this.instance.phase.value = this.phase
+        this.instance.phase.setValueAtTime(this.phase, Tone.context.currentTime)
+
     }
 
     triggerNote(note, time) {

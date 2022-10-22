@@ -4,7 +4,7 @@ import { Grid } from "../core/grid"
 
 export const moireShader = (p5) => {
 
-    let theShader
+    let shader
 
     let grid
     let oldCellPos
@@ -15,7 +15,7 @@ export const moireShader = (p5) => {
     let IVID
 
     p5.preload = () => {
-        theShader = p5.loadShader('./shader/moire-vert.glsl', './shader/moire-frag.glsl');
+        shader = p5.loadShader('./shader/moire-vert.glsl', './shader/moire-frag.glsl');
     }
 
     p5.setup = () => {
@@ -76,10 +76,10 @@ export const moireShader = (p5) => {
 
         p5.clear()
 
-        p5.shader(theShader)
+        p5.shader(shader)
 
-        theShader.setUniform("u_resolution", [G.w, G.h])
-        theShader.setUniform("u_time", p5.millis() / 1000.0)
+        shader.setUniform("u_resolution", [G.w, G.h])
+        shader.setUniform("u_time", p5.millis() / 1000.0)
 
 
         if(firstAfterKeyDown) {
@@ -166,7 +166,7 @@ export const moireShader = (p5) => {
                         currentCellPos.y = newCellPos.y
                     }
 
-                    theShader.setUniform("u_mouse", [currentCellPos.x, currentCellPos.y])
+                    shader.setUniform("u_mouse", [currentCellPos.x, currentCellPos.y])
 
                 }, time / interval)
             }
@@ -174,10 +174,10 @@ export const moireShader = (p5) => {
         }
         else if(!isAnimating) { // No and no animation right now
 
-            // theShader.setUniform("u_mouse", [newCellPos.x, newCellPos.y])
+            // shader.setUniform("u_mouse", [newCellPos.x, newCellPos.y])
         }
 
-        // theShader.setUniform("u_mouse", [p5.mouseX, p5.map(p5.mouseY, 0, G.h, G.h, 0)])
+        // shader.setUniform("u_mouse", [p5.mouseX, p5.map(p5.mouseY, 0, G.h, G.h, 0)])
 
 
         p5.rect(0, 0, G.w, G.h)

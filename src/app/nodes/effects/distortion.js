@@ -22,13 +22,13 @@ export class Distortion extends Node {
         this.instance = new Tone.Distortion(this.gain)
 
         this.setWet(this.wet)
-        let wetKnob = new Knob(this.wet, 0, 1)
+        let wetKnob = new Knob('Wet', this.wet, 0, 1)
         this.dom.appendChild(wetKnob.dom)
         wetKnob.onChange.subscribe(v => this.setWet(v))
         this.knobs.push(wetKnob)
 
         this.setGain(this.gain)
-        let gainKnob = new Knob(this.gain, 0, 20)
+        let gainKnob = new Knob('Volume', this.gain, 0, 20)
         this.dom.appendChild(gainKnob.dom)
         gainKnob.onChange.subscribe(v => this.setGain(v))
         this.knobs.push(gainKnob)
@@ -38,7 +38,7 @@ export class Distortion extends Node {
 
         this.wet = w
 
-        this.instance.wet.value = this.wet
+        this.instance.wet.setValueAtTime(this.wet, Tone.context.currentTime)
     }
 
     setGain(g) {

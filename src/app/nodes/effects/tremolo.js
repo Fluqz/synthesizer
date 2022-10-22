@@ -27,19 +27,19 @@ export class Tremolo extends Node {
         this.instance = new Tone.Tremolo(this.frequency, this.depth)
 
         this.setWet(this.wet)
-        let wetKnob = new Knob(this.wet, 0, 1)
+        let wetKnob = new Knob('Wet', this.wet, 0, 1)
         this.dom.appendChild(wetKnob.dom)
         wetKnob.onChange.subscribe(v => this.setWet(v))
         this.knobs.push(wetKnob)
 
         this.setFrequency(this.frequency)
-        let frequencyKnob = new Knob(this.frequency, 0, 20)
+        let frequencyKnob = new Knob('Frequency', this.frequency, 0, 20)
         this.dom.appendChild(frequencyKnob.dom)
         frequencyKnob.onChange.subscribe(v => this.setFrequency(v))
         this.knobs.push(frequencyKnob)
 
         this.setDepth(this.depth)
-        let depthKnob = new Knob(this.depth, 0, 1)
+        let depthKnob = new Knob('Depth', this.depth, 0, 1)
         this.dom.appendChild(depthKnob.dom)
         depthKnob.onChange.subscribe(v => this.setDepth(v))
         this.knobs.push(depthKnob)

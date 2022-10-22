@@ -15,6 +15,7 @@ import { Distortion } from './nodes/effects/distortion'
 import { Oscillator } from './nodes/source/oscillator'
 import { Synth } from './nodes/source/synth'
 import { Track } from './track'
+import { DuoSynth } from './nodes/source/duo-synth'
 
 /** Keyboard */
 export class Keyboard {
@@ -94,12 +95,19 @@ export class Keyboard {
     }
 
     static nodes = {
-        delay: () => { return new Delay(1, .12, .8) },
-        tremolo: () => { return new Tremolo(1, 5, 1) },
-        distortion: () => { return new Distortion(1, .5) },
-        chorus: () => { return new Chorus(1, 4, 20, 1, 1) },
-        oscillator: () => { return new Oscillator(50) },
-        synth: () => { return new Synth(50) }
+        effects: {
+
+            delay: () => { return new Delay(1, .12, .8) },
+            tremolo: () => { return new Tremolo(1, 5, 1) },
+            distortion: () => { return new Distortion(1, .5) },
+            chorus: () => { return new Chorus(1, 4, 20, 1, 1) },
+        },
+        source: {
+
+            oscillator: () => { return new Oscillator() },
+            synth: () => { return new Synth() },
+            duosynth: () => { return new DuoSynth() },
+        }
     }
 
     /** Array of created Key objects */
@@ -155,13 +163,13 @@ export class Keyboard {
         this.presets = []
         Keyboard.activeNotes = []
 
-
         this.isRecording = false
 
         this.tracks = []
         // this.addTrack()
         // this.addTrack()
-        this.addTrack(new Track(Keyboard.nodes.oscillator()))
+        // this.addTrack(new Track(Keyboard.nodes.source.oscillator()))
+        this.addTrack(new Track(Keyboard.nodes.source.oscillator()))
         // this.addTrack(new Track(Keyboard.nodes.oscillator()))
 
 
@@ -204,7 +212,6 @@ export class Keyboard {
 
         this.onAddNode = new RxJs.Subject()
         this.onRemoveNode = new RxJs.Subject()
-
     }
 
 
@@ -213,7 +220,7 @@ export class Keyboard {
     setVolume(v) {
 
         this.volume = v
-        this.gain.gain.value = this.volume
+        this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
     }
 
     /** Set the octave number */
@@ -232,11 +239,11 @@ export class Keyboard {
     }
 
     /** Add a instrument to the keyboard. */
-    addTrack(track) {
+    addTrack(track, instrument) {
 
         this.stopAll()
 
-        if(track == undefined) track = new Track(Keyboard.nodes.synth())
+        if(track == undefined) track = new Track(instrument)
         
         if(this.tracks.indexOf(track) == -1) this.tracks.push(track)
 
@@ -265,11 +272,17 @@ export class Keyboard {
         Keyboard.activeNotes.push(note + octave)
 
         console.log('Keyboard.trigger', Keyboard.activeNotes)
+
         if(this.arpMode) {
 
             this.setArpSequence(Keyboard.activeNotes, (time, note, length) => {
 
-                for(let tr of this.tracks) tr.instrument.triggerNote(note, length)
+                for(let tr of this.tracks) tr.instrument.triggerNote(note, time)
+
+            }, () => {
+
+                for(let tr of this.tracks) tr.instrument.releaseNote(note)
+
             })
         }
         else 
@@ -281,15 +294,19 @@ export class Keyboard {
 
         Keyboard.activeNotes.splice(Keyboard.activeNotes.indexOf(note + octave), 1)
 
-        for(let tr of this.tracks) tr.instrument.releaseNote(note + octave)
-
         if(this.arpMode) {
             
             this.setArpSequence(Keyboard.activeNotes, (time, note, length) => {
 
-                for(let tr of this.tracks) tr.instrument.triggerNote(note, length)
+                for(let tr of this.tracks) tr.instrument.triggerNote(note, time)
+
+            }, () => {
+
+                for(let tr of this.tracks) tr.instrument.releaseNote(note)
+
             })
         }
+        else for(let tr of this.tracks) tr.instrument.releaseNote(note + octave)
     }
 
     /** Will release all triggered notes that are stored in [activeNotes] */
@@ -317,7 +334,7 @@ export class Keyboard {
 
         const length = 60 / this.bpm
 
-        this.stopArpeggiator()
+        this.stopArpeggiator(onRelease)
 
         if(!sequence || sequence.length == 0) return
 
@@ -327,19 +344,21 @@ export class Keyboard {
 
         }, sequence)
 
-        // this.arp.interval = length
+        this.arp.interval = length
         this.arp.start()
-        Tone.Transport.bpm.value = this.bpm
+        Tone.Transport.bpm.setValueAtTime(this.bpm, Tone.context.currentTime)
         Tone.Transport.start()
     }
 
-    stopArpeggiator() {
+    stopArpeggiator(onRelease) {
 
         if(this.arp) {
             this.arp.stop()
             this.arp.cancel()
             this.arp.dispose()
         }
+
+        if(onRelease) onRelease()
     }
 
 
@@ -382,8 +401,6 @@ export class Keyboard {
 
             this.onRecordingEnd.next()
 
-            console.log('RECORDING', recording)
-
             const url = URL.createObjectURL(recording);
             const anchor = document.createElement("a");
             anchor.download = "web-synth-recording.webm";
@@ -414,7 +431,7 @@ export class Keyboard {
             this.isRunning = true
         }
 
-        console.log('onKeyDown: key', e.key)
+        // console.log('onKeyDown: key', e.key)
 
         if(e.key == 'ArrowRight') this.setOctave(this.octave + 1)
         if(e.key == 'ArrowLeft') this.setOctave(this.octave - 1)
@@ -448,7 +465,7 @@ export class Keyboard {
     /** Resets the keyboard to standard settings */
     reset() {
 
-        this.gain.gain.value = this.volume
+        this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
 
         for(let n of Keyboard.activeNotes) this.releaseNote(n)
         Keyboard.activeNotes = []

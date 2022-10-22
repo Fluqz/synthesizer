@@ -11,6 +11,9 @@ export class Key {
     octave
     /** Keyboard mapping  */
     mapping
+    /** Key down flag */
+    isKeyDown
+
     /** Key DOM element */
     dom
     domKey
@@ -80,6 +83,8 @@ export class Key {
 
         if(G.debug) console.log(`Trigger | mapping: ${this.mapping} note: ${this.note} octave: ${this.octave}`)
 
+        this.isKeyDown = true
+
         this.dom.classList.add('pressed')
 
         this.onTrigger.next(this)
@@ -92,11 +97,15 @@ export class Key {
 
         if(G.debug) console.log(`Release | mapping: ${this.mapping} note: ${this.note} octave: ${this.octave}`)
 
+        if(!this.isKeyDown) return
+
         this.dom.classList.remove('pressed')
 
         this.onRelease.next(this)
 
         this.resetTransformDOM()
+
+        this.isKeyDown = false
     }
 
     dispose() {
