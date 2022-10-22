@@ -121,8 +121,6 @@ export class DuoSynth extends Instrument {
         // console.log('release')
 
         this.instance.triggerRelease(note)
-
-        this.gain.gain.linearRampToValueAtTime(0, this.releaseTime)
     }
 
     connect(n) {
