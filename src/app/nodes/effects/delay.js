@@ -1,15 +1,13 @@
 import * as Tone from 'tone'
 import { Knob } from '../../view/knob';
 
-import { Node } from "../node";
+import { Effect } from "./effect"
 
 
 
 /** Delay node */
-export class Delay extends Node {
+export class Delay extends Effect {
 
-    /** Intensity */
-    wet
     /** How fast the delay is played in seconds */
     time 
     /** How long the delay is played. [0-1] */
@@ -17,9 +15,8 @@ export class Delay extends Node {
 
     constructor(wet, time, feedback) {
 
-        super('delay')
+        super('delay', wet)
 
-        this.wet = wet ? wet : 1
         this.time = time ? time : 3
         this.feedback = feedback ? feedback : .5
 
@@ -30,7 +27,7 @@ export class Delay extends Node {
         this.dom.appendChild(wetKnob.dom)
         wetKnob.onChange.subscribe(v => this.setWet(v))
         this.knobs.push(wetKnob)
-
+        
         this.setTime(this.time)
         let timeKnob = new Knob('Time', this.time, 0, 20)
         this.dom.appendChild(timeKnob.dom)
@@ -42,13 +39,6 @@ export class Delay extends Node {
         this.dom.appendChild(feedbackKnob.dom)
         feedbackKnob.onChange.subscribe(v => this.setFeedback(v))
         this.knobs.push(feedbackKnob)
-    }
-
-    setWet(w) {
-
-        this.wet = w
-
-        this.instance.wet.setValueAtTime(this.wet, Tone.context.currentTime)
     }
 
     setTime(t) {
@@ -68,6 +58,7 @@ export class Delay extends Node {
 
     serializeIn(o) {
 
+        if(o['name']) this.name = o['name']
         if(o['enabled']) this.enabled = o['enabled']
         if(o['wet']) this.setWet(o['wet'])
         if(o['time']) this.setTime(o['time'])

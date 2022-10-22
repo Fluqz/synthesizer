@@ -1,22 +1,19 @@
 import * as Tone from 'tone'
 import { Knob } from '../../view/knob';
 
-import { Node } from "../node";
+import { Effect } from './effect';
 
 
-export class Distortion extends Node {
+export class Distortion extends Effect {
 
-    /** Intensity */
-    wet
     /** Amound of distortion */
     gain
 
 
     constructor(wet, gain) {
 
-        super('distortion')
+        super('distortion', wet)
 
-        this.wet = wet
         this.gain = gain
 
         this.instance = new Tone.Distortion(this.gain)
@@ -26,19 +23,12 @@ export class Distortion extends Node {
         this.dom.appendChild(wetKnob.dom)
         wetKnob.onChange.subscribe(v => this.setWet(v))
         this.knobs.push(wetKnob)
-
+        
         this.setGain(this.gain)
         let gainKnob = new Knob('Volume', this.gain, 0, 20)
         this.dom.appendChild(gainKnob.dom)
         gainKnob.onChange.subscribe(v => this.setGain(v))
         this.knobs.push(gainKnob)
-    }
-
-    setWet(w) {
-
-        this.wet = w
-
-        this.instance.wet.setValueAtTime(this.wet, Tone.context.currentTime)
     }
 
     setGain(g) {
@@ -50,6 +40,7 @@ export class Distortion extends Node {
 
     serializeIn(o) {
 
+        if(o['name']) this.name = o['name']
         if(o['enabled']) this.enabled = o['enabled']
         if(o['wet']) this.setWet(o['wet'])
         if(o['gain']) this.setGain(o['gain'])

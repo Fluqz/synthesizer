@@ -1,15 +1,13 @@
 import * as Tone from 'tone'
 
-import { Node } from "../node"
+import { Effect } from "./effect"
 import { Knob } from '../../view/knob';
 
 
 
 /** Tremolo node */
-export class Tremolo extends Node {
+export class Tremolo extends Effect {
 
-    /** Intensity */
-    wet
     /** Tremolo amplitude */
     frequency 
     /** Trempolo depth */
@@ -18,9 +16,8 @@ export class Tremolo extends Node {
 
     constructor(wet, frequency, depth) {
 
-        super('tremolo')
+        super('tremolo', wet)
 
-        this.wet = wet
         this.frequency = frequency
         this.depth = depth
         
@@ -31,7 +28,7 @@ export class Tremolo extends Node {
         this.dom.appendChild(wetKnob.dom)
         wetKnob.onChange.subscribe(v => this.setWet(v))
         this.knobs.push(wetKnob)
-
+        
         this.setFrequency(this.frequency)
         let frequencyKnob = new Knob('Frequency', this.frequency, 0, 20)
         this.dom.appendChild(frequencyKnob.dom)
@@ -43,14 +40,6 @@ export class Tremolo extends Node {
         this.dom.appendChild(depthKnob.dom)
         depthKnob.onChange.subscribe(v => this.setDepth(v))
         this.knobs.push(depthKnob)
-    }
-
-
-    setWet(w) {
-
-        this.wet = w
-
-        this.instance.wet.set(this.wet)
     }
 
     setFrequency(f) {
@@ -69,6 +58,7 @@ export class Tremolo extends Node {
     
     serializeIn(o) {
 
+        if(o['name']) this.name = o['name']
         if(o['enabled']) this.enabled = o['enabled']
         if(o['wet']) this.setWet(o['wet'])
         if(o['frequency']) this.setFrequency(o['frequency'])

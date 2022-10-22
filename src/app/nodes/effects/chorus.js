@@ -1,15 +1,13 @@
 import * as Tone from 'tone'
 
-import { Node } from "../node"
 import { Knob } from "../../view/knob"
+import { Effect } from './effect'
 
 
 
 /** Chorus node */
-export class Chorus extends Node {
+export class Chorus extends Effect {
 
-    /** How much of the chorus is misxed into the output */
-    wet
     /** Frequency of the LFO for modulating */
     frequency
     /** Delay of the signal 2-20ms */
@@ -21,9 +19,8 @@ export class Chorus extends Node {
 
     constructor(wet, frequency, delayTime, depth, feedback) {
 
-        super('chorus')
+        super('chorus', wet)
 
-        this.wet = wet
         this.frequency = frequency
         this.delayTime = delayTime
         this.depth = depth
@@ -54,13 +51,6 @@ export class Chorus extends Node {
         this.dom.appendChild(depthKnob.dom)
         depthKnob.onChange.subscribe(v => this.setDepth(v))
         this.knobs.push(depthKnob)
-    }
-
-    setWet(w) {
-
-        this.wet = w
-
-        this.instance.wet.setValueAtTime(this.wet, Tone.context.currentTime)
     }
 
     setDelayTime(t) {

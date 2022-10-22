@@ -8,7 +8,7 @@ export class Node {
     name
 
     /** Enabled flag */
-    enabled
+    _enabled
 
     /** Input Node reference. Should actually be a Array! */
     input
@@ -53,6 +53,9 @@ export class Node {
 
         this.knobs = []
     }
+
+    set enabled(e) { this._enabled = e }
+    get enabled() { return this._enabled }
 
     /** Connects this Nodes Output to [e]'s Input */
     connect(e) {
