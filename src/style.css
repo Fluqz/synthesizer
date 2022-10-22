@@ -3,7 +3,9 @@
 :root {
 
     --c-b: #161616;
-    --c-g: #fed33a;
+    --c-g: #262626;
+    --c-g2: #464646;
+    --c-y: #fed33a;
     --c-w: #f3e5ca;
     --c-o: #fe5e3a;
 
@@ -51,24 +53,27 @@ html {
 #keyboard {
 
     z-index: 1;
+
+    position: absolute;
+    bottom: 0px;
     margin: 0 auto;
-    margin-top: 50px;
-    margin-bottom: 50px;
 
-    width: 90%;
-    height: 130px;
-
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    width: 100%;
 
     -webkit-user-select: none;  
     -moz-user-select: none;    
     -ms-user-select: none;      
     user-select: none;
 }
+#keyboard .keys {
 
-.key {
+    width: 100%;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+#keyboard .keys .key {
 
     width: 3%;
     height: 100%;
@@ -89,58 +94,128 @@ html {
 
     /* mix-blend-mode: difference; */
 }
-
-.black {
-    background-color: var(--c-g);
+#keyboard .keys .key.black {
+    background-color: var(--c-y);
     height: 80%;
     color: var(--c-b);
 }
-
-.key .key-text {
+#keyboard .keys .key .key-text {
     color: var(--c-o);
 }
-.key .key-note {
+#keyboard .keys .key.key .key-note {
     color: var(--c-b);
 }
-
-.pressed {
+#keyboard .keys .key.pressed {
 
     background-color: var(--c-o);
     z-index: 1;
     mix-blend-mode: unset;
-
-}
-
-#record.recording {
-
-    background-color: red;
 }
 
 
-/* Nodes */
-#tracks {
+
+
+
+
+
+.mixer {
 
     width: 100%;
-    max-height: 30%;
-    position: absolute;
-    bottom: 0px;
 }
+
+.mixer-menu {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tracks{
+
+    width: 100%;
+}
+
+
+
+
 
 .track {
 
-    display: flex;
-    justify-content: left;
-    align-items: center;
+    display: inline-block;
+
+    height: 70px;
+
     padding: 5px;
+    margin: 0px 5px;
+
+    background-color: var(--c-g);
+    color: var(--c-w);
 }
 
 .track .track-options {
 
+    display: inline-flex;
+
     width: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
 }
+
+
+
+
+
+/* Nodes */
+.node {
+
+    display: inline-flex;
+
+    align-items: flex-end;
+    justify-content: bottom;
+
+    position: relative;
+
+    height: 100%;
+
+    margin-left: 5px;
+    padding: 0px;
+
+    background-color: var(--c-g2);
+    color: var(--c-w);
+}
+.node:first-child { margin-left: 0px; }
+.node .node-title {
+
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    text-align: center;
+}
+.node .delete {
+
+    position: absolute;
+    right: 4px;
+    top: 0px;
+    cursor: pointer;
+}
+.node .delete:hover {
+    color: var(--c-o);
+}
+
+
+
+
+
+
+
+
+
+#presets>div {
+    display: inline-block;
+}
+
+
+
 
 
 #track-menu {
@@ -165,54 +240,24 @@ html {
     user-select: none; /* Standard */
     
 }
-
 #track-menu.open {
 
     display: block;
 }
 
-.node {
 
-    position: relative;
-    display: flex;
 
-    justify-content: space-evenly;
-    align-items: center;
 
-    background-color: var(--c-b);
-    opacity: .8;
-    color: var(--c-w);
 
-    min-width: 70px;
-    min-height: 70px;
 
-    padding: 0px 20px;
-    margin-left: 10px;
 
-    border: 1px solid var(--c-w);
+
+
+
+#record.recording {
+
+    background-color: red;
 }
-
-.node .node-title {
-
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    width: 100%;
-    text-align: center;
-}
-
-
-.node .delete {
-
-    position: absolute;
-    right: 4px;
-    top: 0px;
-    cursor: pointer;
-}
-.node .delete:hover {
-    color: var(--c-o);
-}
-
 
 
 /* UI */
@@ -237,12 +282,7 @@ html {
     background-color: var(--c-w);
     color: var(--c-b);
 }
-
-.dropdown-selected {
-
-}
-
-.dropdown-options {
+.dropdown .dropdown-options {
 
     position: absolute;
 
@@ -255,28 +295,24 @@ html {
     background-color: var(--c-w);
 
 }
-
-.dropdown-options.active {
+.dropdown .dropdown-options.active {
     
     display: block;
 }
-.dropdown-option {
+.dropdown .dropdown-options .dropdown-option {
     
     width: auto;
     padding: 0px 10px;
     white-space: nowrap;
 }
-
-.dropdown-option:hover {
+.dropdown .dropdown-options .dropdown-option:hover {
 
     background-color: var(--c-o);
 }
-
-.dropdown-option .dropdown-option-delete {
+.dropdown .dropdown-options .dropdown-option .dropdown-option-delete {
 
 }
-
-.dropdown-option .dropdown-option-delete:hover {
+.dropdown .dropdown-options .dropdown-option .dropdown-option-delete:hover {
     
     background-color: red;
 }
@@ -328,6 +364,8 @@ html {
     justify-content: center;
     align-items: flex-start;
 
+    margin: 2.5px;
+
 
     -webkit-user-select: none;  
     -moz-user-select: none;    
@@ -335,7 +373,7 @@ html {
     user-select: none;
 }
 
-.knob-pointer {
+.knob .knob-pointer {
 
     width: 3px;
     height: 50%;

@@ -113,6 +113,8 @@ export class Knob {
         this.setValue(this.value)
     }
 
+    // ADD FIRST LETTER OF NAME TO MIDDLE OF KNOB
+
     /** Set value between 0 - 1 */
     setValue(v) {
         

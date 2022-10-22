@@ -134,8 +134,14 @@ export class Keyboard {
     /** Recording flag */
     isRecording
 
+    /** DOM element representing the mixer in HTML */
+    mixerDOM
+
+    /** DOM element repsresenting the keys in HTML */
+    keysDOM
+
     /** DOM element container */
-    dom
+    tracksDOM
 
 
     // Events
@@ -149,14 +155,14 @@ export class Keyboard {
     onRemoveNode
 
 
-    constructor(dom, octave) {
+    constructor(keysDOM, mixerDOM, octave) {
 
-        this.dom = dom
-
+        this.keysDOM = keysDOM
+        this.mixerDOM = mixerDOM
         this.octave = octave ? octave : 2
 
+        // Keyboard Volume
         this.volume = .7
-
         this.gain = new Tone.Gain(this.volume)
         this.gain.toDestination()
 
@@ -165,15 +171,14 @@ export class Keyboard {
 
         this.isRecording = false
 
-        this.tracks = []
-        // this.addTrack()
-        // this.addTrack()
-        // this.addTrack(new Track(Keyboard.nodes.source.oscillator()))
-        this.addTrack(new Track(Keyboard.nodes.source.duosynth()))
-        // this.addTrack(new Track(Keyboard.nodes.oscillator()))
-
 
         // Create Keys
+        if(keysDOM == undefined) {
+
+            this.keysDOM = document.createElement('div')
+            this.keysDOM.classList.add('keys')
+        }
+
         let key
         let i = 0
         for(let keyMap of Keyboard.keyMap) {
@@ -186,7 +191,7 @@ export class Keyboard {
 
             Keyboard.keys.push(key)
 
-            this.dom.append(key.dom)
+            this.keysDOM.append(key.dom)
 
             key.onTrigger.subscribe(k => {
 
@@ -201,6 +206,28 @@ export class Keyboard {
             i++
         }
 
+
+        if(mixerDOM == undefined) {
+            // Create mixer wrapper
+            this.mixerDOM = document.createElement('div')
+            this.mixerDOM.classList.add('mixer')
+        }
+
+        this.tracksDOM = document.createElement('div')
+        this.tracksDOM.classList.add('tracks')
+        this.mixerDOM.appendChild(this.tracksDOM)
+
+        // Create tracks
+        // Add master track
+        // Add default track
+        this.tracks = []
+        // this.addTrack(new MasterTrack())
+        this.addTrack(new Track(Keyboard.nodes.source.duosynth()))
+        this.addTrack(new Track(Keyboard.nodes.source.oscillator()))
+
+
+
+        // Events
         document.addEventListener('keydown', this.onKeyDown.bind(this), false)
         document.addEventListener('keyup', this.onKeyUp.bind(this), false)
 
@@ -249,10 +276,7 @@ export class Keyboard {
 
         track.connect(this.gain)
 
-        let cont = document.querySelector('#tracks')
-
-        for(let track of this.tracks)
-            cont.append(track.dom)
+        this.tracksDOM.append(track.dom)
     }
 
     removeTrack(track) {

@@ -40,14 +40,14 @@ export class Track {
         this.dom.addEventListener('mousedown', this.mouseDownEvent = this.onMouseDown.bind(this))
 
         let options = document.createElement('div')
-        options.classList.add('track-options')
+        options.classList.add('track-options', 'node')
         this.dom.append(options)
 
         this._volume = .7
 
         this.gain = new Tone.Gain(this._volume)
 
-        let volumeKnob = new Knob(instrument.name, this.volume, 0, 1)
+        let volumeKnob = new Knob('Volume', this.volume, 0, 1)
         options.appendChild(volumeKnob.dom)
         volumeKnob.onChange.subscribe(v => this.volume = v)
 
@@ -106,19 +106,20 @@ export class Track {
 
         let nodes = []
 
-        if(!this.instrument) return
-        
-        this.instrument.disconnect()
+        if(this.instrument) {
 
-        for(let n of this.nodeChain) {
+            this.instrument.disconnect()
 
-            n.disconnect()
-            nodes.push(n.instance)
+            for(let n of this.nodeChain) {
+
+                n.disconnect()
+                nodes.push(n.instance)
+            }
+
+            nodes.push(this.gain)
+
+            this.instrument.chain(nodes)
         }
-
-        nodes.push(this.gain)
-
-        this.instrument.chain(nodes)
     }
 
     /** Remove a node from the node chain */
@@ -198,7 +199,7 @@ export class Track {
 
         return {
             muted: this.isMuted,
-            oscillator: this.instrument.serializeOut(),
+            instrument: this.instrument == null ? undefined : this.instrument.serializeOut(),
             nodes: nodes,
             volume: this.volume
         }

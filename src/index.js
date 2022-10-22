@@ -15,7 +15,8 @@ import { Dropdown } from './app/view/dropdown'
 
 
 let keyboard
-let dom
+let keysDom
+let mixerDom
 // ON LOAD
 document.addEventListener('DOMContentLoaded', (e) => {
 
@@ -23,8 +24,9 @@ document.addEventListener('DOMContentLoaded', (e) => {
     G.h = window.innerHeight
 
     // Create Keyboard
-    dom = document.querySelector('#keyboard')
-    keyboard = G.keyboard = new Keyboard(dom)
+    keysDom = document.querySelector('.keys')
+    mixerDom = document.querySelector('.mixer')
+    keyboard = G.keyboard = new Keyboard(keysDom, mixerDom)
 
     // serializeIn(Storage.load())
 
@@ -114,9 +116,6 @@ document.addEventListener('DOMContentLoaded', (e) => {
 
 
 
-
-    // Container of Tracks
-    const tracksCont = document.querySelector('#tracks')
 
 
 
