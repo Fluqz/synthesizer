@@ -81,10 +81,18 @@ export const keyVisualizer = (p5) => {
         p5.clear()
         // p5.loadPixels()
 
-        let r = img.width / img.height
-        p5.image(img, 0, -(Math.abs(G.w / r - G.h)) / 2, G.w, G.w / r)
 
 
+
+
+        // let r = img.width / img.height
+        // p5.image(img, 0, -(Math.abs(G.w / r - G.h)) / 2, G.w, G.w / r)
+
+
+
+
+
+        
 
         // // Loop through every pixel column
         // for (let x = 0; x < G.w; x++) {

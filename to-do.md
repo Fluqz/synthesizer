@@ -14,6 +14,12 @@
 
 #NiceToHave
 
+
+- drum machine generator
+  set: drum parts (hihat, snare etc)
+       random or steady 4/4 8/8 2/4 etc
+       
+
 - random octaves on keys
 - loop mode recording - set a loop length and start record and play. loop runns and playing will overdub. also make undo 
 - change wave

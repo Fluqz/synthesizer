@@ -88,7 +88,6 @@ void main (void) {
 
     // step(st.x,st.y) just makes a b&w triangles
     // but you can use whatever design you want.
-    gl_FragColor = vec4(vec3(concentricCircles(st, vec2(0.0,0.0), 1.0, 1.0),concentricCircles(st, vec2(0.0,0.0), 1.0, 1.0),concentricCircles(st, vec2(0.0,0.0), 1.0, 1.0)),1.0);
+    // gl_FragColor = vec4(vec3(concentricCircles(st, vec2(0.0,0.0), 4.5, 2.0),concentricCircles(st, vec2(0.0,0.0), 3.0, 3.3),concentricCircles(st, vec2(0.0,0.0), 1a.0, 3.0)),1.0) - vec4(0.4, 0.4, 0.4, 0.4);
+    gl_FragColor = vec4(vec3(concentricCircles(st, vec2(0.0,0.0), 1.0, 1.0),concentricCircles(st, vec2(0.0,0.0), 1.0, 1.0),concentricCircles(st, vec2(0.0,0.0), 1.0, 1.0)), 1.0);
 }
-
-// gl_FragColor = vec4(vec3(concentricCircles(st, vec2(0.0,0.0), 4.0, 2.0),concentricCircles(st, vec2(0.0,0.0), 3.0, 3.0),concentricCircles(st, vec2(0.0,0.0), 3.0, 3.0)),1.0) - vec4(0.4, 0.4, 0.4, 0.4);

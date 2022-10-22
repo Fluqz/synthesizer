@@ -8,7 +8,7 @@ export const moireShader = (p5) => {
 
     let grid
     let oldCellPos
-    let currentCellPos = { x: 0, y: 0 }
+    let currentCellPos = { x: 200, y: 200 }
     let newCellPos
     let increment = 40
     let isAnimating = false
@@ -71,7 +71,6 @@ export const moireShader = (p5) => {
         }
     })()
 
-    let firstAfterKeyDown = false
     p5.draw = () => {
 
         p5.clear()
@@ -81,14 +80,12 @@ export const moireShader = (p5) => {
         shader.setUniform("u_resolution", [G.w, G.h])
         shader.setUniform("u_time", p5.millis() / 1000.0)
 
-
-        if(firstAfterKeyDown) {
+        if(true) {
 
             // Get newCellPos
             for(let k of Keyboard.keys) {
 
                 if(k.note + k.octave == Keyboard.activeNotes[Keyboard.activeNotes.length-1]) {
-
 
                     oldCellPos.x = newCellPos.x
                     oldCellPos.y = newCellPos.y
@@ -116,7 +113,6 @@ export const moireShader = (p5) => {
                 let normal
 
                 let time = (Math.random() * 500) + 100
-                console.log('time', time)
                 let interval = 10
 
                 console.log('d', getDistanceVector(oldCellPos, newCellPos))
