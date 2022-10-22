@@ -66,7 +66,7 @@ export class Track {
 
         this.connectNodeChain()
 
-        // this.addNode(Keyboard.nodes.effects.distortion())
+        this.addNode(Keyboard.nodes.effects.delay())
     }
 
     get volume() { return this._volume }

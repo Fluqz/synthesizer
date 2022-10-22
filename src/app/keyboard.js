@@ -169,7 +169,7 @@ export class Keyboard {
         // this.addTrack()
         // this.addTrack()
         // this.addTrack(new Track(Keyboard.nodes.source.oscillator()))
-        this.addTrack(new Track(Keyboard.nodes.source.oscillator()))
+        this.addTrack(new Track(Keyboard.nodes.source.duosynth()))
         // this.addTrack(new Track(Keyboard.nodes.oscillator()))
 
 
