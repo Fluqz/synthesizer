@@ -223,7 +223,7 @@ export class Keyboard {
         this.tracks = []
         // this.addTrack(new MasterTrack())
         this.addTrack(new Track(Keyboard.nodes.source.duosynth()))
-        this.addTrack(new Track(Keyboard.nodes.source.oscillator()))
+        // this.addTrack(new Track(Keyboard.nodes.source.oscillator()))
 
 
 
@@ -299,18 +299,18 @@ export class Keyboard {
 
         if(this.arpMode) {
 
-            this.setArpSequence(Keyboard.activeNotes, (time, note, length) => {
+            this.setArpSequence(Keyboard.activeNotes, (time, note) => {
 
-                for(let tr of this.tracks) tr.instrument.triggerNote(note, time)
+                for(let tr of this.tracks) tr.triggerNote(note, time)
 
             }, () => {
 
-                for(let tr of this.tracks) tr.instrument.releaseNote(note)
+                for(let tr of this.tracks) tr.releaseNote(note)
 
             })
         }
         else 
-            for(let tr of this.tracks) tr.instrument.triggerNote(note + octave)
+            for(let tr of this.tracks) tr.triggerNote(note + octave)
     }
 
     /** Release note */
@@ -322,15 +322,15 @@ export class Keyboard {
             
             this.setArpSequence(Keyboard.activeNotes, (time, note, length) => {
 
-                for(let tr of this.tracks) tr.instrument.triggerNote(note, time)
+                for(let tr of this.tracks) tr.triggerNote(note, time)
 
             }, () => {
 
-                for(let tr of this.tracks) tr.instrument.releaseNote(note)
+                for(let tr of this.tracks) tr.releaseNote(note)
 
             })
         }
-        else for(let tr of this.tracks) tr.instrument.releaseNote(note + octave)
+        else for(let tr of this.tracks) tr.releaseNote(note + octave)
     }
 
     /** Will release all triggered notes that are stored in [activeNotes] */
@@ -362,9 +362,10 @@ export class Keyboard {
 
         if(!sequence || sequence.length == 0) return
 
+        
         this.arp = new Tone.Pattern((time, note) => {
 
-            if(onTrigger) onTrigger(time, note, time * length)
+            if(onTrigger) onTrigger(time, note, length)
 
         }, sequence)
 

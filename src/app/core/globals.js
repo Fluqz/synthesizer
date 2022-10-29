@@ -4,7 +4,7 @@
 
 export class G {
 
-    static debug = false
+    static debug = true
 
     static w
     static h

@@ -115,7 +115,6 @@ export const moireShader = (p5) => {
                 let time = (Math.random() * 500) + 100
                 let interval = 10
 
-                console.log('d', getDistanceVector(oldCellPos, newCellPos))
                 increment = getDistanceVector(oldCellPos, newCellPos) / (time / interval)
 
                 // console.log('Clear')
@@ -140,7 +139,7 @@ export const moireShader = (p5) => {
         
                     tmpCellPos.x += normal.x * increment
                     tmpCellPos.y += normal.y * increment
-        
+
                     // console.log('d', getDirectionVector(currentCellPos, tmpCellPos))
 
                     // console.log('check', oldCellPos, tmpCellPos, newCellPos, )
@@ -164,7 +163,7 @@ export const moireShader = (p5) => {
 
                     shader.setUniform("u_mouse", [currentCellPos.x, currentCellPos.y])
 
-                }, time / interval)
+                }, interval)
             }
 
         }

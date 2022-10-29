@@ -28,12 +28,25 @@ export class Track {
     isMuted
 
     /** HTML Button for muting */
-    muteBtn
+    muteBtnDOM
+
+    /** When enabled, the current instrument with current note/chord is played endlessly. */
+    _holdEnabled
+
+    /** HTML Button for hold */
+    holdBtnDOM
 
 
     mouseDownEvent
 
     constructor(instrument) {
+
+        this._volume = .7
+        this.nodeChain = []
+        this.instrument = instrument
+        this.gain = new Tone.Gain(this._volume)
+        this.isMuted = false
+        this.holdEnabled = false
 
         this.dom = document.createElement('div')
         this.dom.classList.add('track')
@@ -43,26 +56,27 @@ export class Track {
         options.classList.add('track-options', 'node')
         this.dom.append(options)
 
-        this._volume = .7
-
-        this.gain = new Tone.Gain(this._volume)
+        if(instrument) this.dom.append(this.instrument.dom)
 
         let volumeKnob = new Knob('Volume', this.volume, 0, 1)
         options.appendChild(volumeKnob.dom)
         volumeKnob.onChange.subscribe(v => this.volume = v)
 
-        this.muteBtn = document.createElement('div')
-        this.muteBtn.classList.add('btn')
-        this.muteBtn.innerHTML = 'Mute'
-        this.muteBtn.addEventListener('click', () => {
+        this.muteBtnDOM = document.createElement('div')
+        this.muteBtnDOM.classList.add('btn')
+        this.muteBtnDOM.innerHTML = 'Mute'
+        this.muteBtnDOM.addEventListener('click', () => {
             this.mute(!this.isMuted)
         })
-        options.append(this.muteBtn)
+        options.append(this.muteBtnDOM)
 
-        this.instrument = instrument
-        if(instrument) this.dom.append(this.instrument.dom)
-
-        this.nodeChain = []
+        this.holdBtnDOM = document.createElement('div')
+        this.holdBtnDOM.classList.add('btn')
+        this.holdBtnDOM.innerHTML = 'Hold'
+        this.holdBtnDOM.addEventListener('click', () => {
+            this.holdEnabled = !this.holdEnabled
+        })
+        options.append(this.holdBtnDOM)
 
         this.connectNodeChain()
 
@@ -72,20 +86,47 @@ export class Track {
     get volume() { return this._volume }
     set volume(v) { 
 
-        this._volume = v 
+        this._volume = v
 
-        if(this._volume == 0) this.mute(true)
-        else this.mute(false)
+        this.gain.gain.setValueAtTime(this._volume, Tone.context.currentTime)
     }
 
     mute(m) {
+
+        console.log('mute', this.volume, m)
         
         this.isMuted = m === true ? true : false
 
         if(this.isMuted) this.gain.gain.setValueAtTime(0, Tone.context.currentTime)
         else this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
 
-        this.muteBtn.classList[this.isMuted ? 'add' : 'remove']('active')
+        this.muteBtnDOM.classList[this.isMuted ? 'add' : 'remove']('active')
+    }
+
+    get holdEnabled() { return this._holdEnabled }
+    set holdEnabled(hold) { 
+
+        console.log('hold', )
+
+        // for(let n of Keyboard.activeNotes) hold ? this.instrument.triggerNote(n) : this.instrument.releaseNote(n)
+
+        this._holdEnabled = hold
+    }
+
+    /** Triggers the instruments note */
+    triggerNote(note, time) {
+
+        if(this.holdEnabled) return
+
+        this.instrument.triggerNote(note, time)
+    }
+
+    /** Stops the instruments note */
+    releaseNote(note, time) {
+
+        if(this.holdEnabled) return
+
+        this.instrument.releaseNote(note, time)
     }
 
     /** Adds a node to the node chain */
@@ -99,7 +140,6 @@ export class Track {
 
         this.connectNodeChain()
     }
-
 
     /** Connects all nodes in a chain */
     connectNodeChain() {
@@ -164,7 +204,7 @@ export class Track {
 
         if(this.instrument) this.instrument.destroy()
 
-        this.muteBtn.remove()
+        this.muteBtnDOM.remove()
     }
 
     serializeIn(o) {

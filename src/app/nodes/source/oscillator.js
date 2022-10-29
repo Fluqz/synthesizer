@@ -114,9 +114,6 @@ export class Oscillator extends Instrument {
 
         this.setVolume(1)
 
-        console.log('state', this.instance.state)
-        if(this.instance.state == 'stopped') this.instance.start(time)
-
         this.isPlaying = true
     }
 
@@ -135,16 +132,8 @@ export class Oscillator extends Instrument {
         console.log('STOP', note)
 
         this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
-        this.volume = 0
 
-        this.gain.gain.linearRampToValueAtTime(this.volume, Tone.context.currentTime + this.releaseTime)
-
-        // window.clearTimeout(this.TO)
-        // this.TO = window.setTimeout(() => {
-            
-        //     this.instance.stop(Tone.context.currentTime)
-
-        // }, this.releaseTime + .01)
+        this.gain.gain.linearRampToValueAtTime(0, Tone.context.currentTime + this.releaseTime)
     }
 
     connect(n) {

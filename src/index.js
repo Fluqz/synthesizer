@@ -93,6 +93,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
     // Arpeggiator
     const arpeggiator = document.querySelector('#arpeggiator')
 
+    arpeggiator.querySelector('input').checked = false
     arpeggiator.addEventListener('change', (e) => {
 
         keyboard.toggleArpMode(e.target.checked)

@@ -19,15 +19,15 @@ export class Instrument extends Node {
     /** On Key down */
     triggerNote(note, time) {
 
-        if(G.debug) console.log(`Instrument - Trigger | note: ${this.note} octave: ${this.octave}`)
+        if(G.debug) console.log(`Instrument - Trigger | note: ${note}`)
 
         this.onTrigger.next(this)
     }
 
     /** On Key up */
-    releaseNote(note) {
+    releaseNote(note, time) {
 
-        if(G.debug) console.log(`Instrument - Release | note: ${this.note} octave: ${this.octave}`)
+        if(G.debug) console.log(`Instrument - Release | note: ${note}`)
 
         this.onRelease.next(this)
     }

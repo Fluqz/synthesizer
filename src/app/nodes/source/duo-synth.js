@@ -31,7 +31,7 @@ export class DuoSynth extends Instrument {
         
 
         this.frequency = options.frequency ? options.frequency : 300
-        this.volume = options.volume ? options.volume : 1
+        this.volume = options.volume ? options.volume : .5
         this.detune = options.detune ? options.detune : 0
         this.phase = options.phase ? options.phase : 0
 
@@ -58,11 +58,6 @@ export class DuoSynth extends Instrument {
         let phaseKnob = new Knob('phase', this.phase, 0, 1)
         this.dom.appendChild(phaseKnob.dom)
         phaseKnob.onChange.subscribe(v => this.setPhase(v))
-
-        // this.setFrequency(this.frequency)
-        // this.setVolume(this.volume)
-        // this.setDetune(this.detune)
-        // this.setPhase(this.phase)
     }
 
     setFrequency(f) {
@@ -81,7 +76,9 @@ export class DuoSynth extends Instrument {
 
         this.detune = d
 
-        this.instance.detune.setValueAtTime(this.detune, Tone.context.currentTime)
+        // this.instance.detune.setValueAtTime(this.detune, Tone.context.currentTime)
+
+        console.log('set', d)
     }
 
 
@@ -94,33 +91,26 @@ export class DuoSynth extends Instrument {
 
     triggerNote(note, time) {
 
-        // this.gain.gain.setValueAtTime(this.volume, 0)
-        // this.gain.gain.value = this.volume
+        time = time == undefined ? Tone.context.currentTime : time
 
-        // console.log('trigger', note, Keyboard.activeNotes)
-
-        // this.instance.detune = 50
-        // this.instance.harmonicity = 50
-
-        // setInterval(() => {
-            
-        //     this.instance.detune += 1
-        //     console.log('detune', this.instance.detune)
-
-        // }, 400)
+        super.triggerNote(note, time)
 
         this.setFrequency(note)
 
         this.setVolume(this.volume)
 
-        this.instance.triggerAttackRelease(note, time)
+        this.instance.triggerAttackRelease(note, 2000)
     }
 
-    releaseNote(note) {
+    releaseNote(note, time) {
 
         // console.log('release')
 
-        this.instance.triggerRelease(note)
+        time = time == undefined ? Tone.context.currentTime : time
+
+        super.releaseNote(note, time)
+
+        this.instance.triggerRelease(note, time)
     }
 
     connect(n) {

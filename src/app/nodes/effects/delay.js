@@ -29,9 +29,9 @@ export class Delay extends Effect {
         this.knobs.push(wetKnob)
         
         this.setTime(this.time)
-        let timeKnob = new Knob('Time', this.time, 0, 20)
+        let timeKnob = new Knob('Time', this.time, 0, 1)
         this.dom.appendChild(timeKnob.dom)
-        // timeKnob.onChange.subscribe(v => this.setTime(v))
+        timeKnob.onChange.subscribe(v => this.setTime(v))
         this.knobs.push(timeKnob)
 
         this.setFeedback(this.feedback)
@@ -45,7 +45,7 @@ export class Delay extends Effect {
 
         this.time = t
 
-        this.instance.delayTime.setValueAtTime(this.time, Tone.context.currentTime)
+        this.instance.delayTime.linearRampToValueAtTime(this.time, Tone.context.currentTime)
     }
 
     setFeedback(f) {

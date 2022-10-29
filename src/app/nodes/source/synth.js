@@ -102,11 +102,11 @@ export class Synth extends Instrument {
         this.instance.triggerAttackRelease(note, time)
     }
 
-    releaseNote(note) {
+    releaseNote(note, time) {
 
         console.log('release')
 
-        this.instance.triggerRelease(note)
+        this.instance.triggerRelease(note, time)
         // this.gain.gain.linearRampToValueAtTime(0, this.releaseTime)
     }
 

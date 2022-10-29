@@ -132,27 +132,39 @@ export const keyVisualizer = (p5) => {
         //     Math.random() * Math.max(G.w, G.h)
         // )
 
+        // CIRCLES
+
+        let startSize = (G.w / 10)
+        let endSize = (G.w / 7)
         
         if(Keyboard.activeNotes.length > 0) {
 
-            let i = 1
+            let i = Keyboard.activeNotes.length
             for(let n of Keyboard.activeNotes) {
 
                 let t
                 if(!noteAnimationMap.has(n)) {
-                    t = new Tween((G.w / 10) * i, (G.w / 7) * i, 10, 'increase')
+                    t = new Tween(startSize * i, endSize * i, 10, 'increase')
                     noteAnimationMap.set(n, t)
                 }
                 else t = noteAnimationMap.get(n)
 
-                p5.noFill()
-                p5.stroke('#fefefe')
-                p5.strokeWeight(5)
+                // p5.noFill()
+                // p5.stroke('#fefefe')
+                // p5.strokeWeight(5)
+
+                p5.noStroke()
+                // p5.fill('#'+
+                //     (10 * (i+1)).toString() +
+                //     (10 * (i+1)).toString() +
+                //     (7 * (i+1)).toString() + '88')
+                p5.fill('#ffffff66')
+
                 p5.circle(G.w / 2, G.h / 2, t.current)
 
                 t.update()
 
-                i++
+                i--
             }
         }
 
@@ -174,18 +186,53 @@ export const keyVisualizer = (p5) => {
         // p5.noStroke()
         // p5.circle(G.w / 2, G.h / 2, (G.w / 10) * Keyboard.activeNotes.length - 3, (G.h / 10) * Keyboard.activeNotes.length - 3)
 
+        // DOTS
         for(let n of Keyboard.activeNotes) {
 
-            for(let i = 0; i < 50; i++) {
+            for(let i = 0; i < 200; i++) {
 
                 // p5.fill('#fea5caff')
                 p5.fill('#fea5ca')
                 p5.noStroke()
-                p5[Math.random() > .5 ? 'circle' : 'rect'](
+
+                // p5[Math.random() > .5 ? 'circle' : 'rect'](
+                p5['circle'](
                     Math.random() * G.w,
                     Math.random() * G.h,
                     Math.random() * 5
                 )
+            }
+        }
+
+        // Electric fuzz
+        // for(let n of Keyboard.activeNotes) {
+        if(Keyboard.activeNotes.length > 0) {
+
+            let x1 = G.w / 2
+            let y1 = G.h / 2
+            let x2
+            let y2
+            let nx
+            let ny
+            let length = 1
+
+
+            let amount = (Math.random() * 20 + 20) * Keyboard.activeNotes.length
+            for(let i = 0; i < amount; i++) {
+
+                length = (Math.random() * 10 + 2) * (Keyboard.activeNotes.length / 2)
+                nx = (Math.random() * 2) - 1
+                ny = (Math.random() * 2) - 1
+
+                x2 = x1 + (nx * length)
+                y2 = y1 + (ny * length)
+
+                p5.stroke('#fea5ca')
+                p5.strokeWeight(3)
+                p5.line(x1, y1, x2, y2)
+
+                x1 = x2
+                y1 = y2
             }
         }
     }

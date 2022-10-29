@@ -27,10 +27,14 @@ export class Knob {
      */
     turnEndlessly
 
-    /** HTML element of knob */
+    /** HTML element of wrapper */
     dom
+    /** HTML element of knob */
+    knobDOM
     /** HTML elements rect values. (x, y, width, height, offsets, ...) */
     clientRect
+    /** HTML element for value */
+    valueDOM
 
     /** Center position of HTML element { x, y } */
     centerPosition
@@ -89,16 +93,30 @@ export class Knob {
         this.isKeyDown = false
 
         this.dom = document.createElement('div')
-        this.dom.classList.add('knob')
+        this.dom.classList.add('knob-wrapper')
         this.dom.title = this.name
+
+        this.knobDOM = document.createElement('div')
+        this.knobDOM.classList.add('knob')
+        this.knobDOM.title = this.name
+        this.dom.append(this.knobDOM)
+
         const pointer = document.createElement('div')
         pointer.classList.add('knob-pointer')
-        this.dom.append(pointer)
+        this.knobDOM.append(pointer)
 
-        this.dom.addEventListener('pointerdown', this.mousedownEvent = this.onMouseDown.bind(this))
+        this.valueDOM = document.createElement('div')
+        this.valueDOM.classList.add('knob-value')
+        this.knobDOM.append(this.valueDOM)
+
+        let text = document.createElement('div')
+        text.innerHTML = this.name
+        this.dom.append(text)
+
+        this.knobDOM.addEventListener('pointerdown', this.mousedownEvent = this.onMouseDown.bind(this))
         document.addEventListener('pointermove', this.mousemoveEvent = this.onMouseMove.bind(this))
         document.addEventListener('pointerup', this.mouseupEvent = this.onMouseUp.bind(this))
-        this.dom.addEventListener('touchstart', this.touchstartEvent = this.onTouchStart.bind(this))
+        this.knobDOM.addEventListener('touchstart', this.touchstartEvent = this.onTouchStart.bind(this))
         document.addEventListener('touchmove', this.touchmoveEvent = this.onTouchMove.bind(this))
         document.addEventListener('touchend', this.touchendEvent = this.onTouchEnd.bind(this))
 
@@ -126,7 +144,7 @@ export class Knob {
 
         this.value = M.clamb(this.min, this.max, this.value)
 
-        this.dom.innerHTML = this.value.toFixed(2)
+        this.valueDOM.innerText = this.value.toFixed(2)
 
         this.angle = this.value / ((this.max - this.min) / (Math.PI * 2))
 
@@ -146,9 +164,9 @@ export class Knob {
     /** Update rotation of HTML element from angle. */
     rotateDOM() {
 
-        this.dom.style.transform = 'rotate('+Math.round(this.angle*(180/Math.PI))+'deg)';
+        this.knobDOM.style.transform = 'rotate('+Math.round(this.angle*(180/Math.PI))+'deg)';
 
-        // window.setTimeout(() => { this.dom.innerHTML = '' }, 200)
+        // window.setTimeout(() => { this.knobDOM.innerHTML = '' }, 200)
     }
 
     /** On 'mousedown' event callback */
@@ -163,7 +181,7 @@ export class Knob {
 
         this.mousePosition = { x: e.clientX, y: e.clientY }
 
-        this.clientRect = this.dom.getBoundingClientRect()
+        this.clientRect = this.knobDOM.getBoundingClientRect()
 
         this.centerPosition = { x: this.clientRect.x + (this.clientRect.width / 2), y: this.clientRect.y + (this.clientRect.height / 2) }
 
@@ -232,10 +250,10 @@ export class Knob {
     /** Destroy knob */
     destroy() {
 
-        this.dom.removeEventListener('pointerdown', this.mousedownEvent)
+        this.knobDOM.removeEventListener('pointerdown', this.mousedownEvent)
         document.removeEventListener('pointermove', this.mousemoveEvent)
         document.removeEventListener('pointerup', this.mouseupEvent)
-        this.dom.removeEventListener('touchstart', this.touchstartEvent)
+        this.knobDOM.removeEventListener('touchstart', this.touchstartEvent)
         document.removeEventListener('touchmove', this.touchmoveEvent)
         document.removeEventListener('touchend', this.touchendEvent)
 
