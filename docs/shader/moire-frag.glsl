@@ -13,6 +13,10 @@ precision mediump float;
 uniform vec2 u_resolution;
 uniform float u_time;
 uniform vec2 u_mouse;
+uniform float u_color1;
+uniform float u_color2;
+uniform float u_color3;
+uniform float u_activeNotes;
 
 
 vec2 rotate2D (vec2 _st, float _angle) {
@@ -90,6 +94,6 @@ void main (void) {
     // but you can use whatever design you want.
     // gl_FragColor = vec4(vec3(concentricCircles(st, vec2(0.0,0.0), 4.5, 2.0),concentricCircles(st, vec2(0.0,0.0), 3.0, 3.3),concentricCircles(st, vec2(0.0,0.0), 1.0, 3.0)),1.0) - vec4(0.4, 0.4, 0.4, 0.4);
     // gl_FragColor = vec4(vec3(concentricCircles(st, vec2(0.0,0.0), 1.0, 1.0),concentricCircles(st, vec2(0.0,0.0), 1.0, 1.0),concentricCircles(st, vec2(0.0,0.0), 1.0, 1.0)), 1.0);
-    gl_FragColor = vec4(vec3(concentricCircles(st, vec2(0.0,0.0), 0.9, 0.8),concentricCircles(st, vec2(0.1,1.0), 1.0, 1.0),concentricCircles(st, vec2(0.0,0.0), 0.6, 1.0)),1.0) - vec4(0.0, 0.0, 0.0, 0.0);
+    gl_FragColor = vec4(vec3(concentricCircles(st, vec2(u_activeNotes,u_color2), u_color1, 0.8),concentricCircles(st, vec2(u_color3,1.0), 1.0, 1.0),concentricCircles(st, vec2(u_color2,u_color1), u_color2, 1.0)),u_color1) - vec4(0.0, 0.0, 0.0, 0.0);
 
 }

@@ -104,8 +104,6 @@ export class Oscillator extends Instrument {
 
         time = time == undefined ? Tone.context.currentTime : time
 
-        console.log('PLAY', note)
-
         window.clearTimeout(this.TO)
 
         this.gain.gain.cancelScheduledValues(time)
@@ -128,8 +126,6 @@ export class Oscillator extends Instrument {
             this.triggerNote(Keyboard.activeNotes[Keyboard.activeNotes.length-1])
             return
         }
-
-        console.log('STOP', note)
 
         this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
 

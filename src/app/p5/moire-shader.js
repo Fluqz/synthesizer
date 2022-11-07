@@ -1,6 +1,9 @@
 import { Keyboard } from "../keyboard"
 import { G } from "../core/globals"
 import { Grid } from "../core/grid"
+import { M } from "../core/math"
+
+import * as Tone from 'tone'
 
 export const moireShader = (p5) => {
 
@@ -9,7 +12,7 @@ export const moireShader = (p5) => {
     let grid
     let oldCellPos
     let currentCellPos = { x: 200, y: 200 }
-    let newCellPos
+    let newCellPos = { x: 0, y: 0 }
     let increment = 40
     let isAnimating = false
     let IVID
@@ -71,14 +74,21 @@ export const moireShader = (p5) => {
         }
     })()
 
+
     p5.draw = () => {
 
-        p5.clear()
+        // p5.clear()
 
         p5.shader(shader)
 
         shader.setUniform("u_resolution", [G.w, G.h])
         shader.setUniform("u_time", p5.millis() / 1000.0)
+        shader.setUniform("u_color1", M.map(-1, 1, 0.5, 1, Math.sin(Tone.context.currentTime)))
+        shader.setUniform("u_color2", M.map(-1, 1, 0, 1, Math.sin(Tone.context.currentTime+2)))
+        shader.setUniform("u_color3", M.map(-1, 1, 0, 1, Math.cos(Tone.context.currentTime+5)))
+        shader.setUniform("u_activeNotes", M.map(0, 8, 0, 1, Keyboard.activeNotes.length))
+        // console.log(M.map(-1, 1, 0.99, 1, Math.sin(Tone.context.currentTime)))
+
 
         if(true) {
 
@@ -161,7 +171,10 @@ export const moireShader = (p5) => {
                         currentCellPos.y = newCellPos.y
                     }
 
-                    shader.setUniform("u_mouse", [currentCellPos.x, currentCellPos.y])
+                    shader.setUniform("u_mouse", [
+                        M.map(0, G.w, -G.w / 2, G.w, currentCellPos.x), 
+                        M.map(0, G.h, -G.h / 2, G.h, currentCellPos.y)
+                    ])
 
                 }, interval)
             }

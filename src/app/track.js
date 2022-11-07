@@ -27,15 +27,17 @@ export class Track {
     /** Mute this track */
     isMuted
 
-    /** HTML Button for muting */
-    muteBtnDOM
-
     /** When enabled, the current instrument with current note/chord is played endlessly. */
     _holdEnabled
 
+    /** Allow arpegiator to play this tracks instrument. */
+    arpEnabled
+
+    /** HTML Button for muting */
+    muteBtnDOM
+
     /** HTML Button for hold */
     holdBtnDOM
-
 
     mouseDownEvent
 
@@ -46,7 +48,7 @@ export class Track {
         this.instrument = instrument
         this.gain = new Tone.Gain(this._volume)
         this.isMuted = false
-        this.holdEnabled = false
+        this._holdEnabled = false
 
         this.dom = document.createElement('div')
         this.dom.classList.add('track')
@@ -80,7 +82,7 @@ export class Track {
 
         this.connectNodeChain()
 
-        this.addNode(Keyboard.nodes.effects.delay())
+        // this.addNode(Keyboard.nodes.effects.delay())
     }
 
     get volume() { return this._volume }
@@ -110,7 +112,13 @@ export class Track {
 
         // for(let n of Keyboard.activeNotes) hold ? this.instrument.triggerNote(n) : this.instrument.releaseNote(n)
 
-        this._holdEnabled = hold
+        this.holdBtnDOM.classList[hold == true ? 'add' : 'remove']('active')
+
+        console.log('hold', this._holdEnabled)
+
+        // this._holdEnabled = hold
+
+        if(!hold) this.instrument.releaseNote()
     }
 
     /** Triggers the instruments note */
@@ -207,6 +215,7 @@ export class Track {
         this.muteBtnDOM.remove()
     }
 
+
     serializeIn(o) {
 
         if(o['mute']) this.mute(o['mute'])
@@ -244,10 +253,6 @@ export class Track {
             volume: this.volume
         }
     }
-
-
-
-
 
 
     onMouseDown(e) {

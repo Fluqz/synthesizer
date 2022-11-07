@@ -27,9 +27,13 @@
     width: auto;
     height: auto;
 
-    /* mix-blend-mode: difference; */
+    mix-blend-mode: difference;
 
 }
+/* 
+*:hover {
+    mix-blend-mode: normal;
+} */
 
 body {
     background-color: var(--c-b);
@@ -156,7 +160,10 @@ html {
 .track .track-options {
 
     display: inline-flex;
+    align-items: center;
 
+    background-color: var(--c-y);
+    color: var(--c-b);
 }
 
 
@@ -367,7 +374,7 @@ html {
     background-color: var(--c-g);
     color: var(--c-w);
 
-    font-size: 0.6rem;
+    font-size: 0.8rem;
 
     overflow: hidden;
 /* 
@@ -405,4 +412,11 @@ html {
     line-height: inherit;
 
     text-align: center;
+}
+
+
+
+.shaded {
+
+    
 }

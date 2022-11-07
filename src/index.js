@@ -10,7 +10,9 @@ import { Knob } from './app/view/knob'
 import { G } from './app/core/globals'
 import { moireShader } from './app/p5/moire-shader'
 import { keyVisualizer } from './app/p5/background'
+import { sinewave } from './app/p5/sine-wave'
 import { envelope } from './app/p5/envelope'
+import { worms } from './app/p5/worms'
 import { Dropdown } from './app/view/dropdown'
 
 
@@ -181,11 +183,15 @@ document.addEventListener('DOMContentLoaded', (e) => {
 
 
 
-    let p5Shader = new P5(moireShader)
+    new P5(moireShader)
 
-    let p5Background = new P5(keyVisualizer)
+    // new P5(keyVisualizer)
 
-    // let p5Envelope = new P5(envelope)
+    // new P5(envelope)
+
+    // new P5(sinewave)
+
+    new P5(worms)
 
 
 

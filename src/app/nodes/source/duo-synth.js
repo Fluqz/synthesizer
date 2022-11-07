@@ -110,7 +110,8 @@ export class DuoSynth extends Instrument {
 
         super.releaseNote(note, time)
 
-        this.instance.triggerRelease(note, time)
+        if(note == undefined) this.instance.releaseAll(time) 
+        else this.instance.triggerRelease(note, time)
     }
 
     connect(n) {
