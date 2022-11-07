@@ -100,17 +100,21 @@ export const worms = (p5) => {
                             1,
                             10,
                             // '#'+Math.floor(Math.random()*16777215).toString(16),
-                            '#456678',
+                            '#fed33a',
                             (px, py, nx, ny, vs, c) => {
 
                                 // p5.stroke(c)
                                 // p5.strokeWeight(Math.random() * 3)
                                 // p5.line(px, py, nx, ny)
 
-                                p5.fill(c+'66')
+
+                                p5.fill('#990099')
+                                p5.noStroke()
+                                p5.circle(nx+1, ny, 2)
+
+                                p5.fill(c)
                                 p5.noStroke()
                                 p5.circle(nx, ny, 2)
-
                                 // for(let i = 1; i < vs.length; i++) {
 
                                 //     p5.stroke(c)
