@@ -1,0 +1,124 @@
+
+<script lang="ts">
+    import { onMount } from "svelte";
+    import type { Key } from "../key";
+
+
+    /** Key instance passed down from Synthesizer */
+    export let key: Key
+
+    /** Event callback for keydown, pointerdown */
+    const onTrigger = () => {
+        key.trigger()
+        key = key
+    }
+    /** Event callback for keyup, pointerup, pointerleave */
+    const onRelease = () => {
+        key.release()
+        key = key
+    }
+
+    /** Keydown event */
+    const onKeyDown = (e) => {
+
+        if(!e) return
+        if(e.repeat) return
+
+        if(key.mapping === e.key || key.mapping === e.key.toLowerCase()) {
+
+            onTrigger()
+        }
+
+        key = key
+    }
+
+    /** Keyup event */
+    const onKeyUp = (e) => {
+
+        // if(G.debug) console.log('keyUp: key', e.key)
+
+        if(!e) return
+
+        if(key.mapping === e.key || key.mapping === e.key.toLowerCase()) {
+
+            onRelease()
+        }
+
+        key = key
+    }
+
+    // On document ready
+    onMount(() => {
+
+        // Events
+        document.addEventListener('keydown', onKeyDown, false)
+        document.addEventListener('keyup', onKeyUp, false)
+
+        // On destroy
+        return () => {
+
+            document.removeEventListener('keydown', onKeyDown, false)
+            document.removeEventListener('keyup', onKeyUp, false)
+        }
+    })
+
+</script>
+
+
+<div 
+    class="key" 
+    class:black={key.note[1] == '#' || key.note[1] === 'b'}
+    class:pressed={key.isPressed} 
+    on:pointerdown={onTrigger} 
+    on:pointerup={onRelease} 
+    on:pointerleave={onRelease}
+    style={key.isPressed ? 'transform: scale(1.5); transform-origin: center;' : ''}>
+    
+
+    <div class="key-mapping">{@html key.mapping.toLocaleUpperCase() + '<br/>' }</div>
+
+    <div class="key-note">{ key.note + (key.octave ? key.octave.toString() : '') }</div>
+
+</div>
+
+
+
+<style>
+
+.key {
+
+    display: inline-block;
+    width: 3%;
+    height: 100%;
+
+    background-color: var(--c-w);
+
+    margin: 0px 1px;
+
+    font-size: .7rem;
+    color: var(--c-w);
+    text-align: center;
+
+    padding-top: 5px;
+    /* border-radius: 3px; */
+
+    transition: .2s transform;
+    z-index: 0;
+
+    /* mix-blend-mode: difference; */
+}
+.key.black {
+    background-color: var(--c-y);
+}
+.key .key-mapping {
+}
+.key .key-note {
+}
+.key.pressed {
+
+    background-color: var(--c-o);
+    z-index: 1;
+    mix-blend-mode: unset;
+}
+
+</style>
