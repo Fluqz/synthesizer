@@ -42,7 +42,7 @@ export const moireShader = (p5) => {
         p5.shader(shader)
 
         shader.setUniform("u_resolution", [G.w, G.h])
-        shader.setUniform("u_time", (p5.millis() / 100.0))
+        shader.setUniform("u_time", (p5.millis() / 200.0))
         // shader.setUniform("u_color1", M.map(-1, 1, 0, 1, Math.cos((Tone.context.currentTime * .5))))
         // shader.setUniform("u_color2", M.map(-1, 1, 0, 1, Math.sin((Tone.context.currentTime) + 2)))
         // shader.setUniform("u_color3", M.map(-1, 1, 0, 1, Math.cos((Tone.context.currentTime) + 5)))

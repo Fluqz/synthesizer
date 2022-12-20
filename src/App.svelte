@@ -25,6 +25,7 @@
     onMount(() => {
     
         console.log('MOUNT')
+        
 
       G.w = window.innerWidth
       G.h = window.innerHeight

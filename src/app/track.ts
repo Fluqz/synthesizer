@@ -15,9 +15,6 @@ export class Track {
     /** Instrument used */
     public instrument: Instrument
 
-    /** ADSR */
-    public envelope: Tone.AmplitudeEnvelope
-
     /** Array of added nodes. Nodes are chained in array order  */
     public nodes: Node[]
 
@@ -36,7 +33,6 @@ export class Track {
         this.nodes = []
         this.instrument = instrument
         this.gain = new Tone.Gain(this._volume)
-        this.envelope = new Tone.AmplitudeEnvelope()
         this.isMuted = false
         this._holdEnabled = false
 
@@ -122,25 +118,21 @@ export class Track {
     /** Connects all nodes in a chain */
     connectNodes() {
 
-        let nodes: Tone.InputNode[] = []
+        let nodes = []
 
         if(this.instrument) {
 
             this.instrument.disconnect()
 
-            this.instrument.connect(this.envelope)
+            for(let n of this.nodes) {
 
-            // for(let n of this.nodes) {
+                n.disconnect()
+                nodes.push(n.instance)
+            }
 
-            //     n.disconnect()
-            //     nodes.push(n.instance)
-            // }
+            nodes.push(this.gain)
 
-            // nodes.push(this.gain)
-
-
-            // this.envelope.chain(...nodes)
-            this.envelope.toDestination()
+            this.instrument.chain(nodes)
         }
     }
 
