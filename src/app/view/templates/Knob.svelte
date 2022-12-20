@@ -3,16 +3,15 @@
 
 <script lang="ts">
 
-    import { fromEvent, Subject } from "rxjs"
+    import { fromEvent, Observable, Subject } from "rxjs"
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import { M } from "../../core/math"
 
 
-
+    /** Name of Knob */
     export let name: string
     /** Initial value */
     export let value: number = 0
-
     /** Minimum possible value */
     export let min: number = 0
     /** Maximum possible value */
@@ -20,15 +19,12 @@
     /** Division of (max - min) / division */
     export let division: number = 100
 
-
-
     /** Wrapper dom element */
     let dom: HTMLElement
 
     let knobDOM: HTMLElement
 
-    let clientRect: any
-
+    let clientRect: DOMRect
 
     
     /** Center position of HTML element { x, y } */
@@ -48,9 +44,7 @@
     /** Is key pressed down */
     let isKeyDown: Boolean = false
     
-    /** Subscribeable observable, fired when value is changing */
-    let onChange: Subject<number> = new Subject()
-
+    /** Output emitter */
     let dispatch = createEventDispatcher()
 
 
@@ -61,7 +55,7 @@
 
 
     /** Set value between 0 - 1 */
-    const setValue = (v) => {
+    const setValue = (v: number) => {
         
         value = v
 
@@ -71,7 +65,6 @@
 
         angle = value / ((max - min) / (Math.PI * 2))
 
-        onChange.next(value)
         dispatch('onChange', value)
     }
 
@@ -152,7 +145,6 @@
 
         isKeyDown = false
     }
-    let wheelDelta = 0
     const onScroll = (e) => {
 
         e.preventDefault()
@@ -170,10 +162,10 @@
     document.addEventListener('keydown', onKeyDown)
     document.addEventListener('keyup', onKeyUp)
 
-
+    let wheelObservable: Observable
     onMount(() => {
 
-        const wheelObservable = fromEvent(dom, 'wheel', { bubbles: false })
+        wheelObservable = fromEvent(dom, 'wheel', { bubbles: false })
         wheelObservable.subscribe(onScroll)
     })
 
@@ -187,7 +179,7 @@
         document.removeEventListener('keydown', onKeyDown)
         document.removeEventListener('keyup', onKeyUp)
 
-        // if(wheelObservable) wheelObservable.unsubscribe()
+        if(wheelObservable) wheelObservable.unsubscribe()
     })
 
 </script>

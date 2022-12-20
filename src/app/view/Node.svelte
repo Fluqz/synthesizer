@@ -42,11 +42,12 @@
             {#if n === p}
                   
                 <Knob
-                name={p.charAt(0).toUpperCase() + p.slice(1)}
-                value={node[p]}
-                min={0}
-                max={1}
-                on:onChange={(e) => node[p] = e.detail} />
+                    name={p.charAt(0).toUpperCase() + p.slice(1)}
+                    value={node[p]}
+                    min={0}
+                    max={1}
+                    on:onChange={(e) => node[p] = e.detail} 
+                />
   
             {/if}
 
