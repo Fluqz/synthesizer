@@ -1,53 +1,33 @@
 import * as Tone from 'tone'
-import { Knob } from '../../view/templates/knob';
+import type { Node } from '../node'
 
-import { Effect } from './effect';
+export class Distortion extends Tone.Distortion implements Node {
 
-
-export class Distortion extends Effect {
-
-    /** Amound of distortion */
-    private _gain: number
+    enabled: boolean
 
     declare public instance: Tone.Distortion
 
-    constructor(wet, gain) {
+    constructor(wet, distortion) {
 
-        super('distortion', wet)
+        super(distortion)
 
-        this.instance = new Tone.Distortion(this.gain)
+        this.enabled = true
 
-        this.gain = gain
-
-
-        this.wet = this.wet
+        this.distortion = distortion
     }
-
     
-    get gain() { return this._gain}
-    set gain(g) {
-
-        this._gain = g
-
-        this.instance.distortion = this._gain
-    }
-
     serializeIn(o) {
 
-        if(o['name']) this.name = o['name']
         if(o['enabled']) this.enabled = o['enabled']
-        if(o['wet']) this.wet = o['wet']
-        if(o['gain']) this.gain = o['gain']
+        if(o['distortion']) this.distortion = o['distortion']
     }
 
     serializeOut() {
 
         return {
 
-            name: this.name,
             enabled: this.enabled,
-            wet: this.wet,
-            gain: this.gain
+            distortion: this.distortion
         }
     }
 }

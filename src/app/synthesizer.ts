@@ -1,5 +1,6 @@
 
 import * as Tone from 'tone'
+import type { Instrument, InstrumentOptions } from 'tone/Tone/instrument/Instrument'
 
 import * as RxJs from 'rxjs'
 
@@ -12,11 +13,10 @@ import { Tremolo } from './nodes/effects/tremolo'
 import { Reverb } from './nodes/effects/reverb'
 import { Chorus } from './nodes/effects/chorus'
 import { Distortion } from './nodes/effects/distortion'
-import { Oscillator } from './nodes/source/oscillator'
+// import { Oscillator } from './nodes/source/oscillator'
 import { Synth } from './nodes/source/synth'
 import { Track } from './track'
 import { DuoSynth } from './nodes/source/duo-synth'
-import type { Instrument } from './nodes/source/instrument'
 
 /** Synthesizer */
 export class Synthesizer {
@@ -101,11 +101,11 @@ export class Synthesizer {
             delay: () => { return new Delay(1, .12, .8) },
             tremolo: () => { return new Tremolo(1, 5, 1) },
             distortion: () => { return new Distortion(1, .5) },
-            chorus: () => { return new Chorus(1, 4, 20, 1, 1) },
+            chorus: () => { return new Chorus(1, 4, 20, 1) },
         },
         source: {
 
-            oscillator: () => { return new Oscillator() },
+            // oscillator: () => { return new Oscillator() },
             synth: () => { return new Synth() },
             duosynth: () => { return new DuoSynth() },
         }
@@ -232,7 +232,7 @@ export class Synthesizer {
     }
 
     /** Add a instrument to the synthesizer. */
-    addTrack(track: Track, instrument?: Instrument) {
+    addTrack(track: Track, instrument?: Instrument<InstrumentOptions>) {
 
         this.stopAll()
 

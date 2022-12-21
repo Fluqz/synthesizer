@@ -1,16 +1,15 @@
 import * as Tone from 'tone'
-import { Knob } from '../../view/templates/knob';
-
-import { Node } from "../node";
-
+import type { Node } from '../node'
 
 
 /** LFO filter node */
-export class LFOFilter extends Node {
+export class LFOFilter extends Tone.LFO implements Node {
+    
+    enabled: boolean
 
-    constructor(wet, time, feedback) {
+    constructor() {
 
-        super('lfo')
+        super()
     }
 
     serializeIn(o) {
@@ -22,7 +21,6 @@ export class LFOFilter extends Node {
 
         return {
 
-            name: this.name,
             enabled: this.enabled,
         }
     }

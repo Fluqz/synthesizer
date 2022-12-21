@@ -1,7 +1,7 @@
 import * as Tone from 'tone'
+import type { Instrument, InstrumentOptions } from 'tone/Tone/instrument/Instrument'
 import { Synthesizer } from "./synthesizer"
-import { Node } from './nodes/node'
-import type { Instrument } from './nodes/source/instrument'
+
 
 
 export class Track {
@@ -13,10 +13,10 @@ export class Track {
     private _volume: number
 
     /** Instrument used */
-    public instrument: Instrument
+    public instrument: Instrument<InstrumentOptions>
 
     /** Array of added nodes. Nodes are chained in array order  */
-    public nodes: Node[]
+    public nodes: Tone.ToneAudioNode[]
 
     /** Mute this track */
     public isMuted: boolean
@@ -27,7 +27,7 @@ export class Track {
     /** Allow arpegiator to play this tracks instrument. */
     public arpEnabled: boolean
 
-    constructor(instrument?: Instrument) {
+    constructor(instrument?: Instrument<InstrumentOptions>) {
 
         this._volume = .7
         this.nodes = []
@@ -45,12 +45,12 @@ export class Track {
         // this.addNode(Synthesizer.nodes.effects.delay())
     }
 
-    setInstrument(instrument: Instrument) {
+    setInstrument(instrument: Instrument<InstrumentOptions>) {
 
         if(this.instrument && this.instrument != instrument) {
 
             this.instrument.disconnect()
-            this.instrument.destroy()
+            // this.instrument.destroy()
         }
 
         this.instrument = instrument
@@ -84,16 +84,14 @@ export class Track {
 
         // this._holdEnabled = hold
 
-        if(!hold) this.instrument.releaseNote()
+        // if(!hold) this.instrument.releaseNote()
     }
 
 
     /** Triggers the instruments note */
     triggerNote(note: string) {
 
-        if(this.holdEnabled) return
-
-        this.instrument.triggerNote(note)
+        this.instrument.triggerAttack(note, Tone.context.currentTime)
     }
 
     /** Stops the instruments note */
@@ -101,16 +99,16 @@ export class Track {
 
         if(this.holdEnabled) return
 
-        this.instrument.releaseNote(note)
+        this.instrument.triggerRelease(note, Tone.context.currentTime)
     }
 
 
     /** Adds a node to the node chain */
-    addNode(n: Node) {
+    addNode(n: Tone.ToneAudioNode) {
 
         this.nodes.push(n)
 
-        n.onDelete.subscribe(this.removeNode.bind(this))
+        // n.onDelete.subscribe(this.removeNode.bind(this))
 
         this.connectNodes()
     }
@@ -118,7 +116,7 @@ export class Track {
     /** Connects all nodes in a chain */
     connectNodes() {
 
-        let nodes = []
+        let nodes: Tone.ToneAudioNode[] = []
 
         if(this.instrument) {
 
@@ -127,17 +125,17 @@ export class Track {
             for(let n of this.nodes) {
 
                 n.disconnect()
-                nodes.push(n.instance)
+                nodes.push(n)
             }
 
             nodes.push(this.gain)
 
-            this.instrument.chain(nodes)
+            this.instrument.connect(this.nodes[0])
         }
     }
 
     /** Remove a node from the node chain */
-    removeNode(n: Node) {
+    removeNode(n: Tone.ToneAudioNode) {
 
         let i = this.nodes.indexOf(n)
 
@@ -147,26 +145,24 @@ export class Track {
 
         this.nodes.splice(i, 1)
 
-        n.destroy()
-        
         this.connectNodes()
     }
 
 
-    connect(i: Node | Tone.ToneAudioNode) {
+    connect(i: Tone.ToneAudioNode) {
         
         if(this.nodes.length > 0) 
-            return this.nodes[this.nodes.length-1].connect(i instanceof Node ? i.instance : i)
+            return this.nodes[this.nodes.length-1].connect(i)
 
-        this.gain.connect(i instanceof Node ? i.instance : i)
+        this.gain.connect(i)
     }
 
-    disconnect(i: Node | Tone.ToneAudioNode) {
+    disconnect(i: Tone.ToneAudioNode) {
         
         if(this.nodes.length > 0) 
-            return this.nodes[this.nodes.length-1].disconnect(i instanceof Node ? i.instance : i)
+            return this.nodes[this.nodes.length-1].disconnect(i)
 
-        this.gain.disconnect(i instanceof Node ? i.instance : i)
+        this.gain.disconnect(i)
     }
 
 
@@ -174,7 +170,7 @@ export class Track {
 
         for(let i = this.nodes.length; i >= 0; i--) this.removeNode(this.nodes[i])
 
-        if(this.instrument) this.instrument.destroy()
+        // if(this.instrument) this.instrument.destroy()
     }
 
 
@@ -203,7 +199,10 @@ export class Track {
     serializeOut() {
 
         let nodes = []
-        for(let n of this.nodes) nodes.push(n.serializeOut())
+        for(let n of this.nodes) {
+
+            nodes.push(n.serializeOut())
+        } 
 
         return {
             muted: this.isMuted,

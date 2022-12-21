@@ -3,12 +3,9 @@
 <script lang="ts">
 
     import type { Node } from "../nodes/node";
-    import { Effect } from "../nodes/effects/effect";
-    import { Instrument } from "../nodes/source/instrument";
-    import { NodeInputsArray } from "../nodes/node-inputs";
     import Knob from "./templates/Knob.svelte";
 
-    export let node: Node
+    // export let node: Node
 
     // console.log('props', Object.getOwnPropertyNames(node.constructor.prototype), node.hasOwnProperty('wet'))
 
@@ -18,11 +15,11 @@
     // }
 
 
-    const getInstance = () => {
-        if(node instanceof Effect) return (node as Effect)
-        else if(node instanceof Instrument) return (node as Instrument)
-        return node
-    }
+    // const getInstance = () => {
+    //     if(node instanceof Effect) return (node as Effect)
+    //     else if(node instanceof Instrument) return (node as Instrument)
+    //     return node
+    // }
 
 </script>
 
@@ -34,7 +31,7 @@
 
     <div class="delete" on:click={node.delete}>x</div>
 
-
+<!-- 
     {#each NodeInputsArray as n}
 
         {#each Object.getOwnPropertyNames(getInstance().constructor.prototype) as p}
@@ -53,7 +50,7 @@
 
         {/each}
         
-    {/each}
+    {/each} -->
 
 
 </div>
