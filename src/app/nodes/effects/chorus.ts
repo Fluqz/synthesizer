@@ -9,6 +9,7 @@ import { Effect } from './effect'
 export class Chorus extends Effect {
 
     declare public instance: Tone.Chorus
+    
     /** Frequency of the LFO for modulating */
     _frequency
     /** Delay of the signal 2-20ms */
@@ -23,6 +24,8 @@ export class Chorus extends Effect {
         super('chorus', wet)
 
         this.instance = new Tone.Chorus(this.frequency, this.delayTime, this.depth)
+
+        this.last = this.first = this.instance
 
         this.wet = wet
         this.frequency = frequency

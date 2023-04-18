@@ -118,21 +118,33 @@ export class Track {
     /** Connects all nodes in a chain */
     connectNodes() {
 
-        let nodes = []
+        this.instrument.disconnect()
+        // this.gain.disconnect()
+
+        if(this.nodes.length == 0) return
 
         if(this.instrument) {
 
-            this.instrument.disconnect()
+            // this.instrument.disconnect()
 
-            for(let n of this.nodes) {
+            // for(let n of this.nodes) {
 
-                n.disconnect()
-                nodes.push(n.instance)
+            //     n.disconnect()
+            //     nodes.push(n.instance)
+            // }
+
+            // nodes.push(this.gain)
+
+            // console.log('chain nodes', nodes)
+            // this.instrument.chain(nodes)
+
+            this.instrument.connect(this.nodes[0].first)
+
+            for(let i = 0; i < this.nodes.length; i++) {
+
+                if(this.nodes[i + 1] != null)
+                    this.nodes[i].last.connect(this.nodes[i + 1].first)
             }
-
-            nodes.push(this.gain)
-
-            this.instrument.chain(nodes)
         }
     }
 
@@ -155,18 +167,12 @@ export class Track {
 
     connect(i: Node | Tone.ToneAudioNode) {
         
-        if(this.nodes.length > 0) 
-            return this.nodes[this.nodes.length-1].connect(i instanceof Node ? i.instance : i)
-
-        this.gain.connect(i instanceof Node ? i.instance : i)
+        this.gain.connect(i instanceof Node ? i.first : i)
     }
 
     disconnect(i: Node | Tone.ToneAudioNode) {
         
-        if(this.nodes.length > 0) 
-            return this.nodes[this.nodes.length-1].disconnect(i instanceof Node ? i.instance : i)
-
-        this.gain.disconnect(i instanceof Node ? i.instance : i)
+        this.gain.disconnect(i instanceof Node ? i.first : i)
     }
 
 

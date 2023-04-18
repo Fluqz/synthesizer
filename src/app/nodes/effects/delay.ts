@@ -20,6 +20,8 @@ export class Delay extends Effect {
 
         this.instance = new Tone.FeedbackDelay(this.delayTime, this.feedback)
 
+        this.last = this.first = this.instance
+
         this.wet = wet
         this.delayTime = delayTime ? delayTime : 3
         this.feedback = feedback ? feedback : .5

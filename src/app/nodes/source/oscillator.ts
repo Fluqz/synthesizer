@@ -2,6 +2,7 @@ import * as Tone from 'tone'
 import { Instrument } from './instrument';
 import { Knob } from '../../view/templates/knob';
 import { Synthesizer } from '../../synthesizer';
+import type { Node } from '../node';
 
 
 
@@ -9,6 +10,9 @@ import { Synthesizer } from '../../synthesizer';
 export class Oscillator extends Instrument {
 
     declare instance: Tone.Oscillator
+
+    public envelope: Tone.AmplitudeEnvelope
+
     /** Gain node */
     public gain
 
@@ -18,14 +22,9 @@ export class Oscillator extends Instrument {
     private _frequency
     /** Slight detuning of the note */
     private _detune
-    /** Offset of the wave */
-    private _phase
 
     /** Octave of oscillator */
     public octave = 2
-
-    /** Necessary release time to prevent clicking */
-    private releaseTime = .2
 
     /** Is the osc already playing */
     private isPlaying
@@ -37,13 +36,17 @@ export class Oscillator extends Instrument {
         super('oscillator')
 
         this.instance = new Tone.Oscillator(this.frequency)
+        this.envelope = new Tone.AmplitudeEnvelope()
         this.gain = new Tone.Gain(this.volume)
+
+        this.first = this.instance
+        this.last = this.gain
+
         this.isPlaying = false
 
         this.volume = volume ? volume : .7
         this.frequency = frequency ? frequency : 1
         this.detune = detune ? detune : .5
-        this.phase = phase ? phase : 0
 
         this.instance.start()
 
@@ -74,25 +77,13 @@ export class Oscillator extends Instrument {
         this.instance.detune.setValueAtTime(this._detune, Tone.context.currentTime)
     }
 
-    get phase() { return this._phase }
-    set phase(p) {
-
-        this._phase = p
-
-        // this.instance.phase.value = this.phase
-    }
-
     triggerNote(note) {
-
-        window.clearTimeout(this.TO)
-
-        this.gain.gain.cancelScheduledValues(Tone.context.currentTime)
 
         this.frequency = note
 
-        this.volume = 1
-
         this.isPlaying = true
+
+        this.envelope.triggerAttack(Tone.context.currentTime)
     }
 
     TO
@@ -107,33 +98,29 @@ export class Oscillator extends Instrument {
             return
         }
 
-        this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
-
-        this.gain.gain.linearRampToValueAtTime(0, Tone.context.currentTime + this.releaseTime)
+        this.envelope.triggerRelease(Tone.context.currentTime)
     }
 
     connect(n) {
 
-        this.instance.connect(this.gain)
+        this.instance.connect(this.envelope)
 
-        this.gain.connect(n)
+        this.envelope.connect(this.gain)
+
+        this.last.connect(n)
+
+        this.output = n
+        n.input = this
     }
 
-    disconnect(n) {
 
-        if(n) this.gain.disconnect(n)
-        else this.gain.disconnect()
-    }
 
     destroy() {
 
-        this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
-        this.volume = 0
+        this.envelope.triggerRelease(Tone.context.currentTime)
 
-        this.gain.gain.linearRampToValueAtTime(this.volume, Tone.context.currentTime + this.releaseTime)
+        this.instance.stop(Tone.context.currentTime + this.envelope.toSeconds(this.envelope.release))
 
-        this.instance.stop(Tone.context.currentTime + this.releaseTime + .02)
-        
         super.destroy()
     }
  
@@ -143,7 +130,6 @@ export class Oscillator extends Instrument {
         if(o['frequency']) this.frequency = o['frequency']
         if(o['volume']) this.volume = o['volume']
         if(o['detune']) this.detune = o['detune']
-        if(o['phase']) this.phase = o['phase']
     }
 
     serializeOut() {
@@ -155,7 +141,6 @@ export class Oscillator extends Instrument {
             frequency: this.frequency,
             volume: this.volume,
             detune: this.detune,
-            phase: this.phase
         }
     }
 }

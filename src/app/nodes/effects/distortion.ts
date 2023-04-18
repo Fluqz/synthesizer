@@ -19,6 +19,7 @@ export class Distortion extends Effect {
 
         this.gain = gain
 
+        this.last = this.first = this.instance
 
         this.wet = this.wet
     }

@@ -1,12 +1,13 @@
 import * as Tone from 'tone'
 
 import { Effect } from "./effect"
-import { Knob } from '../../view/templates/knob';
 
 
 
 /** Tremolo node */
 export class Tremolo extends Effect {
+
+    declare instance: Tone.Tremolo
 
     /** Tremolo amplitude */
     private _frequency 
@@ -19,6 +20,8 @@ export class Tremolo extends Effect {
         super('tremolo', wet)
 
         this.instance = new Tone.Tremolo(this.frequency, this.depth)
+
+        this.last = this.first = this.instance
 
         this.wet = wet
         this.frequency = frequency

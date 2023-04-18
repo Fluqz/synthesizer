@@ -19,6 +19,8 @@ export class Effect extends Node {
 
         super(name)
 
+        this.last = this.first = this.instance
+
         this._wet = wet
     }
 

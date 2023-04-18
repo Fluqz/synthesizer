@@ -30,7 +30,7 @@ export const moireShader = (p5) => {
         p5.canvas.style.zIndex = '-5'
 
 
-        grid = new Grid(G.w, G.h, 9, 4) // 9 * 4 = 36 (keys)
+        grid = new Grid(G.w, G.h, 9 * 2, 4 * 2) // 9 * 4 = 36 (keys)
 
         oldCellPos = grid.getCellPosByNr(Synthesizer.keyMap.indexOf(Math.round(Synthesizer.keyMap.length / 2)))
     }

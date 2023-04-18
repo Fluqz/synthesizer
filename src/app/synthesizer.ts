@@ -166,6 +166,7 @@ export class Synthesizer {
         this.isRecording = false
 
 
+
         let key
         let i = 0
         for(let keyMap of Synthesizer.keyMap) {
@@ -222,6 +223,9 @@ export class Synthesizer {
 
         this.octave = o
 
+        console.log('TONE',Tone.now(), Tone.context.currentTime)
+
+
         let i = 0
         for(let k of Synthesizer.keys) {
 
@@ -270,7 +274,7 @@ export class Synthesizer {
 
         if(this.arpMode) {
 
-            this.setArpSequence(Synthesizer.activeNotes, (time, note) => {
+            this.setArpChord(Synthesizer.activeNotes, (time, note) => {
 
                 for(let tr of this.tracks) tr.triggerNote(note)
 
@@ -291,7 +295,7 @@ export class Synthesizer {
 
         if(this.arpMode) {
             
-            this.setArpSequence(Synthesizer.activeNotes, (time, note, length) => {
+            this.setArpChord(Synthesizer.activeNotes, (time, note, length) => {
 
                 for(let tr of this.tracks) tr.triggerNote(note)
 
@@ -316,28 +320,28 @@ export class Synthesizer {
 
         this.arpMode = m == undefined ? !this.arpMode : m
 
-        this.setArpSequence([])
+        this.setArpChord([])
 
         Tone.Transport.stop()
 
         console.log('ARP', this.arpMode)
     }
 
-    setArpSequence(sequence: string[], onTrigger?: (...args) => void, onRelease?: (...args) => void) {
+    setArpChord(chord: string[], onTrigger?: (...args) => void, onRelease?: (...args) => void) {
 
-        console.log('Set ARP', sequence)
+        console.log('Set ARP', chord)
 
         const length = 60 / this.bpm
 
         this.stopArpeggiator(onRelease)
 
-        if(!sequence || sequence.length == 0) return
+        if(!chord || chord.length == 0) return
         
         this.arp = new Tone.Pattern((time, note) => {
 
             if(onTrigger) onTrigger(time, note, length)
 
-        }, sequence)
+        }, chord)
 
         this.arp.interval = length
         this.arp.start()

@@ -4,35 +4,30 @@ import { Knob } from '../../view/templates/knob';
 import { Synthesizer } from '../../synthesizer';
 
 
-
 /**  */
 export class Synth extends Instrument {
+
+    declare instance: Tone.PolySynth<Tone.Synth>
 
     /** How loud */
     volume
     /** Gain node */
     gain
-    /** Frequency */
-    frequency
     /** Slight detuning of the note */
     detune
     /** Offset of the wave */
-    phase
+    portamento
     /** Octave of oscillator */
     octave = 2
 
-    /** Necessary release time to prevent clicking */
-    releaseTime = 1
-
     /** freq, detune, volume, waveform,  */
-    constructor(options = {}) {
+    constructor(options) {
 
         super('synth')
 
-        this.frequency = options.frequency ? options.frequency : 1
         this.volume = options.volume ? options.volume : 3
         this.detune = options.detune ? options.detune : .5
-        this.phase = options.phase ? options.phase : 0
+        this.portamento = options.portamento ? options.portamento : 0
 
         this.instance = new Tone.PolySynth(Tone.Synth)
 
@@ -40,27 +35,8 @@ export class Synth extends Instrument {
 
         this.instance.connect(this.gain)
 
-        console.log('synth', this.instance)
-        
-        // this.setFrequency(this.frequency)
-        // let frequencyKnob = new Knob('', this.frequency, 0, 1)
-        // frequencyKnob.onChange.subscribe(v => this.setFrequency(v))
-
-        let volumeKnob = new Knob('Volume', this.volume, 0, 1)
-        volumeKnob.onChange.subscribe(v => this.setVolume(v))
-
-        let detuneKnob = new Knob('Detune', this.detune, 0, 1)
-        detuneKnob.onChange.subscribe(v => this.setDetune(v))
-
-        let phaseKnob = new Knob('Phase', this.phase, 0, 1)
-        phaseKnob.onChange.subscribe(v => this.setPhase(v))
-    }
-
-    setFrequency(f) {
-
-        this.frequency = f
-
-        // this.instance.frequency.value = this.frequency
+        this.first = this.instance
+        this.last = this.gain
     }
 
     setVolume(v) {
@@ -74,57 +50,42 @@ export class Synth extends Instrument {
 
         this.detune = d
 
-        this.instance.detune.setValueAtTime(this.detune, Tone.context.currentTime)
+        this.instance.set({ detune: this.detune })
     }
 
 
-    setPhase(p) {
+    setPortamento(p) {
 
-        this.phase = p
+        this.portamento = p
 
-        this.instance.phase.setValueAtTime(this.phase, Tone.context.currentTime)
+        this.instance.set({ portamento: this.portamento })
 
     }
 
-    triggerNote(note, time) {
+    triggerNote(note: string) {
 
         // this.gain.gain.setValueAtTime(this.volume, 0)
         // this.gain.gain.value = this.volume
 
         console.log('trigger', note, Synthesizer.activeNotes)
 
-        this.setFrequency(note)
-
-        this.instance.triggerAttackRelease(note, time)
+        this.instance.triggerAttack(note)
     }
 
-    releaseNote(note, time) {
+    releaseNote(note: string) {
 
         console.log('release')
 
-        this.instance.triggerRelease(note, time)
-        // this.gain.gain.linearRampToValueAtTime(0, this.releaseTime)
-    }
-
-    connect(n) {
-
-        this.gain.connect(n instanceof Node ? n.gain : n)
-    }
-
-    disconnect(n) {
-
-        if(n) this.gain.disconnect(n instanceof Node ? n.gain : n)
-        else this.gain.disconnect()
+        this.instance.triggerRelease(note)
     }
 
 
     serializeIn(o) {
 
         if(o['enabled']) this.enabled = o['enabled']
-        if(o['frequency']) this.setFrequency(o['frequency'])
         if(o['volume']) this.setVolume(o['volume'])
         if(o['detune']) this.setDetune(o['detune'])
-        if(o['phase']) this.setPhase(o['phase'])
+        if(o['portamento']) this.setPortamento(o['portamento'])
     }
 
     serializeOut() {
@@ -133,10 +94,9 @@ export class Synth extends Instrument {
 
             name: this.name,
             enabled: this.enabled,
-            frequency: this.frequency,
             volume: this.volume,
             detune: this.detune,
-            phase: this.phase
+            portamento: this.portamento
         }
     }
 }

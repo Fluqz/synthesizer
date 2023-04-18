@@ -11,11 +11,17 @@ export class Node implements NodeInputs {
     /** Enabled flag */
     _enabled: boolean
 
-    /** Input Node reference. Should actually be a Array! */
+    /** Input Node reference */
     input
 
-    /** Output Node reference. Should actually be a Array! */
+    /** Output Node reference */
     output
+
+    /** First ToneAudioNode Node reference of this node */
+    first
+
+    /** First ToneAudioNode Node reference of this node */
+    last
 
     /** ToneJs instance */
     instance: Tone.ToneAudioNode
@@ -49,16 +55,19 @@ export class Node implements NodeInputs {
 
         if(!e) return
 
-        this.instance.connect(e instanceof Node ? e.instance : e)
+        console.log('connect', this.last.inputs, e.input)
+        this.last.connect(e instanceof Node ? e.first : e)
 
         this.output = e
+        e.input = this
     }
 
     /** Disconnects this Output from [e]'s/all Input(s) */
     disconnect(e?: Node | Tone.ToneAudioNode) {
 
-        if(e) this.instance.disconnect(e instanceof Node ? e.instance : e)
-        else this.instance.disconnect()
+        console.log('disconnect',this.last, e)
+        if(e) this.last.disconnect(e instanceof Node ? e.first : e)
+        else this.last.disconnect()
 
         this.output = null
         if(e) e.input = null
@@ -66,7 +75,7 @@ export class Node implements NodeInputs {
 
     chain(nodes: Node[]) {
 
-        if(!nodes.length) return // this.connect(nodes)
+        if(!nodes.length || nodes.length == 0) return // this.connect(nodes)
 
         this.connect(nodes[0])
 
