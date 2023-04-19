@@ -5,23 +5,17 @@ import { Effect } from './effect';
 
 
 export class Distortion extends Effect {
-    get wet(): any {
-        throw new Error('Method not implemented.');
-    }
-    set wet(w: any) {
-        throw new Error('Method not implemented.');
-    }
-
+   
     /** Amound of distortion */
     private _gain: number
 
-    declare public instance: Tone.Distortion
+    public distortion: Tone.Distortion
 
     constructor(wet, gain) {
 
         super('distortion', wet)
 
-        this.instance = new Tone.Distortion(this.gain)
+        this.distortion = new Tone.Distortion(this.gain)
 
         this.gain = gain
 
@@ -31,13 +25,16 @@ export class Distortion extends Effect {
         this.props.set('gain', { name: 'Gain', value: this.gain })
     }
 
+    get wet() { return 0 }
+    set wet(w: any) {
+    }
     
     get gain() { return this._gain }
     set gain(g) {
 
         this._gain = g
 
-        this.instance.distortion = this._gain
+        this.distortion.distortion = this._gain
     }
 
     serializeIn(o) {

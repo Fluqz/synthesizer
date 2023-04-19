@@ -1,5 +1,6 @@
 import * as Tone from 'tone'
 import { Instrument } from './instrument';
+import { Node } from '../node';
 
 
 /**  */
@@ -24,7 +25,7 @@ export class DuoSynth extends Instrument {
 
         // this._volume = options.volume ? options.volume : .5
 
-        this.polySynth = new Tone.PolySynth<Tone.DuoSynth>(options)
+        this.polySynth = new Tone.PolySynth(Tone.DuoSynth)
 
         this.gain = new Tone.Gain(this.volume)
 
@@ -33,7 +34,6 @@ export class DuoSynth extends Instrument {
         this.output = this.gain
 
         this.props.set('volume', { name: 'Volume', value: this.volume })
-
     }
 
     get volume() { return this._volume }
@@ -41,24 +41,43 @@ export class DuoSynth extends Instrument {
 
         this._volume = v
 
-        this.gain.gain.setValueAtTime(this._volume, Tone.context.currentTime)
+        this.gain.gain.setValueAtTime(this._volume, Tone.now())
     }
 
     triggerNote(note) {
 
         super.triggerNote(note)
 
-        this.volume = this.volume
+        this.volume = 1
 
-        this.polySynth.triggerAttack(note)
+        this.polySynth.triggerAttack(note, Tone.now())
     }
 
     releaseNote(note) {
 
         super.releaseNote(note)
 
-        if(note == undefined) this.polySynth.releaseAll(Tone.context.currentTime) 
-        else this.polySynth.triggerRelease(note, Tone.context.currentTime)
+        if(note == undefined) this.polySynth.releaseAll(Tone.now()) 
+        else this.polySynth.triggerRelease(note, Tone.now())
+    }
+
+    connect(n: Node | Tone.ToneAudioNode): void {
+
+        this.polySynth.connect(this.gain)
+
+        this.output = this.gain
+
+        this.output.connect(n instanceof Node ? n.input : n)
+    }
+
+    disconnect(n?: Node | Tone.ToneAudioNode): void {
+        
+        if(n == undefined) {
+
+            if(n instanceof Node) this.output.disconnect(n.input)
+            else this.output.disconnect(n)
+        }
+        else this.output.disconnect()
     }
 
     serializeIn(o) {

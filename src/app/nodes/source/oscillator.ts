@@ -2,7 +2,8 @@ import * as Tone from 'tone'
 import { Instrument } from './instrument';
 import { Knob } from '../../view/templates/knob';
 import { Synthesizer } from '../../synthesizer';
-import type { Node } from '../node';
+import { Node } from '../node';
+import type { ToneWithContextOptions } from 'tone/build/esm/core/context/ToneWithContext';
 
 
 
@@ -31,13 +32,15 @@ export class Oscillator extends Instrument {
 
 
     /** freq, detune, volume, waveform,  */
-    constructor(volume?: number, frequency?: number, detune?: number, phase?: number, ) {
+    constructor(volume?: number, frequency?: number, detune?: number) {
 
         super('oscillator')
 
         this.osc = new Tone.Oscillator(this.frequency)
+        this.osc.start(Tone.now())
+
         this.envelope = new Tone.AmplitudeEnvelope()
-        this.gain = new Tone.Gain(this.volume)
+        this.gain = new Tone.Gain(1)
 
         this.output = this.gain
 
@@ -46,8 +49,6 @@ export class Oscillator extends Instrument {
         this.volume = volume ? volume : .7
         this.frequency = frequency ? frequency : 1
         this.detune = detune ? detune : .5
-
-        this.osc.start()
 
         this.props.set('volume', { name: 'Volume', value: this.volume })
         this.props.set('detune', { name: 'Detune', value: this.detune })
@@ -58,7 +59,7 @@ export class Oscillator extends Instrument {
 
         this._frequency = f
 
-        this.osc.frequency.setValueAtTime(this._frequency, Tone.context.currentTime)
+        this.osc.frequency.setValueAtTime(this._frequency, Tone.now())
     }
 
     get volume() { return this._volume }
@@ -66,7 +67,7 @@ export class Oscillator extends Instrument {
 
         this._volume = v
 
-        this.gain.gain.setValueAtTime(this._volume, Tone.context.currentTime)
+        this.gain.gain.setValueAtTime(this._volume, Tone.now())
     }
 
     get detune() { return this._detune }
@@ -74,19 +75,23 @@ export class Oscillator extends Instrument {
 
         this._detune = d
 
-        this.osc.detune.setValueAtTime(this._detune, Tone.context.currentTime)
+        this.osc.detune.setValueAtTime(this._detune, Tone.now())
     }
 
     triggerNote(note) {
+
+        super.triggerNote(note)
 
         this.frequency = note
 
         this.isPlaying = true
 
-        this.envelope.triggerAttack(Tone.context.currentTime)
+        this.envelope.triggerAttack(Tone.now())
     }
 
     releaseNote(note) {
+        
+        super.releaseNote(note)
 
         this.isPlaying = false
 
@@ -97,28 +102,35 @@ export class Oscillator extends Instrument {
             return
         }
 
-        this.envelope.triggerRelease(Tone.context.currentTime)
+        this.envelope.triggerRelease(Tone.now())
     }
 
-    connect(n) {
+    connect(n: Node | Tone.ToneAudioNode<ToneWithContextOptions>): void {
 
         this.osc.connect(this.envelope)
 
         this.envelope.connect(this.gain)
 
-        this.output.connect(n)
+        this.output = this.gain
 
-        this.output = n
-        n.input = this
+        this.output.connect(n instanceof Node ? n.input : n)
     }
 
+    disconnect(n?: Node | Tone.ToneAudioNode<ToneWithContextOptions>): void {
+        
+        if(n == undefined) {
 
+            if(n instanceof Node) this.output.disconnect(n.input)
+            else this.output.disconnect(n)
+        }
+        else this.output.disconnect()
+    }
 
     destroy() {
 
-        this.envelope.triggerRelease(Tone.context.currentTime)
+        this.envelope.triggerRelease(Tone.now())
 
-        this.osc.stop(Tone.context.currentTime + this.envelope.toSeconds(this.envelope.release))
+        this.osc.stop(Tone.now() + this.envelope.toSeconds(this.envelope.release))
 
         this.osc.disconnect()
         this.osc.dispose()

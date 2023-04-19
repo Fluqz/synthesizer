@@ -1,7 +1,7 @@
 import * as Tone from 'tone'
-import { Synthesizer, type ISerialization } from "./synthesizer"
+import { Synthesizer, type ISerialization, type ISerialize } from "./synthesizer"
 import { Node, type INodeSerialization } from './nodes/node'
-import type { Instrument } from './nodes/source/instrument'
+import type { Instrument } from './nodes'
 
 export interface ITrackSerialization extends ISerialization {
 
@@ -11,7 +11,7 @@ export interface ITrackSerialization extends ISerialization {
     nodes: INodeSerialization[]
 }
 
-export class Track {
+export class Track implements ISerialize {
 
     /** ToneJs Gain Node used for the track */
     public gain: Tone.Gain
@@ -49,7 +49,8 @@ export class Track {
             this.connectNodes()
         }
 
-        // this.addNode(Synthesizer.nodes.effects.delay())
+        // this.addNode(Synthesizer.nodes.effects.Tremolo())
+        this.addNode(Synthesizer.nodes.effects.Delay())
     }
 
     setInstrument(instrument: Instrument) {
@@ -69,23 +70,21 @@ export class Track {
 
         this._volume = v
 
-        this.gain.gain.setValueAtTime(this._volume, Tone.context.currentTime)
+        this.gain.gain.setValueAtTime(this._volume, Tone.now())
     }
 
     mute(m: boolean) {
 
-        console.log('mute', m)
+        console.log('mute track', m)
 
         this.isMuted = m === true ? true : false
 
-        if(this.isMuted) this.gain.gain.setValueAtTime(0, Tone.context.currentTime)
-        else this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
+        if(this.isMuted) this.gain.gain.setValueAtTime(0, Tone.now())
+        else this.gain.gain.setValueAtTime(this.volume, Tone.now())
     }
 
     get holdEnabled() { return this._holdEnabled }
     set holdEnabled(hold: boolean) { 
-
-        console.log('hold', )
 
         // for(let n of Synthesizer.activeNotes) hold ? this.instrument.triggerNote(n) : this.instrument.releaseNote(n)
 
@@ -111,7 +110,6 @@ export class Track {
         this.instrument.releaseNote(note)
     }
 
-
     /** Adds a node to the node chain */
     addNode(n: Node) {
 
@@ -125,33 +123,34 @@ export class Track {
     /** Connects all nodes in a chain */
     connectNodes() {
 
-        this.instrument.disconnect()
-        // this.gain.disconnect()
-
-        if(this.nodes.length == 0) return
-
         if(this.instrument) {
 
-            // this.instrument.disconnect()
+            this.instrument.disconnect()
 
-            // for(let n of this.nodes) {
+            const nodes: Tone.ToneAudioNode[] = []
 
-            //     n.disconnect()
-            //     nodes.push(n.instance)
+            nodes.push(this.instrument.output)
+
+            for(let n of this.nodes) {
+
+                nodes.push(n.input)
+                n.disconnect()
+
+                if(n.input != n.output) nodes.push(n.output)
+            }
+
+            nodes.push(this.gain)
+
+            this.instrument.chain(nodes)
+
+            // for(let i = 0; i < nodes.length - 1; i++) {
+
+            //     console.log('nodes', i, i+1, nodes.length)
+
+            //     nodes[i].connect(nodes[i+1])
             // }
 
-            // nodes.push(this.gain)
-
-            // console.log('chain nodes', nodes)
-            // this.instrument.chain(nodes)
-
-            this.instrument.connect(this.nodes[0].input)
-
-            for(let i = 0; i < this.nodes.length; i++) {
-
-                if(this.nodes[i + 1] != null)
-                    this.nodes[i].output.connect(this.nodes[i + 1].input)
-            }
+            // this.instrument.output.connect(this.gain)
         }
     }
 
@@ -184,14 +183,13 @@ export class Track {
         this.gain.disconnect(i instanceof Node ? i.input : i)
     }
 
-
+    /** Destroy this track. */
     destroy() {
 
         for(let i = this.nodes.length; i >= 0; i--) this.removeNode(this.nodes[i])
 
         if(this.instrument) this.instrument.destroy()
     }
-
 
     serializeIn(o: ITrackSerialization) {
 

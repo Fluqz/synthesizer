@@ -115,7 +115,7 @@
         if(!e) return
         if(e.repeat) return
 
-        console.log('onKeyDown: key', e.key)
+        // console.log('onKeyDown: key', e.key)
 
         if(e.key == 'ArrowRight') synthesizer.setOctave(synthesizer.octave + 1)
         if(e.key == 'ArrowLeft') synthesizer.setOctave(synthesizer.octave - 1)

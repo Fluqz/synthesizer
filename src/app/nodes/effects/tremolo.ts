@@ -6,12 +6,6 @@ import { Effect } from "./effect"
 
 /** Tremolo node */
 export class Tremolo extends Effect {
-    get wet(): any {
-        throw new Error('Method not implemented.')
-    }
-    set wet(w: any) {
-        throw new Error('Method not implemented.')
-    }
 
     tremolo: Tone.Tremolo
 
@@ -27,6 +21,8 @@ export class Tremolo extends Effect {
 
         this.tremolo = new Tone.Tremolo(this.frequency, this.depth)
 
+        this.input = this.output = this.tremolo
+
         this.wet = wet
         this.frequency = frequency
         this.depth = depth
@@ -34,6 +30,10 @@ export class Tremolo extends Effect {
         this.props.set('frequency', { name: 'Frequency', value: this.frequency })
         this.props.set('depth', { name: 'Depth', value: this.depth })
 
+    }
+
+    get wet() { return 0 }
+    set wet(w: any) {
     }
 
     get frequency() { return this._frequency }

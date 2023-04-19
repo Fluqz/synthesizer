@@ -1,5 +1,6 @@
 import { Subject } from 'rxjs'
 import type * as Tone from 'tone'
+import type { ISerialize } from '../synthesizer'
 
 
 export interface NodeProperty  {
@@ -15,7 +16,7 @@ export interface INodeSerialization {
 }
 
 /** Represents a Node that can be connected to eachother */
-export class Node {
+export class Node implements ISerialize {
 
     /** Tag/Name of node */
     name: string
@@ -54,30 +55,35 @@ export class Node {
     get enabled() { return this._enabled }
 
     /** Connects this Nodes Output to [e]'s Input */
-    connect(e: Node | Tone.ToneAudioNode) {
+    connect(n: Node | Tone.ToneAudioNode) {
 
-        if(!e) return
+        if(!n) return
 
-        this.output.connect(e instanceof Node ? e.input : e)
+        this.output.connect(n instanceof Node ? n.input : n)
     }
 
     /** Disconnects this Output from [e]'s/all Input(s) */
-    disconnect(e?: Node | Tone.ToneAudioNode) {
+    disconnect(n?: Node | Tone.ToneAudioNode) {
 
-        if(e) this.output.disconnect(e instanceof Node ? e.input : e)
+        if(n) this.output.disconnect(n instanceof Node ? n.input : n)
         else this.output.disconnect()
     }
 
-    chain(nodes: Node[]) {
+    chain(nodes: Node[] | Tone.ToneAudioNode[]) {
 
         if(!nodes.length || nodes.length == 0) return // this.connect(nodes)
 
-        this.connect(nodes[0])
+        // this.connect(nodes[0])
 
-        for(let i = 0; i < nodes.length; i++) {
+        let n1: Tone.ToneAudioNode
+        let n2: Tone.ToneAudioNode
 
-            if(nodes[i + 1] != null)
-                nodes[i].connect(nodes[i + 1])
+        for(let i = 0; i < nodes.length - 1; i++) {
+
+            n1 = (nodes[i] instanceof Node ? nodes[i].output : nodes[i]) as Tone.ToneAudioNode
+            n2 = (nodes[i + 1] instanceof Node ? nodes[i + 1].output : nodes[i + 1]) as Tone.ToneAudioNode
+
+            n1.connect(n2)
         }
     }
 

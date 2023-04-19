@@ -7,6 +7,7 @@
 
     export let node: Node
 
+    const nodes = [...node.props.values()]
 
 </script>
 
@@ -18,8 +19,8 @@
 
     <div class="delete" on:click={node.delete}>x</div>
 
-<!--
-    {#each node.props.values() as p}
+
+    {#each nodes as p}
                   
         <Knob
             name={p.name.charAt(0).toUpperCase() + p.name.slice(1)}
@@ -30,7 +31,7 @@
         />
         
     {/each}
--->
+
 
 </div>
 

@@ -22,7 +22,7 @@ export abstract class Instrument extends Node {
     /** On Key down */
     triggerNote(note: string) {
 
-        if(G.debug) console.log(`Instrument - Trigger | note: ${note}`)
+        // if(G.debug) console.log(`Instrument - Trigger | note: ${note}`)
 
         this.onTrigger.next(this)
     }
@@ -30,10 +30,11 @@ export abstract class Instrument extends Node {
     /** On Key up */
     releaseNote(note?: string) {
 
-        if(G.debug) console.log(`Instrument - Release | note: ${note}`)
+        // if(G.debug) console.log(`Instrument - Release | note: ${note}`)
 
         this.onRelease.next(this)
     }
+    
 
     destroy() {
 

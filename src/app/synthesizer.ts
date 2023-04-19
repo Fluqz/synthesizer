@@ -5,21 +5,16 @@ import * as RxJs from 'rxjs'
 
 import { Key } from './key'
 
-import { G } from './core/globals'
+import { Synth, DuoSynth, Instrument, FMSynth, AMSynth, Delay, Tremolo, Reverb, Chorus, Distortion, Oscillator} from './nodes'
 
-import { Delay } from './nodes/effects/delay'
-import { Tremolo } from './nodes/effects/tremolo'
-import { Reverb } from './nodes/effects/reverb'
-import { Chorus } from './nodes/effects/chorus'
-import { Distortion } from './nodes/effects/distortion'
-import { Oscillator } from './nodes/source/oscillator'
-import { Synth } from './nodes/source/synth'
 import { Track, type ITrackSerialization } from './track'
-import { DuoSynth } from './nodes/source/duo-synth'
-import type { Instrument } from './nodes/source/instrument'
 import { PresetManager, type IPreset } from './core/preset-manager'
 
+export interface ISerialize {
 
+    serializeOut: () => ISerialization
+    serializeIn: (o: ISerialization) => void
+}
 
 export interface ISerialization {}
 
@@ -40,7 +35,7 @@ export interface ISynthesizerSerialization extends ISerialization {
 
 
 /** Synthesizer */
-export class Synthesizer {
+export class Synthesizer implements ISerialize {
 
     /** Array of keys on the synthesizer */
     static keyMap: string[] = [
@@ -107,7 +102,7 @@ export class Synthesizer {
      * In some occasions you can lose track and wont be able to release the note anymore.
      * The note will play for eternity.
      */
-    static activeNotes: string[]
+    static activeNotes: string[] = []
 
     static synths = {
         Synth: Tone.Synth,
@@ -119,16 +114,20 @@ export class Synthesizer {
     static nodes = {
         effects: {
 
-            delay: () => { return new Delay(1, .12, .8) },
-            tremolo: () => { return new Tremolo(1, 5, 1) },
-            distortion: () => { return new Distortion(1, .5) },
-            chorus: () => { return new Chorus(1, 4, 20, 1, 1) },
+            Delay: () => { return new Delay(1, .12, .8) },
+            Tremolo: () => { return new Tremolo(1, 5, 1) },
+            Distortion: () => { return new Distortion(1, .5) },
+            Chorus: () => { return new Chorus(1, 4, 20, 1, 1) },
         },
         source: {
-
-            oscillator: () => { return new Oscillator() },
-            // synth: () => { return new Synth('A2') },
-            duosynth: () => { return new DuoSynth() },
+	
+            FMSynth: () => { return new FMSynth() },
+            AMSynth: () => { return new AMSynth() },
+            MonoSynth: () => {},
+            MetalSynth:	() => {},
+            Oscillator: () => { return new Oscillator() },
+            Synth: () => { return new Synth() },
+            Duosynth: () => { return new DuoSynth() },
         }
     }
 
@@ -178,8 +177,6 @@ export class Synthesizer {
         this.gain = new Tone.Gain(this.volume)
         this.gain.toDestination()
 
-        Synthesizer.activeNotes = []
-
         this.isRecording = false
 
 
@@ -210,7 +207,11 @@ export class Synthesizer {
 
 
         this.tracks = []
-        this.addTrack(new Track(Synthesizer.nodes.source.duosynth()))
+        this.addTrack(new Track(Synthesizer.nodes.source.Oscillator()))
+        this.addTrack(new Track(Synthesizer.nodes.source.Synth()))
+        this.addTrack(new Track(Synthesizer.nodes.source.Duosynth()))
+        this.addTrack(new Track(Synthesizer.nodes.source.FMSynth()))
+        this.addTrack(new Track(Synthesizer.nodes.source.AMSynth()))
 
         this.presetManager = new PresetManager(this)
 
@@ -229,15 +230,13 @@ export class Synthesizer {
     setVolume(v) {
 
         this.volume = v
-        this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
+        this.gain.gain.setValueAtTime(this.volume, Tone.now())
     }
 
     /** Set the octave number */
     setOctave(o) {
 
         this.octave = o
-
-        console.log('TONE',Tone.now(), Tone.context.currentTime)
 
 
         let i = 0
@@ -284,7 +283,7 @@ export class Synthesizer {
 
         Synthesizer.activeNotes.push(note + octave)
 
-        console.log('Synthesizer.trigger', Synthesizer.activeNotes)
+        // console.log('Synthesizer.trigger', Synthesizer.activeNotes)
 
         if(this.arpMode) {
 
@@ -359,7 +358,7 @@ export class Synthesizer {
 
         this.arp.interval = length
         this.arp.start()
-        Tone.Transport.bpm.setValueAtTime(this.bpm, Tone.context.currentTime)
+        Tone.Transport.bpm.setValueAtTime(this.bpm, Tone.now())
         Tone.Transport.start()
     }
 
@@ -439,7 +438,7 @@ export class Synthesizer {
         this.setVolume(.5)
         this.setOctave(2)
 
-        this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
+        this.gain.gain.setValueAtTime(this.volume, Tone.now())
 
         for(let n of Synthesizer.activeNotes) this.releaseNote(n)
         Synthesizer.activeNotes = []

@@ -4,7 +4,7 @@ import { Synthesizer } from '../../synthesizer';
 
 
 /**  */
-export class Synth extends Instrument {
+export class FMSynth extends Instrument {
 
     synth: Tone.PolySynth
     /** How loud */
@@ -23,7 +23,7 @@ export class Synth extends Instrument {
 
         super('synth')
 
-        this.synth = new Tone.PolySynth(Tone.Synth)
+        this.synth = new Tone.PolySynth(Tone.FMSynth)
 
         this.gain = new Tone.Gain(this.volume)
 

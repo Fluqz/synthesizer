@@ -7,14 +7,9 @@ import { Effect } from "./effect"
 
 /** Delay node */
 export class Delay extends Effect {
-    get wet(): any {
-        throw new Error('Method not implemented.');
-    }
-    set wet(w: any) {
-        throw new Error('Method not implemented.');
-    }
+  
+    feedbackDelay: Tone.FeedbackDelay
 
-    declare public instance: Tone.FeedbackDelay
     /** How fast the delay is played in seconds */
     _delayTime 
     /** How long the delay is played. [0-1] */
@@ -24,7 +19,10 @@ export class Delay extends Effect {
 
         super('delay', wet)
 
-        this.instance = new Tone.FeedbackDelay(this.delayTime, this.feedback)
+        this.feedbackDelay = new Tone.FeedbackDelay(this.delayTime, this.feedback)
+
+        this.input = this.feedbackDelay
+        this.output = this.feedbackDelay
 
         this.wet = wet
         this.delayTime = delayTime ? delayTime : 3
@@ -34,12 +32,16 @@ export class Delay extends Effect {
         this.props.set('feedback', { name: 'Feedback', value: this.feedback })
     }
 
+    get wet() { return 0 }
+    set wet(w: any) {
+    }
+
     get delayTime() { return this._delayTime }
     set delayTime(t) {
 
         this._delayTime = t
 
-        this.instance.delayTime.linearRampToValueAtTime(this._delayTime, Tone.context.currentTime)
+        this.feedbackDelay.delayTime.linearRampToValueAtTime(this._delayTime, Tone.now())
     }
 
     get feedback() { return this._feedback }
@@ -47,7 +49,7 @@ export class Delay extends Effect {
 
         this._feedback = f
 
-        this.instance.feedback.setValueAtTime(this._feedback, Tone.context.currentTime)
+        this.feedbackDelay.feedback.setValueAtTime(this._feedback, Tone.now())
     }
     
 
