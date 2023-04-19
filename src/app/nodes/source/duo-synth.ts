@@ -33,7 +33,27 @@ export class DuoSynth extends Instrument {
 
         this.output = this.gain
 
-        this.props.set('volume', { name: 'Volume', value: this.volume })
+        console.log(this.polySynth.get())
+
+        this.props.set('volume', { name: 'Volume', get: () => { return this.volume }, set: (v: number) => { this.volume = v }, min: 0, max: 1 })
+        this.props.set('detune', { name: 'Detune', get: () => { return this.polySynth.get().detune }, set: (v: number) => { this.polySynth.set({ detune: v }) }, min: 0, max: 1  })
+
+        this.props.set('harmonicity', { name: 'Harmonicity', get: () => { return this.polySynth.get().harmonicity }, set: (v: number) => { this.polySynth.set({ harmonicity: v }) }, min: 0, max: 1  })
+        this.props.set('portamento', { name: 'Portamento', get: () => { return this.polySynth.get().portamento }, set: (v: number) => { this.polySynth.set({ portamento: v }) }, min: 0, max: 1  })
+        this.props.set('vibratoAmount', { name: 'VibratoAmount', get: () => { return this.polySynth.get().vibratoAmount }, set: (v: number) => { this.polySynth.set({ vibratoAmount: v }) }, min: 0, max: 1  })
+        this.props.set('vibratoRate', { name: 'VibratoRate', get: () => { return this.polySynth.get().vibratoRate }, set: (v: number) => { this.polySynth.set({ vibratoRate: v }) }, min: 0, max: 1  })
+
+        this.props.set('attack1', { name: 'Attack 1', get: () => { return this.polySynth.get().voice0.envelope.attack }, set: (v: number) => { this.polySynth.set({ voice0: { envelope: { attack: v } } }) }, min: 0, max: 1  })
+        this.props.set('decay1', { name: 'Decay 1', get: () => { return this.polySynth.get().voice0.envelope.decay }, set: (v: number) => { this.polySynth.set({ voice0: { envelope: { decay: v } } }) }, min: 0, max: 1  })
+        this.props.set('release1', { name: 'Release 1', get: () => { return this.polySynth.get().voice0.envelope.release }, set: (v: number) => { this.polySynth.set({ voice0: { envelope: { release: v } } }) }, min: 0, max: 1  })
+        this.props.set('sustain1', { name: 'Sustain 1', get: () => { return this.polySynth.get().voice0.envelope.sustain }, set: (v: number) => { this.polySynth.set({ voice0: { envelope: { sustain: v } } }) }, min: 0, max: 1  })
+
+        this.props.set('attack2', { name: 'Attack 2', get: () => { return this.polySynth.get().voice1.envelope.attack }, set: (v: number) => { this.polySynth.set({ voice1: { envelope: { attack: v } } }) }, min: 0, max: 1  })
+        this.props.set('decay2', { name: 'Decay 2', get: () => { return this.polySynth.get().voice1.envelope.decay }, set: (v: number) => { this.polySynth.set({ voice1: { envelope: { decay: v } } }) }, min: 0, max: 1  })
+        this.props.set('release2', { name: 'Release 2', get: () => { return this.polySynth.get().voice1.envelope.release }, set: (v: number) => { this.polySynth.set({ voice1: { envelope: { release: v } } }) }, min: 0, max: 1  })
+        this.props.set('sustain2', { name: 'Sustain 2', get: () => { return this.polySynth.get().voice1.envelope.sustain }, set: (v: number) => { this.polySynth.set({ voice1: { envelope: { sustain: v } } }) }, min: 0, max: 1  })
+
+        console.log('POLY',)
     }
 
     get volume() { return this._volume }
@@ -47,8 +67,6 @@ export class DuoSynth extends Instrument {
     triggerNote(note) {
 
         super.triggerNote(note)
-
-        this.volume = 1
 
         this.polySynth.triggerAttack(note, Tone.now())
     }

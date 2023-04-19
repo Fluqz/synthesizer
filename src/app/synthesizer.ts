@@ -127,7 +127,7 @@ export class Synthesizer implements ISerialize {
             MetalSynth:	() => {},
             Oscillator: () => { return new Oscillator() },
             Synth: () => { return new Synth() },
-            Duosynth: () => { return new DuoSynth() },
+            DuoSynth: () => { return new DuoSynth() },
         }
     }
 
@@ -207,11 +207,11 @@ export class Synthesizer implements ISerialize {
 
 
         this.tracks = []
-        this.addTrack(new Track(Synthesizer.nodes.source.Oscillator()))
-        this.addTrack(new Track(Synthesizer.nodes.source.Synth()))
-        this.addTrack(new Track(Synthesizer.nodes.source.Duosynth()))
-        this.addTrack(new Track(Synthesizer.nodes.source.FMSynth()))
-        this.addTrack(new Track(Synthesizer.nodes.source.AMSynth()))
+        // this.addTrack(new Track(Synthesizer.nodes.source.Oscillator()))
+        // this.addTrack(new Track(Synthesizer.nodes.source.Synth()))
+        this.addTrack(new Track(Synthesizer.nodes.source.DuoSynth()))
+        // this.addTrack(new Track(Synthesizer.nodes.source.FMSynth()))
+        // this.addTrack(new Track(Synthesizer.nodes.source.AMSynth()))
 
         this.presetManager = new PresetManager(this)
 

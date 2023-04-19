@@ -6,7 +6,7 @@ export class M {
     /** Calculates a angle from two points where the third point is { x=radius, y=0 }. Center { cx, cy } and edge { ex, ey } */
     static getAngle(cx:number, cy:number, ex:number, ey:number) {
 
-        let theta = Math.atan2(ey - cy, ex - cx) // range (-PI, PI]
+        let theta = Math.atan2(cy - ey, cx - ex) // range (-PI, PI]
         // theta *= 180 / Math.PI // rads to degs, range (-180, 180]
         if (theta < 0) theta = (Math.PI*2) + theta // range [0, 360)
         

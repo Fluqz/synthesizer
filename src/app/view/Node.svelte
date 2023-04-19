@@ -2,12 +2,12 @@
 
 <script lang="ts">
 
-    import type { Node } from "../nodes/node";
+    import type { Node, NodeProperty } from "../nodes";
     import Knob from "./templates/Knob.svelte";
 
     export let node: Node
 
-    const nodes = [...node.props.values()]
+    const nodes: NodeProperty[] = [...node.props.values()]
 
 </script>
 
@@ -24,10 +24,10 @@
                   
         <Knob
             name={p.name.charAt(0).toUpperCase() + p.name.slice(1)}
-            value={p.value}
-            min={0}
-            max={1}
-            on:onChange={(e) => p.value = e.detail} 
+            min={p.min}
+            max={p.max}
+            value={p.get()}
+            on:onChange={(e) => p.set(e.detail) } 
         />
         
     {/each}

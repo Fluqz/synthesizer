@@ -36,9 +36,9 @@ export class AMSynth extends Instrument {
         this.portamento = options.portamento ? options.portamento : 0
 
 
-        this.props.set('volume', { name: 'Volume', value: this.volume })
-        this.props.set('detune', { name: 'Detune', value: this.detune })
-        this.props.set('portamento', { name: 'Portamento', value: this.portamento })
+        this.props.set('volume', { name: 'Volume', get: () =>  this.volume })
+        this.props.set('detune', { name: 'Detune', get: () =>  this.detune })
+        this.props.set('portamento', { name: 'Portamento', get: () =>  this.portamento })
     }
 
     set volume(v: number) {

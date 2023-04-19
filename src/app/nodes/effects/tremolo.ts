@@ -27,8 +27,8 @@ export class Tremolo extends Effect {
         this.frequency = frequency
         this.depth = depth
 
-        this.props.set('frequency', { name: 'Frequency', value: this.frequency })
-        this.props.set('depth', { name: 'Depth', value: this.depth })
+        this.props.set('frequency', { name: 'Frequency', get: () =>  this.frequency })
+        this.props.set('depth', { name: 'Depth', get: () =>  this.depth })
 
     }
 

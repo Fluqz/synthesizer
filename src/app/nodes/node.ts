@@ -3,10 +3,20 @@ import type * as Tone from 'tone'
 import type { ISerialize } from '../synthesizer'
 
 
-export interface NodeProperty  {
+export interface NodeProperty {
 
-    name: string,
-    value: number | boolean
+    /** Title */
+    name: string
+    /** Min value */
+    min?: number
+    /** Max value */
+    max?: number
+    /** Getter value */
+    get?: () => number
+    /** Setter value */
+    set?: (v: number) => void
+    /** Group ID */
+    group?: string
 }
 
 export interface INodeSerialization {

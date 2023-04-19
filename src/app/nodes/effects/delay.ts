@@ -28,8 +28,8 @@ export class Delay extends Effect {
         this.delayTime = delayTime ? delayTime : 3
         this.feedback = feedback ? feedback : .5
         
-        this.props.set('delayTime', { name: 'Delay Time', value: this.delayTime })
-        this.props.set('feedback', { name: 'Feedback', value: this.feedback })
+        this.props.set('delayTime', { name: 'Delay Time', get: () =>  this.delayTime })
+        this.props.set('feedback', { name: 'Feedback', get: () =>  this.feedback })
     }
 
     get wet() { return 0 }

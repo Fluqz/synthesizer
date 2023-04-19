@@ -21,8 +21,8 @@ export class Distortion extends Effect {
 
         this.wet = this.wet
 
-        this.props.set('wet', { name: 'Wet', value: this.wet })
-        this.props.set('gain', { name: 'Gain', value: this.gain })
+        this.props.set('wet', { name: 'Wet', get: () =>  this.wet })
+        this.props.set('gain', { name: 'Gain', get: () =>  this.gain })
     }
 
     get wet() { return 0 }

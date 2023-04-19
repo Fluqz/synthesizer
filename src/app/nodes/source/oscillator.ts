@@ -50,8 +50,8 @@ export class Oscillator extends Instrument {
         this.frequency = frequency ? frequency : 1
         this.detune = detune ? detune : .5
 
-        this.props.set('volume', { name: 'Volume', value: this.volume })
-        this.props.set('detune', { name: 'Detune', value: this.detune })
+        this.props.set('volume', { name: 'Volume', get: () => this.volume })
+        this.props.set('detune', { name: 'Detune', get: () => this.detune })
     }
 
     get frequency() { return this._frequency }

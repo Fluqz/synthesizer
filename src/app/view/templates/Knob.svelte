@@ -37,7 +37,7 @@
     /** New incoming angle when turning knob */
     let newAngle: number = 0
     /** Fix offset to start angle at 12 o clock */
-    let offsetAngle: number = 0
+    let offsetAngle: number = -Math.PI / 2
 
     /** Is mouse button pressed down */
     let isMouseDown: boolean = false
@@ -100,8 +100,8 @@
         clientRect = knobDOM.getBoundingClientRect()
 
         centerPosition = { x: clientRect.x + (clientRect.width / 2), y: clientRect.y + (clientRect.height / 2) }
-
     }
+
     /** On 'mousemove' event callback */
     const onMouseMove = (e) => {
 
@@ -114,10 +114,21 @@
 
         mousePosition = { x: e.clientX, y: e.clientY }
 
-        newAngle = M.getAngle(centerPosition.x, centerPosition.y, mousePosition.x, mousePosition.y)
+        newAngle = M.getAngle(centerPosition.x, centerPosition.y, mousePosition.x, mousePosition.y) + offsetAngle
 
-        angle = newAngle + offsetAngle
-        if(angle > 2 * Math.PI) angle -= 2 * Math.PI
+        if(angle < newAngle) {
+
+            if(newAngle < Math.PI * 2) angle = newAngle
+            else angle = Math.PI * 2
+        }
+
+        else if(angle > newAngle) {
+
+            if(newAngle > 0) angle = newAngle
+            else angle = 0
+        }
+
+        // if(angle > 2 * Math.PI) angle -= 2 * Math.PI
 
         setValueFromAngle()
     }

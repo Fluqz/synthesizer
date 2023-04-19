@@ -33,9 +33,9 @@ export class Chorus extends Effect {
         this.depth = depth
         this.feedback = feedback
 
-        this.props.set('delayTime', { name: 'Delay Time', value: this.delayTime })
-        this.props.set('depth', { name: 'Depth', value: this.depth })
-        this.props.set('feedback', { name: 'Feedback', value: this.feedback })
+        this.props.set('delayTime', { name: 'Delay Time', get: () =>  this.delayTime })
+        this.props.set('depth', { name: 'Depth', get: () =>  this.depth })
+        this.props.set('feedback', { name: 'Feedback', get: () =>  this.feedback })
     }
 
     get wet() { return 0 }
