@@ -7,21 +7,20 @@ import { Synthesizer } from '../../synthesizer';
 /**  */
 export class Synth extends Instrument {
 
-    declare instance: Tone.PolySynth<Tone.Synth>
-
+    synth: Tone.Synth
     /** How loud */
-    volume
+    _volume
     /** Gain node */
     gain
     /** Slight detuning of the note */
-    detune
+    _detune
     /** Offset of the wave */
-    portamento
+    _portamento
     /** Octave of oscillator */
     octave = 2
 
     /** freq, detune, volume, waveform,  */
-    constructor(options) {
+    constructor(options?) {
 
         super('synth')
 
@@ -29,37 +28,37 @@ export class Synth extends Instrument {
         this.detune = options.detune ? options.detune : .5
         this.portamento = options.portamento ? options.portamento : 0
 
-        this.instance = new Tone.PolySynth(Tone.Synth)
+        this.synth = new Tone.Synth()
 
         this.gain = new Tone.Gain(this.volume)
 
-        this.instance.connect(this.gain)
+        this.output = this.gain
 
-        this.first = this.instance
-        this.last = this.gain
+        this.props.set('volume', { name: 'Volume', value: this.volume })
+        this.props.set('detune', { name: 'Detune', value: this.detune })
+        this.props.set('portamento', { name: 'Portamento', value: this.portamento })
     }
 
-    setVolume(v) {
+    set volume(v: number) {
 
-        this.volume = v
-
+        this._volume = v 
         this.gain.gain.value.setValueAtTime(this.volume, Tone.context.currentTime)
     }
+    get volume() { return this.volume }
 
-    setDetune(d) {
 
-        this.detune = d
-
-        this.instance.set({ detune: this.detune })
+    set detune(d: number) { 
+        this._detune = d 
+        this.synth.set({ detune: this.detune })
     }
+    get detune() { return this.detune }
 
 
-    setPortamento(p) {
+    get portamento() { return this._portamento }
+    set portamento(p) {
 
-        this.portamento = p
-
-        this.instance.set({ portamento: this.portamento })
-
+        this._portamento = p
+        this.synth.set({ portamento: this._portamento })
     }
 
     triggerNote(note: string) {
@@ -69,23 +68,23 @@ export class Synth extends Instrument {
 
         console.log('trigger', note, Synthesizer.activeNotes)
 
-        this.instance.triggerAttack(note)
+        this.synth.triggerAttack(note)
     }
 
     releaseNote(note: string) {
 
         console.log('release')
 
-        this.instance.triggerRelease(note)
+        this.synth.triggerRelease(note)
     }
 
 
     serializeIn(o) {
 
         if(o['enabled']) this.enabled = o['enabled']
-        if(o['volume']) this.setVolume(o['volume'])
-        if(o['detune']) this.setDetune(o['detune'])
-        if(o['portamento']) this.setPortamento(o['portamento'])
+        if(o['volume']) this.volume = o['volume']
+        if(o['detune']) this.detune = o['detune']
+        if(o['portamento']) this.portamento = o['portamento']
     }
 
     serializeOut() {

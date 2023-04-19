@@ -9,9 +9,9 @@ import type { Node } from '../node';
 /**  */
 export class Oscillator extends Instrument {
 
-    declare instance: Tone.Oscillator
-
     public envelope: Tone.AmplitudeEnvelope
+
+    public osc: Tone.Oscillator
 
     /** Gain node */
     public gain
@@ -35,12 +35,11 @@ export class Oscillator extends Instrument {
 
         super('oscillator')
 
-        this.instance = new Tone.Oscillator(this.frequency)
+        this.osc = new Tone.Oscillator(this.frequency)
         this.envelope = new Tone.AmplitudeEnvelope()
         this.gain = new Tone.Gain(this.volume)
 
-        this.first = this.instance
-        this.last = this.gain
+        this.output = this.gain
 
         this.isPlaying = false
 
@@ -48,9 +47,10 @@ export class Oscillator extends Instrument {
         this.frequency = frequency ? frequency : 1
         this.detune = detune ? detune : .5
 
-        this.instance.start()
+        this.osc.start()
 
-        this.props.push('volume', 'detune', 'phase')
+        this.props.set('volume', { name: 'Volume', value: this.volume })
+        this.props.set('detune', { name: 'Detune', value: this.detune })
     }
 
     get frequency() { return this._frequency }
@@ -58,7 +58,7 @@ export class Oscillator extends Instrument {
 
         this._frequency = f
 
-        this.instance.frequency.setValueAtTime(this._frequency, Tone.context.currentTime)
+        this.osc.frequency.setValueAtTime(this._frequency, Tone.context.currentTime)
     }
 
     get volume() { return this._volume }
@@ -74,7 +74,7 @@ export class Oscillator extends Instrument {
 
         this._detune = d
 
-        this.instance.detune.setValueAtTime(this._detune, Tone.context.currentTime)
+        this.osc.detune.setValueAtTime(this._detune, Tone.context.currentTime)
     }
 
     triggerNote(note) {
@@ -86,12 +86,11 @@ export class Oscillator extends Instrument {
         this.envelope.triggerAttack(Tone.context.currentTime)
     }
 
-    TO
     releaseNote(note) {
 
         this.isPlaying = false
 
-        if(this.isPlaying || Synthesizer.activeNotes.length > 0) {
+        if(this.isPlaying || Synthesizer.activeNotes.length > 0) {
 
             // console.log('play other note', Synthesizer.activeNotes)
             this.triggerNote(Synthesizer.activeNotes[Synthesizer.activeNotes.length-1])
@@ -103,11 +102,11 @@ export class Oscillator extends Instrument {
 
     connect(n) {
 
-        this.instance.connect(this.envelope)
+        this.osc.connect(this.envelope)
 
         this.envelope.connect(this.gain)
 
-        this.last.connect(n)
+        this.output.connect(n)
 
         this.output = n
         n.input = this
@@ -119,7 +118,10 @@ export class Oscillator extends Instrument {
 
         this.envelope.triggerRelease(Tone.context.currentTime)
 
-        this.instance.stop(Tone.context.currentTime + this.envelope.toSeconds(this.envelope.release))
+        this.osc.stop(Tone.context.currentTime + this.envelope.toSeconds(this.envelope.release))
+
+        this.osc.disconnect()
+        this.osc.dispose()
 
         super.destroy()
     }

@@ -1,5 +1,4 @@
 import * as Tone from 'tone'
-import type { ToneWithContextOptions } from 'tone/build/esm/core/context/ToneWithContext';
 
 import { Node } from "../node";
 
@@ -13,8 +12,6 @@ export class LFOFilter extends Node {
     constructor(wet, time, feedback) {
 
         super('lfo')
-
-        this.last = this.first = this.instance
 
     }
 

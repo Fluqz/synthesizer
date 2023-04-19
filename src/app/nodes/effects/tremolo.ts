@@ -6,8 +6,14 @@ import { Effect } from "./effect"
 
 /** Tremolo node */
 export class Tremolo extends Effect {
+    get wet(): any {
+        throw new Error('Method not implemented.')
+    }
+    set wet(w: any) {
+        throw new Error('Method not implemented.')
+    }
 
-    declare instance: Tone.Tremolo
+    tremolo: Tone.Tremolo
 
     /** Tremolo amplitude */
     private _frequency 
@@ -19,13 +25,15 @@ export class Tremolo extends Effect {
 
         super('tremolo', wet)
 
-        this.instance = new Tone.Tremolo(this.frequency, this.depth)
-
-        this.last = this.first = this.instance
+        this.tremolo = new Tone.Tremolo(this.frequency, this.depth)
 
         this.wet = wet
         this.frequency = frequency
         this.depth = depth
+
+        this.props.set('frequency', { name: 'Frequency', value: this.frequency })
+        this.props.set('depth', { name: 'Depth', value: this.depth })
+
     }
 
     get frequency() { return this._frequency }
@@ -33,7 +41,7 @@ export class Tremolo extends Effect {
 
         this._frequency = f
 
-        this.instance.frequency.set(this._frequency)
+        this.tremolo.frequency.set(this._frequency)
     }
 
     get depth() { return this._depth }
@@ -41,14 +49,14 @@ export class Tremolo extends Effect {
 
         this._depth = d
 
-        this.instance.depth.set(this._depth)
+        this.tremolo.depth.set(this._depth)
     }
     
     serializeIn(o) {
 
         if(o['name']) this.name = o['name']
         if(o['enabled']) this.enabled = o['enabled']
-        if(o['wet']) this.setWet(o['wet'])
+        if(o['wet']) this.wet = o['wet']
         if(o['frequency']) this.frequency = o['frequency']
         if(o['depth']) this.depth = o['depth']
     }

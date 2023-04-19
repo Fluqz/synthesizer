@@ -7,8 +7,14 @@ import { Effect } from './effect'
 
 /** Chorus node */
 export class Chorus extends Effect {
+    get wet(): any {
+        throw new Error('Method not implemented.')
+    }
+    set wet(w: any) {
+        throw new Error('Method not implemented.')
+    }
 
-    declare public instance: Tone.Chorus
+    public instance: Tone.Chorus
     
     /** Frequency of the LFO for modulating */
     _frequency
@@ -25,13 +31,15 @@ export class Chorus extends Effect {
 
         this.instance = new Tone.Chorus(this.frequency, this.delayTime, this.depth)
 
-        this.last = this.first = this.instance
-
         this.wet = wet
         this.frequency = frequency
         this.delayTime = delayTime
         this.depth = depth
         this.feedback = feedback
+
+        this.props.set('delayTime', { name: 'Delay Time', value: this.delayTime })
+        this.props.set('depth', { name: 'Depth', value: this.depth })
+        this.props.set('feedback', { name: 'Feedback', value: this.feedback })
     }
 
     get frequency() { return this._frequency }

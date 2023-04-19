@@ -3,26 +3,10 @@
 <script lang="ts">
 
     import type { Node } from "../nodes/node";
-    import { Effect } from "../nodes/effects/effect";
-    import { Instrument } from "../nodes/source/instrument";
-    import { NodeInputsArray } from "../nodes/node-inputs";
     import Knob from "./templates/Knob.svelte";
 
     export let node: Node
 
-    // console.log('props', Object.getOwnPropertyNames(node.constructor.prototype), node.hasOwnProperty('wet'))
-
-    // const nodeInputs = () => {
-
-    //     for()
-    // }
-
-
-    const getInstance = () => {
-        if(node instanceof Effect) return (node as Effect)
-        else if(node instanceof Instrument) return (node as Instrument)
-        return node
-    }
 
 </script>
 
@@ -34,27 +18,19 @@
 
     <div class="delete" on:click={node.delete}>x</div>
 
-
-    {#each NodeInputsArray as n}
-
-        {#each Object.getOwnPropertyNames(getInstance().constructor.prototype) as p}
-
-            {#if n === p}
+<!--
+    {#each node.props.values() as p}
                   
-                <Knob
-                    name={p.charAt(0).toUpperCase() + p.slice(1)}
-                    value={node[p]}
-                    min={0}
-                    max={1}
-                    on:onChange={(e) => node[p] = e.detail} 
-                />
-  
-            {/if}
-
-        {/each}
+        <Knob
+            name={p.name.charAt(0).toUpperCase() + p.name.slice(1)}
+            value={p.value}
+            min={0}
+            max={1}
+            on:onChange={(e) => p.value = e.detail} 
+        />
         
     {/each}
-
+-->
 
 </div>
 

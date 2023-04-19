@@ -10,16 +10,16 @@ import { Knob } from '../../view/templates/knob';
 
 
 /** Effect node */
-export class Effect extends Node {
+export abstract class Effect extends Node {
 
     /** Bypass ratio. 1 = wet, 0 = dry. */
     private _wet
+    abstract get wet()
+    abstract set wet(w) 
 
     constructor(name, wet) {
 
         super(name)
-
-        this.last = this.first = this.instance
 
         this._wet = wet
     }
@@ -32,13 +32,6 @@ export class Effect extends Node {
     }
     get enabled() { return this._enabled }
 
-    get wet() { return this._wet }
-    set wet(w) {
-
-        this._wet = w
-
-        if(this.instance) this.instance['wet'].setValueAtTime(this._wet, Tone.context.currentTime)
-    }
 
     serializeIn(o) {
 

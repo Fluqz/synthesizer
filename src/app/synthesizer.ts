@@ -14,9 +14,30 @@ import { Chorus } from './nodes/effects/chorus'
 import { Distortion } from './nodes/effects/distortion'
 import { Oscillator } from './nodes/source/oscillator'
 import { Synth } from './nodes/source/synth'
-import { Track } from './track'
+import { Track, type ITrackSerialization } from './track'
 import { DuoSynth } from './nodes/source/duo-synth'
 import type { Instrument } from './nodes/source/instrument'
+import { PresetManager, type IPreset } from './core/preset-manager'
+
+
+
+export interface ISerialization {}
+
+export interface ISession {
+
+    volume: number,
+    octave: number,
+    tracks: ITrackSerialization[]
+}
+
+export interface ISynthesizerSerialization extends ISerialization {
+
+    presets: IPreset[]
+    currentSession: ISession
+}
+
+
+
 
 /** Synthesizer */
 export class Synthesizer {
@@ -106,7 +127,7 @@ export class Synthesizer {
         source: {
 
             oscillator: () => { return new Oscillator() },
-            synth: () => { return new Synth() },
+            // synth: () => { return new Synth('A2') },
             duosynth: () => { return new DuoSynth() },
         }
     }
@@ -126,8 +147,6 @@ export class Synthesizer {
     arpPattern: string[] = []
     /** Arpeggiator mode */
     arpMode: boolean = false
-    /** Presets */
-    presets: {}[]
     /** Beats per minute */
     bpm: number = 400
     
@@ -139,14 +158,13 @@ export class Synthesizer {
     /** Recording flag */
     isRecording: boolean
 
+    presetManager: PresetManager
 
     // Events
     onKeyDownEvent
     onKeyUpEvent
     onRecordingStart
     onRecordingEnd
-    onSavePreset
-    onRemovePreset
     onAddNode
     onRemoveNode
 
@@ -160,11 +178,9 @@ export class Synthesizer {
         this.gain = new Tone.Gain(this.volume)
         this.gain.toDestination()
 
-        this.presets = []
         Synthesizer.activeNotes = []
 
         this.isRecording = false
-
 
 
         let key
@@ -196,14 +212,12 @@ export class Synthesizer {
         this.tracks = []
         this.addTrack(new Track(Synthesizer.nodes.source.duosynth()))
 
+        this.presetManager = new PresetManager(this)
 
 
         // Events
         this.onRecordingStart = new RxJs.Subject()
         this.onRecordingEnd = new RxJs.Subject()
-
-        this.onSavePreset = new RxJs.Subject()
-        this.onRemovePreset = new RxJs.Subject()
 
         this.onAddNode = new RxJs.Subject()
         this.onRemoveNode = new RxJs.Subject()
@@ -422,6 +436,9 @@ export class Synthesizer {
     /** Resets the synthesizer to standard settings */
     reset() {
 
+        this.setVolume(.5)
+        this.setOctave(2)
+
         this.gain.gain.setValueAtTime(this.volume, Tone.context.currentTime)
 
         for(let n of Synthesizer.activeNotes) this.releaseNote(n)
@@ -440,54 +457,10 @@ export class Synthesizer {
         }
     }
 
-    presetID = 0
-    savePreset(name) {
+    /** Get the current session as js object */
+    getSessionObject() : ISession {
 
-        for(let p of this.presets) { if(p.name === name) return }
-
-        const p = this.getSessionObject()
-        p.id = this.presetID + 1,
-        p.name = name
-        this.presets.push(p)
-
-        this.onSavePreset.next(this.presets[this.presets.length-1])
-    }
-
-    loadPreset(name) {
-
-        let preset
-        for(let p of this.presets) {
-
-            if(p.name == name) { 
-                preset = p
-                break
-            }
-        }
-
-        if(!preset) return
-
-        this.serializeIn({
-            currentSession: preset,
-            presets: this.presets
-        })
-    }
-
-    removePreset(name) {
-
-        if(!name) return
-
-        for(let i = 0; i < this.presets.length; i++) {
-
-            if(name && this.presets[i].name == name) {
-                this.onRemovePreset.next(this.presets[i])
-                this.presets.splice(i, 1)
-            }
-        }
-    }
-
-    getSessionObject() {
-
-        let tracks = []
+        let tracks: ITrackSerialization[] = []
         for(let t of this.tracks) tracks.push(t.serializeOut())
 
         return {
@@ -498,20 +471,20 @@ export class Synthesizer {
     }
 
     /** Load settings */
-    serializeIn = o => {
+    serializeIn = (o: ISynthesizerSerialization) => {
 
         console.log('SerializeIn', o)
 
         this.reset()
 
-        const c = o['currentSession']
+        const c = o.currentSession
 
-        if(c['volume']) this.setVolume(c['volume'])
-        if(c['octave']) this.setOctave(c['octave'])
+        if(c.volume) this.setVolume(c.volume)
+        if(c.octave) this.setOctave(c.octave)
 
-        if(c['tracks'] && c['tracks'].length > 0) {
+        if(c.tracks && c.tracks.length > 0) {
 
-            for(let t of c['tracks']) {
+            for(let t of c.tracks) {
 
                 let track = new Track()
                 track.serializeIn(t)
@@ -519,17 +492,18 @@ export class Synthesizer {
             }
         }
 
-        if(o['presets'] && o['presets'].length > 0) {
+        if(o.presets && o.presets.length > 0) {
 
-            this.presets = o['presets']
+            this.presetManager.presets = o.presets
         }
     }
 
     /** Save settings */
-    serializeOut = () => {
+    serializeOut = () : ISynthesizerSerialization => {
         
         return {
-            presets: this.presets,
+
+            presets: this.presetManager.presets,
             currentSession: this.getSessionObject()
         }
     }

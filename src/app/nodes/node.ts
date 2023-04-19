@@ -1,9 +1,21 @@
 import { Subject } from 'rxjs'
 import type * as Tone from 'tone'
-import type { NodeInputs } from './node-inputs'
+
+
+export interface NodeProperty  {
+
+    name: string,
+    value: number | boolean
+}
+
+export interface INodeSerialization {
+
+    name: string
+    enabled: boolean
+}
 
 /** Represents a Node that can be connected to eachother */
-export class Node implements NodeInputs {
+export class Node {
 
     /** Tag/Name of node */
     name: string
@@ -12,25 +24,16 @@ export class Node implements NodeInputs {
     _enabled: boolean
 
     /** Input Node reference */
-    input
+    input: Tone.ToneAudioNode
 
     /** Output Node reference */
-    output
-
-    /** First ToneAudioNode Node reference of this node */
-    first
-
-    /** First ToneAudioNode Node reference of this node */
-    last
-
-    /** ToneJs instance */
-    instance: Tone.ToneAudioNode
+    output: Tone.ToneAudioNode
 
     /** OnDelete Observable */
     onDelete
 
     /** Array of settable properties */
-    props: string[]
+    props: Map<string, NodeProperty>
 
     constructor(name) {
 
@@ -42,7 +45,7 @@ export class Node implements NodeInputs {
 
         this.enabled = true
 
-        this.props = []
+        this.props = new Map()
 
         this.onDelete = new Subject()
     }
@@ -55,22 +58,14 @@ export class Node implements NodeInputs {
 
         if(!e) return
 
-        console.log('connect', this.last.inputs, e.input)
-        this.last.connect(e instanceof Node ? e.first : e)
-
-        this.output = e
-        e.input = this
+        this.output.connect(e instanceof Node ? e.input : e)
     }
 
     /** Disconnects this Output from [e]'s/all Input(s) */
     disconnect(e?: Node | Tone.ToneAudioNode) {
 
-        console.log('disconnect',this.last, e)
-        if(e) this.last.disconnect(e instanceof Node ? e.first : e)
-        else this.last.disconnect()
-
-        this.output = null
-        if(e) e.input = null
+        if(e) this.output.disconnect(e instanceof Node ? e.input : e)
+        else this.output.disconnect()
     }
 
     chain(nodes: Node[]) {
@@ -98,17 +93,15 @@ export class Node implements NodeInputs {
         this.disconnect()
 
         this.onDelete.unsubscribe()
-
-        this.instance.dispose()
     }
 
-    serializeIn(o) {
+    serializeIn(o : INodeSerialization) {
 
         if(o['name']) this.name = o['name']
         if(o['enabled']) this.enabled = o['enabled']
     }
 
-    serializeOut() {
+    serializeOut() : INodeSerialization {
 
         return {
 

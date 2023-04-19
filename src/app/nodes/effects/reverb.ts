@@ -12,7 +12,5 @@ export class Reverb extends Node {
 
         super('reverb')
         
-        this.last = this.first = this.instance
-
     }
 }

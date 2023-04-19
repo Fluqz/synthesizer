@@ -5,11 +5,11 @@ import { Instrument } from './instrument';
 /**  */
 export class DuoSynth extends Instrument {
 
-    declare public instance: Tone.PolySynth<Tone.DuoSynth>
+    public polySynth : Tone.PolySynth<Tone.DuoSynth>
 
     /** How loud */
-    private _volume
-    /** Gain node */
+    private _volume = .5
+    /** Gain node */ 
     public gain
     /** Octave of oscillator */
     public octave = 2
@@ -22,18 +22,18 @@ export class DuoSynth extends Instrument {
 
         super('duosynth')
 
-        this._volume = options.volume ? options.volume : .5
+        // this._volume = options.volume ? options.volume : .5
 
-        this.instance = new Tone.PolySynth<Tone.DuoSynth>(Tone.DuoSynth, options)
+        this.polySynth = new Tone.PolySynth<Tone.DuoSynth>(options)
 
         this.gain = new Tone.Gain(this.volume)
 
-        this.instance.connect(this.gain)
+        this.polySynth.connect(this.gain)
 
-        this.first = this.instance
-        this.last = this.gain
+        this.output = this.gain
 
-        this.props.push('volume', 'detune')
+        this.props.set('volume', { name: 'Volume', value: this.volume })
+
     }
 
     get volume() { return this._volume }
@@ -50,15 +50,15 @@ export class DuoSynth extends Instrument {
 
         this.volume = this.volume
 
-        this.instance.triggerAttack(note)
+        this.polySynth.triggerAttack(note)
     }
 
     releaseNote(note) {
 
         super.releaseNote(note)
 
-        if(note == undefined) this.instance.releaseAll(Tone.context.currentTime) 
-        else this.instance.triggerRelease(note, Tone.context.currentTime)
+        if(note == undefined) this.polySynth.releaseAll(Tone.context.currentTime) 
+        else this.polySynth.triggerRelease(note, Tone.context.currentTime)
     }
 
     serializeIn(o) {

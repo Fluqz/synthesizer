@@ -13,6 +13,50 @@
 
     export let synthesizer: Synthesizer
 
+    // Volume Button
+    let volume: HTMLElement
+    const volumeKnob = new Knob('Volume', synthesizer.volume, 0, 1)
+    volumeKnob.onChange.subscribe((v) => { synthesizer.setVolume(v) })
+
+
+    const octaveDown = () => {
+
+        synthesizer.setOctave(synthesizer.octave - 1)
+    }
+    const octaveUp = () => {
+
+        synthesizer.setOctave(synthesizer.octave + 1)
+    }
+
+    const onArpChange = (e) => {
+
+        synthesizer.toggleArpMode(e.target.checked)
+    }
+
+    // Toggle recording button
+
+    const toggleRecording = (e) => {
+
+        synthesizer.toggleRecording()
+    }
+
+    let isRecording = false
+    synthesizer.onRecordingStart.subscribe(() => {
+
+        isRecording = synthesizer.isRecording
+    })
+    synthesizer.onRecordingEnd.subscribe(() => {
+
+        isRecording = synthesizer.isRecording
+    })
+
+
+    // Reset synthesizer button
+    const reset = (e) => {
+
+        synthesizer.reset()
+    }
+
 
     onMount(() => {
 
@@ -20,32 +64,27 @@
         document.addEventListener('keydown', onKeyDown, false)
         document.addEventListener('keyup', onKeyUp, false)
 
-
-        // Volume Button
-        const volume = document.querySelector('#volume')
-        const volumeKnob = new Knob('Volume', synthesizer.volume, 0, 1)
-        volumeKnob.onChange.subscribe((v) => { synthesizer.setVolume(v) })
         volume.append(volumeKnob.dom)
         
 
-        // Save preset input
-        const savePreset: HTMLInputElement = document.querySelector('#save-preset')
-        savePreset.value = ''
-        savePreset.addEventListener('keydown', (e) => {
+        // // Save preset input
+        // const savePreset: HTMLInputElement = document.querySelector('#save-preset')
+        // savePreset.value = ''
+        // savePreset.addEventListener('keydown', (e) => {
 
-            e.stopPropagation()
+        //     e.stopPropagation()
 
-            if(e.key == 'Enter' && e.target.value != null) {
+        //     if(e.key == 'Enter' && e.target.value != null) {
 
-                synthesizer.savePreset(e.target.value)
-            }
-        })
+        //         synthesizer.presetManager.savePreset(e.target.value)
+        //     }
+        // })
 
-        // Load preset select
-        const loadPreset = document.querySelector('#load-preset')
+        // // Load preset select
+        // const loadPreset = document.querySelector('#load-preset')
 
-        let ps = []
-        for(let p of synthesizer.presets) ps.push(p.name)
+        // let ps = []
+        // for(let p of synthesizer.presetManager.presets) ps.push(p.name)
 
         // let presetDropdown = new Dropdown(ps, undefined, false, true)
         // presetDropdown.onSelectOption.subscribe((o) => {
@@ -66,59 +105,6 @@
 
         //     presetDropdown.remove(p.name)
         // })
-
-
-        // Set octave buttons events
-        const octaveDown = document.querySelector('#octave-down')
-        const octaveUp = document.querySelector('#octave-up')
-
-        octaveDown.addEventListener('click', () => {
-
-            synthesizer.setOctave(synthesizer.octave - 1)
-        })
-
-        octaveUp.addEventListener('click', () => {
-
-            synthesizer.setOctave(synthesizer.octave + 1)
-        })
-
-
-
-        // Arpeggiator
-        const arpeggiator = document.querySelector('#arpeggiator')
-
-        arpeggiator.querySelector('input').checked = false
-        arpeggiator.addEventListener('change', (e) => {
-
-            synthesizer.toggleArpMode(e.target.checked)
-        })
-
-        // Toggle recording button
-        const record = document.querySelector('#record')
-
-        record.addEventListener('mousedown', (e) => {
-
-            synthesizer.toggleRecording()
-        })
-
-        synthesizer.onRecordingStart.subscribe(() => {
-
-            record.classList[synthesizer.isRecording ? 'add' : 'remove']('recording')
-        })
-        synthesizer.onRecordingEnd.subscribe(() => {
-
-            record.classList[synthesizer.isRecording ? 'add' : 'remove']('recording')
-        })
-
-
-
-        // Reset synthesizer button
-        const reset = document.querySelector('#reset')
-
-        reset.addEventListener('mousedown', (e) => {
-
-            synthesizer.reset()
-        })
 
     })
 
@@ -166,20 +152,21 @@
 
 
 
-
 <div class="synthesizer">
 
     <div class="keys">
 
         {#each Synthesizer.keys as key, i}
+
             <Key key={key} />
+
             {#if Math.round(Synthesizer.keys.length / 2) - 2 == i}
                 <br />
             {/if}
+            
         {/each}
 
     </div>
-
 
 
 
@@ -200,24 +187,24 @@
 
 
 
-        <div id="volume" title="Shift + A">
-        </div>
+        <div id="volume" title="Shift + A" bind:this={volume}></div>
+        
         <!-- <div id="bpm" title="Shift + A">
             <label for="bpm">BPM</label>
             <input type="number" pattern="[0-1]" min="1" max="300" name="bpm"/>
         </div> -->
 
-        <div id="octave-down" class="btn" title="ArrowLeft">{'<'}</div>
-        <div id="octave-up" class="btn" title="ArrowRight">{'>'}</div>
+        <div id="octave-down" class="btn" title="ArrowLeft" on:click={octaveDown}>{'<'}</div>
+        <div id="octave-up" class="btn" title="ArrowRight" on:click={octaveUp}>{'>'}</div>
 
         <div id="arpeggiator" title="Shift + A">
             <label for="arp">Arp</label>
-            <input type="checkbox" name="arp"/>
+            <input type="checkbox" name="arp" on:change={onArpChange}/>
         </div>
 
-        <div id="record" class="btn" title="Space">Record</div>
+        <div id="record" class="btn" title="Space" on:click={toggleRecording} class:recording={isRecording}>Record</div>
         
-        <div id="reset" class="btn">Reset</div>
+        <div id="reset" class="btn" on:click={reset}>Reset</div>
 
     </div>
 

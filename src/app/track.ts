@@ -1,8 +1,15 @@
 import * as Tone from 'tone'
-import { Synthesizer } from "./synthesizer"
-import { Node } from './nodes/node'
+import { Synthesizer, type ISerialization } from "./synthesizer"
+import { Node, type INodeSerialization } from './nodes/node'
 import type { Instrument } from './nodes/source/instrument'
 
+export interface ITrackSerialization extends ISerialization {
+
+    muted: boolean
+    volume: number
+    instrument: INodeSerialization
+    nodes: INodeSerialization[]
+}
 
 export class Track {
 
@@ -138,12 +145,12 @@ export class Track {
             // console.log('chain nodes', nodes)
             // this.instrument.chain(nodes)
 
-            this.instrument.connect(this.nodes[0].first)
+            this.instrument.connect(this.nodes[0].input)
 
             for(let i = 0; i < this.nodes.length; i++) {
 
                 if(this.nodes[i + 1] != null)
-                    this.nodes[i].last.connect(this.nodes[i + 1].first)
+                    this.nodes[i].output.connect(this.nodes[i + 1].input)
             }
         }
     }
@@ -165,14 +172,16 @@ export class Track {
     }
 
 
+    /** Connect the output gain node to passed in output */
     connect(i: Node | Tone.ToneAudioNode) {
         
-        this.gain.connect(i instanceof Node ? i.first : i)
+        this.gain.connect(i instanceof Node ? i.input : i)
     }
 
+    /** Disconnects the output gain node from passed in output */
     disconnect(i: Node | Tone.ToneAudioNode) {
         
-        this.gain.disconnect(i instanceof Node ? i.first : i)
+        this.gain.disconnect(i instanceof Node ? i.input : i)
     }
 
 
@@ -184,7 +193,7 @@ export class Track {
     }
 
 
-    serializeIn(o) {
+    serializeIn(o: ITrackSerialization) {
 
         if(o['mute']) this.mute(o['mute'])
         if(o['volume']) this.volume = o['volume']
@@ -206,9 +215,9 @@ export class Track {
         }
     }
 
-    serializeOut() {
+    serializeOut() : ITrackSerialization {
 
-        let nodes = []
+        let nodes: INodeSerialization[] = []
         for(let n of this.nodes) nodes.push(n.serializeOut())
 
         return {

@@ -7,6 +7,12 @@ import { Effect } from "./effect"
 
 /** Delay node */
 export class Delay extends Effect {
+    get wet(): any {
+        throw new Error('Method not implemented.');
+    }
+    set wet(w: any) {
+        throw new Error('Method not implemented.');
+    }
 
     declare public instance: Tone.FeedbackDelay
     /** How fast the delay is played in seconds */
@@ -20,12 +26,12 @@ export class Delay extends Effect {
 
         this.instance = new Tone.FeedbackDelay(this.delayTime, this.feedback)
 
-        this.last = this.first = this.instance
-
         this.wet = wet
         this.delayTime = delayTime ? delayTime : 3
         this.feedback = feedback ? feedback : .5
         
+        this.props.set('delayTime', { name: 'Delay Time', value: this.delayTime })
+        this.props.set('feedback', { name: 'Feedback', value: this.feedback })
     }
 
     get delayTime() { return this._delayTime }

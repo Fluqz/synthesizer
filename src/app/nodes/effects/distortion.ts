@@ -5,6 +5,12 @@ import { Effect } from './effect';
 
 
 export class Distortion extends Effect {
+    get wet(): any {
+        throw new Error('Method not implemented.');
+    }
+    set wet(w: any) {
+        throw new Error('Method not implemented.');
+    }
 
     /** Amound of distortion */
     private _gain: number
@@ -19,13 +25,14 @@ export class Distortion extends Effect {
 
         this.gain = gain
 
-        this.last = this.first = this.instance
-
         this.wet = this.wet
+
+        this.props.set('wet', { name: 'Wet', value: this.wet })
+        this.props.set('gain', { name: 'Gain', value: this.gain })
     }
 
     
-    get gain() { return this._gain}
+    get gain() { return this._gain }
     set gain(g) {
 
         this._gain = g
