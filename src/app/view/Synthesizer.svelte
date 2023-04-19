@@ -9,14 +9,9 @@
     import Track from './Track.svelte'
     
     import { Synthesizer } from '../synthesizer'
-    import { Knob } from './templates/knob';
+    import Knob from "./Knob.svelte"
 
     export let synthesizer: Synthesizer
-
-    // Volume Button
-    let volume: HTMLElement
-    const volumeKnob = new Knob('Volume', synthesizer.volume, 0, 1)
-    volumeKnob.onChange.subscribe((v) => { synthesizer.setVolume(v) })
 
 
     const octaveDown = () => {
@@ -64,8 +59,6 @@
         document.addEventListener('keydown', onKeyDown, false)
         document.addEventListener('keyup', onKeyUp, false)
 
-        volume.append(volumeKnob.dom)
-        
 
         // // Save preset input
         // const savePreset: HTMLInputElement = document.querySelector('#save-preset')
@@ -159,10 +152,10 @@
         {#each Synthesizer.keys as key, i}
 
             <Key key={key} />
-
+<!-- 
             {#if Math.round(Synthesizer.keys.length / 2) - 2 == i}
                 <br />
-            {/if}
+            {/if} -->
             
         {/each}
 
@@ -187,7 +180,15 @@
 
 
 
-        <div id="volume" title="Shift + A" bind:this={volume}></div>
+        <div id="volume" title="Shift + A">
+
+            <Knob 
+                name="Volume" 
+                value={synthesizer.volume}
+                min={0} 
+                max={1} 
+                on:onChange={(e) => synthesizer.setVolume(e.detail)} />
+        </div>
         
         <!-- <div id="bpm" title="Shift + A">
             <label for="bpm">BPM</label>
@@ -236,9 +237,7 @@
     z-index: 1;
 
     position: absolute;
-    bottom: 0px;
-    margin: 0 auto;
-
+    top: 100vh;
     width: 100%;
 
     -webkit-user-select: none;  

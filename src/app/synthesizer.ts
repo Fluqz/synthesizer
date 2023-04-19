@@ -263,6 +263,8 @@ export class Synthesizer implements ISerialize {
 
     removeTrack(track: Track) {
 
+        this.stopAll()
+
         this.tracks.splice(this.tracks.indexOf(track), 1)
 
         track.disconnect(this.gain)
@@ -438,13 +440,11 @@ export class Synthesizer implements ISerialize {
         this.setVolume(.5)
         this.setOctave(2)
 
-        this.gain.gain.setValueAtTime(this.volume, Tone.now())
+        this.stopAll()
 
-        for(let n of Synthesizer.activeNotes) this.releaseNote(n)
-        Synthesizer.activeNotes = []
+        for(let t of this.tracks) t.destroy()
 
-        for(let t of this.tracks) 
-            this.removeTrack(t)
+        this.tracks = []
     }
 
     /** Disconnects everything and removes all event listeners */
@@ -474,13 +474,12 @@ export class Synthesizer implements ISerialize {
 
         console.log('SerializeIn', o)
 
-        this.reset()
-
         const c = o.currentSession
 
         if(c.volume) this.setVolume(c.volume)
         if(c.octave) this.setOctave(c.octave)
 
+        this.tracks = []
         if(c.tracks && c.tracks.length > 0) {
 
             for(let t of c.tracks) {

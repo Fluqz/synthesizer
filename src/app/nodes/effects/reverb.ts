@@ -12,7 +12,7 @@ export class Reverb extends Node {
 
     constructor() {
 
-        super('reverb')
+        super('Reverb')
         
     }
 }

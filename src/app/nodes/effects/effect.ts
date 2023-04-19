@@ -5,7 +5,6 @@
 import * as Tone from 'tone'
 
 import { Node } from "../node"
-import { Knob } from '../../view/templates/knob';
 
 
 
@@ -13,7 +12,7 @@ import { Knob } from '../../view/templates/knob';
 export abstract class Effect extends Node {
 
     /** Bypass ratio. 1 = wet, 0 = dry. */
-    private _wet
+    protected _wet: number
     abstract get wet()
     abstract set wet(w) 
 
@@ -35,9 +34,9 @@ export abstract class Effect extends Node {
 
     serializeIn(o) {
 
-        if(o['name']) this.name = o['name']
-        if(o['enabled']) this.enabled = o['enabled']
-        if(o['wet']) this.wet = o['wet']
+        if(o.name) this.name = o.name
+        if(o.enabled) this.enabled = o.enabled
+        if(o.wet) this.wet = o.wet
     }
 
     serializeOut() {

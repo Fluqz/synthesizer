@@ -28,7 +28,6 @@
   height: auto;
 
   mix-blend-mode: difference;
-
 }
 /* 
 *:hover {
@@ -41,11 +40,15 @@ body {
 
   transition: 1s all;
 
-  overflow: hidden;
+  overflow-x: hidden;
+  scrollbar-width: none;
+
+  cursor: url('/assets/imgs/idioma.jpg');
 }
 
 html {
   font-size: 14px;
+  scrollbar-width: none;
 }
 
 .shadow {
@@ -53,15 +56,12 @@ html {
   box-shadow: 10px 10px 5px 5px #444 inset;
 }
 
-
 #app {
   position: absolute;
   width: 100%;
   height: 100%;
   z-index: 1;
 }
-
-
 
 /* Synthesizer */
 #track-menu {

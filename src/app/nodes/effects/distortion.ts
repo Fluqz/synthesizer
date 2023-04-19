@@ -1,5 +1,4 @@
 import * as Tone from 'tone'
-import { Knob } from '../../view/templates/knob';
 
 import { Effect } from './effect';
 
@@ -13,7 +12,7 @@ export class Distortion extends Effect {
 
     constructor(wet, gain) {
 
-        super('distortion', wet)
+        super('Distortion', wet)
 
         this.distortion = new Tone.Distortion(this.gain)
 
@@ -39,10 +38,10 @@ export class Distortion extends Effect {
 
     serializeIn(o) {
 
-        if(o['name']) this.name = o['name']
-        if(o['enabled']) this.enabled = o['enabled']
-        if(o['wet']) this.wet = o['wet']
-        if(o['gain']) this.gain = o['gain']
+        if(o.name) this.name = o.name
+        if(o.enabled) this.enabled = o.enabled
+        if(o.wet) this.wet = o.wet
+        if(o.gain) this.gain = o.gain
     }
 
     serializeOut() {

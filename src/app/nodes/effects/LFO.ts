@@ -11,13 +11,14 @@ export class LFOFilter extends Node {
 
     constructor(wet, time, feedback) {
 
-        super('lfo')
+        super('LFO')
 
     }
 
     serializeIn(o) {
 
-        if(o['enabled']) this.enabled = o['enabled']
+        if(o.name) this.name = o.name
+        if(o.enabled) this.enabled = o.enabled
     }
 
     serializeOut() {

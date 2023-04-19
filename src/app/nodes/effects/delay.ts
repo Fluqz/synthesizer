@@ -1,5 +1,4 @@
 import * as Tone from 'tone'
-import { Knob } from '../../view/templates/knob';
 
 import { Effect } from "./effect"
 
@@ -17,7 +16,7 @@ export class Delay extends Effect {
 
     constructor(wet, delayTime, feedback) {
 
-        super('delay', wet)
+        super('Delay', wet)
 
         this.feedbackDelay = new Tone.FeedbackDelay(this.delayTime, this.feedback)
 
@@ -28,12 +27,16 @@ export class Delay extends Effect {
         this.delayTime = delayTime ? delayTime : 3
         this.feedback = feedback ? feedback : .5
         
-        this.props.set('delayTime', { name: 'Delay Time', get: () =>  this.delayTime })
-        this.props.set('feedback', { name: 'Feedback', get: () =>  this.feedback })
+        this.props.set('wet', { name: 'Wet', get: () =>  this.wet, set: (w) => { this.wet = w} })
+        this.props.set('delayTime', { name: 'Delay Time', get: () =>  this.delayTime, set: (d) => { this.delayTime = d} })
+        this.props.set('feedback', { name: 'Feedback', get: () =>  this.feedback, set: (f) => { this.feedback = f} })
     }
 
-    get wet() { return 0 }
-    set wet(w: any) {
+    get wet() { return this._wet }
+    set wet(w: number) {
+
+        this._wet = w
+        this.feedbackDelay.wet.setValueAtTime(this._wet, Tone.now())
     }
 
     get delayTime() { return this._delayTime }
@@ -55,11 +58,11 @@ export class Delay extends Effect {
 
     serializeIn(o) {
 
-        if(o['name']) this.name = o['name']
-        if(o['enabled']) this.enabled = o['enabled']
-        if(o['wet']) this.wet = o['wet']
-        if(o['delayTime']) this.delayTime = o['delayTime']
-        if(o['feedback']) this.feedback = o['feedback']
+        if(o.name) this.name = o.name
+        if(o.enabled) this.enabled = o.enabled
+        if(o.wet) this.wet = o.wet
+        if(o.delayTime) this.delayTime = o.delayTime
+        if(o.feedback) this.feedback = o.feedback
     }
 
     serializeOut() {

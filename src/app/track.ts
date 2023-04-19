@@ -193,20 +193,24 @@ export class Track implements ISerialize {
 
     serializeIn(o: ITrackSerialization) {
 
-        if(o['mute']) this.mute(o['mute'])
-        if(o['volume']) this.volume = o['volume']
+        if(o.muted) this.mute(o.muted)
+        if(o.volume) this.volume = o.volume
 
-        if(o['instrument']) {
+        if(o.instrument) {
 
-            this.setInstrument(Synthesizer.nodes[o['instrument']['name']]())
+            let instrument: Instrument = Synthesizer.nodes.source[o.instrument.name]()
+            instrument.serializeIn(o.instrument)
+            this.setInstrument(instrument)
         }
         
-        if(o['nodes'] && o['nodes'].length > 0) {
+        if(o.nodes && o.nodes.length > 0) {
             
-            for(let n of o['nodes']) {
+            for(let n of o.nodes) {
 
-                let node = Synthesizer.nodes[n.name]()
+                let node: Node = Synthesizer.nodes.effects[n.name]()
+
                 if(!node) { console.error('Track Serialize Node Error: Node is undefined. Node.name no match.'); continue}
+
                 node.serializeIn(n)
                 this.addNode(node)
             }

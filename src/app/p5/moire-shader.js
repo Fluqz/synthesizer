@@ -1,7 +1,7 @@
 import { Synthesizer } from "../synthesizer"
 import { G } from "../core/globals"
 import { Grid } from "../core/grid"
-import { M } from "../core/math"
+import { M } from "../core/math/math"
 
 import * as Tone from 'tone'
 export const moireShader = (p5) => {
@@ -158,6 +158,7 @@ export const moireShader = (p5) => {
 
     p5.windowResized = () => { // TODO - aNOT WORKING
 
+        console.log('resize')
         p5.resizeCanvas(G.w, G.h)
         grid.setSize(G.w, G.h, 9, 4)
     }

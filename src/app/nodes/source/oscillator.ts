@@ -1,6 +1,5 @@
 import * as Tone from 'tone'
 import { Instrument } from './instrument';
-import { Knob } from '../../view/templates/knob';
 import { Synthesizer } from '../../synthesizer';
 import { Node } from '../node';
 import type { ToneWithContextOptions } from 'tone/build/esm/core/context/ToneWithContext';
@@ -34,7 +33,7 @@ export class Oscillator extends Instrument {
     /** freq, detune, volume, waveform,  */
     constructor(volume?: number, frequency?: number, detune?: number) {
 
-        super('oscillator')
+        super('Oscillator')
 
         this.osc = new Tone.Oscillator(this.frequency)
         this.osc.start(Tone.now())
@@ -140,10 +139,10 @@ export class Oscillator extends Instrument {
  
     serializeIn(o) {
 
-        if(o['enabled']) this.enabled = o['enabled']
-        if(o['frequency']) this.frequency = o['frequency']
-        if(o['volume']) this.volume = o['volume']
-        if(o['detune']) this.detune = o['detune']
+        if(o.enabled) this.enabled = o.enabled
+        if(o.frequency) this.frequency = o.frequency
+        if(o.volume) this.volume = o.volume
+        if(o.detune) this.detune = o.detune
     }
 
     serializeOut() {

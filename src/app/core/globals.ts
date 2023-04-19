@@ -1,7 +1,5 @@
 
 
-
-
 export class G {
 
     static debug = true

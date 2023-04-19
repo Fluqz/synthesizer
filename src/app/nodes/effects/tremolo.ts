@@ -17,7 +17,7 @@ export class Tremolo extends Effect {
 
     constructor(wet, frequency, depth) {
 
-        super('tremolo', wet)
+        super('Tremolo', wet)
 
         this.tremolo = new Tone.Tremolo(this.frequency, this.depth)
 
@@ -54,11 +54,11 @@ export class Tremolo extends Effect {
     
     serializeIn(o) {
 
-        if(o['name']) this.name = o['name']
-        if(o['enabled']) this.enabled = o['enabled']
-        if(o['wet']) this.wet = o['wet']
-        if(o['frequency']) this.frequency = o['frequency']
-        if(o['depth']) this.depth = o['depth']
+        if(o.name) this.name = o.name
+        if(o.enabled) this.enabled = o.enabled
+        if(o.wet) this.wet = o.wet
+        if(o.frequency) this.frequency = o.frequency
+        if(o.depth) this.depth = o.depth
     }
 
     serializeOut() {

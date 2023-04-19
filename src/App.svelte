@@ -6,7 +6,6 @@
     import { onMount } from 'svelte';
     import Synthesizer from './app/view/Synthesizer.svelte'
     
-    // @ts-ignore
     import * as P5 from 'p5'
     
     import { Synthesizer as Synth } from './app/synthesizer'
@@ -24,19 +23,20 @@
     
     onMount(() => {
 
-      G.w = window.innerWidth
-      G.h = window.innerHeight
-    
-      // Processing
-      new P5(moireShader)
-      new P5(moireShader)
-      // new P5(keyVisualizer)
-      // new P5(envelope)
-      // new P5(sinewave)
-    //   new P5(worms)
-    
-    
-      // serializeIn(Storage.load())
+        G.w = window.innerWidth
+        G.h = window.innerHeight
+
+        // Processing
+        let m1 = new P5(moireShader)
+        let m2 = new P5(moireShader)
+
+        // new P5(keyVisualizer)
+        // new P5(envelope)
+        // new P5(sinewave)
+        // new P5(worms)
+
+
+        // serializeIn(Storage.load())
     })
     
     
@@ -80,7 +80,7 @@
     // ON UNLOAD
     window.onbeforeunload = () => {
     
-        // Storage.save(serializeOut())
+        Storage.save(serializeOut())
     
         synthesizer.dispose()
     }
@@ -118,6 +118,11 @@
 
 
 
-<Synthesizer synthesizer={synthesizer}/>
+<Synthesizer synthesizer={synthesizer} />
 
+
+
+<style>
+
+</style>
 

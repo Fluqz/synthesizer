@@ -21,7 +21,7 @@ export class Synth extends Instrument {
     /** freq, detune, volume, waveform,  */
     constructor(options? = {}) {
 
-        super('synth')
+        super('Synth')
 
         this.synth = new Tone.PolySynth(Tone.Synth)
 
@@ -76,10 +76,10 @@ export class Synth extends Instrument {
 
     serializeIn(o) {
 
-        if(o['enabled']) this.enabled = o['enabled']
-        if(o['volume']) this.volume = o['volume']
-        if(o['detune']) this.detune = o['detune']
-        if(o['portamento']) this.portamento = o['portamento']
+        if(o.enabled) this.enabled = o.enabled
+        if(o.volume) this.volume = o.volume
+        if(o.detune) this.detune = o.detune
+        if(o.portamento) this.portamento = o.portamento
     }
 
     serializeOut() {

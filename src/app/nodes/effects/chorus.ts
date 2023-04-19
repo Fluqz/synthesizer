@@ -1,6 +1,5 @@
 import * as Tone from 'tone'
 
-import { Knob } from "../../view/templates/knob"
 import { Effect } from './effect'
 
 
@@ -21,7 +20,7 @@ export class Chorus extends Effect {
 
     constructor(wet, frequency, delayTime, depth, feedback) {
 
-        super('chorus', wet)
+        super('Chorus', wet)
 
         this.chorus = new Tone.Chorus(this.frequency, this.delayTime, this.depth)
 
@@ -77,11 +76,11 @@ export class Chorus extends Effect {
 
     serializeIn(o) {
 
-        if(o['enabled']) this.enabled = o['enabled']
-        if(o['wet']) this.wet = o['wet']
-        if(o['delayTime']) this.delayTime = o['delayTime']
-        if(o['depth']) this.depth = o['depth']
-        if(o['feedback']) this.feedback = o['feedback']
+        if(o.enabled) this.enabled = o.enabled
+        if(o.wet) this.wet = o.wet
+        if(o.delayTime) this.delayTime = o.delayTime
+        if(o.depth) this.depth = o.depth
+        if(o.feedback) this.feedback = o.feedback
     }
 
     serializeOut() {

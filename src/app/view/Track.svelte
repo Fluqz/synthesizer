@@ -5,7 +5,7 @@
     import type { Track } from "../track";
 
     import Node from "./Node.svelte";
-    import Knob from "./templates/Knob.svelte";
+    import Knob from "./Knob.svelte"
 
     export let track: Track
 
@@ -54,8 +54,8 @@
 
     <Node node={track.instrument} />
 
-    {#each track.nodes as node}
-    
+    {#each track.nodes as node, i}
+
         <Node node={node} />
 
     {/each}

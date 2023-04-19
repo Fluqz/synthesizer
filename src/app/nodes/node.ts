@@ -54,7 +54,7 @@ export class Node implements ISerialize {
 
         this.name = name
 
-        this.enabled = true
+        this._enabled = true
 
         this.props = new Map()
 
@@ -113,8 +113,8 @@ export class Node implements ISerialize {
 
     serializeIn(o : INodeSerialization) {
 
-        if(o['name']) this.name = o['name']
-        if(o['enabled']) this.enabled = o['enabled']
+        if(o.name) this.name = o.name
+        if(o.enabled) this.enabled = o.enabled
     }
 
     serializeOut() : INodeSerialization {

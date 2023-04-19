@@ -1,5 +1,5 @@
 import { fromEvent, Subject, throttleTime } from "rxjs"
-import { M } from "../../core/math"
+import { M } from "../../core/math/math"
 
 /**
  * HTML Knob

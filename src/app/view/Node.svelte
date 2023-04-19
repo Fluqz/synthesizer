@@ -3,7 +3,7 @@
 <script lang="ts">
 
     import type { Node, NodeProperty } from "../nodes";
-    import Knob from "./templates/Knob.svelte";
+    import Knob from "./Knob.svelte"
 
     export let node: Node
 
