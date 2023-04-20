@@ -50,7 +50,7 @@ export class Track implements ISerialize {
         }
 
         // this.addNode(Synthesizer.nodes.effects.Tremolo())
-        // this.addNode(Synthesizer.nodes.effects.Delay())
+        this.addNode(Synthesizer.nodes.effects.Delay())
     }
 
     setInstrument(instrument: Instrument) {

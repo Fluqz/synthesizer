@@ -23,6 +23,7 @@ export class FMSynth extends Instrument {
     _sustain: number
     _release: number
     _phase: number
+    _harmonicity: number
 
     /** freq, detune, volume, waveform,  */
     constructor(options? = {}) {
@@ -53,13 +54,14 @@ export class FMSynth extends Instrument {
         // this.props.set('wave', { type: InputType.DROPDOWN, name: 'Wave', get: () => this.wave, set: (v:string) => this.wave = v, options: ['triangle', 'sine', 'square', 'sawtooth'], group: 1 })
         // this.props.set('wavePartial', { type: InputType.DROPDOWN, name: 'Wave Partial', get: () => this.wavePartial, set: (v:string) => this.wavePartial = v, options: ['', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], group: 1 })
 
-        this.props.set('detune', { type: InputType.KNOB, name: 'Detune', get: () => this.detune, set: (v:number) => this.detune = v, group: 2 })
+        this.props.set('harmonicity', { type: InputType.KNOB, name: 'Harmonicity', get: () => this.harmonicity, set: (v:number) => this.harmonicity = v, min: 0, max: 5, group: 2 })
+
         this.props.set('phase', { type: InputType.KNOB, name: 'Phase', get: () => this.phase, set: (v:number) => this.phase = v, group: 2 })
         
-        this.props.set('attack', { type: InputType.KNOB, name: 'Attack', get: () => this.attack, set: (v:number) => this.attack = v, group: 4 })
-        this.props.set('decay', { type: InputType.KNOB, name: 'Decay', get: () => this.decay, set: (v:number) => this.decay = v, group: 4 })
-        this.props.set('sustain', { type: InputType.KNOB, name: 'Sustain', get: () => this.sustain, set: (v:number) => this.sustain = v, group: 4 })
-        this.props.set('release', { type: InputType.KNOB, name: 'Release', get: () => this.release, set: (v:number) => this.release = v, group: 4 })
+        this.props.set('attack', { type: InputType.KNOB, name: 'Attack', get: () => this.attack, set: (v:number) => this.attack = v, min: 0, max: 5, group: 4 })
+        this.props.set('decay', { type: InputType.KNOB, name: 'Decay', get: () => this.decay, set: (v:number) => this.decay = v, min: 0, max: 5, group: 4 })
+        this.props.set('sustain', { type: InputType.KNOB, name: 'Sustain', get: () => this.sustain, set: (v:number) => this.sustain = v, min: 0, max: 5, group: 4 })
+        this.props.set('release', { type: InputType.KNOB, name: 'Release', get: () => this.release, set: (v:number) => this.release = v, min: 0, max: 5, group: 4 })
     }
 
     set volume(v: number) {
@@ -75,6 +77,14 @@ export class FMSynth extends Instrument {
     //     this.synth.set({ sampleTime: this._sampleTime })
     // }
     // get sampleTime() { return this._sampleTime }
+
+
+    set harmonicity(d: number) { 
+        this._harmonicity = d 
+        this.synth.set({ harmonicity: this._harmonicity })
+    }
+    get harmonicity() { return this._harmonicity }
+
 
 
     set detune(d: number) { 

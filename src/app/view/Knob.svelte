@@ -52,6 +52,12 @@
     /** Is key pressed down */
     let isKeyDown: Boolean = false
 
+    let shiftPressed: boolean = false
+    let metaPressed: boolean = false
+    let ctrlPressed: boolean = false
+    let altPressed: boolean = false
+
+
     /** Amount of pixels the cursor is allowed to travel between the mousedown and mouseup event. 
      * If value is exeeding clickRange, no click has occured.
     */
@@ -181,16 +187,26 @@
     /** On 'keydown' event callback */
     const onKeyDown = (e) => {
 
+        ctrlPressed = e.ctrlKey
+        shiftPressed = e.shiftKey
+        metaPressed = e.metaKey
+        altPressed = e.altKey
+
         if(e.key === 'Shift') division *= 40
-        if(e.key === 'Meta') division /= 4
+        // if(e.key === 'Meta') division /= 4
 
         isKeyDown = true
     }
     /** On 'keyup' event callback */
     const onKeyUp = (e) => {
 
+        ctrlPressed = e.ctrlKey
+        shiftPressed = e.shiftKey
+        metaPressed = e.metaKey
+        altPressed = e.altKey
+
         if(e.key === 'Shift') division /= 40
-        if(e.key === 'Meta') division *= 4
+        // if(e.key === 'Meta') division *= 4
 
         isKeyDown = false
     }
