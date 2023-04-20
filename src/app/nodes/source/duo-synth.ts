@@ -1,6 +1,6 @@
 import * as Tone from 'tone'
 import { Instrument } from './instrument';
-import { Node } from '../node';
+import { InputType, Node, type NodeInput } from '../node';
 
 
 /**  */
@@ -12,11 +12,7 @@ export class DuoSynth extends Instrument {
     private _volume = .5
     /** Gain node */ 
     public gain
-    /** Octave of oscillator */
-    public octave = 2
 
-    /** Necessary release time to prevent clicking */
-    private releaseTime = 1
 
     /** freq, detune, volume, waveform,  */
     constructor(options = {}) {
@@ -34,23 +30,23 @@ export class DuoSynth extends Instrument {
         this.output = this.gain
 
 
-        this.props.set('volume', { name: 'Volume', get: () => { return this.volume }, set: (v: number) => { this.volume = v }, min: 0, max: 1 })
+        this.props.set('volume', { type: InputType.KNOB, name: 'Volume', get: () => { return this.volume }, set: (v: number) => { this.volume = v }, min: 0, max: 1, group: 0 })
         
-        this.props.set('detune', { name: 'Detune', get: () => { return this.detune }, set: (v: number) => { this.detune = v }, min: 0, max: 1  })
-        this.props.set('harmonicity', { name: 'Harmonicity', get: () => { return this.harmonicity }, set: (v: number) => { this.harmonicity = v }, min: 0, max: 1  })
-        this.props.set('portamento', { name: 'Portamento', get: () => { return this.portamento }, set: (v: number) => { this.portamento = v }, min: 0, max: 10  })
-        this.props.set('vibratoAmount', { name: 'VibratoAmount', get: () => { return this.vibratoAmount }, set: (v: number) => { this.vibratoAmount = v }, min: 0, max: 1  })
-        this.props.set('vibratoRate', { name: 'VibratoRate', get: () => { return this.vibratoRate }, set: (v: number) => { this.vibratoRate = v }, min: 0, max: 1  })
+        this.props.set('detune', { type: InputType.KNOB, name: 'Detune', get: () => { return this.detune }, set: (v: number) => { this.detune = v }, min: 0, max: 1, group: 1 })
+        this.props.set('harmonicity', { type: InputType.KNOB, name: 'Harmonicity', get: () => { return this.harmonicity }, set: (v: number) => { this.harmonicity = v }, min: 0, max: 1, group: 1 })
+        this.props.set('portamento', { type: InputType.KNOB, name: 'Portamento', get: () => { return this.portamento }, set: (v: number) => { this.portamento = v }, min: 0, max: 1, group: 1 })
+        this.props.set('vibratoAmount', { type: InputType.KNOB, name: 'VibratoAmount', get: () => { return this.vibratoAmount }, set: (v: number) => { this.vibratoAmount = v }, min: 0, max: 1, group: 1 })
+        this.props.set('vibratoRate', { type: InputType.KNOB, name: 'VibratoRate', get: () => { return this.vibratoRate }, set: (v: number) => { this.vibratoRate = v }, min: 0, max: 1, group: 1 })
 
-        this.props.set('attack1', { name: 'Attack 1', get: () => { return this.attack0 }, set: (v: number) => { this.attack0 = v }, min: 0, max: 3  })
-        this.props.set('decay1', { name: 'Decay 1', get: () => { return this.decay0 }, set: (v: number) => { this.decay0 = v }, min: 0, max: 1  })
-        this.props.set('release1', { name: 'Release 1', get: () => { return this.release0 }, set: (v: number) => { this.release0 = v }, min: 0, max: 1  })
-        this.props.set('sustain1', { name: 'Sustain 1', get: () => { return this.sustain0 }, set: (v: number) => { this.sustain0 = v }, min: 0, max: 1  })
+        this.props.set('attack1', { type: InputType.KNOB, name: 'Attack 1', get: () => { return this.attack0 }, set: (v: number) => { this.attack0 = v }, min: 0, max: 3, group: 2 })
+        this.props.set('decay1', { type: InputType.KNOB, name: 'Decay 1', get: () => { return this.decay0 }, set: (v: number) => { this.decay0 = v }, min: 0, max: 1, group: 2 })
+        this.props.set('release1', { type: InputType.KNOB, name: 'Release 1', get: () => { return this.release0 }, set: (v: number) => { this.release0 = v }, min: 0, max: 1, group: 2 })
+        this.props.set('sustain1', { type: InputType.KNOB, name: 'Sustain 1', get: () => { return this.sustain0 }, set: (v: number) => { this.sustain0 = v }, min: 0, max: 1, group: 2 })
 
-        this.props.set('attack2', { name: 'Attack 2', get: () => { return this.attack1 }, set: (v: number) => { this.attack1 = v }, min: 0, max: 3  })
-        this.props.set('decay2', { name: 'Decay 2', get: () => { return this.decay1 }, set: (v: number) => { this.decay1 = v }, min: 0, max: 1  })
-        this.props.set('release2', { name: 'Release 2', get: () => { return this.release1 }, set: (v: number) => { this.release1 = v }, min: 0, max: 1  })
-        this.props.set('sustain2', { name: 'Sustain 2', get: () => { return this.sustain1 }, set: (v: number) => { this.sustain1 = v }, min: 0, max: 1  })
+        this.props.set('attack2', { type: InputType.KNOB, name: 'Attack 2', get: () => { return this.attack1 }, set: (v: number) => { this.attack1 = v }, min: 0, max: 3, group: 3 })
+        this.props.set('decay2', { type: InputType.KNOB, name: 'Decay 2', get: () => { return this.decay1 }, set: (v: number) => { this.decay1 = v }, min: 0, max: 1, group: 3 })
+        this.props.set('release2', { type: InputType.KNOB, name: 'Release 2', get: () => { return this.release1 }, set: (v: number) => { this.release1 = v }, min: 0, max: 1, group: 3 })
+        this.props.set('sustain2', { type: InputType.KNOB, name: 'Sustain 2', get: () => { return this.sustain1 }, set: (v: number) => { this.sustain1 = v }, min: 0, max: 1, group: 3 })
     }
 
     get volume() { return this._volume }

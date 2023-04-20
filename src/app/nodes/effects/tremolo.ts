@@ -1,6 +1,7 @@
 import * as Tone from 'tone'
 
 import { Effect } from "./effect"
+import { InputType } from '../node'
 
 
 
@@ -27,13 +28,19 @@ export class Tremolo extends Effect {
         this.frequency = frequency
         this.depth = depth
 
-        this.props.set('frequency', { name: 'Frequency', get: () =>  this.frequency })
-        this.props.set('depth', { name: 'Depth', get: () =>  this.depth })
+        console.log(this.tremolo)
 
+
+        this.props.set('wet', { type: InputType.KNOB, name: 'Wet', get: () =>  this.wet, set: (v) => this.wet = v })
+        this.props.set('frequency', { type: InputType.KNOB, name: 'Frequency', get: () =>  this.frequency, set: (v) => this._frequency = v })
+        this.props.set('depth', { type: InputType.KNOB, name: 'Depth', get: () =>  this.depth, set: (v) => this.depth = v })
     }
 
-    get wet() { return 0 }
+    get wet() { return this._wet }
     set wet(w: any) {
+
+        this._wet = w
+        this.tremolo.set({ wet: this._wet })
     }
 
     get frequency() { return this._frequency }

@@ -5,7 +5,7 @@ import * as RxJs from 'rxjs'
 
 import { Key } from './key'
 
-import { Synth, DuoSynth, Instrument, FMSynth, AMSynth, Delay, Tremolo, Reverb, Chorus, Distortion, Oscillator} from './nodes'
+import { Synth, DuoSynth, Instrument, FMSynth, AMSynth, Delay, Tremolo, Reverb, Chorus, Distortion, Oscillator, Effect} from './nodes'
 
 import { Track, type ITrackSerialization } from './track'
 import { PresetManager, type IPreset } from './core/preset-manager'
@@ -104,13 +104,6 @@ export class Synthesizer implements ISerialize {
      */
     static activeNotes: string[] = []
 
-    static synths = {
-        Synth: Tone.Synth,
-        FMSynth: Tone.FMSynth,
-        DuoSynth: Tone.DuoSynth,
-        MembraneSynth: Tone.MembraneSynth,
-    }
-
     static nodes = {
         effects: {
 
@@ -119,7 +112,7 @@ export class Synthesizer implements ISerialize {
             Distortion: () => { return new Distortion(1, .5) },
             Chorus: () => { return new Chorus(1, 4, 20, 1, 1) },
         },
-        source: {
+        sources: {
 	
             FMSynth: () => { return new FMSynth() },
             AMSynth: () => { return new AMSynth() },
@@ -129,6 +122,13 @@ export class Synthesizer implements ISerialize {
             Synth: () => { return new Synth() },
             DuoSynth: () => { return new DuoSynth() },
         }
+    }
+
+    static createNode(name: string) {
+
+        if(Synthesizer.nodes.sources[name]) return Synthesizer.nodes.sources[name]() as Instrument
+        if(Synthesizer.nodes.effects[name]) return Synthesizer.nodes.effects[name]() as Effect
+        return null
     }
 
     /** Array of created Key objects */
@@ -207,11 +207,11 @@ export class Synthesizer implements ISerialize {
 
 
         this.tracks = []
-        // this.addTrack(new Track(Synthesizer.nodes.source.Oscillator()))
-        // this.addTrack(new Track(Synthesizer.nodes.source.Synth()))
-        this.addTrack(new Track(Synthesizer.nodes.source.DuoSynth()))
-        // this.addTrack(new Track(Synthesizer.nodes.source.FMSynth()))
-        // this.addTrack(new Track(Synthesizer.nodes.source.AMSynth()))
+        this.addTrack(new Track(Synthesizer.nodes.sources.FMSynth()))
+        // this.addTrack(new Track(Synthesizer.nodes.sources.Synth()))
+        // this.addTrack(new Track(Synthesizer.nodes.sources.DuoSynth()))
+        // this.addTrack(new Track(Synthesizer.nodes.sources.FMSynth()))
+        // this.addTrack(new Track(Synthesizer.nodes.sources.AMSynth()))
 
         this.presetManager = new PresetManager(this)
 

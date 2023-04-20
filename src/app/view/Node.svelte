@@ -1,14 +1,55 @@
 
 
 <script lang="ts">
+    import type { InputNode } from "tone";
 
-    import type { Node, NodeProperty } from "../nodes";
+
+    import { InputType, type Node, type NodeInput } from "../nodes";
     import Knob from "./Knob.svelte"
+    import Dropdown from "./Dropdown.svelte"
 
     export let node: Node
 
-    const nodes: NodeProperty[] = [...node.props.values()]
+    const nodeInputs: NodeInput[] = [...node.props.values()]
 
+    const groupNodes = (nodeInputs: NodeInput[]) => {
+
+        const groups: Map<number, NodeInput[]> = new Map()
+
+        let nodeInput: NodeInput
+
+        for(let i = 0; i < nodeInputs.length; i++) {
+
+            nodeInput = nodeInputs[i]
+
+            const groupID = nodeInput.group
+
+            let array: NodeInput[] = groups.get(groupID)
+
+            if(array == null) array = []
+
+            array.push(nodeInput)
+
+            groups.set(groupID, array)
+        }
+
+        return groups
+    }
+
+    const groups = Array.from(groupNodes(nodeInputs).values())
+
+    // const nodes: NodeInput[] = [...node.props.values()].sort((a: NodeInput, b:NodeInput) => {
+
+    //     if(a.group > b.group) return 1
+    //     if(a.group < b.group) return -1
+    //     if(a.group == b.group) return 0
+    // })
+
+
+
+    
+        console.log('node props', node.name, groups)
+    
 </script>
 
 
@@ -20,18 +61,44 @@
     <div class="delete" on:click={node.delete}>x</div>
 
 
-    {#each nodes as p}
-                  
-        <Knob
-            name={p.name.charAt(0).toUpperCase() + p.name.slice(1)}
-            min={p.min}
-            max={p.max}
-            value={p.get()}
-            on:onChange={(e) => p.set(e.detail) } 
-        />
-        
-    {/each}
 
+    {#each groups as g}
+
+        <div class="node-group">
+
+            {#each g as n}
+
+                {#if n.type == InputType.KNOB}
+                    
+                    <Knob
+                        name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
+                        min={n.min}
+                        max={n.max}
+                        value={n.get()}
+                        on:onChange={(e) => n.set(e.detail) } 
+                    />
+
+                {/if}
+
+
+                {#if n.type == InputType.DROPDOWN}
+                    
+                    <Dropdown
+                        name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
+                        value={n.get()}
+                        options={n.options}
+                        on:onSelect={(e) => n.set(e.detail) } 
+                    />
+
+                {/if}
+
+
+                
+            {/each}
+
+        </div>
+
+    {/each}
 
 </div>
 

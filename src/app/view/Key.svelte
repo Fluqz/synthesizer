@@ -88,12 +88,10 @@
 .key {
 
     display: inline-block;
-    width: 3%;
+    width: 2%;
     height: 100%;
 
     background-color: var(--c-w);
-
-    margin: 0px 1px;
 
     font-size: .7rem;
     color: var(--c-w);

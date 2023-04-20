@@ -45,8 +45,8 @@ export class Dropdown {
         this.setSelected(this.selected ? this.selected : 'none')
         this.dom.append(this.selectedDOM)
 
-        this.selectedDOM.addEventListener('mouseenter', this.openDropdown.bind(this))
-        this.dom.addEventListener('mouseleave', this.closeDropdown.bind(this))
+        this.selectedDOM.addEventListener('mouseenter', this.open.bind(this))
+        this.dom.addEventListener('mouseleave', this.close.bind(this))
 
         this.dropdownDOM = document.createElement('div')
         this.dropdownDOM.classList.add('dropdown-options')
@@ -121,12 +121,12 @@ export class Dropdown {
         }
     }
 
-    openDropdown(e) {
+    open(e) {
 
         this.dropdownDOM.classList.add('active')
     }
 
-    closeDropdown(e) {
+    close(e) {
 
         this.dropdownDOM.classList.remove('active')
     }
@@ -137,7 +137,7 @@ export class Dropdown {
 
         this.onSelectOption.next(this.selected)
 
-        this.closeDropdown()
+        this.close()
     }
 
     onDelete(e) {

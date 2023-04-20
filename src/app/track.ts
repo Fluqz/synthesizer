@@ -50,7 +50,7 @@ export class Track implements ISerialize {
         }
 
         // this.addNode(Synthesizer.nodes.effects.Tremolo())
-        this.addNode(Synthesizer.nodes.effects.Delay())
+        // this.addNode(Synthesizer.nodes.effects.Delay())
     }
 
     setInstrument(instrument: Instrument) {
@@ -198,7 +198,7 @@ export class Track implements ISerialize {
 
         if(o.instrument) {
 
-            let instrument: Instrument = Synthesizer.nodes.source[o.instrument.name]()
+            let instrument: Instrument = Synthesizer.createNode(o.instrument.name) as Instrument
             instrument.serializeIn(o.instrument)
             this.setInstrument(instrument)
         }
@@ -207,7 +207,7 @@ export class Track implements ISerialize {
             
             for(let n of o.nodes) {
 
-                let node: Node = Synthesizer.nodes.effects[n.name]()
+                let node: Node = Synthesizer.createNode(n.name)
 
                 if(!node) { console.error('Track Serialize Node Error: Node is undefined. Node.name no match.'); continue}
 

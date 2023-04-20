@@ -87,7 +87,7 @@ export class Vec2 {
         return v
     }
 
-    public normalize = (v: Vec2) : Vec2 => {
+    public normalizeVector = (v: Vec2) : Vec2 => {
 
         if(v.x == 0 && v.y == 0) return v
 
@@ -97,7 +97,12 @@ export class Vec2 {
         n.x = v.x / Math.pow((Math.pow(v.x, 2) + Math.pow(v.y, 2)), (1/2))
         n.y = v.y / Math.pow((Math.pow(v.x, 2) + Math.pow(v.y, 2)), (1/2))
         
-        return n
+        return v.copy(n)
+    }
+
+    public normalize = () : Vec2 => {
+
+        return this.normalizeVector(this)
     }
 
     public getDistance = (v1: Vec2, v2: Vec2) : number => {
@@ -110,7 +115,6 @@ export class Vec2 {
 
         return this.getDistance(this, v)
     }
-
 
     public angleTo(v: Vec2) : number {
 

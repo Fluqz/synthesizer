@@ -60,12 +60,16 @@
     /** Output emitter */
     let dispatch = createEventDispatcher()
 
+    let showResetBtn: boolean = false
 
 
     // ADD FIRST LETTER OF NAME TO MIDDLE OF KNOB
 
 
+    const reset = () => {
 
+        setValue(initValue)
+    }
 
     /** Set value between 0 - 1 */
     const setValue = (v: number) => {
@@ -76,9 +80,9 @@
 
         value = M.clamb(min, max, value)
 
-        console.log('value', value)
-
         angle = (value / ((max - min) / (Math.PI * 2)))
+        
+        console.log('Change', name, 'to :', value)
 
         dispatch('onChange', value)
     }
@@ -162,11 +166,11 @@
     const onMouseUp = (e) => { 
 
         isMouseDown = false 
-        drag = false
 
         if(drag) return
 
-        
+        // Click
+        // showResetBtn = true
     }
     /** On 'touchstart' event callback */
     const onTouchStart = onMouseDown
@@ -240,7 +244,8 @@
          bind:this={knobDOM}
          on:pointerdown={onMouseDown} 
          on:touchstart={onTouchStart}
-         style={'transform: rotate(' + Math.round(angle*(180/Math.PI)) + 'deg)'}>
+         on:dblclick={() => showResetBtn = !showResetBtn}
+         style={'transform: rotate(' + Math.round(angle*(180/Math.PI)) + 'deg);'}>
 
         <div class="knob-pointer"></div>
 
@@ -252,9 +257,15 @@
 
 </div>
 
-<div class="knob-settings">
-    Reset
-</div>
+{#if showResetBtn}
+        
+    <div class="knob-settings" 
+            on:click={reset}
+            style={'left:' + mousePosition.x + 'px;'}>
+        Reset
+    </div>
+    
+{/if}
 
 
 
@@ -264,10 +275,12 @@
 
 
 .knob-wrapper {
-  text-align: center;
 
-  font-size: 0.7rem;
-  margin: 5px 5px 0px 5px;
+    display: inline-block;
+    text-align: center;
+
+    font-size: 0.7rem;
+    margin: 5px 5px 0px 5px;
 }
 
 .knob {
@@ -329,13 +342,15 @@
 
 
 .knob-settings {
-    positon: absolute;
+    position: absolute;
 
-    top: -100px;
-    right: 0px;
+    top: 0px;
+    left: 0px;
 
     width: 100px;
     height: 100px;
+
+    cursor: pointer;
 }
 
 </style>

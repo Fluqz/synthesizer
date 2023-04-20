@@ -1,5 +1,6 @@
 import * as Tone from 'tone'
 import { Instrument } from './instrument';
+import { InputType } from '../node';
 
 
 /**  */
@@ -14,8 +15,6 @@ export class AMSynth extends Instrument {
     _detune: number
     /** Offset of the wave */
     _portamento: number
-    /** Octave of oscillator */
-    octave: number = 2
 
     /** freq, detune, volume, waveform,  */
     constructor(options? = {}) {
@@ -35,9 +34,9 @@ export class AMSynth extends Instrument {
         this.portamento = options.portamento ? options.portamento : 0
 
 
-        this.props.set('volume', { name: 'Volume', get: () =>  this.volume })
-        this.props.set('detune', { name: 'Detune', get: () =>  this.detune })
-        this.props.set('portamento', { name: 'Portamento', get: () =>  this.portamento })
+        this.props.set('volume', { type: InputType.KNOB, name: 'Volume', get: () =>  this.volume })
+        this.props.set('detune', { type: InputType.KNOB, name: 'Detune', get: () =>  this.detune })
+        this.props.set('portamento', { type: InputType.KNOB, name: 'Portamento', get: () =>  this.portamento })
     }
 
     set volume(v: number) {

@@ -1,6 +1,8 @@
 import * as Tone from 'tone'
 
 import { Effect } from "./effect"
+import type { ToneWithContextOptions } from 'tone/build/esm/core/context/ToneWithContext'
+import { InputType, Node } from '../node'
 
 
 
@@ -27,9 +29,9 @@ export class Delay extends Effect {
         this.delayTime = delayTime ? delayTime : 3
         this.feedback = feedback ? feedback : .5
         
-        this.props.set('wet', { name: 'Wet', get: () =>  this.wet, set: (w) => { this.wet = w} })
-        this.props.set('delayTime', { name: 'Delay Time', get: () =>  this.delayTime, set: (d) => { this.delayTime = d} })
-        this.props.set('feedback', { name: 'Feedback', get: () =>  this.feedback, set: (f) => { this.feedback = f} })
+        this.props.set('wet', { type: InputType.KNOB, name: 'Wet', get: () =>  this.wet, set: (w) => { this.wet = w} })
+        this.props.set('delayTime', { type: InputType.KNOB, name: 'Delay Time', get: () =>  this.delayTime, set: (d) => { this.delayTime = d} })
+        this.props.set('feedback', { type: InputType.KNOB, name: 'Feedback', get: () =>  this.feedback, set: (f) => { this.feedback = f} })
     }
 
     get wet() { return this._wet }
@@ -54,6 +56,53 @@ export class Delay extends Effect {
 
         this.feedbackDelay.feedback.setValueAtTime(this._feedback, Tone.now())
     }
+
+
+    // THINGS NEED TO CONNECT TO DELAY AND PAST IT
+
+    /** Connects this Nodes Output to [e]'s Input */
+    connect(n: Node | Tone.ToneAudioNode): void {
+
+        if(!n) return
+
+        this.output.connect(n instanceof Node ? n.input : n)
+
+        // Bypass NOT WORKING
+        // this.input.input.connect(n instanceof Node ? n.input : n)
+    }
+
+    /** Disconnects this Output from [e]'s/all Input(s) */
+    disconnect(n?: Node | Tone.ToneAudioNode) {
+
+        if(n) {
+            this.output.disconnect(n instanceof Node ? n.input : n)
+            // this.input.input.disconnect(n instanceof Node ? n.input : n)
+        }
+        else {
+            this.output.disconnect()
+            // this.input.input.disconnect()
+        }
+
+    }
+
+    chain(nodes: Node[] | Tone.ToneAudioNode[]) {
+
+        if(!nodes.length || nodes.length == 0) return // this.connect(nodes)
+
+        // this.connect(nodes[0])
+
+        let n1: Tone.ToneAudioNode
+        let n2: Tone.ToneAudioNode
+
+        for(let i = 0; i < nodes.length - 1; i++) {
+
+            n1 = (nodes[i] instanceof Node ? nodes[i].output : nodes[i]) as Tone.ToneAudioNode
+            n2 = (nodes[i + 1] instanceof Node ? nodes[i + 1].output : nodes[i + 1]) as Tone.ToneAudioNode
+
+            n1.connect(n2)
+        }
+    }
+
     
 
     serializeIn(o) {

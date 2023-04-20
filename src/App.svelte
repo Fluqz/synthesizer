@@ -11,12 +11,8 @@
     import { Synthesizer as Synth } from './app/synthesizer'
     import { Storage } from './app/core/storage'
     import { G } from './app/core/globals'
-    import { moireShader } from './app/p5/moire-shader'
-    import { keyVisualizer } from './app/p5/background'
-    import { sinewave } from './app/p5/sine-wave'
-    import { envelope } from './app/p5/envelope'
-    import { worms } from './app/p5/worms'
     
+    import { Visuals } from './app/p5/visual'
     
     // Create Synthesizer
     let synthesizer = G.synthesizer = new Synth()
@@ -26,15 +22,7 @@
         G.w = window.innerWidth
         G.h = window.innerHeight
 
-        // Processing
-        let m1 = new P5(moireShader)
-        let m2 = new P5(moireShader)
-
-        // new P5(keyVisualizer)
-        // new P5(envelope)
-        // new P5(sinewave)
-        // new P5(worms)
-
+        Visuals.moireShader()
 
         // serializeIn(Storage.load())
     })

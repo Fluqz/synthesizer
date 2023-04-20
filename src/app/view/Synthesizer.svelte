@@ -13,6 +13,8 @@
 
     export let synthesizer: Synthesizer
 
+    const { sources, effects } = Synthesizer.nodes
+
 
     const octaveDown = () => {
 
@@ -147,22 +149,6 @@
 
 <div class="synthesizer">
 
-    <div class="keys">
-
-        {#each Synthesizer.keys as key, i}
-
-            <Key key={key} />
-<!-- 
-            {#if Math.round(Synthesizer.keys.length / 2) - 2 == i}
-                <br />
-            {/if} -->
-            
-        {/each}
-
-    </div>
-
-
-
     <div class="synthesizer-menu">
 
 
@@ -214,6 +200,7 @@
 
     <div class="mixer">
 
+
         <div class="tracks">
 
             {#each synthesizer.tracks as track}
@@ -226,7 +213,28 @@
 
     </div>
 
+
+
+
+    <div class="keys">
+
+        {#each Synthesizer.keys as key, i}
+
+            <Key key={key} />
+            
+        {/each}
+
+    </div>
+
+
+
 </div>
+
+
+
+
+
+
 
 
 
@@ -265,6 +273,13 @@
 
 .synthesizer > .mixer > .tracks{
     width: 100%;
+}
+
+.synthesizer-menu {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
 }
 
 

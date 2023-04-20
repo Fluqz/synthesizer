@@ -1,6 +1,7 @@
 import * as Tone from 'tone'
 
 import { Effect } from './effect';
+import { InputType } from '../node';
 
 
 export class Distortion extends Effect {
@@ -20,8 +21,8 @@ export class Distortion extends Effect {
 
         this.wet = this.wet
 
-        this.props.set('wet', { name: 'Wet', get: () =>  this.wet })
-        this.props.set('gain', { name: 'Gain', get: () =>  this.gain })
+        this.props.set('wet', { type: InputType.KNOB, name: 'Wet', get: () =>  this.wet })
+        this.props.set('gain', { type: InputType.KNOB, name: 'Gain', get: () =>  this.gain })
     }
 
     get wet() { return 0 }
