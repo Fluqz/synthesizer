@@ -24,7 +24,6 @@
 
         Visuals.moireShader()
 
-        // serializeIn(Storage.load())
     })
     
     
@@ -37,6 +36,8 @@
         let o = JSON.parse(file)
     
         synthesizer.serializeIn(o)
+
+        synthesizer = synthesizer
     }
     
     const serializeOut = () => {
@@ -73,6 +74,7 @@
         synthesizer.dispose()
     }
 
+    serializeIn(Storage.load())
 
 </script>
 
@@ -81,32 +83,7 @@
 
 
 
-
-
-
-
-
-<!-- 
-
-
-<div id="track-menu">
-            
-    <div class="category">
-        ADD TRACK
-        DELETE TRACK
-    </div>
-    <div class="category">
-        SET SOURCE
-    </div>
-    <div class="category">
-        ADD EFFECT
-    </div>
-
-</div> -->
-
-
-
-<Synthesizer synthesizer={synthesizer} />
+<Synthesizer synthesizer={synthesizer} tracks={synthesizer.tracks} />
 
 
 

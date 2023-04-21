@@ -4,58 +4,26 @@
 <script lang="ts">
 
     import { onMount } from 'svelte';
-
+    
     import Key from './Key.svelte'
     import Track from './Track.svelte'
-    
-    import { Synthesizer } from '../synthesizer'
+    import TrackMenu from './TrackMenu.svelte'
     import Knob from "./Knob.svelte"
+
+    import { Track as _Track } from '../track'
+    import { Synthesizer } from '../synthesizer'
 
     export let synthesizer: Synthesizer
 
-    const { sources, effects } = Synthesizer.nodes
+    export let tracks: _Track[]
 
-
-    const octaveDown = () => {
-
-        synthesizer.setOctave(synthesizer.octave - 1)
-    }
-    const octaveUp = () => {
-
-        synthesizer.setOctave(synthesizer.octave + 1)
-    }
-
-    const onArpChange = (e) => {
-
-        synthesizer.toggleArpMode(e.target.checked)
-    }
-
-    // Toggle recording button
-
-    const toggleRecording = (e) => {
-
-        synthesizer.toggleRecording()
-    }
-
-    let isRecording = false
-    synthesizer.onRecordingStart.subscribe(() => {
-
-        isRecording = synthesizer.isRecording
-    })
-    synthesizer.onRecordingEnd.subscribe(() => {
-
-        isRecording = synthesizer.isRecording
-    })
-
-
-    // Reset synthesizer button
-    const reset = (e) => {
-
-        synthesizer.reset()
-    }
+    let currentTrack: _Track
 
 
     onMount(() => {
+
+        currentTrack = tracks[0]
+
 
         // Events
         document.addEventListener('keydown', onKeyDown, false)
@@ -100,8 +68,47 @@
 
         //     presetDropdown.remove(p.name)
         // })
-
     })
+
+
+
+    const octaveDown = () => {
+
+        synthesizer.setOctave(synthesizer.octave - 1)
+    }
+    const octaveUp = () => {
+
+        synthesizer.setOctave(synthesizer.octave + 1)
+    }
+
+    const onArpChange = (e) => {
+
+        synthesizer.toggleArpMode(e.target.checked)
+    }
+
+    let isRecording = false
+    // Toggle recording button
+    const toggleRecording = (e) => {
+
+        synthesizer.toggleRecording()
+    }
+    synthesizer.onRecordingStart.subscribe(() => {
+
+        isRecording = synthesizer.isRecording
+    })
+    synthesizer.onRecordingEnd.subscribe(() => {
+
+        isRecording = synthesizer.isRecording
+    })
+
+
+    // Reset synthesizer button
+    const reset = (e) => {
+
+        synthesizer.reset()
+    }
+
+
 
 
     /** Keydown event */
@@ -141,8 +148,6 @@
         //     }
         // }
     }
-
-    
 </script>
 
 
@@ -200,12 +205,17 @@
 
     <div class="mixer">
 
+        <TrackMenu synthesizer={synthesizer} track={currentTrack} />
 
         <div class="tracks">
 
-            {#each synthesizer.tracks as track}
+            {#each tracks as track}
                 
-                <Track track={track} />
+                <div class="track" on:click={() => {currentTrack = track}}>
+
+                    <Track track={track} instrument={track.instrument} nodes={track.nodes} />
+
+                </div>
 
             {/each}
 

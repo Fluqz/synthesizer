@@ -13,6 +13,10 @@ export interface ITrackSerialization extends ISerialization {
 
 export class Track implements ISerialize {
 
+    static count: number = 0
+
+    public id: number
+
     /** ToneJs Gain Node used for the track */
     public gain: Tone.Gain
 
@@ -35,6 +39,8 @@ export class Track implements ISerialize {
     public arpEnabled: boolean
 
     constructor(instrument?: Instrument) {
+
+        this.id = Track.count++
 
         this._volume = .7
         this.nodes = []
@@ -204,6 +210,10 @@ export class Track implements ISerialize {
         }
         
         if(o.nodes && o.nodes.length > 0) {
+
+            for(let i = this.nodes.length; i >= 0; i--) this.removeNode(this.nodes[i])
+
+            this.nodes.length = 0
             
             for(let n of o.nodes) {
 

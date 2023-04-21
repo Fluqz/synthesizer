@@ -4,10 +4,19 @@
 
     import type { Track } from "../track";
 
+    import type { Node as _Node } from "../nodes";
+
     import Node from "./Node.svelte";
     import Knob from "./Knob.svelte"
+    import { onMount } from "svelte";
+    import type { Instrument } from "../nodes";
 
     export let track: Track
+    export let instrument: Instrument
+    export let nodes: _Node[]
+
+    onMount(() => {
+    })
 
     const changeVolume = (e) => {
 
@@ -16,6 +25,8 @@
     }
 
     const onMute = (e) => {
+
+        console.log('track', track.id)
 
         track.mute(!track.isMuted)
         track = track
@@ -26,10 +37,14 @@
         track = track
     }
 
+
+
 </script>
 
 
 <div class="track">
+
+    { track.id }
 
     <div class="track-options">
 
@@ -52,9 +67,9 @@
 
     </div>
 
-    <Node node={track.instrument} />
+    <Node node={instrument} />
 
-    {#each track.nodes as node, i}
+    {#each nodes as node, i}
 
         <Node node={node} />
 

@@ -77,11 +77,11 @@ export class Chorus extends Effect {
 
     serializeIn(o) {
 
-        if(o.enabled) this.enabled = o.enabled
-        if(o.wet) this.wet = o.wet
-        if(o.delayTime) this.delayTime = o.delayTime
-        if(o.depth) this.depth = o.depth
-        if(o.feedback) this.feedback = o.feedback
+        if(o.enabled != undefined) this.enabled = o.enabled
+        if(o.wet != undefined) this.wet = o.wet
+        if(o.delayTime != undefined) this.delayTime = o.delayTime
+        if(o.depth != undefined) this.depth = o.depth
+        if(o.feedback != undefined) this.feedback = o.feedback
     }
 
     serializeOut() {

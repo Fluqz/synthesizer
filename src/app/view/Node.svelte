@@ -46,15 +46,15 @@
     // })
 
 
-
-    
-        console.log('node props', node.name, groups)
+    console.log('node props', node.name, groups)
     
 </script>
 
 
 
 <div class="node">
+
+    { node.id }
 
     <div class="node-title">{ node.name[0].toUpperCase() + node.name.substr(1) }</div>
 

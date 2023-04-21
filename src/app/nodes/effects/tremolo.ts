@@ -61,11 +61,11 @@ export class Tremolo extends Effect {
     
     serializeIn(o) {
 
-        if(o.name) this.name = o.name
-        if(o.enabled) this.enabled = o.enabled
-        if(o.wet) this.wet = o.wet
-        if(o.frequency) this.frequency = o.frequency
-        if(o.depth) this.depth = o.depth
+        if(o.name != undefined) this.name = o.name
+        if(o.enabled != undefined) this.enabled = o.enabled
+        if(o.wet != undefined) this.wet = o.wet
+        if(o.frequency != undefined) this.frequency = o.frequency
+        if(o.depth != undefined) this.depth = o.depth
     }
 
     serializeOut() {

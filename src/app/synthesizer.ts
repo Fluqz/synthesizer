@@ -179,7 +179,6 @@ export class Synthesizer implements ISerialize {
 
         this.isRecording = false
 
-
         let key
         let i = 0
         for(let keyMap of Synthesizer.keyMap) {
@@ -207,11 +206,12 @@ export class Synthesizer implements ISerialize {
 
 
         this.tracks = []
-        // this.addTrack(new Track(Synthesizer.nodes.sources.Oscillator()))
-        // this.addTrack(new Track(Synthesizer.nodes.sources.Synth()))
+        this.addTrack(new Track(Synthesizer.nodes.sources.Oscillator()))
+        this.addTrack(new Track(Synthesizer.nodes.sources.Synth()))
         this.addTrack(new Track(Synthesizer.nodes.sources.DuoSynth()))
         this.addTrack(new Track(Synthesizer.nodes.sources.FMSynth()))
-        // this.addTrack(new Track(Synthesizer.nodes.sources.AMSynth()))
+        this.addTrack(new Track(Synthesizer.nodes.sources.AMSynth()))
+        this.addTrack(new Track(Synthesizer.nodes.sources.FMSynth()))
 
         this.presetManager = new PresetManager(this)
 
@@ -469,6 +469,26 @@ export class Synthesizer implements ISerialize {
         }
     }
 
+    loadSessionObject(o: ISession) {
+
+        if(o.volume) this.setVolume(o.volume)
+        if(o.octave) this.setOctave(o.octave)
+
+        console.log('tracks', this.tracks, this.tracks.length)
+        for(let i = this.tracks.length-1; i >= 0; i--) this.removeTrack(this.tracks[i])
+
+        this.tracks.length = 0
+        if(o.tracks && o.tracks.length > 0) {
+
+            for(let t of o.tracks) {
+
+                let track = new Track()
+                track.serializeIn(t)
+                this.addTrack(track)
+            }
+        }
+    }
+
     /** Load settings */
     serializeIn = (o: ISynthesizerSerialization) => {
 
@@ -476,24 +496,14 @@ export class Synthesizer implements ISerialize {
 
         const c = o.currentSession
 
-        if(c.volume) this.setVolume(c.volume)
-        if(c.octave) this.setOctave(c.octave)
-
-        this.tracks = []
-        if(c.tracks && c.tracks.length > 0) {
-
-            for(let t of c.tracks) {
-
-                let track = new Track()
-                track.serializeIn(t)
-                this.addTrack(track)
-            }
-        }
+        if(c) this.loadSessionObject(c)
 
         if(o.presets && o.presets.length > 0) {
 
             this.presetManager.presets = o.presets
         }
+
+        console.log('SerializeIn', this)
     }
 
     /** Save settings */

@@ -74,10 +74,11 @@ export class AMSynth extends Instrument {
 
     serializeIn(o) {
 
-        if(o.enabled) this.enabled = o.enabled
-        if(o.volume) this.volume = o.volume
-        if(o.detune) this.detune = o.detune
-        if(o.portamento) this.portamento = o.portamento
+        if(o.name != undefined) this.name = o.name
+        if(o.enabled != undefined) this.enabled = o.enabled
+        if(o.volume != undefined) this.volume = o.volume
+        if(o.detune != undefined) this.detune = o.detune
+        if(o.portamento != undefined) this.portamento = o.portamento
     }
 
     serializeOut() {

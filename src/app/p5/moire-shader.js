@@ -85,7 +85,7 @@ export const moireShader = (p5) => {
                 let normal
 
                 let time = (Math.random() * 500) + 100
-                let interval = 10
+                let interval = 30
 
                 increment = M.getDistanceVector(oldCellPos, newCellPos) / (time / interval)
 

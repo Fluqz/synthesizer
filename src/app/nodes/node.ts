@@ -1,4 +1,4 @@
-import { Subject } from 'rxjs'
+import { Subject, count } from 'rxjs'
 import type * as Tone from 'tone'
 import type { ISerialize } from '../synthesizer'
 
@@ -57,6 +57,10 @@ export interface INodeSerialization {
 /** Represents a Node that can be connected to eachother */
 export class Node implements ISerialize {
 
+    static count = 0
+
+    id: number 
+
     /** Tag/Name of node */
     name: string
 
@@ -77,9 +81,9 @@ export class Node implements ISerialize {
 
     constructor(name) {
 
-        // super()
+        this.id = Node.count++
 
-        console.log('Create Node', name)
+        console.log('Create Node', name, this.id)
 
         this.name = name
 

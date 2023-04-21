@@ -17,8 +17,7 @@ export class LFOFilter extends Node {
 
     serializeIn(o) {
 
-        if(o.name) this.name = o.name
-        if(o.enabled) this.enabled = o.enabled
+        if(o.enabled != undefined) this.enabled = o.enabled
     }
 
     serializeOut() {

@@ -88,7 +88,7 @@
 
         angle = (value / ((max - min) / (Math.PI * 2)))
         
-        console.log('Change', name, 'to :', value)
+        // console.log('Change', name, 'to :', value)
 
         dispatch('onChange', value)
     }
@@ -229,6 +229,8 @@
 
     let wheelObservable: Observable
 
+    let unsubscribeWheelObserver
+
     onMount(() => {
 
         wheelObservable = fromEvent(knobDOM, 'wheel', { bubbles: false })
@@ -245,7 +247,7 @@
         document.removeEventListener('keydown', onKeyDown)
         document.removeEventListener('keyup', onKeyUp)
 
-        if(wheelObservable) wheelObservable.unsubscribe()
+        if(unsubscribeWheelObserver) unsubscribeWheelObserver.unsubscribe()
     })
 
 </script>
@@ -315,7 +317,7 @@
   background-color: blue;
   color: var(--c-w);
 
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 
   overflow: hidden;
 /* 

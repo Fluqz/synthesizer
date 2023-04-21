@@ -8,10 +8,10 @@ export class DuoSynth extends Instrument {
 
     public polySynth : Tone.PolySynth<Tone.DuoSynth>
 
-    /** How loud */
-    private _volume = .5
     /** Gain node */ 
-    public gain
+    public gain: Tone.Gain
+
+    public _volume: number = .5
 
 
     /** freq, detune, volume, waveform,  */
@@ -35,7 +35,7 @@ export class DuoSynth extends Instrument {
         this.props.set('detune', { type: InputType.KNOB, name: 'Detune', get: () => { return this.detune }, set: (v: number) => { this.detune = v }, min: 0, max: 1, group: 1 })
         this.props.set('harmonicity', { type: InputType.KNOB, name: 'Harmonicity', get: () => { return this.harmonicity }, set: (v: number) => { this.harmonicity = v }, min: 0, max: 1, group: 1 })
         this.props.set('portamento', { type: InputType.KNOB, name: 'Portamento', get: () => { return this.portamento }, set: (v: number) => { this.portamento = v }, min: 0, max: 1, group: 1 })
-        this.props.set('vibratoAmount', { type: InputType.KNOB, name: 'VibratoAmount', get: () => { return this.vibratoAmount }, set: (v: number) => { this.vibratoAmount = v }, min: 0, max: 1, group: 1 })
+        this.props.set('vibratoAmount', { type: InputType.KNOB, name: 'Vibrato Amount', get: () => { return this.vibratoAmount }, set: (v: number) => { this.vibratoAmount = v }, min: 0, max: 1, group: 1 })
         this.props.set('vibratoRate', { type: InputType.KNOB, name: 'VibratoRate', get: () => { return this.vibratoRate }, set: (v: number) => { this.vibratoRate = v }, min: 0, max: 1, group: 1 })
 
         this.props.set('attack1', { type: InputType.KNOB, name: 'Attack 1', get: () => { return this.attack0 }, set: (v: number) => { this.attack0 = v }, min: 0, max: 3, group: 2 })
@@ -53,9 +53,8 @@ export class DuoSynth extends Instrument {
     set volume(v) {
 
         this._volume = v
-
-        this.gain.gain.setValueAtTime(this._volume, Tone.now())
-    }
+        console.log('DUO VOLUME GOOOO' , this.id)
+        this.gain.gain.setValueAtTime(v, Tone.now())}
 
     set detune(v: number) { this.polySynth.set({ detune: v }) }
     get detune() { return this.polySynth.get().detune }
@@ -124,23 +123,23 @@ export class DuoSynth extends Instrument {
 
     serializeIn(o) {
 
-        if(o.name) this.name = o.name
-        if(o.enabled) this.enabled = o.enabled
+        if(o.name != undefined) this.name = o.name
+        if(o.enabled != undefined) this.enabled = o.enabled
 
-        if(o.volume) this.volume = o.volume
-        if(o.detune) this.detune = o.detune
-        if(o.harmonicity) this.harmonicity = o.harmonicity
-        if(o.portamento) this.portamento = o.portamento
-        if(o.vibratoAmount) this.vibratoAmount = o.vibratoAmount
-        if(o.vibratoRate) this.vibratoRate = o.vibratoRate
-        if(o.attack0) this.attack0 = o.attack0
-        if(o.decay0) this.decay0 = o.decay0
-        if(o.release0) this.release0 = o.release0
-        if(o.sustain0) this.sustain0 = o.sustain0
-        if(o.attack1) this.attack1 = o.attack1
-        if(o.decay1) this.decay1 = o.decay1
-        if(o.release1) this.release1 = o.release1
-        if(o.sustain1) this.sustain1 = o.sustain1
+        if(o.volume != undefined) this.volume = o.volume
+        if(o.detune != undefined) this.detune = o.detune
+        if(o.harmonicity != undefined) this.harmonicity = o.harmonicity
+        if(o.portamento != undefined) this.portamento = o.portamento
+        if(o.vibratoAmount != undefined) this.vibratoAmount = o.vibratoAmount
+        if(o.vibratoRate != undefined) this.vibratoRate = o.vibratoRate
+        if(o.attack0 != undefined) this.attack0 = o.attack0
+        if(o.decay0 != undefined) this.decay0 = o.decay0
+        if(o.release0 != undefined) this.release0 = o.release0
+        if(o.sustain0 != undefined) this.sustain0 = o.sustain0
+        if(o.attack1 != undefined) this.attack1 = o.attack1
+        if(o.decay1 != undefined) this.decay1 = o.decay1
+        if(o.release1 != undefined) this.release1 = o.release1
+        if(o.sustain1 != undefined) this.sustain1 = o.sustain1
     }
 
     serializeOut() {
