@@ -76,7 +76,7 @@ export const worms = (p5) => {
 
 
 
-        if(Synthesizer.activeNotes.length > 0) {
+        if(Synthesizer.activeNotes.size > 0) {
 
             if(init) {
 

@@ -72,7 +72,7 @@
     on:pointerdown={onTrigger} 
     on:pointerup={onRelease} 
     on:pointerleave={onRelease}
-    style={key.isPressed ? 'transform: scale(1.5); transform-origin: center;' : ''}>
+    style={key.isPressed ? 'transform: scale(1.1); transform-origin: center;' : ''}>
     
 
     <div class="key-mapping">{@html key.mapping.toLocaleUpperCase() + '<br/>' }</div>

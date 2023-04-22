@@ -13,6 +13,7 @@
     import { Track as _Track } from '../track'
     import { Synthesizer } from '../synthesizer'
     import { Vec2 } from '../core/math';
+    import { start } from 'tone';
 
     export let synthesizer: Synthesizer
 
@@ -103,12 +104,17 @@
     })
 
 
-    // Reset synthesizer button
+    /** Reset synthesizer button */
     const reset = (e) => {
 
         synthesizer.reset()
     }
 
+    /** Reset synthesizer button */
+    const mute = (e) => {
+
+        synthesizer.mute(!synthesizer.isMuted)
+    }
 
 
 
@@ -176,13 +182,33 @@
         isMenuOpen = selectedTrack ? true : false
     }
 
+    const onEdit = (e) => {
 
+        console.log('edit')
+
+        selectedTrack = e.detail
+
+        isMenuOpen = selectedTrack ? true : false
+
+        mousePosition.set(0, 0)
+    }
+
+    const closeTrackMenu = (e) => {
+
+        e.stopPropagation()
+
+        console.log('close trackmenu')
+
+        selectedTrack = null
+
+        isMenuOpen = false
+    }
 
 </script>
 
 
 
-<div class="synthesizer" on:click={(e) => onClick(e, undefined)}>
+<div class="synthesizer">
 
     <div class="synthesizer-menu">
 
@@ -228,6 +254,9 @@
         
         <div id="reset" class="btn" on:click={reset}>Reset</div>
 
+        <div id="mute" class="btn" on:click={mute}>Mute</div>
+
+
     </div>
 
 
@@ -241,13 +270,13 @@
 
         {/if}
 
-        <div class="tracks" >
+        <div class="tracks" on:click={closeTrackMenu}>
 
             {#each tracks as track}
                 
-                <div class="track-wrapper" on:click={(e) => onClick(e, track)}>
+                <div class="track">
 
-                    <Track track={track} instrument={track.instrument} nodes={track.nodes} />
+                    <Track track={track} instrument={track.instrument} nodes={track.nodes} on:delete on:edit={onEdit} />
 
                 </div>
 
@@ -335,11 +364,19 @@
     background-color: red;
 }
 
-.track-wrapper {
+.track {
 
     position: relative;
 
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    width: 100%;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
 }
 
 </style>

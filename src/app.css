@@ -28,6 +28,7 @@
   height: auto;
 
   mix-blend-mode: difference;
+  
 }
 /* 
 *:hover {
@@ -49,6 +50,9 @@ body {
 html {
   font-size: 14px;
   scrollbar-width: none;
+}
+
+canvas {
 }
 
 .shadow {
@@ -100,65 +104,6 @@ html {
 
 
 
-/* UI */
-
-.dropdown {
-
-  position: relative;
-  display: inline-block;
-
-  width: auto;
-  height: 30px;
-  line-height: 30px;
-
-  padding: 0px 10px;
-
-  text-align: center;
-
-  box-sizing: border-box;
-
-  cursor: pointer;
-
-  background-color: var(--c-w);
-  color: var(--c-b);
-}
-.dropdown .dropdown-options {
-
-  position: absolute;
-
-  top: 30px;
-  left: 0px;
-  
-  display: none;
-
-  z-index: 10;
-  background-color: var(--c-w);
-}
-.dropdown .dropdown-options.active {
-  
-  display: block;
-}
-.dropdown .dropdown-options .dropdown-option {
-  
-  width: auto;
-  padding: 0px 10px;
-  white-space: nowrap;
-}
-.dropdown .dropdown-options .dropdown-option:hover {
-
-  background-color: var(--c-o);
-}
-.dropdown .dropdown-options .dropdown-option .dropdown-option-delete {
-
-}
-.dropdown .dropdown-options .dropdown-option .dropdown-option-delete:hover {
-  
-  background-color: red;
-}
-
-
-
-
 .btn {
 
   display: inline-block;
@@ -185,3 +130,26 @@ html {
 
 
 
+
+/* Nodes */
+.node {
+
+  display: inline-flex;
+
+  align-items: baseline;
+  justify-content: center;
+
+  position: relative;
+
+  min-width: 100px;
+  height: 100%;
+
+  margin-left: 5px;
+  padding: 0px 10px;
+
+  /* background-color: var(--c-g2); */
+  color: var(--c-w);
+
+  text-align: center;
+
+}

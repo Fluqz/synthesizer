@@ -16,15 +16,10 @@
     // Create Synthesizer
     let synthesizer = G.synthesizer = new Synth()
     
-    onMount(() => {
+    G.w = window.innerWidth
+    G.h = window.innerHeight
 
-        G.w = window.innerWidth
-        G.h = window.innerHeight
-
-        // Visuals.moireShader()
-
-    })
-    
+    Visuals.moireShader()
     
     // Serialize
     const serializeIn = file => {
@@ -50,10 +45,16 @@
     document.addEventListener('visibilitychange', (e) => {
     
         if (document.visibilityState == "visible") {
+            console.log('visible')
     
+            synthesizer.mute(false)
+
         }
         else {
             synthesizer.stopAll()
+            console.log('not visible')
+
+            synthesizer.mute(true)
         }  // TODO - NOT WORKING?????
     
         
@@ -93,6 +94,13 @@
         synthesizer = synthesizer
     }
 
+    const deleteTrack = (e) => {
+
+        synthesizer.removeTrack(e.detail)
+
+        synthesizer = synthesizer
+    }
+
 
 </script>
 
@@ -101,7 +109,11 @@
 
 
 
-<Synthesizer synthesizer={synthesizer} tracks={synthesizer.tracks} on:add={addTrack} on:remove={removeTrack}/>
+<Synthesizer synthesizer={synthesizer} 
+                tracks={synthesizer.tracks} 
+                on:add={addTrack} 
+                on:remove={removeTrack} 
+                on:delete={deleteTrack} />
 
 
 

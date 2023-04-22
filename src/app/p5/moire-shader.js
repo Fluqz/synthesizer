@@ -49,7 +49,7 @@ export const moireShader = (p5) => {
         shader.setUniform("u_color1", M.map(-1, 1, 0, 1, Math.cos((0 * .5))))
         shader.setUniform("u_color2", M.map(-1, 1, 0, 1, Math.sin((0) + 2)))
         shader.setUniform("u_color3", M.map(-1, 1, 0, 1, Math.cos((0) + 5)))
-        shader.setUniform("u_activeNotes", M.map(0, 8, 0, 1, Synthesizer.activeNotes.length))
+        shader.setUniform("u_activeNotes", M.map(0, 8, 0, 1, Synthesizer.activeNotes.size))
         // console.log(M.map(-1, 1, 0.99, 1, Math.sin(Tone.now())))
 
         if(true) {
@@ -57,7 +57,7 @@ export const moireShader = (p5) => {
             // Get newCellPos
             for(let k of Synthesizer.keys) {
 
-                if(k.note + k.octave == Synthesizer.activeNotes[Synthesizer.activeNotes.length-1]) {
+                if(k.note + k.octave == Array.from(Synthesizer.activeNotes).pop()) {
 
                     oldCellPos.x = newCellPos.x
                     oldCellPos.y = newCellPos.y

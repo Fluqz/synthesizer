@@ -3,7 +3,7 @@
 
 <script lang="ts">
 
-    import { fromEvent, Observable, Subject } from "rxjs"
+    import { fromEvent, Observable } from "rxjs"
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import { M } from "../core/math"
     import { Vec2 } from "../core/math";
@@ -299,6 +299,7 @@
 
     font-size: 0.7rem;
     margin: 5px 5px 0px 5px;
+    color: inherit;
 }
 
 .knob {
@@ -315,7 +316,7 @@
 
   border: 1px dotted var(--c-w);
   background-color: blue;
-  color: var(--c-w);
+  color: inherit;
 
   font-size: 0.7rem;
 

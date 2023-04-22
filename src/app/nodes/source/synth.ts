@@ -1,7 +1,7 @@
 import * as Tone from 'tone'
 import { Instrument } from './instrument';
 import { Synthesizer } from '../../synthesizer';
-import { InputType } from '../node';
+import { ParamType } from '../node';
 
 
 /**  */
@@ -35,9 +35,9 @@ export class Synth extends Instrument {
         this.portamento = options.portamento ? options.portamento : 0
 
 
-        this.props.set('volume', { type: InputType.KNOB, name: 'Volume', get: () =>  this.volume })
-        this.props.set('detune', { type: InputType.KNOB, name: 'Detune', get: () =>  this.detune })
-        this.props.set('portamento', { type: InputType.KNOB, name: 'Portamento', get: () =>  this.portamento })
+        this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () =>  this.volume })
+        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () =>  this.detune })
+        this.props.set('portamento', { type: ParamType.KNOB, name: 'Portamento', get: () =>  this.portamento })
     }
 
     set volume(v: number) {

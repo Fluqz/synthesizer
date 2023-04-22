@@ -19,11 +19,11 @@ export class Track implements ISerialize {
 
     public synthesizer: Synthesizer
 
-    /** ToneJs Gain Node used for the track */
-    public gain: Tone.Gain
+    /** ToneJs Volume Node used for the track */
+    public volumeNode: Tone.Volume
 
     /** Volume property */
-    private _volume: number = .4
+    private _volume: number
 
     /** Instrument used */
     public instrument: Instrument
@@ -49,10 +49,10 @@ export class Track implements ISerialize {
 
         this.synthesizer = synthesizer
 
-        this._volume = .4
+        this._volume = -3
         this.nodes = []
         this.instrument = instrument
-        this.gain = new Tone.Gain(this._volume)
+        this.volumeNode = new Tone.Volume(this._volume)
         this.isMuted = false
         this.isSolo = false
         this._holdEnabled = false
@@ -69,6 +69,8 @@ export class Track implements ISerialize {
 
     get number() { return this.synthesizer ? this.synthesizer.tracks.indexOf(this) + 1 : -1 }
 
+    /** Sets the tracks source instrument and connects them in chain. 
+     * Instrument will always be the first element in the chain */
     setInstrument(instrument: Instrument) {
 
         if(this.instrument && this.instrument != instrument) {
@@ -81,43 +83,75 @@ export class Track implements ISerialize {
         this.connectNodes()
     }
 
+    /** VolumeNode value */
     get volume() { return this._volume }
-    set volume(v: number) { 
+    set volume(db: number) { 
 
-        this._volume = v
+        this._volume = db
 
-        this.gain.gain.setValueAtTime(this._volume, Tone.now())
+        this.volumeNode.volume.exponentialRampTo(this._volume, .04, Tone.now())
     }
 
+    /** Silences/Unsilences the track volume */
     mute(m: boolean) {
 
         console.log('mute track', m)
 
         this.isMuted = m === true ? true : false
 
-        if(this.isMuted) this.gain.gain.setValueAtTime(0, Tone.now())
-        else this.gain.gain.setValueAtTime(this.volume, Tone.now())
+        if(this.isMuted) this.volumeNode.volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .15, Tone.now())
+        else this.volumeNode.volume.exponentialRampTo(this._volume, .15, Tone.now())
     }
 
+    /** Activates solo mode. Only tracks in solo mode can be heard. */
     solo(s: boolean) {
 
         this.isSolo = s === true ? true : false
 
-        for(let t of this.synthesizer.tracks) {
+        if(this.isSolo) {
 
-            if(t === this) this.mute(!s)
-            else if(t.isSolo) continue
-            else t.mute(s)
+            // Set volume
+            this.volumeNode.volume.exponentialRampTo(this._volume, .15, Tone.now())
+
+            for(let t of this.synthesizer.tracks) {
+
+                // Ignore self
+                if(t === this) continue
+                // Ignore others in solo mode
+                else if(t.isSolo) continue
+                // Silence every other track
+                else t.volumeNode.volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .2, Tone.now())
+            }
         }
+        else {
 
-        // if(this.isSolo) this.gain.gain.setValueAtTime(0, Tone.now())
-        // else this.gain.gain.setValueAtTime(this.volume, Tone.now())
+            // Any track left in solo mode? then only change self volume back to normal
+            let staySoloMode:boolean = false
+            for(let t of this.synthesizer.tracks) {
+
+                if(t.isSolo) staySoloMode = true
+            }
+
+            // Any track left in solo mode? then only change self volume back to normal
+            if(staySoloMode) {
+
+                // Set volume
+                this.volumeNode.volume.exponentialRampTo(this._volume, .2, Tone.now())
+
+            }
+            else {
+
+                // Unsilence every track
+                for(let t of this.synthesizer.tracks) {
+
+                    t.volumeNode.volume.exponentialRampTo(t._volume, .2, Tone.now())
+                }
+            }
+        }
     }
 
     get holdEnabled() { return this._holdEnabled }
     set holdEnabled(hold: boolean) { 
-
-        // for(let n of Synthesizer.activeNotes) hold ? this.instrument.triggerNote(n) : this.instrument.releaseNote(n)
 
         // this._holdEnabled = hold
 
@@ -168,7 +202,7 @@ export class Track implements ISerialize {
                 nodes.push(n)
             }
 
-            nodes.push(this.gain)
+            nodes.push(this.volumeNode)
 
             console.log('NODES', nodes)
 
@@ -196,13 +230,13 @@ export class Track implements ISerialize {
     /** Connect the output gain node to passed in output */
     connect(i: Node | Tone.ToneAudioNode) {
         
-        this.gain.connect(i instanceof Node ? i.input : i)
+        this.volumeNode.connect(i instanceof Node ? i.input : i)
     }
 
     /** Disconnects the output gain node from passed in output */
     disconnect(i: Node | Tone.ToneAudioNode) {
         
-        this.gain.disconnect(i instanceof Node ? i.input : i)
+        this.volumeNode.disconnect(i instanceof Node ? i.input : i)
     }
 
     /** Destroy this track. */

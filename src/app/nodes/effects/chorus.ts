@@ -1,7 +1,7 @@
 import * as Tone from 'tone'
 
 import { Effect } from './effect'
-import { InputType } from '../node'
+import { ParamType } from '../node'
 
 
 
@@ -33,9 +33,9 @@ export class Chorus extends Effect {
         this.depth = depth
         this.feedback = feedback
 
-        this.props.set('delayTime', { type: InputType.KNOB, name: 'Delay Time', get: () =>  this.delayTime })
-        this.props.set('depth', { type: InputType.KNOB, name: 'Depth', get: () =>  this.depth })
-        this.props.set('feedback', { type: InputType.KNOB, name: 'Feedback', get: () =>  this.feedback })
+        this.props.set('delayTime', { type: ParamType.KNOB, name: 'Delay Time', get: () =>  this.delayTime })
+        this.props.set('depth', { type: ParamType.KNOB, name: 'Depth', get: () =>  this.depth })
+        this.props.set('feedback', { type: ParamType.KNOB, name: 'Feedback', get: () =>  this.feedback })
     }
 
     get wet() { return 0 }

@@ -2,23 +2,20 @@ import { Subject, count } from 'rxjs'
 import type * as Tone from 'tone'
 import type { ISerialize } from '../synthesizer'
 
-export enum InputType {
+export enum ParamType {
 
     KNOB,
     DROPDOWN,
     SWITCH,
 }
 
-export interface NodeInputGroup {
+export type GroupID = number
+export type NodeParameterGroup = Map<GroupID, NodeParameter[]>
 
-    group: string
-    children: NodeInput[]
-}
-
-export interface NodeInput {
+export interface NodeParameter {
 
     /** Input type */
-    type: InputType
+    type: ParamType
     /** Title */
     name: string
     /** Getter value */
@@ -26,10 +23,10 @@ export interface NodeInput {
     /** Setter value */
     set?: (v: any) => void
     /** Group ID */
-    group?: number
+    groupID?: GroupID
 }
 
-export interface KnobNodeInput extends NodeInput {
+export interface KnobNodeParameter extends NodeParameter {
 
     /** Min value */
     min?: number
@@ -37,16 +34,15 @@ export interface KnobNodeInput extends NodeInput {
     max?: number
 }
 
-export interface DropDownNodeInput extends NodeInput {
+export interface DropDownNodeParameter extends NodeParameter {
 
     options: string | number
 }
 
-export interface SwitchNodeInput extends NodeInput {
+export interface SwitchNodeParameter extends NodeParameter {
 
     enabled: boolean
 }
-
 
 export interface INodeSerialization {
 
@@ -77,7 +73,7 @@ export class Node implements ISerialize {
     onDelete
 
     /** Array of settable properties */
-    props: Map<string, KnobNodeInput | SwitchNodeInput | DropDownNodeInput>
+    props: Map<GroupID, KnobNodeParameter | SwitchNodeParameter | DropDownNodeParameter> 
 
     constructor(name) {
 

@@ -1,50 +1,42 @@
 
 
 <script lang="ts">
-    import type { InputNode } from "tone";
 
-
-    import { InputType, type Node, type NodeInput } from "../nodes";
+    import { ParamType, type Node, type NodeParameter, type NodeParameterGroup, type GroupID } from "../nodes";
     import Knob from "./Knob.svelte"
     import Dropdown from "./Dropdown.svelte"
 
     export let node: Node
 
-    const nodeInputs: NodeInput[] = [...node.props.values()]
+    const nodeParameters: NodeParameter[] = [...node.props.values()]
 
-    const groupNodes = (nodeInputs: NodeInput[]) => {
 
-        const groups: Map<number, NodeInput[]> = new Map()
+    /** Groupes nodeParamter by sorting them*/
+    const groupNodeParameter = (_nodeParameters: NodeParameter[]) : NodeParameterGroup => {
 
-        let nodeInput: NodeInput
+        const groups: NodeParameterGroup = new Map()
 
-        for(let i = 0; i < nodeInputs.length; i++) {
+        let param: NodeParameter
 
-            nodeInput = nodeInputs[i]
+        for(let i = 0; i < _nodeParameters.length; i++) {
 
-            const groupID = nodeInput.group
+            param = _nodeParameters[i]
 
-            let array: NodeInput[] = groups.get(groupID)
+            const groupID: GroupID = param.groupID
 
-            if(array == null) array = []
+            let groupParams: NodeParameter[] = groups.get(groupID)
 
-            array.push(nodeInput)
+            if(groupParams == null) groupParams = []
 
-            groups.set(groupID, array)
+            groupParams.push(param)
+
+            groups.set(groupID, groupParams)
         }
 
         return groups
     }
 
-    const groups = Array.from(groupNodes(nodeInputs).values())
-
-    // const nodes: NodeInput[] = [...node.props.values()].sort((a: NodeInput, b:NodeInput) => {
-
-    //     if(a.group > b.group) return 1
-    //     if(a.group < b.group) return -1
-    //     if(a.group == b.group) return 0
-    // })
-
+    const groups = Array.from(groupNodeParameter(nodeParameters).values())
 
     console.log('node props', node.name, groups)
     
@@ -60,45 +52,47 @@
 
     <div class="delete" on:click={node.delete}>x</div>
 
+    <div class="parameters">
+
+        {#each groups as g}
+
+            <div class="parameters-group">
+
+                {#each g as n}
+
+                    {#if n.type == ParamType.KNOB}
+                        
+                        <Knob
+                            name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
+                            min={n.min}
+                            max={n.max}
+                            value={n.get()}
+                            on:onChange={(e) => n.set(e.detail) } 
+                        />
+
+                    {/if}
 
 
-    {#each groups as g}
+                    {#if n.type == ParamType.DROPDOWN}
+                        
+                        <Dropdown
+                            name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
+                            value={n.get()}
+                            options={n.options}
+                            on:onSelect={(e) => n.set(e.detail) } 
+                        />
 
-        <div class="node-group">
+                    {/if}
 
-            {#each g as n}
 
-                {#if n.type == InputType.KNOB}
                     
-                    <Knob
-                        name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
-                        min={n.min}
-                        max={n.max}
-                        value={n.get()}
-                        on:onChange={(e) => n.set(e.detail) } 
-                    />
+                {/each}
 
-                {/if}
+            </div>
 
+        {/each}
 
-                {#if n.type == InputType.DROPDOWN}
-                    
-                    <Dropdown
-                        name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
-                        value={n.get()}
-                        options={n.options}
-                        on:onSelect={(e) => n.set(e.detail) } 
-                    />
-
-                {/if}
-
-
-                
-            {/each}
-
-        </div>
-
-    {/each}
+    </div>
 
 </div>
 
@@ -106,45 +100,39 @@
 
 <style>
 
-
-/* Nodes */
-.node {
-
-    display: inline-flex;
-
-    align-items: flex-end;
-    justify-content: bottom;
-
-    position: relative;
-
-    min-width: 100px;
-    height: 100%;
-
-    margin-left: 5px;
-    padding: 0px;
-
-    /* background-color: var(--c-g2); */
-    color: var(--c-w);
-}
 .node:first-child { margin-left: 0px; }
 .node .node-title {
 
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    width: 100%;
-    text-align: center;
-    font-size: .8rem;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  text-align: center;
+  font-size: .8rem;
 }
 .node .delete {
 
-    position: absolute;
-    right: 4px;
-    top: 0px;
-    cursor: pointer;
+  position: absolute;
+  right: 4px;
+  top: 0px;
+  cursor: pointer;
 }
 .node .delete:hover {
-    color: var(--c-o);
+  color: var(--c-o);
+}
+
+.node .parameter-group {
+
+
+    color: inherit;
+}
+
+.node .parameter-group {
+
+    display: flex;
+
+
+    color: inherit;
 }
 
 

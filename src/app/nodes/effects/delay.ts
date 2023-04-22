@@ -2,7 +2,7 @@ import * as Tone from 'tone'
 
 import { Effect } from "./effect"
 import type { ToneWithContextOptions } from 'tone/build/esm/core/context/ToneWithContext'
-import { InputType, Node } from '../node'
+import { ParamType, Node } from '../node'
 
 
 
@@ -29,9 +29,9 @@ export class Delay extends Effect {
         this.delayTime = delayTime ? delayTime : 3
         this.feedback = feedback ? feedback : .5
         
-        this.props.set('wet', { type: InputType.KNOB, name: 'Wet', get: () =>  this.wet, set: (w) => { this.wet = w} })
-        this.props.set('delayTime', { type: InputType.KNOB, name: 'Delay Time', get: () =>  this.delayTime, set: (d) => { this.delayTime = d} })
-        this.props.set('feedback', { type: InputType.KNOB, name: 'Feedback', get: () =>  this.feedback, set: (f) => { this.feedback = f} })
+        this.props.set('wet', { type: ParamType.KNOB, name: 'Wet', get: () =>  this.wet, set: (w) => { this.wet = w} })
+        this.props.set('delayTime', { type: ParamType.KNOB, name: 'Delay Time', get: () =>  this.delayTime, set: (d) => { this.delayTime = d} })
+        this.props.set('feedback', { type: ParamType.KNOB, name: 'Feedback', get: () =>  this.feedback, set: (f) => { this.feedback = f} })
     }
 
     get wet() { return this._wet }

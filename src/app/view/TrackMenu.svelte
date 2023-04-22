@@ -18,11 +18,24 @@
     const add = () => {
 
         dispatch('add')
+        close()
     }
 
     const remove = () => {
 
         dispatch('remove', track)
+        close()
+    }
+
+
+    const open = () => {
+
+        dispatch('open', track)
+    }
+
+    const close = () => {
+
+        dispatch('close', track)
     }
 
 </script>

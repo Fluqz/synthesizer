@@ -139,7 +139,7 @@ export const keyVisualizer = (p5) => {
         
         if(Synthesizer.activeNotes.length > 0) {
 
-            let i = Synthesizer.activeNotes.length
+            let i = Synthesizer.activeNotes.size
             for(let n of Synthesizer.activeNotes) {
 
                 let t
@@ -168,15 +168,15 @@ export const keyVisualizer = (p5) => {
             }
         }
 
-        if(Synthesizer.activeNotes.length !== activeNoteslength) noteAnimationMap.clear()
-        activeNoteslength = Synthesizer.activeNotes.length
+        if(Synthesizer.activeNotes.size !== activeNoteslength) noteAnimationMap.clear()
+        activeNoteslength = Synthesizer.activeNotes.size
 
         // Remove keys from map
         let keys = []
         for(let k of noteAnimationMap.keys()) keys.push(k)
         for(let k of keys) {
 
-            if(Synthesizer.activeNotes.indexOf(k) == -1) {
+            if(Synthesizer.activeNotes.has(k) == -1) {
                 noteAnimationMap.delete(k)
                 continue
             }

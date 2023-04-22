@@ -12,7 +12,9 @@ import { PresetManager, type IPreset } from './core/preset-manager'
 
 export interface ISerialize {
 
+    /** Creates a obj with all information of this entity to eventually restore its current state with serializeIn(). */
     serializeOut: () => ISerialization
+    /** Pass in a obj of serialized information to restore the entity's state */
     serializeIn: (o: ISerialization) => void
 }
 
@@ -102,7 +104,7 @@ export class Synthesizer implements ISerialize {
      * In some occasions you can lose track and wont be able to release the note anymore.
      * The note will play for eternity.
      */
-    static activeNotes: string[] = []
+    static activeNotes: Set<string> = new Set()
 
     static nodes = {
         effects: {
@@ -151,6 +153,7 @@ export class Synthesizer implements ISerialize {
     
     tracks: Track[]
 
+    isMuted: boolean = false
 
     /** ToneJs Recorder instance */
     recorder: Tone.Recorder
@@ -207,12 +210,10 @@ export class Synthesizer implements ISerialize {
 
         this.tracks = []
         this.addTrack(new Track(this, Synthesizer.nodes.sources.Oscillator()))
-        // this.addTrack(new Track(this, Synthesizer.nodes.sources.Synth()))
+        this.addTrack(new Track(this, Synthesizer.nodes.sources.Synth()))
         this.addTrack(new Track(this, Synthesizer.nodes.sources.DuoSynth()))
-        // this.addTrack(new Track(this, Synthesizer.nodes.sources.FMSynth()))
-        // this.addTrack(new Track(this, Synthesizer.nodes.sources.AMSynth()))
-
-        // this.addTrack(new Track(this, Synthesizer.nodes.sources.FMSynth()))
+        this.addTrack(new Track(this, Synthesizer.nodes.sources.FMSynth()))
+        this.addTrack(new Track(this, Synthesizer.nodes.sources.AMSynth()))
 
         this.presetManager = new PresetManager(this)
 
@@ -230,6 +231,19 @@ export class Synthesizer implements ISerialize {
 
         this.volume = v
         this.gain.gain.setValueAtTime(this.volume, Tone.now())
+    }
+
+
+    mute(m: boolean) {
+
+        console.log('mute track', m)
+
+        this.isMuted = m === true ? true : false
+
+        if(this.isMuted) Tone.Destination.volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .2, Tone.now())
+        else Tone.Destination.volume.exponentialRampTo(this.volume, .2, Tone.now())
+
+        // Tone.Destination.mute = this.isMuted
     }
 
     /** Set the octave number */
@@ -281,13 +295,13 @@ export class Synthesizer implements ISerialize {
             this.isRunning = true
         }
 
-        Synthesizer.activeNotes.push(note + octave)
+        Synthesizer.activeNotes.add(note + octave)
 
         // console.log('Synthesizer.trigger', Synthesizer.activeNotes)
 
         if(this.arpMode) {
 
-            this.setArpChord(Synthesizer.activeNotes, (time, note) => {
+            this.setArpChord(Array.from(Synthesizer.activeNotes.keys()), (time, note) => {
 
                 for(let tr of this.tracks) tr.triggerNote(note)
 
@@ -304,11 +318,11 @@ export class Synthesizer implements ISerialize {
     /** Release note */
     releaseNote(note:string, octave?:number) {
 
-        Synthesizer.activeNotes.splice(Synthesizer.activeNotes.indexOf(note + octave), 1)
+        Synthesizer.activeNotes.delete(note + octave)
 
         if(this.arpMode) {
             
-            this.setArpChord(Synthesizer.activeNotes, (time, note, length) => {
+            this.setArpChord(Array.from(Synthesizer.activeNotes.keys()), (time, note, length) => {
 
                 for(let tr of this.tracks) tr.triggerNote(note)
 
@@ -324,7 +338,7 @@ export class Synthesizer implements ISerialize {
     /** Will release all triggered notes that are stored in [activeNotes] */
     stopAll() {
 
-        for(let i = Synthesizer.activeNotes.length-1; i >= 0; i--) this.releaseNote(Synthesizer.activeNotes[i])
+        for(let n of Synthesizer.activeNotes) this.releaseNote(n)
     }
 
 
