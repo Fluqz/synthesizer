@@ -3,6 +3,8 @@
 
 
 <script lang="ts">
+
+    import * as Tone from 'tone'
     import { onMount } from 'svelte';
     import Synthesizer from './app/view/Synthesizer.svelte'
     
@@ -20,6 +22,26 @@
     G.h = window.innerHeight
 
     Visuals.moireShader()
+
+    onMount(() => {
+
+        Tone.start()
+
+        Tone.Transport.start()
+
+        console.log('scroll')
+
+        setTimeout(() => {
+
+            window.scrollTo({
+                top: 1000,
+                left: 0,
+                behavior: 'smooth',
+                
+            });
+        }, 1000)
+
+    })
     
     // Serialize
     const serializeIn = file => {
