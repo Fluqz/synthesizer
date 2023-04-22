@@ -332,7 +332,7 @@
 
 
   background-image: url('/src/assets/imgs/circle-sepia.gif');
-  background-size: 500%;
+  background-size: 1000%;
   background-position: center;
   background-repeat: no-repeat;
 }
