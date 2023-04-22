@@ -12,6 +12,7 @@
 
     import { Track as _Track } from '../track'
     import { Synthesizer } from '../synthesizer'
+    import { Vec2 } from '../core/math';
 
     export let synthesizer: Synthesizer
 
@@ -148,11 +149,40 @@
         //     }
         // }
     }
+
+
+
+    /** Menu */
+
+    let isMenuOpen = false
+    let mousePosition: Vec2 = new Vec2()
+    let selectedTrack: _Track
+
+
+    const onClick = (e, track: _Track) => {
+
+        e.stopPropagation()
+
+        const ct = e.currentTarget
+
+        const client = e.currentTarget.getBoundingClientRect()
+
+        console.log('rect',client)
+
+        mousePosition.set(client.x , client.y)
+
+        selectedTrack = track
+        
+        isMenuOpen = selectedTrack ? true : false
+    }
+
+
+
 </script>
 
 
 
-<div class="synthesizer">
+<div class="synthesizer" on:click={(e) => onClick(e, undefined)}>
 
     <div class="synthesizer-menu">
 
@@ -205,13 +235,17 @@
 
     <div class="mixer">
 
-        <TrackMenu synthesizer={synthesizer} track={currentTrack} />
+        {#if isMenuOpen }
+            
+            <TrackMenu track={selectedTrack} position={mousePosition} on:add on:remove/>
 
-        <div class="tracks">
+        {/if}
+
+        <div class="tracks" >
 
             {#each tracks as track}
                 
-                <div class="track" on:click={() => {currentTrack = track}}>
+                <div class="track-wrapper" on:click={(e) => onClick(e, track)}>
 
                     <Track track={track} instrument={track.instrument} nodes={track.nodes} />
 
@@ -299,6 +333,13 @@
 #record.recording {
 
     background-color: red;
+}
+
+.track-wrapper {
+
+    position: relative;
+
+    display: inline-block;
 }
 
 </style>

@@ -57,10 +57,12 @@ export class Oscillator extends Instrument {
 
         this.isPlaying = false
 
-        this.volume = volume ? volume : .7
+        this.volume = volume ? volume : .4
         this.frequency = frequency ? frequency : 1
         this.detune = detune ? detune : .5
     
+
+
         this.props.set('volume', { type: InputType.KNOB, name: 'Volume', get: () => this.volume, set: (v:number) => this.volume = v, group: 0 })
 
         this.props.set('wave', { type: InputType.DROPDOWN, name: 'Wave', get: () => this.wave, set: (v:string) => this.wave = v, options: ['triangle', 'sine', 'square', 'sawtooth'], group: 1 })
@@ -69,10 +71,10 @@ export class Oscillator extends Instrument {
         this.props.set('detune', { type: InputType.KNOB, name: 'Detune', get: () => this.detune, set: (v:number) => this.detune = v, group: 2 })
         this.props.set('phase', { type: InputType.KNOB, name: 'Phase', get: () => this.phase, set: (v:number) => this.phase = v, group: 2 })
         
-        this.props.set('attack', { type: InputType.KNOB, name: 'Attack', get: () => this.attack, set: (v:number) => this.attack = v, group: 4 })
-        this.props.set('decay', { type: InputType.KNOB, name: 'Decay', get: () => this.decay, set: (v:number) => this.decay = v, group: 4 })
-        this.props.set('sustain', { type: InputType.KNOB, name: 'Sustain', get: () => this.sustain, set: (v:number) => this.sustain = v, group: 4 })
-        this.props.set('release', { type: InputType.KNOB, name: 'Release', get: () => this.release, set: (v:number) => this.release = v, group: 4 })
+        this.props.set('attack', { type: InputType.KNOB, name: 'Attack', get: () => this.attack, set: (v:number) => this.attack = v, min: .1, max: 5, group: 4 })
+        this.props.set('decay', { type: InputType.KNOB, name: 'Decay', get: () => this.decay, set: (v:number) => this.decay = v, min: 0, max: 5, group: 4 })
+        this.props.set('sustain', { type: InputType.KNOB, name: 'Sustain', get: () => this.sustain, set: (v:number) => this.sustain = v, min: 0, max: 1, group: 4 })
+        this.props.set('release', { type: InputType.KNOB, name: 'Release', get: () => this.release, set: (v:number) => this.release = v, min: 0, max: 5, group: 4 })
     }
 
     get frequency() { return this._frequency }
@@ -183,6 +185,43 @@ export class Oscillator extends Instrument {
         this.output = this.gain
 
         this.output.connect(n instanceof Node ? n.input : n)
+    }
+
+    chain(nodes: Node[] | Tone.ToneAudioNode[]) {
+
+        if(!nodes.length || nodes.length == 0) return // this.connect(nodes)
+
+        this.osc.connect(this.envelope)
+
+        this.envelope.connect(this.gain)
+
+        this.output = this.gain
+
+        this.output.connect(nodes[0] instanceof Node ? nodes[0].input : nodes[0])
+
+        let lastNode: Tone.ToneAudioNode = nodes[0] instanceof Node ? nodes[0].output : nodes[0]
+
+        nodes.shift()
+
+        // console.log('chain', this.output.name, 'to', lastNode.name)
+
+        for(let n of nodes) {
+            
+            if(n instanceof Node) {
+
+                // console.log('chain Node', lastNode.name, 'to', n.name)
+
+                lastNode.connect(n.input)
+                lastNode = n.output
+            }
+            else {
+                
+                // console.log('chain ToneNode', lastNode.name, 'to', n.name)
+
+                lastNode.connect(n)
+                lastNode = n
+            }
+        }
     }
 
     disconnect(n?: Node | Tone.ToneAudioNode<ToneWithContextOptions>): void {

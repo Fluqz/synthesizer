@@ -29,6 +29,8 @@ export class DuoSynth extends Instrument {
 
         this.output = this.gain
 
+        this.input = null
+
 
         this.props.set('volume', { type: InputType.KNOB, name: 'Volume', get: () => { return this.volume }, set: (v: number) => { this.volume = v }, min: 0, max: 1, group: 0 })
         
@@ -109,6 +111,15 @@ export class DuoSynth extends Instrument {
         this.output = this.gain
 
         this.output.connect(n instanceof Node ? n.input : n)
+    }
+
+    chain(nodes: Node[] | Tone.ToneAudioNode[]) {
+
+        // this.polySynth.connect(this.gain)
+
+        // this.output = this.gain
+
+        super.chain(nodes)
     }
 
     disconnect(n?: Node | Tone.ToneAudioNode): void {

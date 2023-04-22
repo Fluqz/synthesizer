@@ -171,7 +171,7 @@ export class Synthesizer implements ISerialize {
     constructor() {
 
         // Synthesizer Volume
-        this.volume = .7
+        this.volume = .5
         this.octave = 2
         
         this.gain = new Tone.Gain(this.volume)
@@ -206,12 +206,13 @@ export class Synthesizer implements ISerialize {
 
 
         this.tracks = []
-        this.addTrack(new Track(Synthesizer.nodes.sources.Oscillator()))
-        this.addTrack(new Track(Synthesizer.nodes.sources.Synth()))
-        this.addTrack(new Track(Synthesizer.nodes.sources.DuoSynth()))
-        this.addTrack(new Track(Synthesizer.nodes.sources.FMSynth()))
-        this.addTrack(new Track(Synthesizer.nodes.sources.AMSynth()))
-        this.addTrack(new Track(Synthesizer.nodes.sources.FMSynth()))
+        this.addTrack(new Track(this, Synthesizer.nodes.sources.Oscillator()))
+        // this.addTrack(new Track(this, Synthesizer.nodes.sources.Synth()))
+        this.addTrack(new Track(this, Synthesizer.nodes.sources.DuoSynth()))
+        // this.addTrack(new Track(this, Synthesizer.nodes.sources.FMSynth()))
+        // this.addTrack(new Track(this, Synthesizer.nodes.sources.AMSynth()))
+
+        // this.addTrack(new Track(this, Synthesizer.nodes.sources.FMSynth()))
 
         this.presetManager = new PresetManager(this)
 
@@ -223,8 +224,6 @@ export class Synthesizer implements ISerialize {
         this.onAddNode = new RxJs.Subject()
         this.onRemoveNode = new RxJs.Subject()
     }
-
-
 
     /** Set Master Volume */
     setVolume(v) {
@@ -249,16 +248,15 @@ export class Synthesizer implements ISerialize {
     }
 
     /** Add a instrument to the synthesizer. */
-    addTrack(track: Track, instrument?: Instrument) {
+    addTrack(track: Track) {
 
         this.stopAll()
-
-        if(track == undefined) track = new Track(instrument)
-        else if(instrument != undefined) track.instrument = instrument
         
         if(this.tracks.indexOf(track) == -1) this.tracks.push(track)
-
+        
         track.connect(this.gain)
+
+        console.log('ADD TRACK', this.tracks.length)
     }
 
     removeTrack(track: Track) {
@@ -482,7 +480,7 @@ export class Synthesizer implements ISerialize {
 
             for(let t of o.tracks) {
 
-                let track = new Track()
+                let track = new Track(this)
                 track.serializeIn(t)
                 this.addTrack(track)
             }

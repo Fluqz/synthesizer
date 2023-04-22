@@ -15,10 +15,10 @@
     export let instrument: Instrument
     export let nodes: _Node[]
 
-    onMount(() => {
-    })
 
-    const changeVolume = (e) => {
+    onMount(() => {})
+
+    const onVolumeChange = (e) => {
 
         track.volume = e.detail
         track = track
@@ -26,25 +26,29 @@
 
     const onMute = (e) => {
 
-        console.log('track', track.id)
-
         track.mute(!track.isMuted)
-        track = track
+        track.isMuted = track.isMuted
+    }
+
+    const onSolo = (e) => {
+
+        track.solo(!track.isSolo)
+        track.isSolo = track.isSolo
     }
 
     const onHold = (e) => {
 
-        track = track
-    }
 
+    }
 
 
 </script>
 
 
+
 <div class="track">
 
-    { track.id }
+    { track.number } { track.id } { track.instrument.name }
 
     <div class="track-options">
 
@@ -53,12 +57,17 @@
         value={track.volume}
         min={0} 
         max={1} 
-        on:onChange={changeVolume} />
+        on:onChange={onVolumeChange} />
 
         <div 
             on:click={onMute}
             class="btn" 
             class:active={track.isMuted}>Mute</div>
+
+        <div 
+            on:click={onSolo}
+            class="btn" 
+            class:active={track.isSolo}>Solo</div>
 
         <div 
             on:click={onHold}
@@ -84,6 +93,8 @@
 .track {
 
     display: inline-block;
+
+    position: relative;
 
     height: 70px;
 

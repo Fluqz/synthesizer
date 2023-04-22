@@ -99,6 +99,7 @@ export class Node implements ISerialize {
 
     /** Connects this Nodes Output to [e]'s Input */
     connect(n: Node | Tone.ToneAudioNode) {
+        console.log('node CONNECT', this.name)
 
         if(!n) return
 
@@ -116,20 +117,32 @@ export class Node implements ISerialize {
 
         if(!nodes.length || nodes.length == 0) return // this.connect(nodes)
 
-        // this.connect(nodes[0])
+        this.output.connect(nodes[0] instanceof Node ? nodes[0].input : nodes[0])
 
-        let n1: Tone.ToneAudioNode
-        let n2: Tone.ToneAudioNode
+        let lastNode: Tone.ToneAudioNode = nodes[0] instanceof Node ? nodes[0].output : nodes[0]
 
-        for(let i = 0; i < nodes.length - 1; i++) {
+        nodes.shift()
 
-            n1 = (nodes[i] instanceof Node ? nodes[i].output : nodes[i]) as Tone.ToneAudioNode
-            n2 = (nodes[i + 1] instanceof Node ? nodes[i + 1].output : nodes[i + 1]) as Tone.ToneAudioNode
+        // console.log('chain', this.output.name, 'to', lastNode.name)
 
-            n1.connect(n2)
+        for(let n of nodes) {
+            
+            if(n instanceof Node) {
+
+                // console.log('chain Node', lastNode.name, 'to', n.name)
+
+                lastNode.connect(n.input)
+                lastNode = n.output
+            }
+            else {
+                
+                // console.log('chain ToneNode', lastNode.name, 'to', n.name)
+
+                lastNode.connect(n)
+                lastNode = n
+            }
         }
     }
-
     delete() {
 
         this.onDelete.next(this)

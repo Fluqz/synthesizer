@@ -6,45 +6,30 @@
     import { createEventDispatcher } from "svelte";
 
 
-    import { Synthesizer } from "../synthesizer";
     import { Track } from "../track";
+    import type { Vec2 } from "../core/math";
 
-    export let synthesizer: Synthesizer
     export let track: Track
+    export let position: Vec2
 
     const dispatch = createEventDispatcher()
 
-    $: synthesizer 
 
     const add = () => {
 
-        console.log('add track')
-        synthesizer.addTrack(getNewTrack())
-
-        synthesizer = synthesizer
-
-        dispatch('update')
+        dispatch('add')
     }
 
     const remove = () => {
 
-        console.log('remove track')
-        synthesizer.removeTrack(track)
-
-        synthesizer = synthesizer
-
-        dispatch('update')
-    }
-    const getNewTrack = () => {
-
-        return new Track()
+        dispatch('remove', track)
     }
 
 </script>
 
 
 
-<div class="track-menu">
+<div class="track-menu" style={'top:' + 0 + 'px;left:' + position.x + 'px'}>
 
     <div class="category">
 
@@ -90,7 +75,8 @@
 
     background-color: blue;
 
-    mix-blend-mode: color;
+    position: relative;
+    mix-blend-mode: normal;
 
     z-index: 10;
 }

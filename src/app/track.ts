@@ -17,11 +17,13 @@ export class Track implements ISerialize {
 
     public id: number
 
+    public synthesizer: Synthesizer
+
     /** ToneJs Gain Node used for the track */
     public gain: Tone.Gain
 
     /** Volume property */
-    private _volume: number
+    private _volume: number = .4
 
     /** Instrument used */
     public instrument: Instrument
@@ -32,21 +34,27 @@ export class Track implements ISerialize {
     /** Mute this track */
     public isMuted: boolean
 
+    /** Mute this track */
+    public isSolo: boolean
+
     /** When enabled, the current instrument with current note/chord is played endlessly. */
     private _holdEnabled: boolean
 
     /** Allow arpegiator to play this tracks instrument. */
     public arpEnabled: boolean
 
-    constructor(instrument?: Instrument) {
+    constructor(synthesizer: Synthesizer, instrument?: Instrument) {
 
         this.id = Track.count++
 
-        this._volume = .7
+        this.synthesizer = synthesizer
+
+        this._volume = .4
         this.nodes = []
         this.instrument = instrument
         this.gain = new Tone.Gain(this._volume)
         this.isMuted = false
+        this.isSolo = false
         this._holdEnabled = false
 
         if(instrument) {
@@ -58,6 +66,8 @@ export class Track implements ISerialize {
         // this.addNode(Synthesizer.nodes.effects.Tremolo())
         this.addNode(Synthesizer.nodes.effects.Delay())
     }
+
+    get number() { return this.synthesizer ? this.synthesizer.tracks.indexOf(this) + 1 : -1 }
 
     setInstrument(instrument: Instrument) {
 
@@ -87,6 +97,21 @@ export class Track implements ISerialize {
 
         if(this.isMuted) this.gain.gain.setValueAtTime(0, Tone.now())
         else this.gain.gain.setValueAtTime(this.volume, Tone.now())
+    }
+
+    solo(s: boolean) {
+
+        this.isSolo = s === true ? true : false
+
+        for(let t of this.synthesizer.tracks) {
+
+            if(t === this) this.mute(!s)
+            else if(t.isSolo) continue
+            else t.mute(s)
+        }
+
+        // if(this.isSolo) this.gain.gain.setValueAtTime(0, Tone.now())
+        // else this.gain.gain.setValueAtTime(this.volume, Tone.now())
     }
 
     get holdEnabled() { return this._holdEnabled }
@@ -129,34 +154,25 @@ export class Track implements ISerialize {
     /** Connects all nodes in a chain */
     connectNodes() {
 
+
         if(this.instrument) {
 
             this.instrument.disconnect()
 
-            const nodes: Tone.ToneAudioNode[] = []
+            console.log('Connect Nodes', this.id, this.nodes)
 
-            nodes.push(this.instrument.output)
+            const nodes = []
 
             for(let n of this.nodes) {
 
-                nodes.push(n.input)
-                n.disconnect()
-
-                if(n.input != n.output) nodes.push(n.output)
+                nodes.push(n)
             }
 
             nodes.push(this.gain)
 
+            console.log('NODES', nodes)
+
             this.instrument.chain(nodes)
-
-            // for(let i = 0; i < nodes.length - 1; i++) {
-
-            //     console.log('nodes', i, i+1, nodes.length)
-
-            //     nodes[i].connect(nodes[i+1])
-            // }
-
-            // this.instrument.output.connect(this.gain)
         }
     }
 

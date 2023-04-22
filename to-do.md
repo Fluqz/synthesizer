@@ -24,3 +24,6 @@
 - Add different colors for different octaves (only for black keys?)
 - Add knob automation (startVal, endVal, curve, duration)
 - Pressing keys changes the color of the background/keys. Colors are chose by my synesthesia palette
+
+
+- upload presets to database? 

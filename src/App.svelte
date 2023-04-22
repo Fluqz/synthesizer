@@ -6,13 +6,12 @@
     import { onMount } from 'svelte';
     import Synthesizer from './app/view/Synthesizer.svelte'
     
-    import * as P5 from 'p5'
-    
     import { Synthesizer as Synth } from './app/synthesizer'
     import { Storage } from './app/core/storage'
     import { G } from './app/core/globals'
     
     import { Visuals } from './app/p5/visual'
+    import { Track } from './app/track';
     
     // Create Synthesizer
     let synthesizer = G.synthesizer = new Synth()
@@ -22,7 +21,7 @@
         G.w = window.innerWidth
         G.h = window.innerHeight
 
-        Visuals.moireShader()
+        // Visuals.moireShader()
 
     })
     
@@ -74,7 +73,26 @@
         synthesizer.dispose()
     }
 
-    serializeIn(Storage.load())
+    // serializeIn(Storage.load())
+
+
+
+    const addTrack = (e) => {
+
+        console.log('add')
+
+        synthesizer.addTrack(new Track(synthesizer, Synth.nodes.sources.Oscillator()))
+
+        synthesizer = synthesizer
+    }
+
+    const removeTrack = (e) => {
+
+        synthesizer.removeTrack(e.detail)
+
+        synthesizer = synthesizer
+    }
+
 
 </script>
 
@@ -83,7 +101,7 @@
 
 
 
-<Synthesizer synthesizer={synthesizer} tracks={synthesizer.tracks} />
+<Synthesizer synthesizer={synthesizer} tracks={synthesizer.tracks} on:add={addTrack} on:remove={removeTrack}/>
 
 
 
