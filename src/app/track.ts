@@ -66,10 +66,10 @@ export class Track implements ISerialize {
             this.connectNodes()
         }
 
-        this.addNode(Synthesizer.nodes.effects.AutoFilter())
-        this.addNode(Synthesizer.nodes.effects.Reverb())
+        // this.addNode(Synthesizer.nodes.effects.AutoFilter())
+        // this.addNode(Synthesizer.nodes.effects.Reverb())
         this.addNode(Synthesizer.nodes.effects.Delay())
-        this.addNode(Synthesizer.nodes.effects.Phaser())
+        // this.addNode(Synthesizer.nodes.effects.Phaser())
         // this.addNode(Synthesizer.nodes.effects.Chorus())
         // this.addNode(Synthesizer.nodes.effects.Distortion())
         // this.addNode(Synthesizer.nodes.effects.Tremolo())
