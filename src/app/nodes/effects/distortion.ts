@@ -19,6 +19,8 @@ export class Distortion extends Effect {
 
         this.gain = gain
 
+        this.output = this.input = this.distortion
+
         this.wet = this.wet
 
         this.props.set('wet', { type: ParamType.KNOB, name: 'Wet', get: () =>  this.wet })

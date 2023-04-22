@@ -25,6 +25,9 @@ export class Track implements ISerialize {
     /** Volume property */
     private _volume: number
 
+    /** Overwriting Synthesizer's octave */
+    private octave: number
+
     /** Instrument used */
     public instrument: Instrument
 
@@ -63,10 +66,17 @@ export class Track implements ISerialize {
             this.connectNodes()
         }
 
-        // this.addNode(Synthesizer.nodes.effects.Tremolo())
+        this.addNode(Synthesizer.nodes.effects.AutoFilter())
+        this.addNode(Synthesizer.nodes.effects.Reverb())
         this.addNode(Synthesizer.nodes.effects.Delay())
+        this.addNode(Synthesizer.nodes.effects.Phaser())
+        // this.addNode(Synthesizer.nodes.effects.Chorus())
+        // this.addNode(Synthesizer.nodes.effects.Distortion())
+        // this.addNode(Synthesizer.nodes.effects.Tremolo())
+        // this.addNode(Synthesizer.nodes.effects.Vibrato())
     }
 
+    /** Get the track count/order number */
     get number() { return this.synthesizer ? this.synthesizer.tracks.indexOf(this) + 1 : -1 }
 
     /** Sets the tracks source instrument and connects them in chain. 
@@ -164,6 +174,9 @@ export class Track implements ISerialize {
 
         if(this.holdEnabled) return
 
+        // Cant keep track of notes. Also will stay in this octave only! Need to check (synth.octave - note.octave) + this.octave
+        if(this.octave != undefined) note = note.replace(/[0-9]/g, '') + this.octave
+
         this.instrument.triggerNote(note)
     }
 
@@ -171,6 +184,8 @@ export class Track implements ISerialize {
     releaseNote(note:string) {
 
         if(this.holdEnabled) return
+
+        if(this.octave != undefined) note = note.replace(/[0-9]/g, '') + this.octave
 
         this.instrument.releaseNote(note)
     }

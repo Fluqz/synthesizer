@@ -22,6 +22,7 @@ export class AutoFilter extends Effect {
         super('AutoFilter', wet)
 
         this.autoFilter = new Tone.AutoFilter()
+        this.autoFilter.start()
 
         this.input = this.output = this.autoFilter
 
