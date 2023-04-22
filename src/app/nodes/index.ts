@@ -10,6 +10,9 @@ export * from './effects/chorus'
 export * from './effects/distortion'
 export * from './effects/reverb'
 export * from './effects/effect'
+export * from './effects/auto-filter'
+export * from './effects/phaser'
+export * from './effects/vibrato'
 
 
 export * from './source/instrument'

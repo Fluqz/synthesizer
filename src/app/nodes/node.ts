@@ -73,7 +73,7 @@ export class Node implements ISerialize {
     onDelete
 
     /** Array of settable properties */
-    props: Map<GroupID, KnobNodeParameter | SwitchNodeParameter | DropDownNodeParameter> 
+    props: Map<string, KnobNodeParameter | SwitchNodeParameter | DropDownNodeParameter> 
 
     constructor(name) {
 
