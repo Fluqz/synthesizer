@@ -24,6 +24,8 @@ export const moireShader = (p5) => {
 
         p5.createCanvas(G.w, G.h, p5.WEBGL)
 
+        p5.frameRate(30)
+
         p5.canvas.style.position = 'absolute'
         p5.canvas.style.top = '0px'
         p5.canvas.style.left = '0px'
@@ -85,7 +87,9 @@ export const moireShader = (p5) => {
                 let normal
 
                 let time = (Math.random() * 500) + 100
-                let interval = 30
+                let rMin = 33.33333 // ~30fps
+                let rMax = 120
+                let interval = Math.round(Math.random() * (rMax - rMin)) + rMin
 
                 increment = M.getDistanceVector(oldCellPos, newCellPos) / (time / interval)
 

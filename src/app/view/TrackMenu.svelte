@@ -92,11 +92,13 @@
     mix-blend-mode: normal;
 
     z-index: 10;
+
 }
 
 .option {
 
     cursor: pointer;
 }
+
 
 </style>

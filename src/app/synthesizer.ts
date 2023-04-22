@@ -149,7 +149,7 @@ export class Synthesizer implements ISerialize {
     /** Arpeggiator mode */
     arpMode: boolean = false
     /** Beats per minute */
-    bpm: number = 400
+    bpm: number = 120
     
     tracks: Track[]
 
@@ -182,6 +182,7 @@ export class Synthesizer implements ISerialize {
 
         this.isRecording = false
 
+        console.log('Register keys', Synthesizer.keyMap, Synthesizer.keyMap.length)
         let key
         let i = 0
         for(let keyMap of Synthesizer.keyMap) {

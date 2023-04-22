@@ -9,6 +9,7 @@
   --c-y: #fed33a;
   --c-w: #f3e5ca;
   --c-o: #fe5e3a;
+  --c-bl: blue;
 
 }
 
@@ -29,6 +30,11 @@
 
   mix-blend-mode: difference;
   
+
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
 }
 /* 
 *:hover {
@@ -67,36 +73,6 @@ canvas {
   z-index: 1;
 }
 
-/* Synthesizer */
-#track-menu {
-
-  display: none;
-
-  position: absolute;
-
-  top: 0px;
-  left: 0px;
-
-  min-height: 20px;
-
-  padding: 20px;
-
-  background-color: aqua;
-  color: #000;
-
-  -webkit-user-select: none; /* Safari */        
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE10+/Edge */
-  user-select: none; /* Standard */
-  
-}
-#track-menu.open {
-
-  display: block;
-}
-
-
-
 
 
 
@@ -118,7 +94,7 @@ canvas {
   background-color: var(--c-w);;
   color: var(--c-b);
 
-  border-radius: 3px;
+  /* border-radius: 4px; */
 
   transition: .1s background-color;
 

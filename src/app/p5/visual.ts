@@ -1,6 +1,6 @@
 
 
-import * as P5 from 'p5'
+import P5 from 'p5'
 
 import { G } from '../core/globals'
 import { moireShader } from './moire-shader'

@@ -88,7 +88,7 @@
 .key {
 
     display: inline-block;
-    width: 2%;
+    width: calc(100% / 36);
     height: 100%;
 
     background-color: var(--c-w);
@@ -107,6 +107,7 @@
 }
 .key.black {
     background-color: var(--c-y);
+    color: var(--c-w);
 }
 .key .key-mapping {
 }
@@ -114,7 +115,7 @@
 }
 .key.pressed {
 
-    background-color: var(--c-o);
+    background-color: var(--c-bl);
     z-index: 1;
     mix-blend-mode: unset;
 }

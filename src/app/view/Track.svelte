@@ -59,16 +59,16 @@
 
 <div class="track-wrapper">
 
-    <div class="track-options">
+    <div class="node track-options">
 
         { track.number } { track.id } { track.instrument.name }
 
         <Knob 
-        name="Volume" 
-        value={track.volume}
-        min={-70} 
-        max={6} 
-        on:onChange={onVolumeChange} />
+            name="Volume" 
+            value={track.volume}
+            min={-70} 
+            max={6} 
+            on:onChange={onVolumeChange} />
 
         <div 
             on:click={onMute}
@@ -110,20 +110,22 @@
 .track-wrapper {
 
     display: flex;
-
-    position: relative;
-
     height: 90px;
 
-    padding: 5px;
+    /* padding: 5px; */
 
     background-color: var(--c-g);
     color: var(--c-w);
+    
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
 }
 
 .track-wrapper .track-options {
 
     width: 250px;
+    height: 100%;
 
     display: inline-flex;
     align-items: center;

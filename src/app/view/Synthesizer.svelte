@@ -366,17 +366,17 @@
 
 .track {
 
-    position: relative;
-
+    /* position: relative; */
+/* 
     display: inline-flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-start; */
 
     width: 100%;
-
+/* 
     overflow-x: auto;
     overflow-y: hidden;
-    scrollbar-width: none;
+    scrollbar-width: none; */
 }
 
 </style>

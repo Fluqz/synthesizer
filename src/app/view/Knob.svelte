@@ -3,24 +3,29 @@
 
 <script lang="ts">
 
+    import * as Tone from "tone"
+
     import { fromEvent, Observable } from "rxjs"
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import { M } from "../core/math"
     import { Vec2 } from "../core/math";
+
+    import GIF from '../../assets/imgs/tenor.gif'
 
 
     /** Name of Knob */
     export let name: string
     /** value */
     export let value: number = 0
-    /** Initial value */
-    const initValue: number = value
     /** Minimum possible value */
     export let min: number = 0
     /** Maximum possible value */
     export let max: number = 1
     /** Division of (max - min) / division */
     export let division: number = 100
+
+    /** Initial value */
+    const initValue: number = value
 
     /** Wrapper dom element */
     let dom: HTMLElement
@@ -51,12 +56,6 @@
     let isMouseDown: boolean = false
     /** Is key pressed down */
     let isKeyDown: Boolean = false
-
-    let shiftPressed: boolean = false
-    let metaPressed: boolean = false
-    let ctrlPressed: boolean = false
-    let altPressed: boolean = false
-
 
     /** Amount of pixels the cursor is allowed to travel between the mousedown and mouseup event. 
      * If value is exeeding clickRange, no click has occured.
@@ -187,11 +186,6 @@
     /** On 'keydown' event callback */
     const onKeyDown = (e) => {
 
-        ctrlPressed = e.ctrlKey
-        shiftPressed = e.shiftKey
-        metaPressed = e.metaKey
-        altPressed = e.altKey
-
         if(e.key === 'Shift') division *= 40
         // if(e.key === 'Meta') division /= 4
 
@@ -200,10 +194,6 @@
     /** On 'keyup' event callback */
     const onKeyUp = (e) => {
 
-        ctrlPressed = e.ctrlKey
-        shiftPressed = e.shiftKey
-        metaPressed = e.metaKey
-        altPressed = e.altKey
 
         if(e.key === 'Shift') division /= 40
         // if(e.key === 'Meta') division *= 4
@@ -263,11 +253,15 @@
          on:pointerdown={onMouseDown} 
          on:touchstart={onTouchStart}
          on:dblclick={() => showResetBtn = !showResetBtn}
-         style={'transform: rotate(' + Math.round(angle*(180/Math.PI)) + 'deg);'}>
+         style={'transform: rotate(' + Math.round(angle * (180 / Math.PI)) + 'deg);'}>
 
-        <div class="knob-pointer"></div>
+        <div class="knob-underlay">
 
-        <div class="knob-value">{ value.toFixed(2) }</div>
+            <div class="knob-pointer"></div>
+
+            <div class="knob-value">{ value.toFixed(2) }</div>
+
+        </div>
 
     </div>
 
@@ -314,7 +308,8 @@
 
   border-radius: 100%;
 
-  border: 1px dotted var(--c-w);
+  /* border: 1px solid var(--c-y); */
+  
   background-color: blue;
   color: inherit;
 
@@ -330,20 +325,25 @@
 
   /* box-shadow: 0px 0px 1px 2px rgba(0,0,0,0.2); */
 
-
   -webkit-user-select: none;  
   -moz-user-select: none;    
   -ms-user-select: none;      
   user-select: none;
+
+
+  background-image: url('/src/assets/imgs/circle-sepia.gif');
+  background-size: 500%;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .knob > .knob-pointer {
 
   position: absolute;
   top: 0px;
-  left: calc(50% - (7% / 2));
+  left: calc(50% - (10% / 2));
 
-  width: 7%;
+  width: 10%;
   height: 30%;
 
   background-color: var(--c-o);
@@ -358,7 +358,11 @@
   text-align: center;
 }
 
+.knob-underlay {
+  background-color: #000;
+  /* mix-blend-mode: unset; */
 
+}
 
 .knob-settings {
     position: absolute;
