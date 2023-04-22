@@ -214,10 +214,10 @@ export class Synthesizer implements ISerialize {
 
 
         this.tracks = []
-        this.addTrack(new Track(this, Synthesizer.nodes.sources.Oscillator()))
+        // this.addTrack(new Track(this, Synthesizer.nodes.sources.Oscillator()))
         // this.addTrack(new Track(this, Synthesizer.nodes.sources.Synth()))
-        // this.addTrack(new Track(this, Synthesizer.nodes.sources.DuoSynth()))
-        // this.addTrack(new Track(this, Synthesizer.nodes.sources.FMSynth()))
+        this.addTrack(new Track(this, Synthesizer.nodes.sources.DuoSynth()))
+        this.addTrack(new Track(this, Synthesizer.nodes.sources.FMSynth()))
         // this.addTrack(new Track(this, Synthesizer.nodes.sources.AMSynth()))
 
         this.presetManager = new PresetManager(this)
