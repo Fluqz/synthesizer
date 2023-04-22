@@ -72,7 +72,10 @@
         // })
     })
 
+    const addTrack = () => {
 
+        // synthesizer.addTrack(new _Track(synthesizer, Synthesizer.nodes.sources.Oscillator()))
+    }
 
     const octaveDown = () => {
 
@@ -204,6 +207,8 @@
         isMenuOpen = false
     }
 
+    /** Menu End*/
+
 </script>
 
 
@@ -211,6 +216,8 @@
 <div class="synthesizer">
 
     <div class="synthesizer-menu">
+
+        <div class="add-track btn" on:click={addTrack}>+</div>
 
 
         <div id="presets">
@@ -263,12 +270,12 @@
     
 
     <div class="mixer">
-
+<!-- 
         {#if isMenuOpen }
             
             <TrackMenu track={selectedTrack} position={mousePosition} on:add on:remove/>
 
-        {/if}
+        {/if} -->
 
         <div class="tracks" on:click={closeTrackMenu}>
 
