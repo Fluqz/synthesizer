@@ -9,18 +9,24 @@ export const moireShader = (p5) => {
     let shader
 
     let grid
-    let oldCellPos
+    let oldCellPos = { x: 0, y: 0 }
     let currentCellPos = { x: 200, y: 200 }
     let newCellPos = { x: 0, y: 0 }
     let increment = 40
     let isAnimating = false
     let IVID
 
+    let tIncrement = Math.random() / 30 + .1
+    let t = 0
+
     p5.preload = () => {
         shader = p5.loadShader('./shader/moire-vert.glsl', './shader/moire-frag.glsl');
     }
 
     p5.setup = () => {
+
+        console.log('setup')
+
 
         p5.createCanvas(G.w, G.h, p5.WEBGL)
 
@@ -33,13 +39,20 @@ export const moireShader = (p5) => {
 
 
         grid = new Grid(G.w, G.h, 9, 4) // 9 * 4 = 36 (keys)
+        // grid = new Grid(100, 100, 9, 4) // 9 * 4 = 36 (keys)
 
         oldCellPos = grid.getCellPosByNr(Synthesizer.keyMap.indexOf(Math.round(Synthesizer.keyMap.length / 2)))
+
     }
 
     p5.draw = () => {
 
-        // p5.clear()
+
+        if(!G.visualsEnabled) return
+
+        // console.log('draw')
+
+        p5.clear()
 
         p5.shader(shader)
 
@@ -55,18 +68,19 @@ export const moireShader = (p5) => {
         // console.log(M.map(-1, 1, 0.99, 1, Math.sin(Tone.now())))
 
         if(true) {
+            // Get last pressed key
+            let key = Synthesizer.keys.find((k) => {
 
-            // Get newCellPos
-            for(let k of Synthesizer.keys) {
+                if(k.note + k.octave == Array.from(Synthesizer.activeNotes).pop()) return k
+            })
 
-                if(k.note + k.octave == Array.from(Synthesizer.activeNotes).pop()) {
+            // If key set position from key index in keymap array
+            if(key) {
 
-                    oldCellPos.x = newCellPos.x
-                    oldCellPos.y = newCellPos.y
+                oldCellPos.x = newCellPos.x
+                oldCellPos.y = newCellPos.y
 
-                    newCellPos = grid.getCellPosByNr(Synthesizer.keyMap.indexOf(k.mapping))
-                    break
-                }
+                newCellPos = grid.getCellPosByNr(Synthesizer.keyMap.indexOf(key.mapping))
             }
 
             if(!newCellPos) newCellPos = { x: G.w / 2, y: G.h / 2 }
@@ -75,9 +89,8 @@ export const moireShader = (p5) => {
             // Did cellpos change?
             if((oldCellPos.x !== newCellPos.x || oldCellPos.y !== newCellPos.y)) {
 
-                if(isAnimating) {
+                // console.log('other pos', oldCellPos, newCellPos)
 
-                }
                 currentCellPos.x = oldCellPos.x
                 currentCellPos.y = oldCellPos.y
 
@@ -88,11 +101,14 @@ export const moireShader = (p5) => {
 
                 let time = (Math.random() * 500) + 100
                 let rMin = 33.33333 // ~30fps
-                let rMax = 120
+                let rMax = 100
+                let randomMizeIntervalLength = Math.random() * 100
                 let interval = Math.round(Math.random() * (rMax - rMin)) + rMin
 
+                // Get interpolation step as vec3
                 increment = M.getDistanceVector(oldCellPos, newCellPos) / (time / interval)
 
+                // console.log('increment', increment)
                 // console.log('Clear')
 
                 // console.log('old', oldCellPos)
@@ -126,6 +142,9 @@ export const moireShader = (p5) => {
                         // console.log('curr', currentCellPos)
                         currentCellPos.x = tmpCellPos.x
                         currentCellPos.y = tmpCellPos.y
+
+                        // console.log('interpolating')
+
                     }
                     else {
                         // console.log('Clear2')
@@ -135,20 +154,32 @@ export const moireShader = (p5) => {
                         oldCellPos.y = newCellPos.y
                         currentCellPos.x = newCellPos.x
                         currentCellPos.y = newCellPos.y
+
+                        // console.log('stop animation')
+
                     }
 
+
+
                     shader.setUniform("u_mouse", [
-                        M.map(0, G.w, -G.w / 2, G.w, currentCellPos.x), 
-                        M.map(0, G.h, -G.h / 2, G.h, currentCellPos.y)
+                        M.map(0, G.w, -200, 200, currentCellPos.x), 
+                        M.map(0, G.h, -200, 200, currentCellPos.y)
                     ])
 
-                }, interval)
+                    // console.log('interval')
+
+                }, interval + randomMizeIntervalLength)
+            }
+            else {
+
+                t += tIncrement
+                // console.log((Math.sin(t)), t)
+                shader.setUniform("u_mouse", [
+                    M.map(0, G.w, -200, 200, currentCellPos.x + (Math.sin(t) * 10)), 
+                    M.map(0, G.h, -200, 200, currentCellPos.y + (Math.cos(t) * 10))
+                ])
             }
 
-        }
-        else if(!isAnimating) { // No and no animation right now
-
-            // shader.setUniform("u_mouse", [newCellPos.x, newCellPos.y])
         }
 
         // shader.setUniform("u_mouse", [p5.mouseX, p5.map(p5.mouseY, 0, G.h, G.h, 0)])
@@ -156,6 +187,19 @@ export const moireShader = (p5) => {
         //     M.map(0, G.w, -G.w / 2, G.w, p5.mouseX), 
         //     M.map(0, G.h, -G.h / 2, G.h, p5.mouseY)
         // ])
+
+
+
+        // // constant
+        // const m = [
+        //     M.map(0, G.w, -200, 200, p5.mouseX), 
+        //     M.map(0, G.h, -120, 130, p5.mouseY)
+        // ]
+
+        // console.log('xy', m)
+
+        // shader.setUniform("u_mouse", m)
+
 
         p5.rect(0, 0, G.w, G.h)
     }

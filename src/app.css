@@ -45,12 +45,12 @@ body {
   background-color: var(--c-b);
   color: var(--c-w);
 
-  transition: 1s all;
+  transition: 2s all;
 
   overflow-x: hidden;
   scrollbar-width: none;
 
-  cursor: url('/assets/imgs/idioma.jpg');
+  /* cursor: url('/src/assets/imgs/circle-sepia.gif'); */
 }
 
 html {
@@ -111,7 +111,7 @@ canvas {
 .node {
 
   display: inline-flex;
-
+  
   align-items: baseline;
   justify-content: center;
 
@@ -119,9 +119,6 @@ canvas {
 
   min-width: 100px;
   height: 100%;
-
-  margin-left: 5px;
-  padding: 0px 10px;
 
   /* background-color: var(--c-g2); */
   color: var(--c-w);

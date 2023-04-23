@@ -31,9 +31,9 @@ export class Tremolo extends Effect {
         console.log(this.tremolo)
 
 
-        this.props.set('wet', { type: ParamType.KNOB, name: 'Wet', get: () =>  this.wet, set: (v) => this.wet = v })
-        this.props.set('frequency', { type: ParamType.KNOB, name: 'Frequency', get: () =>  this.frequency, set: (v) => this._frequency = v })
-        this.props.set('depth', { type: ParamType.KNOB, name: 'Depth', get: () =>  this.depth, set: (v) => this.depth = v })
+        this.props.set('wet', { type: ParamType.KNOB, name: 'Wet', get: () =>  this.wet, set: (v) => this.wet = v, min: 0, max: 1, groupID: 0 })
+        this.props.set('frequency', { type: ParamType.KNOB, name: 'Frequency', get: () =>  this.frequency, set: (v) => this._frequency = v, min: 0, max: 1000, groupID: 0 })
+        this.props.set('depth', { type: ParamType.KNOB, name: 'Depth', get: () =>  this.depth, set: (v) => this.depth = v, min: 0, max: 10, groupID: 0 })
     }
 
     get wet() { return this._wet }

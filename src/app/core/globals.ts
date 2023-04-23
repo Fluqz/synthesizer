@@ -1,11 +1,14 @@
+import type { Synthesizer } from "../synthesizer"
 
 
 export class G {
 
     static debug = true
 
-    static w
-    static h
+    static w: number
+    static h: number
 
-    static synthesizer
+    static synthesizer: Synthesizer
+
+    static visualsEnabled: boolean = true
 }

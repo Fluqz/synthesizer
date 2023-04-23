@@ -18,6 +18,9 @@ export class Chorus extends Effect {
     _depth
     /** Amount of input */
     _feedback
+    _wave
+    _wavePartial
+    _spread
 
     constructor(wet, frequency, delayTime, depth, feedback) {
 
@@ -33,13 +36,21 @@ export class Chorus extends Effect {
         this.depth = depth
         this.feedback = feedback
 
-        this.props.set('delayTime', { type: ParamType.KNOB, name: 'Delay Time', get: () =>  this.delayTime })
-        this.props.set('depth', { type: ParamType.KNOB, name: 'Depth', get: () =>  this.depth })
-        this.props.set('feedback', { type: ParamType.KNOB, name: 'Feedback', get: () =>  this.feedback })
+        this.props.set('delayTime', { type: ParamType.KNOB, name: 'Delay Time', get: () =>  this.delayTime, set: (e) => this.delayTime = e, min: 2, max: 20, groupID: 0 })
+        this.props.set('depth', { type: ParamType.KNOB, name: 'Depth', get: () =>  this.depth, set: (e) => this.depth = e, min: 0, max: 1, groupID: 0 })
+        this.props.set('feedback', { type: ParamType.KNOB, name: 'Feedback', get: () =>  this.feedback, set: (e) => this.feedback = e, min: 0, max: 1, groupID: 0 })
+        this.props.set('frequency', { type: ParamType.KNOB, name: 'frequency', get: () =>  this.frequency, set: (e) => this.frequency = e, min: .1, max: 1000, groupID: 0 })
+        this.props.set('spread', { type: ParamType.KNOB, name: 'spread', get: () =>  this.spread, set: (e) => this.spread = e, min: 0, max: 180, groupID: 0 })
+
+        this.props.set('wave', { type: ParamType.DROPDOWN, name: 'Wave', get: () => this.wave, set: (v:string) => this.wave = v, options: ['triangle', 'sine', 'square', 'sawtooth'], group: 1 })
+        this.props.set('wavePartial', { type: ParamType.DROPDOWN, name: 'Wave Partial', get: () => this.wavePartial, set: (v:string) => this.wavePartial = v, options: ['', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], group: 1 })
     }
 
-    get wet() { return 0 }
+    get wet() { return this._wet }
     set wet(w: any) {
+
+        this._wet = w
+        this.chorus.set({ wet: this._wet })
     }
 
     get frequency() { return this._frequency }
@@ -55,7 +66,7 @@ export class Chorus extends Effect {
 
         this._delayTime = t
 
-        this.chorus.delayTime = this._delayTime
+        this.chorus.set({ delayTime: this._delayTime })
     }
 
     get depth() { return this._depth }
@@ -63,7 +74,7 @@ export class Chorus extends Effect {
 
         this._depth = d
 
-        this.chorus.depth = this._depth
+        this.chorus.set({ depth: this._depth })
     }
 
     get feedback() { return this._feedback }
@@ -71,7 +82,29 @@ export class Chorus extends Effect {
 
         this._feedback = f
 
-        this.chorus.feedback.setValueAtTime(this._feedback, Tone.now())
+        this.chorus.set({ feedback: this._feedback })
+    }
+
+    get spread() { return this._spread }
+    set spread(t) {
+
+        this._spread = t
+
+        this.chorus.set({ spread: this._spread })
+    }
+
+    get wave() { return this._wave }
+    set wave(w) {
+
+        this._wave = w
+        this.autoFilter.set({ type: (this._wave + this.wavePartial)})
+    }
+
+    get wavePartial() { return this._wavePartial }
+    set wavePartial(w) {
+
+        this._wavePartial = w
+        this.autoFilter.set({ type: (this._wave + this.wavePartial)})
     }
 
 

@@ -26,10 +26,10 @@ export class Phaser extends Effect {
 
         this.props.set('wet', { type: ParamType.KNOB, name: 'Wet', get: () =>  this.wet, set: (e) => this.wet = e, min: 0, max: 1, groupID: 0 })
         this.props.set('Q', { type: ParamType.KNOB, name: 'Q', get: () =>  this.Q, set: (e) => this.Q = e, min: 0, max: 1, groupID: 0 })
-        this.props.set('octaves', { type: ParamType.KNOB, name: 'Octaves', get: () =>  this.octaves, set: (e) => this.octaves = e, min: 0, max: 1, groupID: 0 })
-        this.props.set('stages', { type: ParamType.KNOB, name: 'Octaves', get: () =>  this.stages, set: (e) => this.stages = e, min: 0, max: 1, groupID: 0 })
-        this.props.set('baseFrequency', { type: ParamType.KNOB, name: 'Base Frequency', get: () =>  this.baseFrequency, set: (e) => this.baseFrequency = e, min: 0, max: 1, groupID: 0 })
-        this.props.set('frequency', { type: ParamType.KNOB, name: 'Frequency', get: () =>  this.frequency, set: (e) => this.frequency = e, min: 0, max: 1, groupID: 0 })
+        this.props.set('octaves', { type: ParamType.KNOB, name: 'Octaves', get: () =>  this.octaves, set: (e) => this.octaves = e, min: 0, max: 12, groupID: 0 })
+        // this.props.set('stages', { type: ParamType.KNOB, name: 'Stages', get: () =>  this.stages, set: (e) => this.stages = e, min: 0, max: 1, groupID: 0 })
+        this.props.set('baseFrequency', { type: ParamType.KNOB, name: 'Base Frequency', get: () =>  this.baseFrequency, set: (e) => this.baseFrequency = e, min: .1, max: 1000, groupID: 0 })
+        this.props.set('frequency', { type: ParamType.KNOB, name: 'Frequency', get: () =>  this.frequency, set: (e) => this.frequency = e, min: .1, max: 1000, groupID: 0 })
     }
 
     get wet() { return this._wet }
@@ -40,13 +40,13 @@ export class Phaser extends Effect {
         this.phaser.set({ wet: this._wet})
     }
 
-    get stages() { return this._stages }
-    set stages(w: any) {
+    // get stages() { return this._stages }
+    // set stages(w: any) {
 
-        this._stages = w
+    //     this._stages = w
 
-        this.phaser.set({ stages: this._stages})
-    }
+    //     this.phaser.set({ stages: this._stages})
+    // }
 
     get octaves() { return this._octaves }
     set octaves(w: any) {

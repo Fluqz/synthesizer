@@ -26,7 +26,7 @@ export class Reverb extends Effect {
         this.input = this.output = this.reverb
 
         this.props.set('wet', { type: ParamType.KNOB, name: 'Wet', get: () =>  this.wet, set: (e) => this.wet = e, min: 0, max: 1, groupID: 0 })
-        this.props.set('decay', { type: ParamType.KNOB, name: 'Depth', get: () =>  this.decay, set: (e) => this.decay = e, min: 0, max: 1, groupID: 0 })
+        this.props.set('decay', { type: ParamType.KNOB, name: 'Decay', get: () =>  this.decay, set: (e) => this.decay = e, min: 0, max: 3, groupID: 0 })
         this.props.set('preDelay', { type: ParamType.KNOB, name: 'Pre Delay', get: () =>  this.preDelay, set: (e) => this.preDelay = e, min: 0, max: 1, groupID: 0 })
     }
 
