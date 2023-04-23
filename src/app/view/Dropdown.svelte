@@ -6,11 +6,11 @@
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
 
     /** Name of Knob */
-    export let name: string
+    export let name: string = ''
     /** value */
-    export let value: string | number
+    export let value: string | number = ''
     /** Options */
-    export let options: string | number[] = []
+    export let options: string[] | number[] = []
 
     if(value == undefined && options && options.length > 0) value = options[0]
 
@@ -27,15 +27,8 @@
 
     const onChange = (e) => {
 
-        dispatch('onSelect', e.target.value)
+        dispatch('onSelect', e)
     }
-
-    onMount(() => {
-
-    })
-
-    onDestroy(() => {
-    })
 
 </script>
 

@@ -22,6 +22,7 @@
 
   font-family: Arial, 'Courier New', Courier, monospace;
   font-weight: 300;
+  font-size: .8rem;
 
   box-sizing: border-box;
 
@@ -45,7 +46,7 @@ body {
   background-color: var(--c-b);
   color: var(--c-w);
 
-  transition: 2s all;
+  transition: 1s all;
 
   overflow-x: hidden;
   scrollbar-width: none;
@@ -84,6 +85,7 @@ canvas {
 
   display: inline-block;
 
+  width: 30px;
   height: 30px;
   line-height: 30px;
 
@@ -94,15 +96,15 @@ canvas {
   background-color: var(--c-w);;
   color: var(--c-b);
 
-  /* border-radius: 4px; */
+  border-radius: 100%;
 
-  transition: .1s background-color;
+  transition: .4s background-color, .4s color;
 
   cursor: pointer;
 }
-.btn:hover { background-color: var(--c-o); }
+.btn:hover { background-color: var(--c-b); color: var(--c-w) }
 .btn:active,
-.btn.active { background-color: var(--c-o); }
+.btn.active { background-color: var(--c-b); }
 
 
 
@@ -112,7 +114,7 @@ canvas {
 
   display: inline-flex;
   
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
 
   position: relative;
@@ -125,4 +127,10 @@ canvas {
 
   text-align: center;
 
+  flex: none;
+  flex-shrink: 0;
+
+  padding: 0px 20px;
+
+  margin: 0px .5px;
 }

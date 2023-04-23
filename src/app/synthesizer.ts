@@ -9,6 +9,7 @@ import { Synth, DuoSynth, Instrument, FMSynth, AMSynth, Delay, Tremolo, Reverb, 
 
 import { Track, type ITrackSerialization } from './track'
 import { PresetManager, type IPreset } from './core/preset-manager'
+import { writable, type Writable } from 'svelte/store'
 
 export interface ISerialize {
 
@@ -156,6 +157,7 @@ export class Synthesizer implements ISerialize {
     bpm: number = 120
     
     tracks: Track[]
+    store: Writable<Synthesizer>
 
     isMuted: boolean = false
 
@@ -180,6 +182,8 @@ export class Synthesizer implements ISerialize {
         // Synthesizer Volume
         this.volume = .5
         this.octave = 2
+
+        this.store = writable(this)
         
         this.gain = new Tone.Gain(this.volume)
         this.gain.toDestination()
@@ -212,12 +216,11 @@ export class Synthesizer implements ISerialize {
             i++
         }
 
-
         this.tracks = []
         // this.addTrack(new Track(this, Synthesizer.nodes.sources.Oscillator()))
         // this.addTrack(new Track(this, Synthesizer.nodes.sources.Synth()))
         this.addTrack(new Track(this, Synthesizer.nodes.sources.DuoSynth()))
-        this.addTrack(new Track(this, Synthesizer.nodes.sources.FMSynth()))
+        // this.addTrack(new Track(this, Synthesizer.nodes.sources.FMSynth()))
         // this.addTrack(new Track(this, Synthesizer.nodes.sources.AMSynth()))
 
         this.presetManager = new PresetManager(this)
@@ -231,6 +234,17 @@ export class Synthesizer implements ISerialize {
         this.onRemoveNode = new RxJs.Subject()
     }
 
+    set(v: any) { this.store.set(v) }
+
+    subscribe(f: (v: any) => void) : () => void {
+
+        let unsubscribe = this.store.subscribe(f)
+       
+        this.set(this)
+
+        return unsubscribe
+    }
+
     /** Set Master Volume */
     setVolume(v) {
 
@@ -241,14 +255,14 @@ export class Synthesizer implements ISerialize {
 
     mute(m: boolean) {
 
-        console.log('mute track', m)
-
         this.isMuted = m === true ? true : false
 
         if(this.isMuted) Tone.Destination.volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .2, Tone.now())
         else Tone.Destination.volume.exponentialRampTo(this.volume, .2, Tone.now())
 
         // Tone.Destination.mute = this.isMuted
+
+        this.set(this)
     }
 
     /** Set the octave number */
@@ -264,6 +278,8 @@ export class Synthesizer implements ISerialize {
 
             i++
         }
+
+        this.set(this)
     }
 
     /** Add a instrument to the synthesizer. */
@@ -275,7 +291,7 @@ export class Synthesizer implements ISerialize {
         
         track.connect(this.gain)
 
-        console.log('ADD TRACK', this.tracks.length)
+        this.set(this)
     }
 
     removeTrack(track: Track) {
@@ -287,6 +303,8 @@ export class Synthesizer implements ISerialize {
         track.disconnect(this.gain)
 
         track.destroy()
+
+        this.set(this)
     }
 
     isRunning = false
@@ -318,6 +336,8 @@ export class Synthesizer implements ISerialize {
         }
         else 
             for(let tr of this.tracks) tr.triggerNote(note + octave)
+
+        this.set(this)
     }
 
     /** Release note */
@@ -338,12 +358,16 @@ export class Synthesizer implements ISerialize {
             })
         }
         else for(let tr of this.tracks) tr.releaseNote(note + octave)
+
+        this.set(this)
     }
 
     /** Will release all triggered notes that are stored in [activeNotes] */
     stopAll() {
 
         for(let n of Synthesizer.activeNotes) this.releaseNote(n)
+
+        this.set(this)
     }
 
 
@@ -356,12 +380,14 @@ export class Synthesizer implements ISerialize {
 
         Tone.Transport.stop()
 
-        console.log('ARP', this.arpMode)
+        // console.log('ARP', this.arpMode)
+
+        this.set(this)
     }
 
     setArpChord(chord: string[], onTrigger?: (...args) => void, onRelease?: (...args) => void) {
 
-        console.log('Set ARP', chord)
+        // console.log('Set ARP', chord)
 
         const length = 60 / this.bpm
 
@@ -378,7 +404,8 @@ export class Synthesizer implements ISerialize {
         this.arp.interval = length
         this.arp.start()
         Tone.Transport.bpm.setValueAtTime(this.bpm, Tone.now())
-        Tone.Transport.start()
+
+        this.set(this)
     }
 
     stopArpeggiator(onRelease) {
@@ -390,6 +417,8 @@ export class Synthesizer implements ISerialize {
         }
 
         if(onRelease) onRelease()
+
+        this.set(this)
     }
 
 
@@ -462,6 +491,8 @@ export class Synthesizer implements ISerialize {
         for(let t of this.tracks) t.destroy()
 
         this.tracks = []
+
+        this.set(this)
     }
 
     /** Disconnects everything and removes all event listeners */
@@ -491,7 +522,6 @@ export class Synthesizer implements ISerialize {
         if(o.volume) this.setVolume(o.volume)
         if(o.octave) this.setOctave(o.octave)
 
-        console.log('tracks', this.tracks, this.tracks.length)
         for(let i = this.tracks.length-1; i >= 0; i--) this.removeTrack(this.tracks[i])
 
         this.tracks.length = 0
@@ -520,7 +550,7 @@ export class Synthesizer implements ISerialize {
             this.presetManager.presets = o.presets
         }
 
-        console.log('SerializeIn', this)
+        this.set(this)
     }
 
     /** Save settings */

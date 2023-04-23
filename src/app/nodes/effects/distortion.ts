@@ -17,18 +17,20 @@ export class Distortion extends Effect {
 
         this.distortion = new Tone.Distortion(this.gain)
 
-        this.gain = gain
-
         this.output = this.input = this.distortion
 
-        this.wet = this.wet
+        this.wet = wet != undefined ? wet : this.distortion.get().wet
+        this.gain = gain != undefined ? gain : this.distortion.get().distortion
 
-        this.props.set('wet', { type: ParamType.KNOB, name: 'Wet', get: () =>  this.wet })
-        this.props.set('gain', { type: ParamType.KNOB, name: 'Gain', get: () =>  this.gain })
+        this.props.set('wet', { type: ParamType.KNOB, name: 'Wet', get: () =>  this.wet, set: (v) => this.wet = v, min: 0, max: 1, groupID: 0 })
+        this.props.set('gain', { type: ParamType.KNOB, name: 'Gain', get: () =>  this.gain, set: (v) => this.gain = v, min: 0, max: 1, groupID: 0 })
     }
 
-    get wet() { return 0 }
+    get wet() { return this._wet }
     set wet(w: any) {
+
+        this._wet = w
+        this.distortion.set({ wet: this._wet })
     }
     
     get gain() { return this._gain }

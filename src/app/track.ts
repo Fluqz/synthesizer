@@ -2,6 +2,7 @@ import * as Tone from 'tone'
 import { Synthesizer, type ISerialization, type ISerialize } from "./synthesizer"
 import { Node, type INodeSerialization } from './nodes/node'
 import type { Instrument } from './nodes'
+import { writable, type Writable } from 'svelte/store'
 
 export interface ITrackSerialization extends ISerialization {
 
@@ -33,6 +34,8 @@ export class Track implements ISerialize {
 
     /** Array of added nodes. Nodes are chained in array order  */
     public nodes: Node[]
+
+    public store: Writable<Track> = writable(this)
 
     /** Mute this track */
     public isMuted: boolean
@@ -66,9 +69,9 @@ export class Track implements ISerialize {
             this.connectNodes()
         }
 
-        // this.addNode(Synthesizer.nodes.effects.AutoFilter())
         // this.addNode(Synthesizer.nodes.effects.Reverb())
-        this.addNode(Synthesizer.nodes.effects.Delay())
+        // this.addNode(Synthesizer.nodes.effects.Delay())
+        // this.addNode(Synthesizer.nodes.effects.AutoFilter())
         // this.addNode(Synthesizer.nodes.effects.Phaser())
         // this.addNode(Synthesizer.nodes.effects.Chorus())
         // this.addNode(Synthesizer.nodes.effects.Distortion())
@@ -78,6 +81,18 @@ export class Track implements ISerialize {
 
     /** Get the track count/order number */
     get number() { return this.synthesizer ? this.synthesizer.tracks.indexOf(this) + 1 : -1 }
+
+
+    set(v: any) { this.store.set(v) }
+
+    subscribe(f: (v: any) => void) : () => void {
+
+        let unsubscribe = this.store.subscribe(f)
+       
+        this.set(this)
+
+        return unsubscribe
+    }
 
     /** Sets the tracks source instrument and connects them in chain. 
      * Instrument will always be the first element in the chain */
@@ -91,6 +106,8 @@ export class Track implements ISerialize {
 
         this.instrument = instrument
         this.connectNodes()
+
+        this.set(this)
     }
 
     /** VolumeNode value */
@@ -100,17 +117,19 @@ export class Track implements ISerialize {
         this._volume = db
 
         this.volumeNode.volume.exponentialRampTo(this._volume, .04, Tone.now())
+
+        this.set(this)
     }
 
     /** Silences/Unsilences the track volume */
     mute(m: boolean) {
 
-        console.log('mute track', m)
-
         this.isMuted = m === true ? true : false
 
         if(this.isMuted) this.volumeNode.volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .15, Tone.now())
         else this.volumeNode.volume.exponentialRampTo(this._volume, .15, Tone.now())
+
+        this.set(this)
     }
 
     /** Activates solo mode. Only tracks in solo mode can be heard. */
@@ -158,6 +177,8 @@ export class Track implements ISerialize {
                 }
             }
         }
+
+        this.set(this)
     }
 
     get holdEnabled() { return this._holdEnabled }
@@ -166,6 +187,9 @@ export class Track implements ISerialize {
         // this._holdEnabled = hold
 
         if(!hold) this.instrument.releaseNote()
+
+        this.set(this)
+
     }
 
 
@@ -178,6 +202,8 @@ export class Track implements ISerialize {
         if(this.octave != undefined) note = note.replace(/[0-9]/g, '') + this.octave
 
         this.instrument.triggerNote(note)
+
+        this.set(this)
     }
 
     /** Stops the instruments note */
@@ -188,6 +214,8 @@ export class Track implements ISerialize {
         if(this.octave != undefined) note = note.replace(/[0-9]/g, '') + this.octave
 
         this.instrument.releaseNote(note)
+
+        this.set(this)
     }
 
     /** Adds a node to the node chain */
@@ -198,31 +226,37 @@ export class Track implements ISerialize {
         n.onDelete.subscribe(this.removeNode.bind(this))
 
         this.connectNodes()
+
+        this.set(this)
     }
 
     /** Connects all nodes in a chain */
     connectNodes() {
 
-
         if(this.instrument) {
 
             this.instrument.disconnect()
 
-            console.log('Connect Nodes', this.id, this.nodes)
+            // console.log('Connect Nodes', this.id)
 
             const nodes = []
 
             for(let n of this.nodes) {
+
+                console.log(n)
+
+                n.disconnect()
 
                 nodes.push(n)
             }
 
             nodes.push(this.volumeNode)
 
-            console.log('NODES', nodes)
 
             this.instrument.chain(nodes)
         }
+
+        this.set(this)
     }
 
     /** Remove a node from the node chain */
@@ -239,6 +273,28 @@ export class Track implements ISerialize {
         n.destroy()
         
         this.connectNodes()
+
+        this.set(this)
+    }
+
+    shiftNodeForward(node: Node) {
+
+        let i = this.nodes.indexOf(node)
+
+        if(i <= 0) return
+
+        let dNode: Node = this.nodes.splice(i, 1)[0]
+        this.nodes.splice(i - 1, 0, dNode)
+    }
+
+    shiftNodeBackward(node: Node) {
+
+        let i = this.nodes.indexOf(node)
+
+        if(i > this.nodes.length) return
+
+        this.nodes.splice(i, 1)
+        this.nodes.splice(i + 1, null, node)
     }
 
 
@@ -260,6 +316,8 @@ export class Track implements ISerialize {
         for(let i = this.nodes.length; i >= 0; i--) this.removeNode(this.nodes[i])
 
         if(this.instrument) this.instrument.destroy()
+
+        this.set(this)
     }
 
     serializeIn(o: ITrackSerialization) {
@@ -290,6 +348,8 @@ export class Track implements ISerialize {
                 this.addNode(node)
             }
         }
+
+        this.set(this)
     }
 
     serializeOut() : ITrackSerialization {

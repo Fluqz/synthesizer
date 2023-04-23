@@ -34,7 +34,6 @@ export class Synth extends Instrument {
         this.detune = options.detune ? options.detune : .5
         this.portamento = options.portamento ? options.portamento : 0
 
-
         this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () =>  this.volume })
         this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () =>  this.detune })
         this.props.set('portamento', { type: ParamType.KNOB, name: 'Portamento', get: () =>  this.portamento })

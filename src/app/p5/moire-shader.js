@@ -19,18 +19,18 @@ export const moireShader = (p5) => {
     let tIncrement = Math.random() / 30 + .1
     let t = 0
 
+    let passFrame = true
+
     p5.preload = () => {
         shader = p5.loadShader('./shader/moire-vert.glsl', './shader/moire-frag.glsl');
     }
 
     p5.setup = () => {
 
-        console.log('setup')
-
-
         p5.createCanvas(G.w, G.h, p5.WEBGL)
 
-        p5.frameRate(30)
+        // p5.frameRate(30)
+        p5.noLoop()
 
         p5.canvas.style.position = 'absolute'
         p5.canvas.style.top = '0px'
@@ -43,12 +43,22 @@ export const moireShader = (p5) => {
 
         oldCellPos = grid.getCellPosByNr(Synthesizer.keyMap.indexOf(Math.round(Synthesizer.keyMap.length / 2)))
 
+
     }
 
     p5.draw = () => {
 
+        // console.log('DRAW')
 
-        if(!G.visualsEnabled) return
+        if(!G.visualsEnabled) {
+            return
+        }
+
+        // if(!passFrame) { return }
+        // else {
+
+        //     passFrame = false
+        // }
 
         // console.log('draw')
 
@@ -101,7 +111,7 @@ export const moireShader = (p5) => {
 
                 let time = (Math.random() * 500) + 100
                 let rMin = 33.33333 // ~30fps
-                let rMax = 100
+                let rMax = 110
                 let randomMizeIntervalLength = Math.random() * 100
                 let interval = Math.round(Math.random() * (rMax - rMin)) + rMin
 
@@ -209,5 +219,34 @@ export const moireShader = (p5) => {
         console.log('resize')
         p5.resizeCanvas(G.w, G.h)
         grid.setSize(G.w, G.h, 9, 4)
+    }
+
+
+    let CID
+    p5.keyPressed = () => { // TODO - aNOT WORKING
+
+        if(G.visualsEnabled) return
+
+        // Trigger frame on keydown
+        p5.draw()
+
+        // Clear idle animation
+        clearInterval(CID)
+
+
+        // Trigger animation for a short duration
+        let IID = setInterval(() => {
+
+            p5.draw()
+
+        }, 50)
+
+
+        // End key interval and trigger idle animation
+        setTimeout(() => {
+
+            clearInterval(IID)
+
+        }, 1000) // Animate on keydown for a second
     }
 }

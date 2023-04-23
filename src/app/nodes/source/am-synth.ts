@@ -4,7 +4,23 @@ import { Synthesizer } from '../../synthesizer';
 import { ParamType } from '../node';
 
 
-/**  */
+
+const o = {
+    "volume": 0, 
+    "detune": 0, 
+    "portamento": 0, 
+    "harmonicity": 3,
+    "oscillator": { "partialCount": 0, "partials": [], "phase": 0, "type": "sine" }, 
+    "envelope": { "attack": 0.01, "attackCurve": "linear", "decay": 0.01, "decayCurve": "exponential", "release": 0.5, "releaseCurve": "exponential", "sustain": 1 }, 
+    "modulation": { "partialCount": 0, "partials": [], "phase": 0, "type": "square" }, 
+    "modulationEnvelope": { "attack": 0.5, "attackCurve": "linear", "decay": 0, "decayCurve": "exponential", "release": 0.5, "releaseCurve": "exponential", "sustain": 1 }
+}
+
+
+
+/** 
+ * { "volume": 0, "detune": 0, "portamento": 0, "harmonicity": 3, "oscillator": { "partialCount": 0, "partials": [], "phase": 0, "type": "sine" }, "envelope": { "attack": 0.01, "attackCurve": "linear", "decay": 0.01, "decayCurve": "exponential", "release": 0.5, "releaseCurve": "exponential", "sustain": 1 }, "modulation": { "partialCount": 0, "partials": [], "phase": 0, "type": "square" }, "modulationEnvelope": { "attack": 0.5, "attackCurve": "linear", "decay": 0, "decayCurve": "exponential", "release": 0.5, "releaseCurve": "exponential", "sustain": 1 } }
+ */
 export class AMSynth extends Instrument {
 
     synth: Tone.PolySynth
@@ -26,7 +42,7 @@ export class AMSynth extends Instrument {
     _harmonicity: number
 
     /** freq, detune, volume, waveform,  */
-    constructor(options? = {}) {
+    constructor(options: any = {}) {
 
         super('AMSynth')
 
@@ -38,35 +54,42 @@ export class AMSynth extends Instrument {
 
         this.output = this.gain
 
-        this.volume = options.volume ? options.volume : 3
-        this.detune = options.detune ? options.detune : .5
-        this.portamento = options.portamento ? options.portamento : 0
-
-
-        console.log(this.synth)
-
-        this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () =>  this.volume, set: (v) => this.volume = v })
-        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () =>  this.detune, set: (v) => this.detune = v })
-        this.props.set('portamento', { type: ParamType.KNOB, name: 'Portamento', get: () =>  this.portamento, set: (v) => this.portamento = v })
         
+        this.volume = options.volume != undefined ? options.volume : 3
+
+        this.detune = options.detune != undefined ? options.detune : this.synth.get().detune
+        this.portamento = options.portamento != undefined ? options.portamento : this.synth.get().portamento
+        this.harmonicity = options.harmonicity != undefined ? options.harmonicity : this.synth.get().harmonicity
+        this.phase = options.phase != undefined ? options.phase : this.synth.get().oscillator.phase
+
+        this.attack = options.attack != undefined ? options.attack : this.synth.get().envelope.attack
+        this.decay = options.decay != undefined ? options.decay : this.synth.get().envelope.decay
+        this.sustain = options.sustain != undefined ? options.sustain : this.synth.get().envelope.sustain
+        this.release = options.release != undefined ? options.release : this.synth.get().envelope.release
+
+
+        this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () => this.volume, set: (v) => this.volume = v })
+        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => this.detune, set: (v) => this.detune = v })
+        this.props.set('portamento', { type: ParamType.KNOB, name: 'Portamento', get: () => this.portamento, set: (v) => this.portamento = v })
+
         // this.props.set('sampleTime', { type: ParamType.KNOB, name: 'sampleTime', get: () =>  this.sampleTime, set: (v) => this.sampleTime = v })
-    
+
         // this.props.set('wave', { type: ParamType.DROPDOWN, name: 'Wave', get: () => this.wave, set: (v:string) => this.wave = v, options: ['triangle', 'sine', 'square', 'sawtooth'], group: 1 })
         // this.props.set('wavePartial', { type: ParamType.DROPDOWN, name: 'Wave Partial', get: () => this.wavePartial, set: (v:string) => this.wavePartial = v, options: ['', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], group: 1 })
 
-        this.props.set('harmonicity', { type: ParamType.KNOB, name: 'Harmonicity', get: () => this.harmonicity, set: (v:number) => this.harmonicity = v, min: 0, max: 5, group: 2 })
+        this.props.set('harmonicity', { type: ParamType.KNOB, name: 'Harmonicity', get: () => this.harmonicity, set: (v: number) => this.harmonicity = v, min: 0, max: 5, group: 2 })
 
-        this.props.set('phase', { type: ParamType.KNOB, name: 'Phase', get: () => this.phase, set: (v:number) => this.phase = v, group: 2 })
-        
-        this.props.set('attack', { type: ParamType.KNOB, name: 'Attack', get: () => this.attack, set: (v:number) => this.attack = v, min: 0, max: 5, group: 4 })
-        this.props.set('decay', { type: ParamType.KNOB, name: 'Decay', get: () => this.decay, set: (v:number) => this.decay = v, min: 0, max: 5, group: 4 })
-        this.props.set('sustain', { type: ParamType.KNOB, name: 'Sustain', get: () => this.sustain, set: (v:number) => this.sustain = v, min: 0, max: 5, group: 4 })
-        this.props.set('release', { type: ParamType.KNOB, name: 'Release', get: () => this.release, set: (v:number) => this.release = v, min: 0, max: 5, group: 4 })
+        this.props.set('phase', { type: ParamType.KNOB, name: 'Phase', get: () => this.phase, set: (v: number) => this.phase = v, group: 2 })
+
+        this.props.set('attack', { type: ParamType.KNOB, name: 'Attack', get: () => this.attack, set: (v: number) => this.attack = v, min: 0, max: 5, group: 4 })
+        this.props.set('decay', { type: ParamType.KNOB, name: 'Decay', get: () => this.decay, set: (v: number) => this.decay = v, min: 0, max: 5, group: 4 })
+        this.props.set('sustain', { type: ParamType.KNOB, name: 'Sustain', get: () => this.sustain, set: (v: number) => this.sustain = v, min: 0, max: 5, group: 4 })
+        this.props.set('release', { type: ParamType.KNOB, name: 'Release', get: () => this.release, set: (v: number) => this.release = v, min: 0, max: 5, group: 4 })
     }
 
     set volume(v: number) {
 
-        this._volume = v 
+        this._volume = v
         this.gain.gain.setValueAtTime(this.volume, Tone.now())
     }
     get volume() { return this._volume }
@@ -79,16 +102,16 @@ export class AMSynth extends Instrument {
     // get sampleTime() { return this._sampleTime }
 
 
-    set harmonicity(d: number) { 
-        this._harmonicity = d 
+    set harmonicity(d: number) {
+        this._harmonicity = d
         this.synth.set({ harmonicity: this._harmonicity })
     }
     get harmonicity() { return this._harmonicity }
 
 
 
-    set detune(d: number) { 
-        this._detune = d 
+    set detune(d: number) {
+        this._detune = d
         this.synth.set({ detune: this._detune })
     }
     get detune() { return this._detune }
@@ -105,7 +128,7 @@ export class AMSynth extends Instrument {
     set phase(d) {
 
         this._phase = d
-        this.synth.set({ phase: this._phase })
+        this.synth.set({ oscillator: { phase: this._phase } })
     }
 
     get attack() { return this._attack }
@@ -154,11 +177,11 @@ export class AMSynth extends Instrument {
 
     serializeIn(o) {
 
-        if(o.name != undefined) this.name = o.name
-        if(o.enabled != undefined) this.enabled = o.enabled
-        if(o.volume != undefined) this.volume = o.volume
-        if(o.detune != undefined) this.detune = o.detune
-        if(o.portamento != undefined) this.portamento = o.portamento
+        if (o.name != undefined) this.name = o.name
+        if (o.enabled != undefined) this.enabled = o.enabled
+        if (o.volume != undefined) this.volume = o.volume
+        if (o.detune != undefined) this.detune = o.detune
+        if (o.portamento != undefined) this.portamento = o.portamento
     }
 
     serializeOut() {

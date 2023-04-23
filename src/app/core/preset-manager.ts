@@ -47,14 +47,7 @@ export class PresetManager {
 
     loadPreset(name: string) : boolean {
 
-        let preset
-        for(let p of this.presets) {
-
-            if(p.name == name) { 
-                preset = p
-                break
-            }
-        }
+        let preset = this.presets.find(p => p.name == name)
 
         if(!preset) return false
 

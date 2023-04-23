@@ -1,6 +1,6 @@
 import * as Tone from 'tone'
 import { Instrument } from './instrument';
-import { ParamType, Node, type NodeParametereter } from '../node';
+import { ParamType, Node } from '../node';
 
 
 /**  */
@@ -15,7 +15,7 @@ export class DuoSynth extends Instrument {
 
 
     /** freq, detune, volume, waveform,  */
-    constructor(options = {}) {
+    constructor(options: any = {}) {
 
         super('DuoSynth')
 
@@ -32,6 +32,26 @@ export class DuoSynth extends Instrument {
         this.input = null
 
 
+        console.log('DUO', this.polySynth.get())
+
+        this.detune = options.detune != undefined ? options.detune : this.polySynth.get().detune
+        this.portamento = options.portamento != undefined ? options.portamento : this.polySynth.get().portamento
+        this.harmonicity = options.harmonicity != undefined ? options.harmonicity : this.polySynth.get().harmonicity
+        this.vibratoAmount = options.vibratoAmount != undefined ? options.vibratoAmount : this.polySynth.get().vibratoAmount
+        this.vibratoRate = options.vibratoRate != undefined ? options.vibratoRate : this.polySynth.get().vibratoRate
+
+        this.attack0 = options.attack != undefined ? options.attack : this.polySynth.get().voice0.envelope.attack
+        this.decay0 = options.decay != undefined ? options.decay : this.polySynth.get().voice0.envelope.decay
+        this.sustain0 = options.sustain != undefined ? options.sustain : this.polySynth.get().voice0.envelope.sustain
+        this.release0 = options.release != undefined ? options.release : this.polySynth.get().voice0.envelope.release
+
+        this.attack1 = options.attack != undefined ? options.attack : this.polySynth.get().voice1.envelope.attack
+        this.decay1 = options.decay != undefined ? options.decay : this.polySynth.get().voice1.envelope.decay
+        this.sustain1 = options.sustain != undefined ? options.sustain : this.polySynth.get().voice1.envelope.sustain
+        this.release1 = options.release != undefined ? options.release : this.polySynth.get().voice1.envelope.release
+
+
+
         this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () => { return this.volume }, set: (v: number) => { this.volume = v }, min: 0, max: 1, group: 0 })
         
         this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => { return this.detune }, set: (v: number) => { this.detune = v }, min: 0, max: 1, group: 1 })
@@ -40,23 +60,23 @@ export class DuoSynth extends Instrument {
         this.props.set('vibratoAmount', { type: ParamType.KNOB, name: 'Vibrato Amount', get: () => { return this.vibratoAmount }, set: (v: number) => { this.vibratoAmount = v }, min: 0, max: 1, group: 1 })
         this.props.set('vibratoRate', { type: ParamType.KNOB, name: 'VibratoRate', get: () => { return this.vibratoRate }, set: (v: number) => { this.vibratoRate = v }, min: 0, max: 1, group: 1 })
 
-        this.props.set('attack1', { type: ParamType.KNOB, name: 'Attack 1', get: () => { return this.attack0 }, set: (v: number) => { this.attack0 = v }, min: 0, max: 3, group: 2 })
-        this.props.set('decay1', { type: ParamType.KNOB, name: 'Decay 1', get: () => { return this.decay0 }, set: (v: number) => { this.decay0 = v }, min: 0, max: 1, group: 2 })
-        this.props.set('release1', { type: ParamType.KNOB, name: 'Release 1', get: () => { return this.release0 }, set: (v: number) => { this.release0 = v }, min: 0, max: 3, group: 2 })
-        this.props.set('sustain1', { type: ParamType.KNOB, name: 'Sustain 1', get: () => { return this.sustain0 }, set: (v: number) => { this.sustain0 = v }, min: 0, max: 3, group: 2 })
+        this.props.set('attack0', { type: ParamType.KNOB, name: 'Attack 1', get: () => { return this.attack0 }, set: (v: number) => { this.attack0 = v }, min: 0, max: 3, group: 2 })
+        this.props.set('decay0', { type: ParamType.KNOB, name: 'Decay 1', get: () => { return this.decay0 }, set: (v: number) => { this.decay0 = v }, min: 0, max: 1, group: 2 })
+        this.props.set('release0', { type: ParamType.KNOB, name: 'Release 1', get: () => { return this.release0 }, set: (v: number) => { this.release0 = v }, min: 0, max: 3, group: 2 })
+        this.props.set('sustain0', { type: ParamType.KNOB, name: 'Sustain 1', get: () => { return this.sustain0 }, set: (v: number) => { this.sustain0 = v }, min: 0, max: 3, group: 2 })
 
-        this.props.set('attack2', { type: ParamType.KNOB, name: 'Attack 2', get: () => { return this.attack1 }, set: (v: number) => { this.attack1 = v }, min: 0, max: 3, group: 3 })
-        this.props.set('decay2', { type: ParamType.KNOB, name: 'Decay 2', get: () => { return this.decay1 }, set: (v: number) => { this.decay1 = v }, min: 0, max: 1, group: 3 })
-        this.props.set('release2', { type: ParamType.KNOB, name: 'Release 2', get: () => { return this.release1 }, set: (v: number) => { this.release1 = v }, min: 0, max: 3, group: 3 })
-        this.props.set('sustain2', { type: ParamType.KNOB, name: 'Sustain 2', get: () => { return this.sustain1 }, set: (v: number) => { this.sustain1 = v }, min: 0, max: 3, group: 3 })
+        this.props.set('attack1', { type: ParamType.KNOB, name: 'Attack 2', get: () => { return this.attack1 }, set: (v: number) => { this.attack1 = v }, min: 0, max: 3, group: 3 })
+        this.props.set('decay1', { type: ParamType.KNOB, name: 'Decay 2', get: () => { return this.decay1 }, set: (v: number) => { this.decay1 = v }, min: 0, max: 1, group: 3 })
+        this.props.set('release1', { type: ParamType.KNOB, name: 'Release 2', get: () => { return this.release1 }, set: (v: number) => { this.release1 = v }, min: 0, max: 3, group: 3 })
+        this.props.set('sustain1', { type: ParamType.KNOB, name: 'Sustain 2', get: () => { return this.sustain1 }, set: (v: number) => { this.sustain1 = v }, min: 0, max: 3, group: 3 })
     }
 
     get volume() { return this._volume }
     set volume(v) {
 
         this._volume = v
-        console.log('DUO VOLUME GOOOO' , this.id)
-        this.gain.gain.setValueAtTime(v, Tone.now())}
+        this.gain.gain.setValueAtTime(v, Tone.now())
+    }
 
     set detune(v: number) { this.polySynth.set({ detune: v }) }
     get detune() { return this.polySynth.get().detune }

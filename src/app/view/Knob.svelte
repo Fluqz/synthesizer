@@ -9,8 +9,7 @@
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import { M } from "../core/math"
     import { Vec2 } from "../core/math";
-
-    import GIF from '../../assets/imgs/tenor.gif'
+    import { validate_each_keys } from "svelte/internal";
 
 
     /** Name of Knob */
@@ -100,8 +99,6 @@
         setValue(value)
     }
 
-
-    setValue(value)
 
 
 

@@ -1,6 +1,7 @@
 import { Subject, count } from 'rxjs'
 import type * as Tone from 'tone'
 import type { ISerialize } from '../synthesizer'
+import { writable, type Writable } from 'svelte/store'
 
 export enum ParamType {
 
@@ -51,7 +52,7 @@ export interface INodeSerialization {
 }
 
 /** Represents a Node that can be connected to eachother */
-export class Node implements ISerialize {
+export abstract class Node implements ISerialize {
 
     static count = 0
 
@@ -75,11 +76,14 @@ export class Node implements ISerialize {
     /** Array of settable properties */
     props: Map<string, KnobNodeParameter | SwitchNodeParameter | DropDownNodeParameter> 
 
+    /**  */
+    store: Writable<Node>
+
     constructor(name) {
 
         this.id = Node.count++
 
-        console.log('Create Node', name, this.id)
+        this.store = writable(this)
 
         this.name = name
 
@@ -90,12 +94,22 @@ export class Node implements ISerialize {
         this.onDelete = new Subject()
     }
 
+    set(v: any) { this.store.set(v) }
+
+    subscribe(f: (v: any) => void) : () => void {
+
+        let unsubscribe = this.store.subscribe(f)
+       
+        this.set(this)
+
+        return unsubscribe
+    }
+
     set enabled(e) { this._enabled = e }
     get enabled() { return this._enabled }
 
     /** Connects this Nodes Output to [e]'s Input */
     connect(n: Node | Tone.ToneAudioNode) {
-        console.log('node CONNECT', this.name)
 
         if(!n) return
 
@@ -104,6 +118,8 @@ export class Node implements ISerialize {
 
     /** Disconnects this Output from [e]'s/all Input(s) */
     disconnect(n?: Node | Tone.ToneAudioNode) {
+
+        console.log('DISCONNECT')
 
         if(n) this.output.disconnect(n instanceof Node ? n.input : n)
         else this.output.disconnect()

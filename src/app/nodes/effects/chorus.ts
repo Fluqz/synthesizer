@@ -30,11 +30,14 @@ export class Chorus extends Effect {
 
         this.input = this.output = this.chorus
 
-        this.wet = wet
-        this.frequency = frequency
-        this.delayTime = delayTime
-        this.depth = depth
-        this.feedback = feedback
+        this.wet = this.chorus.get().wet
+        this.frequency = this.chorus.get().frequency
+        this.delayTime = this.chorus.get().delayTime
+        this.depth = this.chorus.get().depth
+        this.feedback = this.chorus.get().feedback
+        this.spread = this.chorus.get().spread
+        this._wave = this.chorus.get().type.replace(/[0-9]/g, '')
+        this._wavePartial = this.chorus.get().type.replace(/[\[\]&]+/g, '')
 
         this.props.set('delayTime', { type: ParamType.KNOB, name: 'Delay Time', get: () =>  this.delayTime, set: (e) => this.delayTime = e, min: 2, max: 20, groupID: 0 })
         this.props.set('depth', { type: ParamType.KNOB, name: 'Depth', get: () =>  this.depth, set: (e) => this.depth = e, min: 0, max: 1, groupID: 0 })

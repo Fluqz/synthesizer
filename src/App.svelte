@@ -1,7 +1,4 @@
 
-
-
-
 <script lang="ts">
 
     import * as Tone from 'tone'
@@ -14,33 +11,44 @@
     
     import { Visuals } from './app/p5/visual'
     import { Track } from './app/track';
+    import { Vec2 } from './app/core/math';
+
+    // Init globals
+    G.init()
     
     // Create Synthesizer
     let synthesizer = G.synthesizer = new Synth()
-    
-    G.w = window.innerWidth
-    G.h = window.innerHeight
 
-    Visuals.moireShader()
+    // Create Visuals
+    Visuals.moire()
 
+
+    // On document ready
     onMount(() => {
 
-        Tone.start()
-
-        Tone.Transport.start()
-
-        console.log('scroll')
-
+        // Scroll to bottom
         setTimeout(() => {
 
             window.scrollTo({
                 top: 1000,
                 left: 0,
                 behavior: 'smooth',
-                
-            });
-        }, 1000)
+            })
 
+        }, 1500)
+
+
+        // let i = 0
+        // let colors = ['#FFFFFF', '#FFFF00', '#00FFFF', '#FF00FF', '#FF0000', '#00FF00']
+        // setInterval(() => {
+
+        //     if(i >= colors.length) i = 0
+
+        //     document.body.style.backgroundColor = colors[i]
+
+        //     i++
+
+        // }, 2000)
     })
     
     // Serialize
@@ -67,14 +75,14 @@
     document.addEventListener('visibilitychange', (e) => {
     
         if (document.visibilityState == "visible") {
-            console.log('visible')
+            // console.log('visible')
     
             synthesizer.mute(false)
 
         }
         else {
             synthesizer.stopAll()
-            console.log('not visible')
+            // console.log('not visible')
 
             synthesizer.mute(true)
         }  // TODO - NOT WORKING?????
@@ -96,13 +104,11 @@
         synthesizer.dispose()
     }
 
-    // serializeIn(Storage.load())
+    serializeIn(Storage.load())
 
 
 
     const addTrack = (e) => {
-
-        console.log('add')
 
         synthesizer.addTrack(new Track(synthesizer, Synth.nodes.sources.Oscillator()))
 
@@ -122,24 +128,65 @@
 
         synthesizer = synthesizer
     }
+    
 
+    const toggleVisuals = (e) => {
+
+        G.visualsEnabled = !G.visualsEnabled
+
+    }
+    
+    const saveImage = (e) => {
+
+        G.visualsEnabled = false
+
+        G.saveVisuals()
+
+        G.visualsEnabled = true
+    }
 
 </script>
 
 
 
+<div class="btn" on:click={toggleVisuals}>V</div>
+<div class="btn" on:click={saveImage}>I</div>
 
-
-
-<Synthesizer synthesizer={synthesizer} 
+<Synthesizer    synthesizer={synthesizer} 
                 tracks={synthesizer.tracks} 
                 on:add={addTrack} 
                 on:remove={removeTrack} 
-                on:delete={deleteTrack} />
+                on:delete={deleteTrack} 
+                >
+                <!-- on:mousemove={onMouseMove} -->
+
+<!-- 
+
+    <svg class="svg-line">
+
+        <line x1={mousePosition.x} y1={mousePosition.y} x2={elementPosition.x} y2={elementPosition.y} stroke="#FFFFFF"></line>
+    </svg> -->
+
+
+</Synthesizer>
+
+
 
 
 
 <style>
+
+    .svg-line {
+
+        position: absolute;
+        left: 0px;
+        top: 0px;
+
+        display: block;
+
+        width: 100%;
+        height: 100%;
+    }
 
 </style>
 

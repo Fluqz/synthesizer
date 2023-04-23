@@ -24,6 +24,12 @@ export class Phaser extends Effect {
 
         this.input = this.output = this.phaser
 
+        this.wet = wet != undefined ? wet : this.phaser.get().wet
+        this.Q = this.phaser.get().Q
+        this.octaves = this.phaser.get().octaves
+        this.baseFrequency = this.phaser.get().baseFrequency
+        this.frequency = this.phaser.get().frequency
+
         this.props.set('wet', { type: ParamType.KNOB, name: 'Wet', get: () =>  this.wet, set: (e) => this.wet = e, min: 0, max: 1, groupID: 0 })
         this.props.set('Q', { type: ParamType.KNOB, name: 'Q', get: () =>  this.Q, set: (e) => this.Q = e, min: 0, max: 1, groupID: 0 })
         this.props.set('octaves', { type: ParamType.KNOB, name: 'Octaves', get: () =>  this.octaves, set: (e) => this.octaves = e, min: 0, max: 12, groupID: 0 })

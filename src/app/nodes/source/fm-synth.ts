@@ -26,7 +26,7 @@ export class FMSynth extends Instrument {
     _harmonicity: number
 
     /** freq, detune, volume, waveform,  */
-    constructor(options? = {}) {
+    constructor(options:any = {}) {
 
         super('FMSynth')
 
@@ -43,7 +43,17 @@ export class FMSynth extends Instrument {
         this.portamento = options.portamento ? options.portamento : 0
 
 
-        console.log(this.synth)
+        this.detune = options.detune != undefined ? options.detune : this.synth.get().detune
+        this.portamento = options.portamento != undefined ? options.portamento : this.synth.get().portamento
+        this.harmonicity = options.harmonicity != undefined ? options.harmonicity : this.synth.get().harmonicity
+        this.phase = options.phase != undefined ? options.phase : this.synth.get().oscillator.phase
+
+        this.attack = options.attack != undefined ? options.attack : this.synth.get().envelope.attack
+        this.decay = options.decay != undefined ? options.decay : this.synth.get().envelope.decay
+        this.sustain = options.sustain != undefined ? options.sustain : this.synth.get().envelope.sustain
+        this.release = options.release != undefined ? options.release : this.synth.get().envelope.release
+
+
 
         this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () =>  this.volume, set: (v) => this.volume = v })
         this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () =>  this.detune, set: (v) => this.detune = v })

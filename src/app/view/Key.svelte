@@ -100,7 +100,7 @@
     padding-top: 5px;
     /* border-radius: 3px; */
 
-    transition: .2s transform;
+    transition: .4s transform;
     z-index: 0;
 
     /* mix-blend-mode: difference; */

@@ -13,6 +13,7 @@ export class LFOFilter extends Node {
 
         super('LFO')
 
+
     }
 
     serializeIn(o) {

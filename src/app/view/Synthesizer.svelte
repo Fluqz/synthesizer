@@ -3,38 +3,47 @@
 
 <script lang="ts">
 
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     
     import Key from './Key.svelte'
     import Track from './Track.svelte'
-    import TrackMenu from './TrackMenu.svelte'
     import Knob from "./Knob.svelte"
 
     import { Track as _Track } from '../track'
+    import { Instrument, Node as _Node } from '../nodes/'
     import { Synthesizer } from '../synthesizer'
-    import { Vec2 } from '../core/math';
-    import { start } from 'tone';
+    import { writable } from 'svelte/store';
+    import { G } from '../core/globals';
+    import Dropdown from './Dropdown.svelte';
 
     export let synthesizer: Synthesizer
 
     export let tracks: _Track[]
 
-    let currentTrack: _Track
+
+    let tracksStore = writable(tracks)
+
+    let presets: string[] = []
+
+    let unsubscribeSynthStore = synthesizer.store.subscribe((s: Synthesizer) => {
+
+        synthesizer = s
+        tracksStore.set(s.tracks)
+
+        presets = []
+        for(let p of synthesizer.presetManager.presets) presets.push(p.name)
+    })
+
+
 
 
     onMount(() => {
-
-        currentTrack = tracks[0]
 
 
         // Events
         document.addEventListener('keydown', onKeyDown, false)
         document.addEventListener('keyup', onKeyUp, false)
 
-
-        // // Save preset input
-        // const savePreset: HTMLInputElement = document.querySelector('#save-preset')
-        // savePreset.value = ''
         // savePreset.addEventListener('keydown', (e) => {
 
         //     e.stopPropagation()
@@ -45,11 +54,6 @@
         //     }
         // })
 
-        // // Load preset select
-        // const loadPreset = document.querySelector('#load-preset')
-
-        // let ps = []
-        // for(let p of synthesizer.presetManager.presets) ps.push(p.name)
 
         // let presetDropdown = new Dropdown(ps, undefined, false, true)
         // presetDropdown.onSelectOption.subscribe((o) => {
@@ -74,7 +78,25 @@
 
     const addTrack = () => {
 
-        // synthesizer.addTrack(new _Track(synthesizer, Synthesizer.nodes.sources.Oscillator()))
+        synthesizer.addTrack(new _Track(synthesizer, Synthesizer.nodes.sources.Oscillator()))
+
+        synthesizer.store.set(synthesizer)
+
+        scrollToBottom()
+    }
+    
+    const scrollToBottom = () => {
+
+        setTimeout(() => {
+
+            window.scrollTo({
+                top: G.h,
+                left: 0,
+                behavior: 'smooth',
+                
+            });
+
+        }, 0)
     }
 
     const octaveDown = () => {
@@ -86,10 +108,12 @@
         synthesizer.setOctave(synthesizer.octave + 1)
     }
 
+
     const onArpChange = (e) => {
 
         synthesizer.toggleArpMode(e.target.checked)
     }
+
 
     let isRecording = false
     // Toggle recording button
@@ -120,7 +144,6 @@
     }
 
 
-
     /** Keydown event */
     const onKeyDown = (e) => {
 
@@ -132,15 +155,6 @@
         if(e.key == 'ArrowRight') synthesizer.setOctave(synthesizer.octave + 1)
         if(e.key == 'ArrowLeft') synthesizer.setOctave(synthesizer.octave - 1)
         if(e.key == ' ') synthesizer.toggleRecording()
-
-
-        // for(let k of Synthesizer.keys) {
-
-        //     if(k.mapping === e.key || k.mapping === e.key.toLowerCase()) {
-
-        //         k.trigger()
-        //     }
-        // }
     }
 
     /** Keyup event */
@@ -149,71 +163,43 @@
         // if(G.debug) console.log('keyUp: key', e.key)
 
         if(!e) return
-
-        // for(let k of Synthesizer.keys) {
-
-        //     if(k.mapping === e.key || k.mapping === e.key.toLowerCase()) {
-
-        //         k.release()
-        //     }
-        // }
     }
 
+    let presetInputValue: string
 
-
-    /** Menu */
-
-    let isMenuOpen = false
-    let mousePosition: Vec2 = new Vec2()
-    let selectedTrack: _Track
-
-
-    const onClick = (e, track: _Track) => {
+    const onPresetInput = (e) => {
 
         e.stopPropagation()
 
-        const ct = e.currentTarget
+        if(e.key == 'Enter' && e.target.value != null) {
 
-        const client = e.currentTarget.getBoundingClientRect()
+            synthesizer.presetManager.savePreset(presetInputValue)
+        }
 
-        console.log('rect',client)
-
-        mousePosition.set(client.x , client.y)
-
-        selectedTrack = track
-        
-        isMenuOpen = selectedTrack ? true : false
+        synthesizer.store.set(synthesizer)
     }
 
-    const onEdit = (e) => {
+    const onChangePresets = (e) => {
 
-        console.log('edit')
+        synthesizer.presetManager.loadPreset(e.detail.target.value)
 
-        selectedTrack = e.detail
+        synthesizer.store.set(synthesizer)
 
-        isMenuOpen = selectedTrack ? true : false
-
-        mousePosition.set(0, 0)
+        scrollToBottom()
     }
 
-    const closeTrackMenu = (e) => {
+    onDestroy(() => {
 
-        e.stopPropagation()
-
-        console.log('close trackmenu')
-
-        selectedTrack = null
-
-        isMenuOpen = false
-    }
-
-    /** Menu End*/
+        unsubscribeSynthStore()
+    })
 
 </script>
 
 
 
 <div class="synthesizer">
+
+    <slot></slot>
 
     <div class="synthesizer-menu">
 
@@ -223,11 +209,19 @@
         <div id="presets">
             <div>
                 <label for="savePreset">Save Preset</label>
-                <input id="save-preset" type="text" name="savePreset"/>
+                <input id="save-preset" type="text" name="savePreset" bind:value={presetInputValue} on:keydown={onPresetInput}/>
             </div>
 
             <div id="load-preset">
                 <label for="loadPreset">Load Preset</label>
+
+                <!-- Presets -->
+                <Dropdown
+                    name={''}
+                    value={''}
+                    options={presets}
+                    on:onSelect={onChangePresets} 
+                />
             </div>
         </div>
 
@@ -257,11 +251,11 @@
             <input type="checkbox" name="arp" on:change={onArpChange}/>
         </div>
 
-        <div id="record" class="btn" title="Space" on:click={toggleRecording} class:recording={isRecording}>Record</div>
+        <div id="record" class="btn" title="Space" on:click={toggleRecording} class:recording={isRecording}>&#x2609;</div>
         
-        <div id="reset" class="btn" on:click={reset}>Reset</div>
+        <div id="reset" class="btn" title="ALT - Delete" on:click={reset}>R</div>
 
-        <div id="mute" class="btn" on:click={mute}>Mute</div>
+        <div id="mute" class="btn" title="ALT - M" on:click={mute}>M</div>
 
 
     </div>
@@ -270,20 +264,14 @@
     
 
     <div class="mixer">
-<!-- 
-        {#if isMenuOpen }
-            
-            <TrackMenu track={selectedTrack} position={mousePosition} on:add on:remove/>
 
-        {/if} -->
+        <div class="tracks">
 
-        <div class="tracks" on:click={closeTrackMenu}>
-
-            {#each tracks as track}
+            {#each $tracksStore as track}
                 
                 <div class="track">
 
-                    <Track track={track} instrument={track.instrument} nodes={track.nodes} on:delete on:edit={onEdit} />
+                    <Track bind:track={track} on:delete />
 
                 </div>
 

@@ -25,6 +25,16 @@ export class Vibrato extends Effect {
 
         this.input = this.output = this.vibrato
 
+
+        this.wet = wet != undefined ? wet : this.vibrato.get().wet
+        this.frequency = this.vibrato.get().frequency
+        this.depth = this.vibrato.get().depth
+        this.maxDelay = this.vibrato.get().maxDelay
+
+        this._wave = this.vibrato.get().type.replace(/[0-9]/g, '')
+        this._wavePartial = this.vibrato.get().type.replace(/[\[\]&]+/g, '')
+
+        
         this.props.set('wet', { type: ParamType.KNOB, name: 'Wet', get: () =>  this.wet, set: (e) => this.wet = e, min: 0, max: 1, groupID: 0 })
         this.props.set('frequency', { type: ParamType.KNOB, name: 'Frequency', get: () =>  this.frequency, set: (e) => this.frequency = e, min: 0, max: 1, groupID: 0 })
         this.props.set('depth', { type: ParamType.KNOB, name: 'Depth', get: () =>  this.depth, set: (e) => this.depth = e, min: 0, max: 1, groupID: 0 })
@@ -32,7 +42,6 @@ export class Vibrato extends Effect {
 
         this.props.set('wave', { type: ParamType.DROPDOWN, name: 'Wave', get: () => this.wave, set: (v:string) => this.wave = v, options: ['triangle', 'sine', 'square', 'sawtooth'], group: 1 })
         this.props.set('wavePartial', { type: ParamType.DROPDOWN, name: 'Wave Partial', get: () => this.wavePartial, set: (v:string) => this.wavePartial = v, options: ['', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], group: 1 })
-
     }
 
     get wet() { return this._wet }

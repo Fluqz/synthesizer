@@ -33,12 +33,12 @@ export class TrackMenu {
 
         let rect = this.dom.getBoundingClientRect()
 
-        console.log(rect.x, rect.y)
-        console.log(rect.width, rect.height)
-        console.log(x, y)
-        console.log(window.innerWidth, window.innerHeight)
+        // console.log(rect.x, rect.y)
+        // console.log(rect.width, rect.height)
+        // console.log(x, y)
+        // console.log(window.innerWidth, window.innerHeight)
 
-        console.log(rect.y + rect.height, window.innerHeight, rect)
+        // console.log(rect.y + rect.height, window.innerHeight, rect)
 
 
         if(rect.y + rect.height > window.innerHeight) {

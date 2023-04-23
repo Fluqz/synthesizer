@@ -26,6 +26,17 @@ export class AutoFilter extends Effect {
 
         this.input = this.output = this.autoFilter
 
+        this.wet = this.autoFilter.get().wet
+        this._frequency = this.autoFilter.get().frequency
+        this._depth = this.autoFilter.get().depth
+        this._octaves = this.autoFilter.get().octaves
+        this._wave = this.autoFilter.get().type.replace(/[0-9]/g, '')
+        this._wavePartial = this.autoFilter.get().type.replace(/[\[\]&]+/g, '')
+        this._baseFrequency = this.autoFilter.get().baseFrequency
+
+        console.log('wave', this._wave)
+        console.log('partials', this._wavePartial)
+
         this.props.set('wet', { type: ParamType.KNOB, name: 'Wet', get: () =>  this.wet, set: (e) => this.wet = e, min: 0, max: 1, groupID: 0 })
         this.props.set('depth', { type: ParamType.KNOB, name: 'Depth', get: () =>  this.depth, set: (e) => this.depth = e, min: 0, max: 1, groupID: 0 })
         this.props.set('octaves', { type: ParamType.KNOB, name: 'Octaves', get: () =>  this.octaves, set: (e) => this.octaves = e, min: 0, max: 1, groupID: 0 })
@@ -33,8 +44,8 @@ export class AutoFilter extends Effect {
         this.props.set('wave', { type: ParamType.DROPDOWN, name: 'Wave', get: () => this.wave, set: (v:string) => this.wave = v, options: ['triangle', 'sine', 'square', 'sawtooth'], group: 1 })
         this.props.set('wavePartial', { type: ParamType.DROPDOWN, name: 'Wave Partial', get: () => this.wavePartial, set: (v:string) => this.wavePartial = v, options: ['', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], group: 1 })
 
-        this.props.set('baseFrequency', { type: ParamType.KNOB, name: 'Base Frequency', get: () =>  this.baseFrequency, set: (e) => this.baseFrequency = e, min: 0, max: 1, groupID: 0 })
-        this.props.set('frequency', { type: ParamType.KNOB, name: 'Frequency', get: () =>  this.frequency, set: (e) => this.frequency = e, min: 0, max: 1, groupID: 0 })
+        this.props.set('baseFrequency', { type: ParamType.KNOB, name: 'Base Frequency', get: () =>  this.baseFrequency, set: (e) => this.baseFrequency = e, min: 0, max: 1000, groupID: 0 })
+        this.props.set('frequency', { type: ParamType.KNOB, name: 'Frequency', get: () =>  this.frequency, set: (e) => this.frequency = e, min: 0, max: 1000, groupID: 0 })
 
     }
 
@@ -91,7 +102,6 @@ export class AutoFilter extends Effect {
         this._wavePartial = w
         this.autoFilter.set({ type: (this._wave + this.wavePartial)})
     }
-
 
     serializeIn(o) {
 

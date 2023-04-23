@@ -58,9 +58,14 @@ export class Oscillator extends Instrument {
         this.isPlaying = false
 
         this.volume = volume ? volume : .4
-        this.frequency = frequency ? frequency : 1
-        this.detune = detune ? detune : .5
-    
+        this.detune = this.osc.get().detune
+        this.phase = this.osc.get().phase
+        this.attack = this.envelope.get().attack as number
+        this.decay = this.envelope.get().decay as number
+        this.sustain = this.envelope.get().sustain
+        this.release = this.envelope.get().release as number
+        this._wave = this.osc.get().type.replace(/[0-9]/g, '')
+        this._wavePartial = this.osc.get().type.replace(/[\[\]&]+/g, '')
 
 
         this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () => this.volume, set: (v:number) => this.volume = v, group: 0 })
