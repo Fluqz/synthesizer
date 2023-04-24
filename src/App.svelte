@@ -187,8 +187,6 @@
     const toggleVisuals = (e) => {
 
         G.visualsEnabled = !G.visualsEnabled
-
-        Tone.start()
     }
     
     const saveImage = (e) => {
