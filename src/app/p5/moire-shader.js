@@ -41,16 +41,18 @@ export const moireShader = (p5) => {
         grid = new Grid(G.w, G.h, 9, 4) // 9 * 4 = 36 (keys)
         // grid = new Grid(100, 100, 9, 4) // 9 * 4 = 36 (keys)
 
-        oldCellPos = grid.getCellPosByNr(Synthesizer.keyMap.indexOf(Math.round(Synthesizer.keyMap.length / 2)))
+        // oldCellPos = grid.getCellPosByNr(Synthesizer.keyMap.indexOf(Math.round(Synthesizer.keyMap.length / 2)))
 
 
     }
 
     p5.draw = () => {
 
+
         // console.log('DRAW')
 
         if(!G.visualsEnabled) {
+
             return
         }
 
@@ -78,6 +80,7 @@ export const moireShader = (p5) => {
         // console.log(M.map(-1, 1, 0.99, 1, Math.sin(Tone.now())))
 
         if(true) {
+
             // Get last pressed key
             let key = Synthesizer.keys.find((k) => {
 
@@ -94,6 +97,10 @@ export const moireShader = (p5) => {
             }
 
             if(!newCellPos) newCellPos = { x: G.w / 2, y: G.h / 2 }
+
+
+            console.log((oldCellPos.x !== newCellPos.x || oldCellPos.y !== newCellPos.y), oldCellPos, newCellPos)
+
 
 
             // Did cellpos change?
@@ -170,7 +177,7 @@ export const moireShader = (p5) => {
                     }
 
 
-
+                    console.log('good')
                     shader.setUniform("u_mouse", [
                         M.map(0, G.w, -200, 200, currentCellPos.x), 
                         M.map(0, G.h, -200, 200, currentCellPos.y)
@@ -181,12 +188,13 @@ export const moireShader = (p5) => {
                 }, interval + randomMizeIntervalLength)
             }
             else {
+                console.log('ok')
 
                 t += tIncrement
                 // console.log((Math.sin(t)), t)
                 shader.setUniform("u_mouse", [
                     M.map(0, G.w, -200, 200, currentCellPos.x + (Math.sin(t) * 10)), 
-                    M.map(0, G.h, -200, 200, currentCellPos.y + (Math.cos(t) * 10))
+                    M.map(0, G.h, -200, 200, currentCellPos.y + (Math.cos(t) * 20))
                 ])
             }
 
