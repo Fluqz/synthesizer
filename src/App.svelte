@@ -83,7 +83,11 @@
 
         setInterval(() => {
 
-            if(i >= colors.length) i = 0
+            if(i >= colors.length) { 
+                
+                i = 0 
+                colors.sort(() =>  Math.ceil((Math.random() * 2) - 1) )
+            }
 
             document.body.style.backgroundColor = colors[i]
 

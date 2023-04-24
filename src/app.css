@@ -53,6 +53,7 @@ body {
 
   overflow-x: hidden;
   scrollbar-width: none;
+  -ms-scrollbar: none
 
   /* cursor: url('/src/assets/imgs/circle-sepia.gif'); */
 }

@@ -13,6 +13,10 @@
 
     export let node: Node
 
+    export let isClosed: Boolean = false
+
+
+
 
     $: {
         
@@ -73,6 +77,11 @@
         groups.set(Array.from(groupNodeParameter($nodeParameters).values()))
     }
 
+    const toggleShrinking = () => {
+
+        isClosed = !isClosed
+    }
+
     const onDelete = () => {
 
         dispatch('deleteNode', node)
@@ -100,73 +109,78 @@
 
 <div class="node">
 
-    {#if !isInstrument }
+    
+    {#if !isInstrument && !isClosed }
         
         <div class="shift-forward shift arrow-left" on:click={shiftForward}>&#x27A4</div>
 
     {/if}
 
-
     <!-- { node.id } -->
 
     <div class="node-title">{ node.name[0].toUpperCase() + node.name.substr(1) }</div>
 
+    <div class="toggle-shrink-btn" on:click={toggleShrinking}>&#x2689;</div>
+
     <div class="delete" on:click={onDelete}>&#x2715;</div>
 
-    <div class="parameters">
+    {#if !isClosed }
 
-        <!-- Each group of Parameters -->
-        {#each $groups as g}
+        <div class="parameters">
 
-            <div class="parameters-group">
+            <!-- Each group of Parameters -->
+            {#each $groups as g}
 
-                <!-- Each parameter -->
-                {#each g as n}
+                <div class="parameters-group">
 
-                    {#if n && n.get() != undefined }
+                    <!-- Each parameter -->
+                    {#each g as n}
+
+                        {#if n && n.get() != undefined }
+                            
+                            {#if n.type == ParamType.KNOB}
+                                
+                                <Knob
+                                    name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
+                                    min={n.min}
+                                    max={n.max}
+                                    value={n.get()}
+                                    on:onChange={(e) => n.set(e.detail) } 
+                                />
+
+                            {/if}
+
+
+                            {#if n.type == ParamType.DROPDOWN}
+                                
+                                <Dropdown
+                                    name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
+                                    value={n.get()}
+                                    options={n.options}
+                                    on:onSelect={(e) => n.set(e.detail.target.value) } 
+                                />
+
+                            {/if}
+
+
+                        {/if}
+
                         
-                        {#if n.type == ParamType.KNOB}
-                            
-                            <Knob
-                                name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
-                                min={n.min}
-                                max={n.max}
-                                value={n.get()}
-                                on:onChange={(e) => n.set(e.detail) } 
-                            />
+                    {/each}
 
-                        {/if}
+                </div>
 
+            {/each}
 
-                        {#if n.type == ParamType.DROPDOWN}
-                            
-                            <Dropdown
-                                name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
-                                value={n.get()}
-                                options={n.options}
-                                on:onSelect={(e) => n.set(e.detail.target.value) } 
-                            />
+        </div>
 
-                        {/if}
+        {#if !isInstrument }
 
+            <div class="shift-back shift" on:click={shiftBack}>&#x27A4</div>
 
-                    {/if}
-
-                    
-                {/each}
-
-            </div>
-
-        {/each}
-
-    </div>
-
-    {#if !isInstrument }
-
-        <div class="shift-back shift" on:click={shiftBack}>&#x27A4</div>
+        {/if}
 
     {/if}
-
 
 </div>
 
@@ -209,6 +223,29 @@
   background-color: var(--c-y);
 }
 
+.toggle-shrink-btn {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    left: 15px;
+    top: 0px;
+    cursor: pointer;
+
+    width: 20px;
+    height: 20px;
+
+    z-index: 100;
+
+    transition: .4s background-color, .4s color;
+}
+
+.node .delete:hover {
+  color: var(--c-b);
+  background-color: var(--c-bl);
+}
 .node .parameter-group {
 
 
@@ -264,6 +301,7 @@
 
     right:0px;
 }
+
 
 .parameters {
 

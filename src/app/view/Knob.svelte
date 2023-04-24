@@ -70,6 +70,10 @@
     // ADD FIRST LETTER OF NAME TO MIDDLE OF KNOB
 
 
+    angle = (value / ((max - min) / (Math.PI * 2)))
+
+
+
     const reset = () => {
 
         setValue(initValue)
@@ -86,7 +90,7 @@
 
         angle = (value / ((max - min) / (Math.PI * 2)))
         
-        // console.log('Change', name, 'to :', value)
+        console.log('Change', name, 'to :', value, initValue)
 
         dispatch('onChange', value)
     }
@@ -222,6 +226,8 @@
 
         wheelObservable = fromEvent(knobDOM, 'wheel', { bubbles: false })
         wheelObservable.subscribe(onScroll)
+
+        console.log('INIT VALUE', name, value, initValue)
     })
 
     onDestroy(() => {
@@ -245,6 +251,8 @@
 
 <div class="knob-wrapper" bind:this={dom}>
 
+    <div class="knob-value">{ value.toFixed(2) }</div>
+
     <div class="knob"
         bind:this={knobDOM}
         on:pointerdown={onMouseDown} 
@@ -252,13 +260,13 @@
         on:dblclick={() => showResetBtn = !showResetBtn}
         style={'transform: rotate(' + Math.round(angle * (180 / Math.PI)) + 'deg);'}>
 
-        <div class="knob-underlay">
+        <!-- <div class="knob-underlay"> -->
+
+            
 
             <div class="knob-pointer"></div>
-
-            <div class="knob-value">{ value.toFixed(2) }</div>
-
-        </div>
+            
+        <!-- </div> -->
 
     </div>
 
@@ -294,7 +302,7 @@
     text-align: center;
 
     font-size: 0.7rem;
-    margin: 5px 5px 0px 5px;
+    margin: 15px 5px 0px 5px;
     color: inherit;
 }
 
@@ -341,29 +349,41 @@
     /* background-image: none; */
 }
 
-.knob > .knob-pointer {
+.knob .knob-pointer {
 
   position: absolute;
   top: 0px;
   left: calc(50% - (10% / 2));
 
-  width: 10%;
-  height: 30%;
+  width: 100%;
+  height: 100%;
 
+  border-radius: 100%;
+
+  /* transform: inherit; */
+  
+  /* mix-blend-mode: difference; */
   background-color: var(--c-o);
 }
 
-.knob > .knob-value {
+.knob .knob-value {
+/* .knob > .knob-value { */
+/* 
+    position: absolute;
 
   width: 100%;
   height: 100%;
   line-height: inherit;
 
   text-align: center;
+
+  z-index: 10; */
 }
 
 .knob-underlay {
   /* background-color: #FFF; */
+
+
 }
 
 .knob-settings {
