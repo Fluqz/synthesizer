@@ -150,24 +150,30 @@
         <!-- Mute -->
         <div 
             on:click={onMute}
-            class="btn" 
+            class="btn"
+            title="Mute" 
             class:active={track.isMuted}>M</div>
 
         <!-- Solo -->
         <div 
             on:click={onSolo}
-            class="btn" 
+            class="btn"
+            title="Solo" 
             class:active={track.isSolo}>S</div>
 
         <!-- Hold -->
         <div 
             on:click={onHold}
-            class="btn" 
+            class="btn"
+            title="Hold" 
             class:active={track.holdEnabled}>H</div>
 
 
         <!-- Delete -->
-        <div class="btn" on:click={onDelete}>x</div>
+        <div 
+            class="btn"
+            title="Delete" 
+            on:click={onDelete}>x</div>
 
     </div>
 

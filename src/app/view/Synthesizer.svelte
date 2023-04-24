@@ -258,7 +258,7 @@
         <div id="volume" title="Shift + A">
 
             <Knob 
-                name="Volume" 
+                name=""
                 value={synthesizer.volume}
                 min={0} 
                 max={1} 
