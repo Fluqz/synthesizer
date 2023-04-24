@@ -2,11 +2,12 @@
 
 <script lang="ts">
 
-    import { ParamType, type Node, type NodeParameter, type NodeParameterGroup, type GroupID, Instrument } from "../nodes";
+    import { ParamType, type Node, type NodeParameter, type NodeParameterGroup, type GroupID, Instrument, Effect } from "../nodes";
     import Knob from "./Knob.svelte"
     import Dropdown from "./Dropdown.svelte"
     import { createEventDispatcher, onDestroy } from "svelte";
     import { writable, type Writable } from "svelte/store";
+    import { max, min } from "rxjs";
 
     const dispatch = createEventDispatcher()
 
@@ -60,7 +61,6 @@
 
 
 
-
     // console.log('node props', node.name, groups)
 
     const shiftForward = () => {
@@ -88,6 +88,23 @@
     }
 
     const isInstrument = node instanceof Instrument ? true : false
+    const isEffect = node instanceof Effect ? true : false
+
+    let isEnabled: boolean = true
+    let wet: number
+    const enable = () => {
+
+        if(isInstrument) return
+
+        const e = (node as Effect)
+
+        if(isEnabled) wet = e.wet
+
+        isEnabled = !isEnabled
+
+        e.wet = isEnabled ? wet : 0
+    }
+
 
 
 
@@ -121,6 +138,12 @@
     <div class="node-title">{ node.name[0].toUpperCase() + node.name.substr(1) }</div>
 
     <div class="toggle-shrink-btn" on:click={toggleShrinking}>&#x2689;</div>
+    
+    {#if isEffect }
+        
+        <div class="enabled-btn" on:click={enable} class:enabled={isEnabled}></div>
+    
+    {/if}
 
     <div class="delete" on:click={onDelete}>&#x2715;</div>
 
@@ -241,6 +264,35 @@
 
     transition: .4s background-color, .4s color;
 }
+
+.enabled-btn {
+
+    display: block;
+
+    width: 8px;
+    height: 8px;
+
+    position: absolute;
+    left: 35px;
+    top: 0px;
+
+    cursor: pointer;
+    
+    border-radius: 100%;
+
+    z-index: 100;
+
+    transition: .4s background-color, .4s color;
+
+    background-color: var(--c-o);
+    margin: 6px;
+}
+.enabled-btn.enabled {
+
+    background-color: var(--c-bl);
+}
+
+
 
 .node .delete:hover {
   color: var(--c-b);

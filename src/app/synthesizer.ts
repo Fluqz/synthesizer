@@ -5,7 +5,7 @@ import * as RxJs from 'rxjs'
 
 import { Key } from './key'
 
-import { Synth, DuoSynth, Instrument, FMSynth, AMSynth, Delay, Tremolo, Reverb, Chorus, Distortion, Oscillator, Effect, AutoFilter, Phaser, Vibrato} from './nodes'
+import { Sampler, Synth, DuoSynth, Instrument, FMSynth, AMSynth, Delay, Tremolo, Reverb, Chorus, Distortion, Oscillator, Effect, AutoFilter, Phaser, Vibrato} from './nodes'
 
 import { Track, type ITrackSerialization } from './track'
 import { PresetManager, type IPreset } from './core/preset-manager'
@@ -123,11 +123,13 @@ export class Synthesizer implements ISerialize {
 	
             FMSynth: () => { return new FMSynth() },
             AMSynth: () => { return new AMSynth() },
-            MonoSynth: () => {},
-            MetalSynth:	() => {},
+            // MonoSynth: () => {},
+            // MetalSynth:	() => {},
+            // PluckSynth:	() => {},
             Oscillator: () => { return new Oscillator() },
             Synth: () => { return new Synth() },
             DuoSynth: () => { return new DuoSynth() },
+            Sampler: () => { return new Sampler() },
         }
     }
 

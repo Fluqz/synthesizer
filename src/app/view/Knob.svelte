@@ -26,6 +26,7 @@
     /** Initial value */
     const initValue: number = value
 
+
     /** Wrapper dom element */
     let dom: HTMLElement
 
@@ -226,8 +227,6 @@
 
         wheelObservable = fromEvent(knobDOM, 'wheel', { bubbles: false })
         wheelObservable.subscribe(onScroll)
-
-        console.log('INIT VALUE', name, value, initValue)
     })
 
     onDestroy(() => {
@@ -362,8 +361,8 @@
 
   /* transform: inherit; */
   
-  /* mix-blend-mode: difference; */
-  background-color: var(--c-o);
+  mix-blend-mode: difference;
+  background-color: var(--c-bl);
 }
 
 .knob .knob-value {

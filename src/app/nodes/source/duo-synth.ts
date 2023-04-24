@@ -62,12 +62,12 @@ export class DuoSynth extends Instrument {
 
         this.props.set('attack0', { type: ParamType.KNOB, name: 'Attack 1', get: () => { return this.attack0 }, set: (v: number) => { this.attack0 = v }, min: 0, max: 3, group: 2 })
         this.props.set('decay0', { type: ParamType.KNOB, name: 'Decay 1', get: () => { return this.decay0 }, set: (v: number) => { this.decay0 = v }, min: 0, max: 1, group: 2 })
-        this.props.set('release0', { type: ParamType.KNOB, name: 'Release 1', get: () => { return this.release0 }, set: (v: number) => { this.release0 = v }, min: 0, max: 3, group: 2 })
+        this.props.set('release0', { type: ParamType.KNOB, name: 'Release 1', get: () => { return this.release0 }, set: (v: number) => { this.release0 = v }, min: 0, max: 5, group: 2 })
         this.props.set('sustain0', { type: ParamType.KNOB, name: 'Sustain 1', get: () => { return this.sustain0 }, set: (v: number) => { this.sustain0 = v }, min: 0, max: 1, group: 2 })
 
         this.props.set('attack1', { type: ParamType.KNOB, name: 'Attack 2', get: () => { return this.attack1 }, set: (v: number) => { this.attack1 = v }, min: 0, max: 3, group: 3 })
         this.props.set('decay1', { type: ParamType.KNOB, name: 'Decay 2', get: () => { return this.decay1 }, set: (v: number) => { this.decay1 = v }, min: 0, max: 1, group: 3 })
-        this.props.set('release1', { type: ParamType.KNOB, name: 'Release 2', get: () => { return this.release1 }, set: (v: number) => { this.release1 = v }, min: 0, max: 3, group: 3 })
+        this.props.set('release1', { type: ParamType.KNOB, name: 'Release 2', get: () => { return this.release1 }, set: (v: number) => { this.release1 = v }, min: 0, max: 5, group: 3 })
         this.props.set('sustain1', { type: ParamType.KNOB, name: 'Sustain 2', get: () => { return this.sustain1 }, set: (v: number) => { this.sustain1 = v }, min: 0, max: 1, group: 3 })
     }
 

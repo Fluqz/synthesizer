@@ -20,9 +20,9 @@ export interface NodeParameter {
     /** Title */
     name: string
     /** Getter value */
-    get?: () => any
+    get: () => any
     /** Setter value */
-    set?: (v: any) => void
+    set: (v: any) => void
     /** Group ID */
     groupID?: GroupID
 }
@@ -30,14 +30,14 @@ export interface NodeParameter {
 export interface KnobNodeParameter extends NodeParameter {
 
     /** Min value */
-    min?: number
+    min: number
     /** Max value */
-    max?: number
+    max: number
 }
 
 export interface DropDownNodeParameter extends NodeParameter {
 
-    options: string | number
+    options: any
 }
 
 export interface SwitchNodeParameter extends NodeParameter {

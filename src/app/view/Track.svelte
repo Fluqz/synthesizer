@@ -173,7 +173,7 @@
         <div 
             class="btn"
             title="Delete" 
-            on:click={onDelete}>x</div>
+            on:click={onDelete}>&#x2715;</div>
 
     </div>
 

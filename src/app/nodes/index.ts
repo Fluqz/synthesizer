@@ -16,8 +16,12 @@ export * from './effects/vibrato'
 
 
 export * from './source/instrument'
+export * from './source/sampler'
 export * from './source/am-synth'
 export * from './source/fm-synth'
 export * from './source/duo-synth'
 export * from './source/oscillator'
 export * from './source/synth'
+
+// export * from './source/metal-synth'
+// export * from './source/pluck-synth'

@@ -99,9 +99,6 @@ export const moireShader = (p5) => {
             if(!newCellPos) newCellPos = { x: G.w / 2, y: G.h / 2 }
 
 
-            console.log((oldCellPos.x !== newCellPos.x || oldCellPos.y !== newCellPos.y), oldCellPos, newCellPos)
-
-
 
             // Did cellpos change?
             if((oldCellPos.x !== newCellPos.x || oldCellPos.y !== newCellPos.y)) {
@@ -177,7 +174,6 @@ export const moireShader = (p5) => {
                     }
 
 
-                    console.log('good')
                     shader.setUniform("u_mouse", [
                         M.map(0, G.w, -200, 200, currentCellPos.x), 
                         M.map(0, G.h, -200, 200, currentCellPos.y)
@@ -188,7 +184,6 @@ export const moireShader = (p5) => {
                 }, interval + randomMizeIntervalLength)
             }
             else {
-                console.log('ok')
 
                 t += tIncrement
                 // console.log((Math.sin(t)), t)

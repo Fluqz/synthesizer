@@ -280,7 +280,7 @@
 
         <div id="record" class="btn" title="Space" on:click={toggleRecording} class:recording={isRecording}>&#x2609;</div>
         
-        <div id="reset" class="btn" title="ALT - Delete; Click: SHIFT -> DEFAULT, META -> RESET PRESETS" on:click={reset}>R</div>
+        <div id="reset" class="btn" title="ALT - Delete; Click: SHIFT -> DEFAULT, META -> RESET PRESETS" on:click={reset}>&#x2715;</div>
 
         <div id="mute" class="btn" title="ALT - M" on:click={mute}>M</div>
 

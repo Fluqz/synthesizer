@@ -4,7 +4,30 @@ import { Synthesizer } from '../../synthesizer';
 import { ParamType } from '../node';
 
 
-/**  */
+/** {
+ * 
+ * 
+  "volume": 0,
+  "detune": 0.5,
+  "portamento": 0,
+  "envelope": {
+    "attack": 0.005,
+    "attackCurve": "linear",
+    "decay": 0.1,
+    "decayCurve": "exponential",
+    "release": 1,
+    "releaseCurve": "exponential",
+    "sustain": 0.3
+  },
+  "oscillator": {
+    "partialCount": 0,
+    "partials": [],
+    "phase": 0,
+    "type": "triangle"
+  }
+
+  
+}  */
 export class Synth extends Instrument {
 
     synth: Tone.PolySynth
@@ -34,9 +57,11 @@ export class Synth extends Instrument {
         this.detune = options.detune ? options.detune : .5
         this.portamento = options.portamento ? options.portamento : 0
 
-        this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () =>  this.volume })
-        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () =>  this.detune })
-        this.props.set('portamento', { type: ParamType.KNOB, name: 'Portamento', get: () =>  this.portamento })
+        console.log('synth', this.synth.get())
+
+        this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () =>  this.volume, set: (v) => this.volume = v, min: 0, max: 1, groupID: 0 })
+        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () =>  this.detune, set: (v) => this.detune = v, min: 0, max: 1, groupID: 0 })
+        this.props.set('portamento', { type: ParamType.KNOB, name: 'Portamento', get: () =>  this.portamento, set: (v) => this.portamento = v, min: 0, max: 1, groupID: 0 })
     }
 
     set volume(v: number) {

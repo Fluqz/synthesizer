@@ -57,7 +57,7 @@
 
                     <div class="dropdown-option">{ o }</div>
 
-                    <div class="btn delete" on:click={onDeleteOption}>x</div>
+                    <div class="btn delete" on:click={onDeleteOption}>&#x2715;</div>
 
                 </option>
 
