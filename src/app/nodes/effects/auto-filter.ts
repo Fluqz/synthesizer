@@ -28,14 +28,11 @@ export class AutoFilter extends Effect {
 
         this.wet = this.autoFilter.get().wet
         this._frequency = this.autoFilter.get().frequency
+        this._baseFrequency = this.autoFilter.get().baseFrequency
         this._depth = this.autoFilter.get().depth
         this._octaves = this.autoFilter.get().octaves
-        this._wave = this.autoFilter.get().type.replace(/[0-9]/g, '')
-        this._wavePartial = this.autoFilter.get().type.replace(/[\[\]&]+/g, '')
-        this._baseFrequency = this.autoFilter.get().baseFrequency
-
-        console.log('wave', this._wave)
-        console.log('partials', this._wavePartial)
+        this._wave = 'sine'
+        this._wavePartial = ''
 
         this.props.set('wet', { type: ParamType.KNOB, name: 'Wet', get: () =>  this.wet, set: (e) => this.wet = e, min: 0, max: 1, groupID: 0 })
         this.props.set('depth', { type: ParamType.KNOB, name: 'Depth', get: () =>  this.depth, set: (e) => this.depth = e, min: 0, max: 1, groupID: 0 })

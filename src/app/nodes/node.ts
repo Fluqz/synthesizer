@@ -119,8 +119,6 @@ export abstract class Node implements ISerialize {
     /** Disconnects this Output from [e]'s/all Input(s) */
     disconnect(n?: Node | Tone.ToneAudioNode) {
 
-        console.log('DISCONNECT')
-
         if(n) this.output.disconnect(n instanceof Node ? n.input : n)
         else this.output.disconnect()
     }

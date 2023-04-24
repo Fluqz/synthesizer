@@ -243,8 +243,6 @@ export class Track implements ISerialize {
 
             for(let n of this.nodes) {
 
-                console.log(n)
-
                 n.disconnect()
 
                 nodes.push(n)

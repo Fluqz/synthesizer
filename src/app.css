@@ -37,10 +37,11 @@
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
 }
-/* 
-*:hover {
-  mix-blend-mode: normal;
-} */
+
+.synthesizer * {
+
+  mix-blend-mode: unset;
+}
 
 body {
   background-color: var(--c-b);
@@ -85,7 +86,8 @@ canvas {
 
   display: inline-block;
 
-  width: 30px;
+  min-width: 30px;
+  /* width: 30px; */
   height: 30px;
   line-height: 30px;
 
@@ -93,16 +95,16 @@ canvas {
 
   text-align: center;
 
-  background-color: var(--c-w);;
+  background-color: var(--c-y);;
   color: var(--c-b);
 
-  border-radius: 100%;
+  /* border-radius: 100%; */
 
   transition: .4s background-color, .4s color;
 
   cursor: pointer;
 }
-.btn:hover { background-color: var(--c-b); color: var(--c-w) }
+.btn:hover { background-color: var(--c-b); color: var(--c-y) }
 .btn:active,
 .btn.active { background-color: var(--c-b); }
 

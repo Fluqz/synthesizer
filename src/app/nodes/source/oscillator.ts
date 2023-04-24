@@ -24,10 +24,10 @@ export class Oscillator extends Instrument {
     private _detune: number
     /** The phase is the starting position within the oscillator's cycle. 
      * For example a phase of 180 would start halfway through the oscillator's cycle. */
-    private _phase: number
+    private _phase: number = 0
 
     /** Wave types. Sine, Triangle, Square, Saw */
-    private _wave: string = 'sine'
+    private _wave: Tone.ToneOscillatorType = 'sine'
 
     /** Wave types. Sine, Triangle, Square, Saw */
     private _wavePartial: string = ''
@@ -64,8 +64,8 @@ export class Oscillator extends Instrument {
         this.decay = this.envelope.get().decay as number
         this.sustain = this.envelope.get().sustain
         this.release = this.envelope.get().release as number
-        this._wave = this.osc.get().type.replace(/[0-9]/g, '')
-        this._wavePartial = this.osc.get().type.replace(/[\[\]&]+/g, '')
+        this._wave = 'sine'
+        this._wavePartial = ''
 
 
         this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () => this.volume, set: (v:number) => this.volume = v, group: 0 })
@@ -73,8 +73,8 @@ export class Oscillator extends Instrument {
         this.props.set('wave', { type: ParamType.DROPDOWN, name: 'Wave', get: () => this.wave, set: (v:string) => this.wave = v, options: ['triangle', 'sine', 'square', 'sawtooth'], group: 1 })
         this.props.set('wavePartial', { type: ParamType.DROPDOWN, name: 'Wave Partial', get: () => this.wavePartial, set: (v:string) => this.wavePartial = v, options: ['', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], group: 1 })
 
-        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => this.detune, set: (v:number) => this.detune = v, group: 2 })
-        this.props.set('phase', { type: ParamType.KNOB, name: 'Phase', get: () => this.phase, set: (v:number) => this.phase = v, group: 2 })
+        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => this.detune, set: (v:number) => this.detune = v, min: 0, max: 12, group: 2 })
+        this.props.set('phase', { type: ParamType.KNOB, name: 'Phase', get: () => this.phase, set: (v:number) => this.phase = v, min: 0, max: 1, group: 2 })
         
         this.props.set('attack', { type: ParamType.KNOB, name: 'Attack', get: () => this.attack, set: (v:number) => this.attack = v, min: .1, max: 5, group: 4 })
         this.props.set('decay', { type: ParamType.KNOB, name: 'Decay', get: () => this.decay, set: (v:number) => this.decay = v, min: 0, max: 5, group: 4 })
@@ -102,21 +102,21 @@ export class Oscillator extends Instrument {
     set wave(w) {
 
         this._wave = w
-        this.osc.set({ type: (this._wave + this.wavePartial) as Tone.ToneOscillatorType})
+        this.osc.set({ type: this._wave })
     }
 
     get wavePartial() { return this._wavePartial }
     set wavePartial(w) {
 
         this._wavePartial = w
-        this.osc.set({ type: (this._wave + this.wavePartial) as Tone.ToneOscillatorType})
+        this.osc.set({ type: this._wave })
     }
 
     get detune() { return this._detune }
     set detune(d) {
 
         this._detune = d
-        this.osc.detune.setValueAtTime(this._detune, Tone.now())
+        this.osc.detune.set({ detune: this._detune })
     }
 
     get phase() { return this._phase }
@@ -255,9 +255,17 @@ export class Oscillator extends Instrument {
 
         if(o.name != undefined) this.name = o.name
         if(o.enabled != undefined) this.enabled = o.enabled
-        if(o.frequency != undefined) this.frequency = o.frequency
         if(o.volume != undefined) this.volume = o.volume
+
         if(o.detune != undefined) this.detune = o.detune
+        if(o.phase != undefined) this.phase = o.phase
+        if(o.wave != undefined) this.wave = o.wave
+        if(o.wavePartial != undefined) this.wavePartial = o.wavePartial
+
+        if(o.attack != undefined) this.attack = o.attack
+        if(o.decay != undefined) this.decay = o.decay
+        if(o.sustain != undefined) this.sustain = o.sustain
+        if(o.release != undefined) this.release = o.release
     }
 
     serializeOut() {
@@ -266,9 +274,16 @@ export class Oscillator extends Instrument {
 
             name: this.name,
             enabled: this.enabled,
-            frequency: this.frequency,
-            volume: this.volume,
+            
             detune: this.detune,
+            phase: this.phase,
+            wave: this.wave,
+            wavePartial: this.wavePartial,
+
+            attack: this.attack,
+            decay: this.decay,
+            sustain: this.sustain,
+            release: this.release,
         }
     }
 }

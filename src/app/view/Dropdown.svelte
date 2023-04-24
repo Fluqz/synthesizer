@@ -28,6 +28,8 @@
     const onChange = (e) => {
 
         dispatch('onSelect', e)
+
+        e.target.blur()
     }
 
 </script>

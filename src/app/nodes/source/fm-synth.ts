@@ -167,8 +167,15 @@ export class FMSynth extends Instrument {
         if(o.name != undefined) this.name = o.name
         if(o.enabled != undefined) this.enabled = o.enabled
         if(o.volume != undefined) this.volume = o.volume
-        if(o.detune != undefined) this.detune = o.detune
-        if(o.portamento != undefined) this.portamento = o.portamento
+
+        if(o.detune != undefined) this.volume = o.volume
+        if(o.portamento != undefined) this.volume = o.volume
+        if(o.harmonicity != undefined) this.volume = o.volume
+        if(o.phase != undefined) this.volume = o.volume
+        if(o.attack != undefined) this.volume = o.volume
+        if(o.decay != undefined) this.volume = o.volume
+        if(o.sustain != undefined) this.volume = o.volume
+        if(o.release != undefined) this.volume = o.volume
     }
 
     serializeOut() {
@@ -177,9 +184,18 @@ export class FMSynth extends Instrument {
 
             name: this.name,
             enabled: this.enabled,
+
             volume: this.volume,
+
             detune: this.detune,
-            portamento: this.portamento
+            portamento: this.portamento,
+            harmonicity: this.harmonicity,
+            phase: this.phase,
+
+            attack: this.attack,
+            decay: this.decay,
+            sustain: this.sustain,
+            release: this.release,
         }
     }
 }

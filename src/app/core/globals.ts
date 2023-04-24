@@ -30,13 +30,6 @@ export class G {
 
             this.beat.next(time)
 
-            // let osc = new Tone.Oscillator().start()
-            // let env = new Tone.AmplitudeEnvelope().toDestination()
-
-            // osc.connect(env)
-
-            // env.triggerAttackRelease(.1, Tone.now())
-
         }, '32n')
 
         Tone.Transport.bpm.value = 120

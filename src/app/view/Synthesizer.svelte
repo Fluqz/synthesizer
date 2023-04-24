@@ -209,7 +209,7 @@
         <div id="presets">
             <div>
                 <label for="savePreset">Save Preset</label>
-                <input id="save-preset" type="text" name="savePreset" bind:value={presetInputValue} on:keydown={onPresetInput}/>
+                <input id="save-preset" type="text" placeholder="Preset" name="savePreset" bind:value={presetInputValue} on:keydown={onPresetInput}/>
             </div>
 
             <div id="load-preset">
@@ -361,17 +361,10 @@
 
 .track {
 
-    /* position: relative; */
-/* 
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-start; */
-
     width: 100%;
-/* 
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none; */
+
+    min-width: 75px;
+    height: 75px;
 }
 
 </style>

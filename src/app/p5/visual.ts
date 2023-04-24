@@ -38,6 +38,6 @@ export const Visuals = {
             m2.draw()
         }
 
-        G.beat.subscribe(onDraw)
+        // G.beat.subscribe(onDraw)
     }
 }

@@ -31,8 +31,8 @@ export class Vibrato extends Effect {
         this.depth = this.vibrato.get().depth
         this.maxDelay = this.vibrato.get().maxDelay
 
-        this._wave = this.vibrato.get().type.replace(/[0-9]/g, '')
-        this._wavePartial = this.vibrato.get().type.replace(/[\[\]&]+/g, '')
+        this._wave = 'sine'
+        this._wavePartial = ''
 
         
         this.props.set('wet', { type: ParamType.KNOB, name: 'Wet', get: () =>  this.wet, set: (e) => this.wet = e, min: 0, max: 1, groupID: 0 })

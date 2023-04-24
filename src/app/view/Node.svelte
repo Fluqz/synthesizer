@@ -111,7 +111,7 @@
 
     <div class="node-title">{ node.name[0].toUpperCase() + node.name.substr(1) }</div>
 
-    <div class="delete" on:click={onDelete}>x</div>
+    <div class="delete" on:click={onDelete}>&#x2715;</div>
 
     <div class="parameters">
 
@@ -123,7 +123,7 @@
                 <!-- Each parameter -->
                 {#each g as n}
 
-                    {#if n && n.get() }
+                    {#if n && n.get() != undefined }
                         
                         {#if n.type == ParamType.KNOB}
                             
@@ -144,7 +144,7 @@
                                 name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
                                 value={n.get()}
                                 options={n.options}
-                                on:onSelect={(e) => n.set(e.detail) } 
+                                on:onSelect={(e) => n.set(e.detail.target.value) } 
                             />
 
                         {/if}
@@ -183,18 +183,30 @@
   width: 100%;
   text-align: center;
   font-size: .8rem;
+  height: 20px;
+  line-height: 20px;
 }
 .node .delete {
 
-  position: absolute;
-  right: 4px;
-  top: 0px;
-  cursor: context-menu;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  z-index: 100;
+    position: absolute;
+    right: 15px;
+    top: 0px;
+    cursor: pointer;
+
+    width: 20px;
+    height: 20px;
+
+    z-index: 100;
+
+    transition: .4s background-color, .4s color;
 }
 .node .delete:hover {
-  color: var(--c-o);
+  color: var(--c-b);
+  background-color: var(--c-y);
 }
 
 .node .parameter-group {
@@ -229,6 +241,15 @@
     background-color: var(--c-w);
 
     font-size: 1.2rem;
+
+    transition: .4s background-color, .4s color, .4s opacity;
+
+    z-index: 10;
+}
+
+.node .shift:hover {
+
+    background-color: var(--c-y);
 }
 
 .node .shift.arrow-left {
@@ -242,6 +263,14 @@
 .node .shift-back {
 
     right:0px;
+}
+
+.parameters {
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
 }
 
 </style>

@@ -217,9 +217,9 @@ export class Synthesizer implements ISerialize {
         }
 
         this.tracks = []
-        // this.addTrack(new Track(this, Synthesizer.nodes.sources.Oscillator()))
+        this.addTrack(new Track(this, Synthesizer.nodes.sources.Oscillator()))
         // this.addTrack(new Track(this, Synthesizer.nodes.sources.Synth()))
-        this.addTrack(new Track(this, Synthesizer.nodes.sources.DuoSynth()))
+        // this.addTrack(new Track(this, Synthesizer.nodes.sources.DuoSynth()))
         // this.addTrack(new Track(this, Synthesizer.nodes.sources.FMSynth()))
         // this.addTrack(new Track(this, Synthesizer.nodes.sources.AMSynth()))
 
@@ -319,8 +319,6 @@ export class Synthesizer implements ISerialize {
         }
 
         Synthesizer.activeNotes.add(note + octave)
-
-        // console.log('Synthesizer.trigger', Synthesizer.activeNotes)
 
         if(this.arpMode) {
 

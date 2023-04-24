@@ -246,11 +246,11 @@
 <div class="knob-wrapper" bind:this={dom}>
 
     <div class="knob"
-         bind:this={knobDOM}
-         on:pointerdown={onMouseDown} 
-         on:touchstart={onTouchStart}
-         on:dblclick={() => showResetBtn = !showResetBtn}
-         style={'transform: rotate(' + Math.round(angle * (180 / Math.PI)) + 'deg);'}>
+        bind:this={knobDOM}
+        on:pointerdown={onMouseDown} 
+        on:touchstart={onTouchStart}
+        on:dblclick={() => showResetBtn = !showResetBtn}
+        style={'transform: rotate(' + Math.round(angle * (180 / Math.PI)) + 'deg);'}>
 
         <div class="knob-underlay">
 
@@ -305,33 +305,35 @@
 
   border-radius: 100%;
 
-  /* border: 1px solid var(--c-y); */
-  
   background-color: blue;
   color: inherit;
 
   font-size: 0.7rem;
 
   overflow: hidden;
-/* 
-  display: flex;
-  justify-content: center;
-  align-items: flex-start; */
 
   margin: 0 auto;
-
-  /* box-shadow: 0px 0px 1px 2px rgba(0,0,0,0.2); */
 
   -webkit-user-select: none;  
   -moz-user-select: none;    
   -ms-user-select: none;      
   user-select: none;
 
-
-  background-image: url('/src/assets/imgs/circle-sepia.gif');
+  background-image: url('/src/assets/imgs/circle-monochrome.gif');
   background-size: 1000%;
   background-position: center;
   background-repeat: no-repeat;
+
+  transition: .4s background-color, .4s color;
+  mix-blend-mode: difference;
+
+  z-index: 100;
+}
+.knob:hover {
+    
+    background-image: url('/src/assets/imgs/circle-monochrome-yellow.gif');
+
+    /* background-image: none; */
 }
 
 .knob > .knob-pointer {
@@ -356,9 +358,7 @@
 }
 
 .knob-underlay {
-  background-color: #000;
-  /* mix-blend-mode: unset; */
-
+  /* background-color: #FFF; */
 }
 
 .knob-settings {

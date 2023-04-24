@@ -33,6 +33,7 @@
     })
 
     const sources: number[] | string[] = Object.keys(Synth.nodes.sources)
+    const effects: number[] | string[] = Object.keys(Synth.nodes.effects)
 
 
     onMount(() => {})
@@ -67,9 +68,12 @@
         dispatch('delete', track)
     }
     
-    const addNode = (e) => {
+    const addNode = (name?: string) => {
 
-        track.addNode(Synth.nodes.effects.Delay())
+        if(!effects.includes(name)) return
+
+        if(name != undefined) track.addNode(Synth.nodes.effects[name]())
+        else track.addNode(Synth.nodes.effects.Delay())
     }
 
     const deleteNode = (e) => {
@@ -112,7 +116,7 @@
 
     const onScroll = (e) => {
 
-        if(!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) e.preventDefault()
+        // if(!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) e.preventDefault()
 
         console.log('scroll', track.id)
     }
@@ -163,7 +167,7 @@
 
 
         <!-- Delete -->
-        <div on:click={onDelete}>x</div>
+        <div class="btn" on:click={onDelete}>x</div>
 
     </div>
 
@@ -179,7 +183,21 @@
     {/each}
 
     <!-- Add node -->
-    <div class="add-node-button node" on:click={addNode}>+</div>
+    <div class="add-node-btn node" on:click={addNode}>
+
+        <div class="add-node-btn-plus">+</div>
+
+        <div class="addable-nodes">
+
+            {#each effects as e }
+            
+                <div class="addable-node" on:click={() => addNode(e)}>{ e.substring(0, 2) }</div>
+
+            {/each}
+
+        </div>
+
+    </div>
 
 </div>
 
@@ -189,7 +207,9 @@
 .track-wrapper {
 
     display: flex;
-    height: 90px;
+
+    min-width: inherit;
+    height: inherit;
 
     /* padding: 5px; */
 
@@ -199,6 +219,8 @@
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
+
+    border: .5px solid var(--c-b);
 }
 
 .track-wrapper .track-options {
@@ -213,16 +235,72 @@
     color: var(--c-b);
 }
 
-.track-wrapper .add-node-button {
+.track-wrapper .add-node-btn {
+
+    min-width: inherit;
+    width: 100%;
+
+    height: inherit;
+    line-height: inherit;
 
     background-color: var(--c-w);
     color: var(--c-b);
     transition: .4s background-color, .4s color;
-}
-.track-wrapper .add-node-button:hover {
 
-    color: var(--w);
-    background-color: var(--c-g2);
+    cursor: pointer;
 }
+.track-wrapper .add-node-btn:hover {
+
+    color: var(--c-b);
+    background-color: var(--c-y);
+}
+
+.track-wrapper .add-node-btn .add-node-btn-plus {
+
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.track-wrapper .add-node-btn .addable-nodes {
+    
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+}
+
+.track-wrapper .add-node-btn .addable-nodes .addable-node {
+
+    display: block;
+
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+
+    background-color: var(--c-y);
+    color: var(--c-b);
+
+    transition: .4s background-color, .4s color;
+
+    cursor: pointer;
+}
+
+.track-wrapper .add-node-btn .addable-nodes .addable-node:hover {
+
+    background-color: var(--c-b);
+    color: var(--c-y);
+}
+
 
 </style>

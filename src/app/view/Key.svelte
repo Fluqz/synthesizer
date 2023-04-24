@@ -102,8 +102,6 @@
 
     transition: .4s transform;
     z-index: 0;
-
-    /* mix-blend-mode: difference; */
 }
 .key.black {
     background-color: var(--c-y);
@@ -117,7 +115,6 @@
 
     background-color: var(--c-bl);
     z-index: 1;
-    mix-blend-mode: unset;
 }
 
 </style>
