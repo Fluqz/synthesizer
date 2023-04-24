@@ -5,13 +5,16 @@
     import { onMount } from 'svelte';
     import Synthesizer from './app/view/Synthesizer.svelte'
     
-    import { Synthesizer as Synth } from './app/synthesizer'
+    import { Synthesizer as Synth, type ISynthesizerSerialization } from './app/synthesizer'
     import { Storage } from './app/core/storage'
     import { G } from './app/core/globals'
     
     import { Visuals } from './app/p5/visual'
     import { Track } from './app/track';
     import { Vec2 } from './app/core/math';
+
+    import { DEFAULT_SESSION } from './app/presets';
+
 
     // Init globals
     G.init()
@@ -37,27 +40,70 @@
 
         }, 1500)
 
+        /**
+         * 
+         *  RGB
+         * 
+'rgb(128, 122, 255)',
+'rgb(255, 121, 159)',
+'rgb(128, 255, 255)',
+'rgb(255, 255, 159)',
+'rgb(21, 111, 74)',
+'rgb(105, 22, 22)',
+'rgb(22, 22, 74)',
+'rgb(22, 22, 22)',
+'rgb(105, 111, 22)',
+'rgb(105, 22, 74)',
+'rgb(21, 111, 23)',
+         */
 
-        // let i = 0
-        // let colors = ['#FFFFFF', '#FFFF00', '#00FFFF', '#FF00FF', '#FF0000', '#00FF00']
-        // setInterval(() => {
+        let i = 0
+        let colors = [
+            
+            // '#FFFFFF', '#FFFF00', '#00FFFF', '#FF00FF', '#FF0000', '#00FF00',
+    
+            //   Cyan        Black      Red      blue
+            '#166f4a', '#161616', '#691616', '#16164a',
+            'rgb(128, 122, 255)',
+            'rgb(255, 121, 159)',
+            'rgb(128, 255, 255)',
+            'rgb(255, 255, 159)',
+            'rgb(21, 111, 74)',
+            'rgb(105, 22, 22)',
+            'rgb(22, 22, 74)',
+            'rgb(22, 22, 22)',
+            'rgb(105, 111, 22)',
+            'rgb(105, 22, 74)',
+            'rgb(21, 111, 23)',
+        ]
 
-        //     if(i >= colors.length) i = 0
+        colors.sort(() =>  Math.ceil((Math.random() * 2) - 1) )
 
-        //     document.body.style.backgroundColor = colors[i]
+        console.log(colors)
 
-        //     i++
+        setInterval(() => {
 
-        // }, 2000)
+            if(i >= colors.length) i = 0
+
+            document.body.style.backgroundColor = colors[i]
+
+            i++
+
+        }, 10000)
     })
     
     // Serialize
-    const serializeIn = file => {
+    const serializeIn = (file: any, isString: boolean = false) => {
+
+        console.log('serialize file', file)
     
         // file = ''
-        if(!file) return
+        if(file == undefined) return
     
-        let o = JSON.parse(file)
+        let o: ISynthesizerSerialization
+
+        if(isString) o = JSON.parse(file)
+        else o = file
     
         synthesizer.serializeIn(o)
 
@@ -104,7 +150,11 @@
         synthesizer.dispose()
     }
 
-    serializeIn(Storage.load())
+    const storageData = Storage.load()
+
+    if(storageData) serializeIn(storageData, true)
+
+    else serializeIn(DEFAULT_SESSION, false)
 
 
 

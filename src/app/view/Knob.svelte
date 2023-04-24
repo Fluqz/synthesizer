@@ -20,8 +20,9 @@
     export let min: number = 0
     /** Maximum possible value */
     export let max: number = 1
+    
     /** Division of (max - min) / division */
-    export let division: number = 100
+    let division: number = (Math.abs(max) + Math.abs(min)) / 3600
 
     /** Initial value */
     const initValue: number = value
@@ -33,6 +34,7 @@
 
     let clientRect: DOMRect
 
+    console.log('knob', min, max, (Math.abs(max) + Math.abs(min)), division)
     
     /** Center position of HTML element { x, y } */
     let centerPosition: Vec2 = new Vec2()
@@ -183,7 +185,7 @@
     /** On 'keydown' event callback */
     const onKeyDown = (e) => {
 
-        if(e.key === 'Shift') division *= 40
+        // if(e.key === 'Shift') division *= 40
         // if(e.key === 'Meta') division /= 4
 
         isKeyDown = true
@@ -192,7 +194,7 @@
     const onKeyUp = (e) => {
 
 
-        if(e.key === 'Shift') division /= 40
+        // if(e.key === 'Shift') division /= 40
         // if(e.key === 'Meta') division *= 4
 
         isKeyDown = false
@@ -202,8 +204,10 @@
         e.preventDefault()
         e.stopPropagation()
 
-        if(e.wheelDelta > 0) setValue(M.map(min, max, 0, 1, value - ((1 / division) * Math.round(Math.abs(e.wheelDelta / 5)))))
-        else if(e.wheelDelta < 0) setValue(M.map(min, max, 0, 1, value + ((1 / division) * Math.round(Math.abs(e.wheelDelta / 5)))))
+        console.log(setValue(value - ((1 / division) * Math.round(Math.abs(e.wheelDelta / 5)))), value, ((1 / division) * Math.round(Math.abs(e.wheelDelta / 5))))
+
+        if(e.wheelDelta > 0) setValue(value - ((1 / division) * Math.round(Math.abs(e.wheelDelta / 5))))
+        else if(e.wheelDelta < 0) setValue(value + ((1 / division) * Math.round(Math.abs(e.wheelDelta / 5))))
     }
 
     document.addEventListener('pointermove', onMouseMove)

@@ -1,5 +1,6 @@
 import { Subject } from "rxjs"
 import type { ISession, Synthesizer } from "../synthesizer"
+import { DEFAULT_SESSION } from "../presets"
 
 
 
@@ -11,14 +12,16 @@ export interface IPreset extends ISession {
 
 export class PresetManager {
 
-    presets: IPreset[]
+    private presets: IPreset[]
 
-    synthesizer: Synthesizer
+    private synthesizer: Synthesizer
 
     private presetID = 0
 
-    onSavePreset: Subject<IPreset>
-    onRemovePreset: Subject<IPreset>
+    public default: IPreset
+
+    public onSavePreset: Subject<IPreset>
+    public onRemovePreset: Subject<IPreset>
 
     constructor(synthesizer: Synthesizer) {
 
@@ -26,9 +29,17 @@ export class PresetManager {
 
         this.presets = []
 
+        this.default = {
+            name: 'default',
+            id: -1,
+            ...DEFAULT_SESSION.currentSession
+        }
+
         this.onSavePreset = new Subject()
         this.onRemovePreset = new Subject()
     }
+
+    getPresets() { return this.presets }
 
     savePreset(name: string) {
 
@@ -45,9 +56,29 @@ export class PresetManager {
         return true
     }
 
-    loadPreset(name: string) : boolean {
+    addPreset(preset: IPreset) {
+
+        if(this.presets.find(p => p.name == preset.name)) return
+
+        this.presets.push(preset)
+    }
+
+    loadPresetFromName(name: string) : boolean {
 
         let preset = this.presets.find(p => p.name == name)
+
+        if(!preset) return false
+
+        this.synthesizer.serializeIn({
+            currentSession: preset,
+            presets: this.presets
+        })
+
+        return true
+    }
+
+
+    loadPreset(preset: IPreset) : boolean {
 
         if(!preset) return false
 
@@ -78,5 +109,11 @@ export class PresetManager {
     setPresets(presets: IPreset[]) {
 
         this.presets = presets
+    }
+
+    reset() {
+
+        this.presets.length = 0
+        this.presetID = 0
     }
 }

@@ -185,13 +185,19 @@
     <!-- Add node -->
     <div class="add-node-btn node" on:click={addNode}>
 
-        <div class="add-node-btn-plus">+</div>
-
         <div class="addable-nodes">
 
             {#each effects as e }
             
-                <div class="addable-node" on:click={() => addNode(e)}>{ e.substring(0, 2) }</div>
+                <div class="addable-node" on:click={() => addNode(e)}>
+
+                    <!-- <div class="addable-node-inner"> -->
+
+                        { e.substring(0, 2) }
+
+                    <!-- </div> -->
+
+                </div>
 
             {/each}
 
@@ -238,7 +244,7 @@
 .track-wrapper .add-node-btn {
 
     min-width: inherit;
-    width: 100%;
+    width: auto;
 
     height: inherit;
     line-height: inherit;
@@ -255,52 +261,76 @@
     background-color: var(--c-y);
 }
 
-.track-wrapper .add-node-btn .add-node-btn-plus {
-
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    width: 100%;
-    height: 100%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .track-wrapper .add-node-btn .addable-nodes {
     
     position: absolute;
     left: 0px;
     top: 0px;
-    width: 100%;
+    width: auto;
     height: 100%;
 
     display: flex;
+    justify-content: start;
+    align-items: center;
 }
 
 .track-wrapper .add-node-btn .addable-nodes .addable-node {
 
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    width: 25px;
-    height: 25px;
-    line-height: 25px;
+    width: 75px;
+    height: 75px;
+    line-height: 75px;
     text-align: center;
 
     background-color: var(--c-y);
     color: var(--c-b);
 
-    transition: .4s background-color, .4s color;
+    transition: .2s background-color, .2s color;
 
     cursor: pointer;
 }
 
 .track-wrapper .add-node-btn .addable-nodes .addable-node:hover {
 
+
     background-color: var(--c-b);
     color: var(--c-y);
 }
+
+
+
+/* 
+.track-wrapper .add-node-btn .addable-nodes .addable-node .addable-node-inner {
+
+    width: 100%;
+    height: 100%;
+    line-height: inherit;
+    text-align: center;
+
+    transition: .2s background-color, .2s color, .2s border-radius, .2s line-height, .2s height, .2s width;
+
+    cursor: pointer;
+} */
+
+
+/* 
+
+.track-wrapper .add-node-btn .addable-nodes .addable-node:hover .addable-node-inner {
+
+    background-color: var(--c-b);
+    color: var(--c-y);
+
+    border-radius: 100%;
+
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+} 
+
+*/
 
 
 </style>

@@ -488,7 +488,7 @@ export class Synthesizer implements ISerialize {
 
         for(let t of this.tracks) t.destroy()
 
-        this.tracks = []
+        this.tracks.length = 0
 
         this.set(this)
     }
@@ -545,7 +545,7 @@ export class Synthesizer implements ISerialize {
 
         if(o.presets && o.presets.length > 0) {
 
-            this.presetManager.presets = o.presets
+            this.presetManager.setPresets(o.presets)
         }
 
         this.set(this)
@@ -556,7 +556,7 @@ export class Synthesizer implements ISerialize {
         
         return {
 
-            presets: this.presetManager.presets,
+            presets: this.presetManager.getPresets(),
             currentSession: this.getSessionObject()
         }
     }

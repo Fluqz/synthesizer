@@ -15,6 +15,7 @@
     import { writable } from 'svelte/store';
     import { G } from '../core/globals';
     import Dropdown from './Dropdown.svelte';
+    import { DEFAULT_SESSION } from '../presets';
 
     export let synthesizer: Synthesizer
 
@@ -30,7 +31,7 @@
         synthesizer = s
         tracksStore.set(s.tracks)
 
-        presets = []
+        presets = [  ]
         for(let p of synthesizer.presetManager.presets) presets.push(p.name)
     })
 
@@ -135,6 +136,23 @@
     const reset = (e) => {
 
         synthesizer.reset()
+
+        if(e.shiftKey) {
+
+            console.log('RESET - SHIFT -> LOAD DEFAULT')
+
+            synthesizer.presetManager.loadPreset(synthesizer.presetManager.default)
+
+            scrollToBottom()
+        }
+        else if (e.metaKey) {
+
+            console.log('RESET - META -> RESET PRESETS')
+
+            synthesizer.presetManager.reset()
+        }
+
+        synthesizer.store.set(synthesizer)
     }
 
     /** Reset synthesizer button */
@@ -181,11 +199,18 @@
 
     const onChangePresets = (e) => {
 
-        synthesizer.presetManager.loadPreset(e.detail.target.value)
+        synthesizer.presetManager.loadPresetFromName(e.detail.target.value)
 
         synthesizer.store.set(synthesizer)
 
         scrollToBottom()
+    }
+
+    const onDeletePresetOption = (e) => {
+
+        synthesizer.presetManager.removePreset(e.detail.target.value)
+
+        synthesizer.store.set(synthesizer)
     }
 
     onDestroy(() => {
@@ -213,14 +238,16 @@
             </div>
 
             <div id="load-preset">
-                <label for="loadPreset">Load Preset</label>
+                <label for="loadPreset">Load</label>
 
                 <!-- Presets -->
                 <Dropdown
                     name={''}
                     value={''}
                     options={presets}
+                    deletableOptions={true}
                     on:onSelect={onChangePresets} 
+                    on:onDeleteOption={onDeletePresetOption}
                 />
             </div>
         </div>
@@ -253,7 +280,7 @@
 
         <div id="record" class="btn" title="Space" on:click={toggleRecording} class:recording={isRecording}>&#x2609;</div>
         
-        <div id="reset" class="btn" title="ALT - Delete" on:click={reset}>R</div>
+        <div id="reset" class="btn" title="ALT - Delete; Click: SHIFT -> DEFAULT, META -> RESET PRESETS" on:click={reset}>R</div>
 
         <div id="mute" class="btn" title="ALT - M" on:click={mute}>M</div>
 

@@ -49,6 +49,8 @@ body {
 
   transition: 1s all;
 
+  transition: 1s background-color;
+
   overflow-x: hidden;
   scrollbar-width: none;
 

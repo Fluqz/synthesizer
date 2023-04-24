@@ -12,6 +12,8 @@
     /** Options */
     export let options: string[] | number[] = []
 
+    export let deletableOptions: boolean = true
+
     if(value == undefined && options && options.length > 0) value = options[0]
 
     const initValue = value
@@ -32,6 +34,11 @@
         e.target.blur()
     }
 
+    const onDeleteOption = (e) => {
+
+        dispatch('onDeleteOption', e)
+    }
+
 </script>
 
 
@@ -47,7 +54,11 @@
             {#each options as o}
                     
                 <option class="dropdown-option" value={o}>
-                    { o }
+
+                    <div class="dropdown-option">{ o }</div>
+
+                    <div class="btn delete" on:click={onDeleteOption}>x</div>
+
                 </option>
 
             {/each}
@@ -73,6 +84,11 @@
 }
 
 .dropdown-select {
+
+    -webkit-appearance:none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
 
     border: none;
 
