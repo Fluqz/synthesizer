@@ -4,7 +4,7 @@ import { Synthesizer } from '../../synthesizer';
 import { ParamType } from '../node';
 
 import Sweep from '../../../assets/samples/synth/SweepFm7.wav'
-import BackHome from '../../../assets/samples/synth/SweepFm7.wav'
+import BackHome from '../../../assets/samples/synth/Back_Home_F_01.wav'
 
 const samples = [
 
