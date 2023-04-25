@@ -89,6 +89,8 @@ export class Phaser extends Effect {
 
     serializeIn(o) {
 
+        super.serializeIn(o)
+
         if(o.enabled != undefined) this.enabled = o.enabled
 
         if(o.wet != undefined) this.wet = o.wet
@@ -101,7 +103,11 @@ export class Phaser extends Effect {
 
     serializeOut() {
 
+        let no = super.serializeOut()
+
         return {
+
+            ...no,
 
             name: this.name,
             enabled: this.enabled,
@@ -111,7 +117,7 @@ export class Phaser extends Effect {
             baseFrequency: this.baseFrequency,
             frequency: this.frequency,
             Q: this.Q,
-            stages: this.stages,
+            // stages: this.stages,
         }
     }
 }

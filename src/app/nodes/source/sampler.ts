@@ -71,10 +71,14 @@ export class Sampler extends Instrument {
             if(s.name == v) return s.path
         })
 
-        if(path == undefined) return
+
+        if(path == undefined) {
+
+            if(this.sampler == undefined) this.sampler = new Tone.Sampler()
+            return
+        }
 
         this._sample = v
-
 
         this.sampler = new Tone.Sampler({
             urls: {
@@ -83,7 +87,6 @@ export class Sampler extends Instrument {
         })
 
         this.sampler.connect(this.gain)
-
     }
     get sample() { return this._sample }
 
@@ -121,6 +124,8 @@ export class Sampler extends Instrument {
 
     serializeIn(o) {
 
+        super.serializeIn(o)
+
         if(o.name != undefined) this.name = o.name
         if(o.enabled != undefined) this.enabled = o.enabled
         if(o.volume != undefined) this.volume = o.volume
@@ -128,8 +133,11 @@ export class Sampler extends Instrument {
 
     serializeOut() {
 
+        let no = super.serializeOut()
+
         return {
 
+            ...no,
             name: this.name,
             enabled: this.enabled,
             volume: this.volume,

@@ -287,7 +287,7 @@ export class Synthesizer implements ISerialize {
     /** Add a instrument to the synthesizer. */
     addTrack(track: Track) {
 
-        this.stopAll()
+        this.releaseKeys()
         
         if(this.tracks.indexOf(track) == -1) this.tracks.push(track)
         
@@ -298,7 +298,7 @@ export class Synthesizer implements ISerialize {
 
     removeTrack(track: Track) {
 
-        this.stopAll()
+        this.releaseKeys()
 
         this.tracks.splice(this.tracks.indexOf(track), 1)
 
@@ -363,7 +363,7 @@ export class Synthesizer implements ISerialize {
     }
 
     /** Will release all triggered notes that are stored in [activeNotes] */
-    stopAll() {
+    releaseKeys() {
 
         for(let n of Synthesizer.activeNotes) this.releaseNote(n)
 
@@ -486,7 +486,7 @@ export class Synthesizer implements ISerialize {
         this.setVolume(.5)
         this.setOctave(2)
 
-        this.stopAll()
+        this.releaseKeys()
 
         for(let t of this.tracks) t.destroy()
 

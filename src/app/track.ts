@@ -6,10 +6,17 @@ import { writable, type Writable } from 'svelte/store'
 
 export interface ITrackSerialization extends ISerialization {
 
-    muted: boolean
+    enabled: boolean
+
     volume: number
     instrument: INodeSerialization
     nodes: INodeSerialization[]
+
+    isMuted: boolean
+    soloEnabled: boolean
+    holdEnabled: boolean
+
+    isCollapsed: boolean
 }
 
 export class Track implements ISerialize {
@@ -41,7 +48,7 @@ export class Track implements ISerialize {
     public isMuted: boolean
 
     /** Mute this track */
-    public isSolo: boolean
+    public soloEnabled: boolean
 
     /** When enabled, the current instrument with current note/chord is played endlessly. */
     private _holdEnabled: boolean
@@ -60,7 +67,7 @@ export class Track implements ISerialize {
         this.instrument = instrument
         this.volumeNode = new Tone.Volume(this._volume)
         this.isMuted = false
-        this.isSolo = false
+        this.soloEnabled = false
         this._holdEnabled = false
 
         if(instrument) {
@@ -135,9 +142,9 @@ export class Track implements ISerialize {
     /** Activates solo mode. Only tracks in solo mode can be heard. */
     solo(s: boolean) {
 
-        this.isSolo = s === true ? true : false
+        this.soloEnabled = s === true ? true : false
 
-        if(this.isSolo) {
+        if(this.soloEnabled) {
 
             // Set volume
             this.volumeNode.volume.exponentialRampTo(this._volume, .15, Tone.now())
@@ -147,7 +154,7 @@ export class Track implements ISerialize {
                 // Ignore self
                 if(t === this) continue
                 // Ignore others in solo mode
-                else if(t.isSolo) continue
+                else if(t.soloEnabled) continue
                 // Silence every other track
                 else t.volumeNode.volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .2, Tone.now())
             }
@@ -158,7 +165,7 @@ export class Track implements ISerialize {
             let staySoloMode:boolean = false
             for(let t of this.synthesizer.tracks) {
 
-                if(t.isSolo) staySoloMode = true
+                if(t.soloEnabled) staySoloMode = true
             }
 
             // Any track left in solo mode? then only change self volume back to normal
@@ -320,7 +327,12 @@ export class Track implements ISerialize {
 
     serializeIn(o: ITrackSerialization) {
 
-        if(o.muted) this.mute(o.muted)
+        // if(o.name) this.name = o.name
+        // if(o.enabled) this.enabled = o.enabled
+        // if(o.arpeggiatorEnabled) this.arpeggiatorEnabled = o.arpeggiatorEnabled
+        if(o.soloEnabled) this.mute(o.soloEnabled)
+        if(o.holdEnabled) this.solo(o.holdEnabled)
+        if(o.isCollapsed) this.holdEnabled = o.isCollapsed
         if(o.volume) this.volume = o.volume
 
         if(o.instrument) {
@@ -356,10 +368,19 @@ export class Track implements ISerialize {
         for(let n of this.nodes) nodes.push(n.serializeOut())
 
         return {
-            muted: this.isMuted,
+
+            // name: this.name,
+            enabled: true,
+
+            volume: this.volume,
             instrument: this.instrument == null ? undefined : this.instrument.serializeOut(),
             nodes: nodes,
-            volume: this.volume
+
+            soloEnabled: this.soloEnabled,
+            holdEnabled: this.holdEnabled,
+            isMuted: this.isMuted,
+
+            isCollapsed: false,
         }
     }
 }

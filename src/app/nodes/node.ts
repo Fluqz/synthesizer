@@ -1,6 +1,6 @@
 import { Subject, count } from 'rxjs'
 import type * as Tone from 'tone'
-import type { ISerialize } from '../synthesizer'
+import type { ISerialization, ISerialize } from '../synthesizer'
 import { writable, type Writable } from 'svelte/store'
 
 export enum ParamType {
@@ -45,10 +45,12 @@ export interface SwitchNodeParameter extends NodeParameter {
     enabled: boolean
 }
 
-export interface INodeSerialization {
+
+export interface INodeSerialization extends ISerialization {
 
     name: string
     enabled: boolean
+    collapsed: boolean
 }
 
 /** Represents a Node that can be connected to eachother */
@@ -76,8 +78,11 @@ export abstract class Node implements ISerialize {
     /** Array of settable properties */
     props: Map<string, KnobNodeParameter | SwitchNodeParameter | DropDownNodeParameter> 
 
-    /**  */
+    /** instance Store */
     store: Writable<Node>
+
+    /** Visiblity flag for small/edit view */
+    collapsed: boolean = false
 
     constructor(name) {
 
@@ -171,6 +176,7 @@ export abstract class Node implements ISerialize {
 
         if(o.name) this.name = o.name
         if(o.enabled) this.enabled = o.enabled
+        if(o.collapsed) this.collapsed = o.collapsed
     }
 
     serializeOut() : INodeSerialization {
@@ -179,6 +185,7 @@ export abstract class Node implements ISerialize {
 
             name: this.name,
             enabled: this.enabled,
+            collapsed: this.collapsed
         }
     }
 }

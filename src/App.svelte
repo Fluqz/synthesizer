@@ -14,6 +14,7 @@
     import { Vec2 } from './app/core/math';
 
     import { DEFAULT_SESSION } from './app/presets';
+    import { Midi } from './app/core/midi';
 
 
     // Init globals
@@ -28,6 +29,9 @@
 
     // On document ready
     onMount(() => {
+
+
+        Midi.init()
 
         // Scroll to bottom
         setTimeout(() => {
@@ -118,23 +122,43 @@
     }
     
     // ON CHANGE TAB
-    document.addEventListener('visibilitychange', (e) => {
     
-        if (document.visibilityState == "visible") {
-            // console.log('visible')
-    
+    const toggleActive = (active:boolean) => {
+        
+        if (active) {
+            // console.log('activate')
+            
             synthesizer.mute(false)
-
+            
+            Tone.Transport.start(Tone.now() + .5)
+            
+            Visual.visualsEnabled = true
+            
         }
         else {
-            synthesizer.stopAll()
-            // console.log('not visible')
-
+            // console.log('deactivate')
+            
+            synthesizer.releaseKeys()
             synthesizer.mute(true)
-        }  // TODO - NOT WORKING?????
-    
+            
+            Tone.Transport.stop(Tone.now() + .5)
+            Visual.visualsEnabled = false
+        }
+    }
+    document.addEventListener('visibilitychange', (e) => {
         
+        if (document.visibilityState == "visible") {
+            
+            toggleActive(true)
+        }
+        else {
+
+            toggleActive(false)
+        }
     })
+    window.addEventListener('focus', () => toggleActive(true))
+    window.addEventListener('blur', () => toggleActive(false))
+
     
     window.addEventListener('resize', () => {
     

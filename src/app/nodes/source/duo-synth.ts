@@ -56,7 +56,7 @@ export class DuoSynth extends Instrument {
         this.props.set('harmonicity', { type: ParamType.KNOB, name: 'Harmonicity', get: () => { return this.harmonicity }, set: (v: number) => { this.harmonicity = v }, min: 0, max: 1, group: 1 })
         this.props.set('portamento', { type: ParamType.KNOB, name: 'Portamento', get: () => { return this.portamento }, set: (v: number) => { this.portamento = v }, min: 0, max: 1, group: 1 })
         this.props.set('vibratoAmount', { type: ParamType.KNOB, name: 'Vibrato Amount', get: () => { return this.vibratoAmount }, set: (v: number) => { this.vibratoAmount = v }, min: 0, max: 1, group: 1 })
-        this.props.set('vibratoRate', { type: ParamType.KNOB, name: 'VibratoRate', get: () => { return this.vibratoRate }, set: (v: number) => { this.vibratoRate = v }, min: 0, max: 1, group: 1 })
+        this.props.set('vibratoRate', { type: ParamType.KNOB, name: 'VibratoRate', get: () => { return this.vibratoRate }, set: (v: number) => { this.vibratoRate = v }, min: 0, max: 60, group: 1 })
 
         this.props.set('attack0', { type: ParamType.KNOB, name: 'Attack 1', get: () => { return this.attack0 }, set: (v: number) => { this.attack0 = v }, min: 0, max: 3, group: 2 })
         this.props.set('decay0', { type: ParamType.KNOB, name: 'Decay 1', get: () => { return this.decay0 }, set: (v: number) => { this.decay0 = v }, min: 0, max: 1, group: 2 })
@@ -152,6 +152,8 @@ export class DuoSynth extends Instrument {
 
     serializeIn(o) {
 
+        super.serializeIn(o)
+
         if(o.name != undefined) this.name = o.name
         if(o.enabled != undefined) this.enabled = o.enabled
 
@@ -173,8 +175,12 @@ export class DuoSynth extends Instrument {
 
     serializeOut() {
 
+        let no = super.serializeOut()
+
         return {
 
+            ...no,
+            
             name: this.name,
             enabled: this.enabled,
 

@@ -188,7 +188,7 @@
     /** On 'keydown' event callback */
     const onKeyDown = (e) => {
 
-        if(e.key === 'Shift') division *= 40
+        if(e.key === 'Meta') division *= 40
         // if(e.key === 'Meta') division /= 4
 
         isKeyDown = true
@@ -197,12 +197,14 @@
     const onKeyUp = (e) => {
 
 
-        if(e.key === 'Shift') division /= 40
+        if(e.key === 'Meta') division /= 40
         // if(e.key === 'Meta') division *= 4
 
         isKeyDown = false
     }
     const onScroll = (e) => {
+
+        if(!e.shiftKey) return
 
         e.preventDefault()
         e.stopPropagation()
@@ -303,6 +305,8 @@
     font-size: 0.7rem;
     margin: 15px 5px 0px 5px;
     color: inherit;
+
+    /* min-width: 50px; */
 }
 
 .knob {

@@ -182,9 +182,9 @@
     <Node node={track.instrument} />
 
     <!-- Nodes -->
-    {#each $nodesStore as node, i}
+    {#each $nodesStore as node }
 
-        <Node bind:node={node} on:shiftForward={shiftForward} on:shiftBack={shiftBack} on:deleteNode={deleteNode} />
+        <Node bind:node={node} collapsed={node.collapsed} on:shiftForward={shiftForward} on:shiftBack={shiftBack} on:deleteNode={deleteNode} />
 
     {/each}
 
@@ -291,7 +291,7 @@
     line-height: 75px;
     text-align: center;
 
-    background-color: var(--c-y);
+    background-color: var(--c-w);
     color: var(--c-b);
 
     transition: .2s background-color, .2s color;

@@ -93,6 +93,8 @@ export class Vibrato extends Effect {
 
     serializeIn(o) {
 
+        super.serializeIn(o)
+        
         if(o.enabled != undefined) this.enabled = o.enabled
 
         if(o.wet != undefined) this.wet = o.wet
@@ -105,8 +107,11 @@ export class Vibrato extends Effect {
 
     serializeOut() {
 
+        let no = super.serializeOut()
+
         return {
 
+            ...no,
             name: this.name,
             enabled: this.enabled,
 

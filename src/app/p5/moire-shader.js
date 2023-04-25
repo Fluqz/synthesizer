@@ -51,8 +51,6 @@ export const moireShader = (p5) => {
     p5.draw = () => {
 
 
-        // console.log('DRAW')
-
         if(!Visual.visualsEnabled) {
 
             return

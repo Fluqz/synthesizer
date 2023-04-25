@@ -164,6 +164,8 @@ export class FMSynth extends Instrument {
 
     serializeIn(o) {
 
+        super.serializeIn(o)
+
         if(o.name != undefined) this.name = o.name
         if(o.enabled != undefined) this.enabled = o.enabled
         if(o.volume != undefined) this.volume = o.volume
@@ -180,8 +182,11 @@ export class FMSynth extends Instrument {
 
     serializeOut() {
 
+        let no = super.serializeOut()
+
         return {
 
+            ...no,
             name: this.name,
             enabled: this.enabled,
 

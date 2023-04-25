@@ -18,13 +18,18 @@ export class LFOFilter extends Node {
 
     serializeIn(o) {
 
+        super.serializeIn(o)
+
         if(o.enabled != undefined) this.enabled = o.enabled
     }
 
     serializeOut() {
 
+        let no = super.serializeOut()
+
         return {
 
+            ...no,
             name: this.name,
             enabled: this.enabled,
         }

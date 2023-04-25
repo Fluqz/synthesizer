@@ -14,7 +14,7 @@
 
     export let node: Node
 
-    export let isClosed: Boolean = false
+    export let collapsed: Boolean = false
 
 
 
@@ -79,7 +79,7 @@
 
     const toggleShrinking = () => {
 
-        isClosed = !isClosed
+        collapsed = !collapsed
     }
 
     const onDelete = () => {
@@ -127,7 +127,7 @@
 <div class="node">
 
     
-    {#if !isInstrument && !isClosed }
+    {#if !isInstrument && !collapsed }
         
         <div class="shift-forward shift arrow-left" on:click={shiftForward}>&#x27A4</div>
 
@@ -147,7 +147,7 @@
 
     <div class="delete" on:click={onDelete}>&#x2715;</div>
 
-    {#if !isClosed }
+    {#if !collapsed }
 
         <div class="parameters">
 

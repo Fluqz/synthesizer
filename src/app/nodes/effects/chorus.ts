@@ -100,18 +100,21 @@ export class Chorus extends Effect {
     set wave(w) {
 
         this._wave = w
-        this.autoFilter.set({ type: (this._wave + this.wavePartial)})
+        this.chorus.set({ type: (this._wave + this.wavePartial)})
     }
 
     get wavePartial() { return this._wavePartial }
     set wavePartial(w) {
 
         this._wavePartial = w
-        this.autoFilter.set({ type: (this._wave + this.wavePartial)})
+        this.chorus.set({ type: (this._wave + this.wavePartial)})
     }
 
 
     serializeIn(o) {
+
+        let no = super.serializeOut()
+        super.serializeIn(o)
 
         if(o.enabled != undefined) this.enabled = o.enabled
         if(o.wet != undefined) this.wet = o.wet
@@ -122,8 +125,11 @@ export class Chorus extends Effect {
 
     serializeOut() {
 
+        let no = super.serializeOut()
+
         return {
 
+            ...no,
             name: this.name,
             enabled: this.enabled,
             wet: this.wet,

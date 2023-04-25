@@ -3,8 +3,6 @@
 
 #Unfinished
 
-- dropdown delete with ::after
-- dropdown label text variable instead of selected
 - two tween functions combine
 
 
@@ -18,7 +16,7 @@
 - hide keyboard
 - random octaves on keys
 - loop mode recording - set a loop length and start record and play. loop runns and playing will overdub. also make undo 
-- change wave
+
 - Record what youre playing in midi notes?
 - Loop recordings?
 - Add different colors for different octaves (only for black keys?)

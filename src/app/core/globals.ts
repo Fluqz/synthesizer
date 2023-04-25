@@ -23,7 +23,6 @@ export class G {
         G.h = innerHeight
 
 
-        Midi.init()
         Visual.init()
 
 

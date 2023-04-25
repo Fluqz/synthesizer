@@ -73,7 +73,7 @@ export class Oscillator extends Instrument {
         this.props.set('wave', { type: ParamType.DROPDOWN, name: 'Wave', get: () => this.wave, set: (v:string) => this.wave = v, options: ['triangle', 'sine', 'square', 'sawtooth'], groupID: 1 })
         this.props.set('wavePartial', { type: ParamType.DROPDOWN, name: 'Wave Partial', get: () => this.wavePartial, set: (v:string) => this.wavePartial = v, options: ['', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], group: 1 })
 
-        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => this.detune, set: (v:number) => this.detune = v, min: 0, max: 12, groupID: 2 })
+        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => this.detune, set: (v:number) => this.detune = v, min: 0, max: 1000, groupID: 2 })
         this.props.set('phase', { type: ParamType.KNOB, name: 'Phase', get: () => this.phase, set: (v:number) => this.phase = v, min: 0, max: 1, groupID: 2 })
         
         this.props.set('attack', { type: ParamType.KNOB, name: 'Attack', get: () => this.attack, set: (v:number) => this.attack = v, min: .1, max: 5, groupID: 4 })
@@ -115,7 +115,9 @@ export class Oscillator extends Instrument {
     get detune() { return this._detune }
     set detune(d) {
 
+
         this._detune = d
+
         this.osc.detune.set({ detune: this._detune })
     }
 
@@ -253,6 +255,8 @@ export class Oscillator extends Instrument {
  
     serializeIn(o) {
 
+        super.serializeIn(o)
+        
         if(o.name != undefined) this.name = o.name
         if(o.enabled != undefined) this.enabled = o.enabled
         if(o.volume != undefined) this.volume = o.volume
@@ -270,7 +274,11 @@ export class Oscillator extends Instrument {
 
     serializeOut() {
 
+        let no = super.serializeOut()
+
         return {
+
+            ...no,
 
             name: this.name,
             enabled: this.enabled,
