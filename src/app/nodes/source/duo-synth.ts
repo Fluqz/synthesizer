@@ -32,8 +32,6 @@ export class DuoSynth extends Instrument {
         this.input = null
 
 
-        console.log('DUO', this.polySynth.get())
-
         this.detune = options.detune != undefined ? options.detune : this.polySynth.get().detune
         this.portamento = options.portamento != undefined ? options.portamento : this.polySynth.get().portamento
         this.harmonicity = options.harmonicity != undefined ? options.harmonicity : this.polySynth.get().harmonicity

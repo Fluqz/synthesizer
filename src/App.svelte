@@ -9,7 +9,7 @@
     import { Storage } from './app/core/storage'
     import { G } from './app/core/globals'
     
-    import { Visuals } from './app/p5/visual'
+    import { Visual } from './app/p5/visual'
     import { Track } from './app/track';
     import { Vec2 } from './app/core/math';
 
@@ -23,7 +23,7 @@
     let synthesizer = G.synthesizer = new Synth()
 
     // Create Visuals
-    Visuals.moire()
+    Visual.moire()
 
 
     // On document ready
@@ -79,8 +79,6 @@
 
         colors.sort(() =>  Math.ceil((Math.random() * 2) - 1) )
 
-        console.log(colors)
-
         setInterval(() => {
 
             if(i >= colors.length) { 
@@ -99,8 +97,6 @@
     // Serialize
     const serializeIn = (file: any, isString: boolean = false) => {
 
-        console.log('serialize file', file)
-    
         // file = ''
         if(file == undefined) return
     
@@ -186,16 +182,16 @@
 
     const toggleVisuals = (e) => {
 
-        G.visualsEnabled = !G.visualsEnabled
+        Visual.visualsEnabled = !Visual.visualsEnabled
     }
     
     const saveImage = (e) => {
 
-        G.visualsEnabled = false
+        Visual.visualsEnabled = false
 
         G.saveVisuals()
 
-        G.visualsEnabled = true
+        Visual.visualsEnabled = true
     }
 
 </script>

@@ -17,14 +17,23 @@ export interface IVisual {
 
 export let visualCount: number = 0
 
-export const Visuals = {
+export class Visual {
 
-    moire: () => {
+    static visualsEnabled: boolean
+
+    static visuals: Map<string, IVisual> = new Map()
+
+    static init() {
+
+        this.visualsEnabled = true
+    }
+
+    static moire() {
 
         let m1 = new P5(moireShader)
         let m2 = new P5(moireShader)
 
-        G.visuals.set('moire', {
+        this.visuals.set('moire', {
 
             id: visualCount++,
             p5: [ m1, m2 ]

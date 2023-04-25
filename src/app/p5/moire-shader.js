@@ -2,8 +2,10 @@ import { Synthesizer } from "../synthesizer"
 import { G } from "../core/globals"
 import { Grid } from "../core/grid"
 import { M } from "../core/math/math"
+import { Visual } from "./visual"
 
-import * as Tone from 'tone'
+
+
 export const moireShader = (p5) => {
 
     let shader
@@ -51,7 +53,7 @@ export const moireShader = (p5) => {
 
         // console.log('DRAW')
 
-        if(!G.visualsEnabled) {
+        if(!Visual.visualsEnabled) {
 
             return
         }
@@ -228,7 +230,7 @@ export const moireShader = (p5) => {
     let CID
     p5.keyPressed = () => { // TODO - aNOT WORKING
 
-        if(G.visualsEnabled) return
+        if(Visual.visualsEnabled) return
 
         // Trigger frame on keydown
         p5.draw()

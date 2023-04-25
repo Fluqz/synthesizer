@@ -21,6 +21,7 @@
 
     export let tracks: _Track[]
 
+    let keyboardVisible = true
 
     let tracksStore = writable(tracks)
 
@@ -309,17 +310,24 @@
     </div>
 
 
-
-
+    
     <div class="keys">
+        
+        {#if keyboardVisible }
 
-        {#each Synthesizer.keys as key, i}
+            {#each Synthesizer.keys as key, i}
 
-            <Key key={key} />
+                <Key key={key} />
+                
+            {/each}
             
-        {/each}
+        {/if}
+
+        <!-- <div on:click={() => keyboardVisible = !keyboardVisible}>:</div> -->
 
     </div>
+
+
 
 
 

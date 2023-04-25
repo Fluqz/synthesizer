@@ -2,6 +2,8 @@ import { Subject, takeUntil } from "rxjs"
 import * as Tone from "tone"
 import type { IVisual } from "../p5/visual"
 import type { Synthesizer } from "../synthesizer"
+import { Midi } from "./midi"
+import { Visual } from "../p5/visual"
 
 
 export class G {
@@ -13,10 +15,6 @@ export class G {
 
     static synthesizer: Synthesizer
 
-    static visualsEnabled: boolean
-
-    static visuals: Map<string, IVisual> = new Map()
-
     static beat: Subject<number> = new Subject()
 
     static init() {
@@ -24,7 +22,10 @@ export class G {
         G.w = innerWidth
         G.h = innerHeight
 
-        this.visualsEnabled = true
+
+        Midi.init()
+        Visual.init()
+
 
         Tone.Transport.scheduleRepeat(time => {
 

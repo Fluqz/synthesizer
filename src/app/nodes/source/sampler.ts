@@ -3,12 +3,14 @@ import { Instrument } from './instrument';
 import { Synthesizer } from '../../synthesizer';
 import { ParamType } from '../node';
 
+import Sweep from '../../../assets/samples/synth/SweepFm7.wav'
+import BackHome from '../../../assets/samples/synth/SweepFm7.wav'
 
 const samples = [
 
 
-    { path: '/src/assets/samples/synth/SweepFm7.wav', name: 'Sweep Fm7' },
-    { path: '/src/assets/samples/synth/Back_Home_F_01.wav', name: 'Back Home F'},
+    { path: Sweep, name: 'Sweep Fm7' },
+    { path: BackHome, name: 'Back Home F'},
 ]
 
 export class Sampler extends Instrument {
