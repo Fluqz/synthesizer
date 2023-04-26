@@ -10,6 +10,8 @@
 
     import Knob from "./Knob.svelte"
     import LevelMeter from "./LevelMeter.svelte"
+    import Oscilloscope from "./Oscilloscope.svelte"
+    import DCMeter from "./DCMeter.svelte"
 
     import { Track as _Track } from '../track'
     import { Instrument, Node as _Node } from '../nodes/'
@@ -256,19 +258,6 @@
             </div>
         </div>
 
-
-
-
-        <div id="volume" title="Shift + A">
-
-            <Knob 
-                name=""
-                value={synthesizer.volume}
-                min={0} 
-                max={1} 
-                on:onChange={(e) => synthesizer.setVolume(e.detail)} />
-        </div>
-        
         <!-- <div id="bpm" title="Shift + A">
             <label for="bpm">BPM</label>
             <input type="number" pattern="[0-1]" min="1" max="300" name="bpm"/>
@@ -289,7 +278,21 @@
         <div id="mute" class="btn" class:active={synthesizer.isMuted} title="ALT - M" on:click={mute}>M</div>
 
 
+        <Oscilloscope output={synthesizer.gain} />
+
+        <DCMeter output={synthesizer.gain} />
+
         <LevelMeter output={synthesizer.gain} value={synthesizer.gain.gain.value} />
+
+        <div id="volume" title="Shift + A">
+
+            <Knob 
+                name=""
+                value={synthesizer.volume}
+                min={0} 
+                max={1} 
+                on:onChange={(e) => synthesizer.setVolume(e.detail)} />
+        </div>
 
     </div>
 

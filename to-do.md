@@ -25,8 +25,8 @@ Disable Visuals completly remove() in p5 sketch
 - moodlight background easy smoothly between colors
 - sequencer - use keys to click in notes for the sequencer. 
 - velicity knob?
-- Level Meter - show output for clipping 
-- Show wave 
+
+- Master track no instrument, but add effects before gain out
 - Show ADSR 
 - drum machine generator
   set: drum parts (hihat, snare etc) 

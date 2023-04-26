@@ -19,11 +19,7 @@
     let tailsStore = writable(tails)
     let maxTails: number = 5
 
-    $: {
-        value = meter.getValue() as number
-
-        tails = []
-    }   
+    $: value = meter.getValue() as number
 
     let IID
 
@@ -41,8 +37,6 @@
         tails.push(percentage)
 
         tailsStore.set(tails)
-
-        console.log(meter.getValue(), meter.getLevel())
     }
 
     if(output != undefined) {
@@ -51,6 +45,7 @@
 
         output.connect(meter)
 
+        clearInterval(IID)
         IID = setInterval(getValue, 80)
     }
 
