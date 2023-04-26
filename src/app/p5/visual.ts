@@ -12,32 +12,87 @@ import { worms } from './worms'
 export interface IVisual {
 
     id: number,
-    p5: P5[]
+    sketch: P5[]
+    remove: () => void
+    restart: () => void
+    pause: () => void
 }
 
 export let visualCount: number = 0
 
 export class Visual {
 
-    static visualsEnabled: boolean
+    static _visualsEnabled: boolean = true
+    static collapsed: boolean = false
 
     static visuals: Map<string, IVisual> = new Map()
+
+    static activeVisual: IVisual
+
+
+    static get visualsEnabled() { return this._visualsEnabled }
+    static set visualsEnabled(v: boolean) {
+
+        this._visualsEnabled = v
+
+        if(!this.activeVisual) return
+
+        if(Visual.visualsEnabled) Visual.activeVisual.restart()
+        else Visual.activeVisual.pause()
+    }
+
 
     static init() {
 
         this.visualsEnabled = true
+        this.collapsed = false
+
+        this.visuals = new Map()
     }
 
     static moire() {
 
-        let m1 = new P5(moireShader)
-        let m2 = new P5(moireShader)
+        const name = 'moire'
 
-        this.visuals.set('moire', {
+        if(this.visuals.has(name)) {
+
+            this.activeVisual = this.visuals.get(name)
+
+            this.activeVisual.restart()
+
+            return this.activeVisual
+        }
+
+        const m1 = new P5(moireShader)
+        const m2 = new P5(moireShader)
+
+        this.activeVisual = {
 
             id: visualCount++,
-            p5: [ m1, m2 ]
-        })
+            sketch: [m1, m2],
+
+            remove: () => {
+
+                m1.remove()
+                m2.remove()
+
+                this.visuals.delete(name)
+
+                this.activeVisual = null
+            },
+            pause: () => {
+
+                m1.noLoop()
+                m2.noLoop()
+            },
+            restart: () => {
+
+                m1.loop()
+                m2.loop()
+            }
+        }
+
+        this.visuals.set(name, this.activeVisual)
 
 
         // Draw loop
@@ -48,5 +103,7 @@ export class Visual {
         }
 
         // G.beat.subscribe(onDraw)
+
+        return this.activeVisual
     }
 }

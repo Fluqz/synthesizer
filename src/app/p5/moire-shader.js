@@ -192,7 +192,6 @@ export const moireShader = (p5) => {
                     M.map(0, G.h, -200, 200, currentCellPos.y + (Math.cos(t) * 20))
                 ])
             }
-
         }
 
         // shader.setUniform("u_mouse", [p5.mouseX, p5.map(p5.mouseY, 0, G.h, G.h, 0)])

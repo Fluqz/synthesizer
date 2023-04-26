@@ -36,9 +36,9 @@
 
         if(tails.length > maxTails) tails.shift()
 
-        tails.push(percentage)
+        // tails.push(percentage)
 
-        tailsStore.set(tails)
+        // tailsStore.set(tails)
     }
 
     if(output != undefined) {
@@ -60,16 +60,14 @@
     <div class="btn level-meter shifting-GIF">
 
         {#if value != min }
-
-            <div class="level shifting-GIF" style={`height:${percentage}%;`} class:clipping={value > max}></div>
-
-            
+<!--             
             {#each $tailsStore as tail }
-                
+            
                 <div class="level shifting-GIF" style={`height:${tail}%;`} class:clipping={value > max}></div>
-                
-            {/each}
-
+            
+            {/each} -->
+            
+            <div class="level shifting-GIF" style={`height:${percentage}%;background-color:#FF00FF;`} class:clipping={value > max}></div>
 
             <div id="level-value">{ value.toFixed(0) }</div>
             
@@ -89,6 +87,7 @@
     border-top-right-radius: 100%;
 
     border-radius: 100%;
+    border: 2px solid var(--c-y);
 
     overflow: hidden;
 

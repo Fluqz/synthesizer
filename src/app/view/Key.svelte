@@ -91,10 +91,10 @@
     width: calc(100% / 36);
     height: 100%;
 
-    background-color: var(--c-w);
+    background-color: var(--c-y);
 
     font-size: .7rem;
-    color: var(--c-w);
+    color: var(--c-b);
     text-align: center;
 
     padding-top: 5px;
@@ -104,7 +104,7 @@
     z-index: 0;
 }
 .key.black {
-    background-color: var(--c-y);
+    background-color: var(--c-b);
     color: var(--c-w);
 }
 .key .key-mapping {
@@ -114,6 +114,7 @@
 .key.pressed {
 
     background-color: var(--c-bl);
+    color: var(--c-y);
     z-index: 1;
 }
 

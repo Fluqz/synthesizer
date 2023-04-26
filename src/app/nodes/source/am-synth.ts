@@ -168,6 +168,8 @@ export class AMSynth extends Instrument {
 
     triggerNote(note: string) {
 
+        console.log('am ', note, this.synth)
+
         this.synth.triggerAttack(note, Tone.now())
     }
 

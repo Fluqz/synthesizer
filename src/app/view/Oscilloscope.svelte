@@ -29,6 +29,9 @@
 
         if (analyser) analyser.getByteTimeDomainData(dataArray)
 
+        w = container.clientWidth
+        h = container.clientHeight
+
         if (output) {
 
           var sliceWidth = w / bufferLength
@@ -104,7 +107,7 @@
     svg {
 
         width: 100px;
-        height: 75px;
+        height: 50px;
     }
 
     svg { mix-blend-mode: unset; }

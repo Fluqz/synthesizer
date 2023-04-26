@@ -2,7 +2,7 @@
 
 <script lang="ts">
 
-    import type { Track } from "../track";
+    import { Track } from "../track";
     import { Synthesizer as Synth } from "../synthesizer";
     import type { Instrument, Node as _Node } from "../nodes";
 
@@ -55,12 +55,33 @@
 
     const onSolo = (e) => {
 
-        track.solo(!track.isSolo)
-        track.isSolo = track.isSolo
+        track.solo(!track.soloEnabled)
+        track.soloEnabled = track.soloEnabled
     }
 
     const onHold = (e) => {
 
+        if(track.holdEnabled == 'OFF') {
+
+            track.holdEnabled = 'PLAY'
+        } 
+        else if(track.holdEnabled == 'PLAY') {
+
+            track.holdEnabled = 'HOLD'
+        }
+        else {
+
+            track.holdEnabled = 'OFF'
+        }
+    }
+
+    const onDuplicate = () => {
+
+        let duplicate = new Track(track.synthesizer)
+
+        duplicate.serializeIn(track.serializeOut())
+
+        track.synthesizer.addTrack(duplicate)
     }
 
     const onDelete = (e) => {
@@ -68,7 +89,7 @@
         dispatch('delete', track)
     }
     
-    const addNode = (name?: string) => {
+    const addNode = (e, name?: string) => {
 
         if(!effects.includes(name)) return
 
@@ -159,14 +180,21 @@
             on:click={onSolo}
             class="btn"
             title="Solo" 
-            class:active={track.isSolo}>S</div>
+            class:active={track.soloEnabled}>S</div>
 
         <!-- Hold -->
         <div 
             on:click={onHold}
             class="btn"
             title="Hold" 
-            class:active={track.holdEnabled}>H</div>
+            class:play={track.holdEnabled == 'PLAY'}
+            class:hold={track.holdEnabled == 'HOLD'}>{track.holdEnabled.charAt(0)}</div>
+
+
+        <!-- Duplicate -->
+        <div 
+            on:click={onDuplicate}
+            class="btn">D</div>
 
 
         <!-- Delete -->
@@ -189,17 +217,17 @@
     {/each}
 
     <!-- Add node -->
-    <div class="add-node-btn node" on:click={addNode}>
+    <div class="add-node-btn node">
 
         <div class="addable-nodes">
 
-            {#each effects as e }
+            {#each effects as ef }
             
-                <div class="addable-node" on:click={() => addNode(e)}>
+                <div class="addable-node" on:click={(e) => addNode(e, ef)}>
 
                     <!-- <div class="addable-node-inner"> -->
 
-                        { e.substring(0, 2) }
+                        { ef.substring(0, 2) }
 
                     <!-- </div> -->
 
@@ -338,5 +366,15 @@
 
 */
 
+.btn.play {
+
+    background-color: var(--c-o);
+}
+
+.btn.hold {
+
+    background-color: var(--c-bl);
+    color: var(--c-w);
+}
 
 </style>

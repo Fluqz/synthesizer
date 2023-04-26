@@ -107,7 +107,7 @@ canvas {
 
   cursor: pointer;
 }
-.btn:hover 
+.btn:hover,
 .btn:active,
 .btn.active { 
 
@@ -117,6 +117,8 @@ canvas {
   background-size: 1000%;
   background-position: center;
   background-repeat: no-repeat;
+
+  mix-blend-mode: luminosity;
 }
 
 .shifting-GIF {

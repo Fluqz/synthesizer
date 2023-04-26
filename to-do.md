@@ -23,6 +23,16 @@ Node extend Tone.ToneAudioNode
 
 #IDEAs
 
+Use Oscilloscope's frequency for visuals
+
+Make multiple synthesizers at the same time
+
+Set tracks to midi channels. Can it play multiple sequences at the same time? Every sequence on one channel?
+
+Make a sequencer and add tracks that will play the sequence.
+
+Or make a sequence per synthesizer
+
 - Enter fullscreen mode and disable all UI
 - moodlight background easy smoothly between colors
 - sequencer - use keys to click in notes for the sequencer. 

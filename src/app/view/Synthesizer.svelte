@@ -22,6 +22,7 @@
     import { DEFAULT_SESSION } from '../presets';
     import { Tone } from 'tone/build/esm/core/Tone';
     import { Volume } from 'tone';
+    import { Visual } from '../p5/visual';
 
     export let synthesizer: Synthesizer
 
@@ -39,11 +40,8 @@
         tracksStore.set(s.tracks)
 
         presets = [  ]
-        for(let p of synthesizer.presetManager.presets) presets.push(p.name)
+        for(let p of synthesizer.presetManager.getPresets()) presets.push(p.name)
     })
-
-
-
 
     onMount(() => {
 
@@ -241,8 +239,8 @@
 
             <div id="presets">
                 <div>
-                    <label for="savePreset">Save Preset</label>
-                    <input id="save-preset" type="text" placeholder="Preset" name="savePreset" bind:value={presetInputValue} on:keydown={onPresetInput}/>
+                    <!-- <label for="savePreset">Save Preset</label> -->
+                    <input id="save-preset" type="text" placeholder="Save Preset" name="savePreset" bind:value={presetInputValue} on:keydown={onPresetInput}/>
                 </div>
 
                 <div id="load-preset">
@@ -349,20 +347,14 @@
 
     z-index: 1;
 
-    position: absolute;
-    top: 100vh;
     width: 100%;
+    height: auto;
 
     -webkit-user-select: none;  
     -moz-user-select: none;    
     -ms-user-select: none;      
     user-select: none;
 }
-
-.synthesizer > .keys {
-
-}
-
 
 .synthesizer > .mixer {
 

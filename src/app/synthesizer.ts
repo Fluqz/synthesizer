@@ -284,10 +284,10 @@ export class Synthesizer implements ISerialize {
         this.set(this)
     }
 
-    /** Add a instrument to the synthesizer. */
-    addTrack(track: Track) {
+    /** Add a track to the synthesizer. */
+    addTrack(track: Track, i?: number) {
 
-        this.releaseKeys()
+        // this.releaseKeys()
         
         if(this.tracks.indexOf(track) == -1) this.tracks.push(track)
         
@@ -555,15 +555,15 @@ export class Synthesizer implements ISerialize {
     serializeIn = (o: ISynthesizerSerialization) => {
 
         console.log('SerializeIn', o)
+        
+        if(o.presets && o.presets.length > 0) {
+            
+            this.presetManager.setPresets(o.presets)
+        }
 
         const c = o.currentSession
 
         if(c) this.loadSessionObject(c)
-
-        if(o.presets && o.presets.length > 0) {
-
-            this.presetManager.setPresets(o.presets)
-        }
 
         this.set(this)
     }

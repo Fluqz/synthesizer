@@ -45,7 +45,7 @@
 
 <div class="dropdown-wrapper">
 
-    <label for="dropdown">{ name }</label>
+    <!-- <label for="dropdown">{ name }</label> -->
 
     <div class="dropdown-options">
 
@@ -55,7 +55,7 @@
                     
                 <option class="dropdown-option" value={o}>
 
-                    <div class="dropdown-option">{ o }</div>
+                    <div class="dropdown-option-text">{ o }</div>
 
                     <div class="btn delete" on:click={onDeleteOption}>&#x2715;</div>
 
@@ -80,10 +80,26 @@
     text-align: center;
 
     font-size: 0.7rem;
-    margin: 5px 5px 0px 5px;
+    /* margin: 5px 5px 0px 5px; */
+
+    min-width: 50px;
+    height: 25px;
+
+    cursor: pointer;
+}
+
+.dropdown-options {
+
+    width: 100%;
+    height: 100%;
 }
 
 .dropdown-select {
+
+    width: auto;
+    height: inherit;
+
+    /* padding: 0px 5px; */
 
     -webkit-appearance:none;
     -moz-appearance: none;
@@ -100,6 +116,14 @@
     text-align: center;
 
     font-size: inherit;
+}
+
+.dropdown-option {
+    
+    width: 100%;
+    height: 100%;
+
+    padding: 0px 10px;
 }
 
 </style>

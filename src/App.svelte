@@ -24,17 +24,21 @@
     let synthesizer = G.synthesizer = new Synth()
 
     // Create Visuals
-    Visual.moire()
+    let activeVisual = Visual.moire()
+
+    Tone.start()
 
 
     // On document ready
     onMount(() => {
 
+        Tone.start()
 
         Midi.init()
 
         // Scroll to bottom
         setTimeout(() => {
+            Tone.start()
 
             window.scrollTo({
                 top: 1000,
@@ -209,7 +213,7 @@
         Visual.visualsEnabled = !Visual.visualsEnabled
     }
     
-    const saveImage = (e) => {
+    const saveVisuals = (e) => {
 
         Visual.visualsEnabled = false
 
@@ -218,39 +222,87 @@
         Visual.visualsEnabled = true
     }
 
+    const collapseVisuals = (e) => {
+
+        Visual.collapsed = !Visual.collapsed
+
+        if(Visual.activeVisual) {
+
+            if(Visual.collapsed) Visual.activeVisual.remove()
+            else Visual.activeVisual.restart()
+        }
+        else Visual.moire()
+
+        console.log('COLL', Visual.collapsed)
+    }
+
+
+    document.addEventListener('click', () => {
+
+        Tone.start()
+
+    })
+
+
 </script>
 
 
 {#if !G.fullScreenmode }
 
+<div class="main-ui">
+
+    <div class="btn" on:click={collapseVisuals}>&#x2715;</div>
+    <div class="btn" on:click={saveVisuals}>I</div>
     <div class="btn" on:click={toggleVisuals}>V</div>
-    <div class="btn" on:click={saveImage}>I</div>
+
+</div>
 
 {/if}
 
+<div class="synthesizer-wrapper" class:screen-offset={!Visual.collapsed}>
 
-<Synthesizer synthesizer={synthesizer} 
-                tracks={synthesizer.tracks} 
-                on:add={addTrack} 
-                on:remove={removeTrack} 
-                on:delete={deleteTrack} 
->
-<!-- on:mousemove={onMouseMove} -->
+    <Synthesizer synthesizer={synthesizer} 
+                    tracks={synthesizer.tracks} 
+                    on:add={addTrack} 
+                    on:remove={removeTrack} 
+                    on:delete={deleteTrack} 
+    >
+    <!-- on:mousemove={onMouseMove} -->
 
-<!-- 
-    
-    <svg class="svg-line">
+    <!-- 
         
-        <line x1={mousePosition.x} y1={mousePosition.y} x2={elementPosition.x} y2={elementPosition.y} stroke="#FFFFFF"></line>
-    </svg> -->
-    
-    
-</Synthesizer>
+        <svg class="svg-line">
+            
+            <line x1={mousePosition.x} y1={mousePosition.y} x2={elementPosition.x} y2={elementPosition.y} stroke="#FFFFFF"></line>
+        </svg> -->
+        
+        
+    </Synthesizer>
 
-
+</div>
 
 
 <style>
+
+    .main-ui {
+
+
+    }
+
+    .synthesizer-wrapper {
+
+        position: absolute;
+
+        top: 25px;
+        left: 0px;
+
+        width: 100%;
+    }
+
+    .synthesizer-wrapper.screen-offset {
+
+        top: 100vh;
+    }
 
     .svg-line {
 
