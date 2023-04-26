@@ -7,7 +7,9 @@
     
     import Key from './Key.svelte'
     import Track from './Track.svelte'
+
     import Knob from "./Knob.svelte"
+    import LevelMeter from "./LevelMeter.svelte"
 
     import { Track as _Track } from '../track'
     import { Instrument, Node as _Node } from '../nodes/'
@@ -16,6 +18,7 @@
     import { G } from '../core/globals';
     import Dropdown from './Dropdown.svelte';
     import { DEFAULT_SESSION } from '../presets';
+    import { Tone } from 'tone/build/esm/core/Tone';
 
     export let synthesizer: Synthesizer
 
@@ -283,8 +286,10 @@
         
         <div id="reset" class="btn" title="ALT - Delete; Click: SHIFT -> DEFAULT, META -> RESET PRESETS" on:click={reset}>&#x2715;</div>
 
-        <div id="mute" class="btn" title="ALT - M" on:click={mute}>M</div>
+        <div id="mute" class="btn" class:active={synthesizer.isMuted} title="ALT - M" on:click={mute}>M</div>
 
+
+        <LevelMeter output={synthesizer.gain} value={synthesizer.gain.gain.value} />
 
     </div>
 
@@ -328,13 +333,7 @@
     </div>
 
 
-
-
-
 </div>
-
-
-
 
 
 

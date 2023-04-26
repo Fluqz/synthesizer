@@ -315,6 +315,8 @@ export class Synthesizer implements ISerialize {
     /** Trigger note */
     triggerNote(note, octave) {
 
+        // console.log('TRIGGER with ARP', this.arpMode)
+
         if(this.isRunning == false) {
             Tone.start()
             this.isRunning = true
@@ -324,11 +326,11 @@ export class Synthesizer implements ISerialize {
 
         if(this.arpMode) {
 
-            this.setArpChord(Array.from(Synthesizer.activeNotes.keys()), (time, note) => {
+            this.setArpChord(Array.from(Synthesizer.activeNotes.keys()), (note) => {
 
                 for(let tr of this.tracks) tr.triggerNote(note)
 
-            }, () => {
+            }, (note) => {
 
                 for(let tr of this.tracks) tr.releaseNote(note)
 
@@ -343,15 +345,18 @@ export class Synthesizer implements ISerialize {
     /** Release note */
     releaseNote(note:string, octave?:number) {
 
+        // console.log('RELEASE with ARP', this.arpMode)
+
+
         Synthesizer.activeNotes.delete(note + octave)
 
         if(this.arpMode) {
             
-            this.setArpChord(Array.from(Synthesizer.activeNotes.keys()), (time, note, length) => {
+            this.setArpChord(Array.from(Synthesizer.activeNotes.keys()), (note) => {
 
                 for(let tr of this.tracks) tr.triggerNote(note)
 
-            }, () => {
+            }, (note) => {
 
                 for(let tr of this.tracks) tr.releaseNote(note)
 
@@ -378,7 +383,9 @@ export class Synthesizer implements ISerialize {
 
         this.setArpChord([])
 
-        Tone.Transport.stop()
+        // Tone.Transport.stop()
+
+        // this.arp.stop(Tone.now())
 
         // console.log('ARP', this.arpMode)
 
@@ -395,15 +402,23 @@ export class Synthesizer implements ISerialize {
 
         if(!chord || chord.length == 0) return
         
+        let lastNote
         this.arp = new Tone.Pattern((time, note) => {
 
-            if(onTrigger) onTrigger(time, note, length)
+            console.log('PATTERN NEXT NOTE', note)
+            if(lastNote) {
+
+                onRelease(note)
+            }
+            if(onTrigger) onTrigger(note, length)
+
+            lastNote = note
 
         }, chord)
 
-        this.arp.interval = length
-        this.arp.start()
         Tone.Transport.bpm.setValueAtTime(this.bpm, Tone.now())
+        this.arp.interval = length
+        this.arp.start(Tone.now())
 
         this.set(this)
     }

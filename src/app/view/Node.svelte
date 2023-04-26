@@ -79,7 +79,11 @@
 
     const toggleShrinking = () => {
 
-        collapsed = !collapsed
+        node.collapsed = !node.collapsed
+
+        collapsed = node.collapsed
+
+        node.store.set(node)
     }
 
     const onDelete = () => {
@@ -124,7 +128,7 @@
 
 
 
-<div class="node">
+<div class="node" class:collapsed={collapsed}>
 
     
     {#if !isInstrument && !collapsed }
@@ -145,7 +149,11 @@
     
     {/if}
 
-    <div class="delete" on:click={onDelete}>&#x2715;</div>
+    {#if !isInstrument }
+
+        <div class="delete" on:click={onDelete}>&#x2715;</div>
+
+    {/if}
 
     {#if !collapsed }
 
