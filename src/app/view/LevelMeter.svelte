@@ -60,17 +60,23 @@
 
 {#if output != undefined }
     
-    <div id="level-meter" class="btn level-meter">
+    <div class="btn level-meter shifting-GIF">
 
-        <div class="level" style={`height:${percentage}%;`} class:clipping={value > max}></div>
+        {#if value != min }
 
-        {#each $tailsStore as tail }
+            <div class="level shifting-GIF" style={`height:${percentage}%;`} class:clipping={value > max}></div>
+
             
-            <div class="level" style={`height:${tail}%;`} class:clipping={value > max}></div>
-            
-        {/each}
+            {#each $tailsStore as tail }
+                
+                <div class="level shifting-GIF" style={`height:${tail}%;`} class:clipping={value > max}></div>
+                
+            {/each}
 
-        <div id="level-value">{ value.toFixed(0) }</div>
+
+            <div id="level-value">{ value.toFixed(0) }</div>
+            
+        {/if}
 
     </div>
 
@@ -80,7 +86,7 @@
 
 <style>
 
-#level-meter {
+.level-meter {
 
     border-top-left-radius: 100%;
     border-top-right-radius: 100%;
@@ -105,8 +111,8 @@
 
     transition: .2s background-color;
 }
-#level-meter:active,
-#level-meter:hover {
+.level-meter:active,
+.level-meter:hover {
     
     background-color: var(--c-bl);
     color: var(--c-y);
@@ -114,6 +120,8 @@
 
 
 .level {
+
+    background-blend-mode: difference;
 
     border-top-left-radius: 100%;
     border-top-right-radius: 100%;
@@ -146,6 +154,7 @@
 
     color: #fff;
 }
+
 
 
 </style>

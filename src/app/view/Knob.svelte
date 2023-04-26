@@ -254,7 +254,7 @@
 
     <div class="knob-value">{ value.toFixed(2) }</div>
 
-    <div class="knob"
+    <div class="knob shifting-GIF"
         bind:this={knobDOM}
         on:pointerdown={onMouseDown} 
         on:touchstart={onTouchStart}
@@ -334,11 +334,6 @@
   -moz-user-select: none;    
   -ms-user-select: none;      
   user-select: none;
-
-  background-image: url('/src/assets/imgs/circle-monochrome.gif');
-  background-size: 1000%;
-  background-position: center;
-  background-repeat: no-repeat;
 
   transition: .4s background-color, .4s color;
   mix-blend-mode: difference;

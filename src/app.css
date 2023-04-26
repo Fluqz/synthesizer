@@ -111,7 +111,15 @@ canvas {
 .btn:active,
 .btn.active { background-color: var(--c-b); }
 
+.shifting-GIF {
 
+  /* background-blend-mode: difference; */
+
+  background-image: url('/src/assets/imgs/circle-monochrome.gif');
+  background-size: 1000%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
 
 /* Nodes */
