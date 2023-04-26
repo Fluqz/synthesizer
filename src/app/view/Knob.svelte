@@ -320,7 +320,7 @@
   line-height: 30px;
 
   border-radius: 100%;
-  border: 1px solid var(--c-bl);
+  /* border: 1px solid var(--c-bl); */
 
   background-color: blue;
   color: inherit;
