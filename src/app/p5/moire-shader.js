@@ -217,11 +217,16 @@ export const moireShader = (p5) => {
         p5.rect(0, 0, G.w, G.h)
     }
 
+    let resizeID
     p5.windowResized = () => { // TODO - aNOT WORKING
 
-        console.log('resize')
-        p5.resizeCanvas(G.w, G.h)
-        grid.setSize(G.w, G.h, 9, 4)
+        clearTimeout(resizeID)
+        resizeID = setTimeout(() => {
+
+            p5.resizeCanvas(G.w, G.h)
+            grid.setSize(G.w, G.h, 9, 4)
+
+        })
     }
 
 

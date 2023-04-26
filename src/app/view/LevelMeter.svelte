@@ -27,10 +27,12 @@
 
         value = meter.getValue() as number
 
+        value = /*Math.round(*/value/* * 100) / 100*/
+
         value = Math.min(value, max)
         value = Math.max(value, min)
 
-        percentage = M.map(min, max, 0, 100, value)
+        percentage = Math.round(M.map(min, max, 0, 100, value) * 100) / 100
 
         if(tails.length > maxTails) tails.shift()
 
@@ -112,7 +114,6 @@
     background-color: var(--c-bl);
     color: var(--c-y);
 }
-
 
 .level {
 

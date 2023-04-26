@@ -221,28 +221,31 @@
 </script>
 
 
+{#if !G.fullScreenmode }
 
-<div class="btn" on:click={toggleVisuals}>V</div>
-<div class="btn" on:click={saveImage}>I</div>
+    <div class="btn" on:click={toggleVisuals}>V</div>
+    <div class="btn" on:click={saveImage}>I</div>
 
-<Synthesizer    synthesizer={synthesizer} 
+{/if}
+
+
+<Synthesizer synthesizer={synthesizer} 
                 tracks={synthesizer.tracks} 
                 on:add={addTrack} 
                 on:remove={removeTrack} 
                 on:delete={deleteTrack} 
-                >
-                <!-- on:mousemove={onMouseMove} -->
+>
+<!-- on:mousemove={onMouseMove} -->
 
 <!-- 
-
+    
     <svg class="svg-line">
-
+        
         <line x1={mousePosition.x} y1={mousePosition.y} x2={elementPosition.x} y2={elementPosition.y} stroke="#FFFFFF"></line>
     </svg> -->
-
-
+    
+    
 </Synthesizer>
-
 
 
 

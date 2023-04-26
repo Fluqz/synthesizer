@@ -10,18 +10,27 @@ export class G {
 
     static debug = true
 
-    static w: number
-    static h: number
+    static w: number = 0
+    static h: number = 0
 
     static synthesizer: Synthesizer
 
     static beat: Subject<number> = new Subject()
+
+    static fullScreenmode: boolean = false
+
+
+
 
     static init() {
 
         G.w = innerWidth
         G.h = innerHeight
 
+        this.fullScreenmode = false
+        
+        let events = ['', 'webkit', 'moz', 'ms']
+        events.forEach(prefix => document.addEventListener(prefix + 'fullscreenchange', this.onFullscreenMode, false))
 
         Visual.init()
 
@@ -96,4 +105,43 @@ export class G {
 
         document.body.append(ele)
     }
+
+    private static onFullscreenMode(event) {
+
+        console.log('SOONOIANSFÜAPMüpmppppppppp')
+
+        // document.fullscreenElement will point to the element that
+        // is in fullscreen mode if there is one. If not, the value
+        // of the property is null.
+        if (document.fullscreenElement) {
+
+          console.log(`Element: ${document.fullscreenElement.id} entered fullscreen mode.`)
+          this.fullScreenmode = true
+        } 
+        else {
+
+          console.log("Leaving fullscreen mode.");
+          this.fullScreenmode = false
+
+        }
+    }
+      
+    //   const el = document.getElementById("fullscreen-div");
+      
+    //   el.addEventListener("fullscreenchange", fullscreenchanged);
+    //   // or
+    //   el.onfullscreenchange = fullscreenchanged;
+      
+    //   // When the toggle button is clicked, enter/exit fullscreen
+    //   document
+    //     .getElementById("toggle-fullscreen")
+    //     .addEventListener("click", (event) => {
+    //       if (document.fullscreenElement) {
+    //         // exitFullscreen is only available on the Document object.
+    //         document.exitFullscreen();
+    //       } else {
+    //         el.requestFullscreen();
+    //       }
+    //     });
+      
 }

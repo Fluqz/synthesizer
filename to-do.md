@@ -19,9 +19,11 @@ implement more synths, oscs and effects
 
 Disable Visuals completly remove() in p5 sketch
 
+Node extend Tone.ToneAudioNode
 
 #IDEAs
 
+- Enter fullscreen mode and disable all UI
 - moodlight background easy smoothly between colors
 - sequencer - use keys to click in notes for the sequencer. 
 - velicity knob?

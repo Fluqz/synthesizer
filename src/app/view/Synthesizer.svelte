@@ -21,6 +21,7 @@
     import Dropdown from './Dropdown.svelte';
     import { DEFAULT_SESSION } from '../presets';
     import { Tone } from 'tone/build/esm/core/Tone';
+    import { Volume } from 'tone';
 
     export let synthesizer: Synthesizer
 
@@ -227,117 +228,116 @@
 </script>
 
 
+{#if !G.fullScreenmode }
 
-<div class="synthesizer">
+    <div class="synthesizer">
 
-    <slot></slot>
+        <slot></slot>
 
-    <div class="synthesizer-menu">
+        <div class="synthesizer-menu">
 
-        <div class="add-track btn" on:click={addTrack}>+</div>
-
-
-        <div id="presets">
-            <div>
-                <label for="savePreset">Save Preset</label>
-                <input id="save-preset" type="text" placeholder="Preset" name="savePreset" bind:value={presetInputValue} on:keydown={onPresetInput}/>
-            </div>
-
-            <div id="load-preset">
-                <label for="loadPreset">Load</label>
-
-                <!-- Presets -->
-                <Dropdown
-                    name={''}
-                    value={''}
-                    options={presets}
-                    deletableOptions={true}
-                    on:onSelect={onChangePresets} 
-                    on:onDeleteOption={onDeletePresetOption}
-                />
-            </div>
-        </div>
-
-        <!-- <div id="bpm" title="Shift + A">
-            <label for="bpm">BPM</label>
-            <input type="number" pattern="[0-1]" min="1" max="300" name="bpm"/>
-        </div> -->
-
-        <div id="octave-down" class="btn" title="ArrowLeft" on:click={octaveDown}>{'<'}</div>
-        <div id="octave-up" class="btn" title="ArrowRight" on:click={octaveUp}>{'>'}</div>
-
-        <div id="arpeggiator" title="Shift + A">
-            <label for="arp">Arp</label>
-            <input type="checkbox" name="arp" on:change={onArpChange}/>
-        </div>
-
-        <div id="record" class="btn" title="Space" on:click={toggleRecording} class:recording={isRecording}>&#x2609;</div>
-        
-        <div id="reset" class="btn" title="ALT - Delete; Click: SHIFT -> DEFAULT, META -> RESET PRESETS" on:click={reset}>&#x2715;</div>
-
-        <div id="mute" class="btn" class:active={synthesizer.isMuted} title="ALT - M" on:click={mute}>M</div>
+            <div class="add-track btn" on:click={addTrack}>+</div>
 
 
-        <Oscilloscope output={synthesizer.gain} />
-
-        <DCMeter output={synthesizer.gain} />
-
-        <LevelMeter output={synthesizer.gain} value={synthesizer.gain.gain.value} />
-
-        <div id="volume" title="Shift + A">
-
-            <Knob 
-                name=""
-                value={synthesizer.volume}
-                min={0} 
-                max={1} 
-                on:onChange={(e) => synthesizer.setVolume(e.detail)} />
-        </div>
-
-    </div>
-
-
-    
-
-    <div class="mixer">
-
-        <div class="tracks">
-
-            {#each $tracksStore as track}
-                
-                <div class="track">
-
-                    <Track bind:track={track} on:delete />
-
+            <div id="presets">
+                <div>
+                    <label for="savePreset">Save Preset</label>
+                    <input id="save-preset" type="text" placeholder="Preset" name="savePreset" bind:value={presetInputValue} on:keydown={onPresetInput}/>
                 </div>
 
-            {/each}
+                <div id="load-preset">
+                    <label for="loadPreset">Load</label>
+
+                    <!-- Presets -->
+                    <Dropdown
+                        name={''}
+                        value={''}
+                        options={presets}
+                        deletableOptions={true}
+                        on:onSelect={onChangePresets} 
+                        on:onDeleteOption={onDeletePresetOption}
+                    />
+                </div>
+            </div>
+
+            <!-- <div id="bpm" title="Shift + A">
+                <label for="bpm">BPM</label>
+                <input type="number" pattern="[0-1]" min="1" max="300" name="bpm"/>
+            </div> -->
+
+            <div id="octave-down" class="btn" title="ArrowLeft" on:click={octaveDown}>{'<'}</div>
+            <div id="octave-up" class="btn" title="ArrowRight" on:click={octaveUp}>{'>'}</div>
+
+            <div id="arpeggiator" class="btn" title="Shift + A" on:click={onArpChange}>Arp</div>
+
+            <div id="record" class="btn" title="Space" on:click={toggleRecording} class:recording={isRecording}>&#x2609;</div>
+            
+            <div id="reset" class="btn" title="ALT - Delete; Click: SHIFT -> DEFAULT, META -> RESET PRESETS" on:click={reset}>&#x2715;</div>
+
+            <div id="mute" class="btn" class:active={synthesizer.isMuted} title="ALT - M" on:click={mute}>M</div>
+
+
+            <Oscilloscope output={synthesizer.gain} />
+
+            <DCMeter output={synthesizer.gain} />
+
+            <LevelMeter output={synthesizer.gain} value={synthesizer.gain.gain.value} />
+
+            <div id="volume" title="Shift + A">
+
+                <Knob 
+                    name=""
+                    value={synthesizer.volume}
+                    min={0} 
+                    max={1} 
+                    on:onChange={(e) => synthesizer.setVolume(e.detail)} />
+            </div>
 
         </div>
 
-    </div>
 
-
-    
-    <div class="keys">
         
-        {#if keyboardVisible }
 
-            {#each Synthesizer.keys as key, i}
+        <div class="mixer">
 
-                <Key key={key} />
-                
-            {/each}
+            <div class="tracks">
+
+                {#each $tracksStore as track}
+                    
+                    <div class="track">
+
+                        <Track bind:track={track} on:delete />
+
+                    </div>
+
+                {/each}
+
+            </div>
+
+        </div>
+
+
+        
+        <div class="keys">
             
-        {/if}
+            {#if keyboardVisible }
 
-        <!-- <div on:click={() => keyboardVisible = !keyboardVisible}>:</div> -->
+                {#each Synthesizer.keys as key, i}
+
+                    <Key key={key} />
+                    
+                {/each}
+                
+            {/if}
+
+            <!-- <div on:click={() => keyboardVisible = !keyboardVisible}>:</div> -->
+
+        </div>
+
 
     </div>
 
-
-</div>
-
+{/if}
 
 
 
@@ -402,6 +402,11 @@
 
     min-width: 75px;
     height: 75px;
+}
+
+#volume .knob-wrapper {
+
+    margin: 0;
 }
 
 </style>

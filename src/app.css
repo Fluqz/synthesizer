@@ -107,9 +107,17 @@ canvas {
 
   cursor: pointer;
 }
-.btn:hover { background-color: var(--c-b); color: var(--c-y) }
+.btn:hover 
 .btn:active,
-.btn.active { background-color: var(--c-b); }
+.btn.active { 
+
+  background-color: var(--c-b); color: var(--c-y);
+
+  background-image: url('/src/assets/imgs/circle-monochrome.gif');
+  background-size: 1000%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
 .shifting-GIF {
 
