@@ -19,22 +19,28 @@ export class Midi {
 
 
 
-        // // Function triggered when WebMidi.js is ready
-        // function onEnabled() {
+        // Function triggered when WebMidi.js is ready
+        function onEnabled() {
 
-        //     // Display available MIDI input devices
-        //     if (WebMidi.inputs.length < 1) {
+            // console.log('ENABLE MIDI')
 
-        //         document.body.innerHTML+= "No device detected."
-        //     } 
-        //     else {
+            // // Display available MIDI input devices
+            // if (WebMidi.inputs.length < 1) {
 
-        //         WebMidi.inputs.forEach((device, index) => {
+            //     console.log('NO MIDI DEVICE')
 
-        //             console.log(`${index}: ${device.name} <br>`);
-        //         })
-        //     }
-        // }
+            //     document.body.innerHTML+= "No device detected."
+            // } 
+            // else {
+
+            //     console.log('MIDI DEVICE CONNECTED')
+
+            //     WebMidi.inputs.forEach((device, index) => {
+
+            //         console.log(`${index}: ${device.name} <br>`);
+            //     })
+            // }
+        }
     }
 
 

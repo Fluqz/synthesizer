@@ -287,8 +287,6 @@ export class Synthesizer implements ISerialize {
     /** Add a track to the synthesizer. */
     addTrack(track: Track, i?: number) {
 
-        // this.releaseKeys()
-        
         if(this.tracks.indexOf(track) == -1) this.tracks.push(track)
         
         track.connect(this.gain)
@@ -297,8 +295,6 @@ export class Synthesizer implements ISerialize {
     }
 
     removeTrack(track: Track) {
-
-        this.releaseKeys()
 
         this.tracks.splice(this.tracks.indexOf(track), 1)
 
@@ -371,6 +367,7 @@ export class Synthesizer implements ISerialize {
     releaseKeys() {
 
         for(let n of Synthesizer.activeNotes) this.releaseNote(n)
+        for(let t of this.tracks) t.releaseKeys()
 
         this.set(this)
     }

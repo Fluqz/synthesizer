@@ -1,13 +1,16 @@
 
 
 <script lang="ts">
-
-    import { ParamType, type Node, type NodeParameter, type NodeParameterGroup, type GroupID, Instrument, Effect } from "../nodes";
-    import Knob from "./Knob.svelte"
-    import Dropdown from "./Dropdown.svelte"
+    import * as Tone from 'tone'
     import { createEventDispatcher, onDestroy } from "svelte";
     import { writable, type Writable } from "svelte/store";
-    import { max, min } from "rxjs";
+
+    import { ParamType, type Node, type NodeParameter, type NodeParameterGroup, type GroupID, Instrument, Effect } from "../nodes";
+
+    import Knob from "./Knob.svelte"
+    import Dropdown from "./Dropdown.svelte"
+    import LevelMeter from "./LevelMeter.svelte";
+
 
     const dispatch = createEventDispatcher()
 
@@ -16,11 +19,8 @@
 
     export let collapsed: Boolean = false
 
-
-
-
     $: {
-        
+
         $nodeParameters = [...node.props.values()]
         
         groups.set(Array.from(groupNodeParameter($nodeParameters).values()))
@@ -139,77 +139,90 @@
 
     <!-- { node.id } -->
 
-    <div class="node-title">{ node.name[0].toUpperCase() + node.name.substr(1) }</div>
+    <div class="node-content">
 
-    <div class="toggle-shrink-btn" on:click={toggleShrinking}>&#x2689;</div>
+        <div class="node-header">
+
+            <div class="toggle-shrink-btn" on:click={toggleShrinking}>&#x2689;</div>
     
-    {#if isEffect }
+            {#if isEffect }
+                
+                <div class="enabled-btn" on:click={enable} class:enabled={isEnabled}></div>
+            
+            {/if}
         
-        <div class="enabled-btn" on:click={enable} class:enabled={isEnabled}></div>
+            {#if !isInstrument }
+        
+                <div class="delete" on:click={onDelete}>&#x2715;</div>
+        
+            {/if}
+
+                
+            <div class="node-title">{ node.name[0].toUpperCase() + node.name.substr(1) }</div>
+
+        </div>
     
-    {/if}
+        {#if !collapsed }
+
+            <div class="parameters">
+
+                <!-- Each group of Parameters -->
+                {#each $groups as g}
+
+                    <div class="parameter">
+
+                        <!-- Each parameter -->
+                        {#each g as n}
+
+                            {#if n && n.get() != undefined }
+                                
+                                {#if n.type == ParamType.KNOB }
+                                    
+                                    <Knob
+                                        name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
+                                        min={n.min}
+                                        max={n.max}
+                                        value={n.get()}
+                                        on:onChange={(e) => n.set(e.detail) } 
+                                    />
+
+                                {/if}
+
+
+                                {#if n.type == ParamType.DROPDOWN}
+                                    
+                                    <Dropdown
+                                        name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
+                                        value={n.get()}
+                                        options={n.options}
+                                        on:onSelect={(e) => n.set(e.detail.target.value) } 
+                                    />
+
+                                {/if}
+
+
+                            {/if}
+
+                            
+                        {/each}
+
+                    </div>
+
+                {/each}
+
+                <LevelMeter output={node.output} />
+
+            </div>
+
+
+        {/if}
+
+    </div>
+
 
     {#if !isInstrument }
 
-        <div class="delete" on:click={onDelete}>&#x2715;</div>
-
-    {/if}
-
-    {#if !collapsed }
-
-        <div class="parameters">
-
-            <!-- Each group of Parameters -->
-            {#each $groups as g}
-
-                <div class="parameters-group">
-
-                    <!-- Each parameter -->
-                    {#each g as n}
-
-                        {#if n && n.get() != undefined }
-                            
-                            {#if n.type == ParamType.KNOB}
-                                
-                                <Knob
-                                    name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
-                                    min={n.min}
-                                    max={n.max}
-                                    value={n.get()}
-                                    on:onChange={(e) => n.set(e.detail) } 
-                                />
-
-                            {/if}
-
-
-                            {#if n.type == ParamType.DROPDOWN}
-                                
-                                <Dropdown
-                                    name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
-                                    value={n.get()}
-                                    options={n.options}
-                                    on:onSelect={(e) => n.set(e.detail.target.value) } 
-                                />
-
-                            {/if}
-
-
-                        {/if}
-
-                        
-                    {/each}
-
-                </div>
-
-            {/each}
-
-        </div>
-
-        {#if !isInstrument }
-
-            <div class="shift-back shift" on:click={shiftBack}>&#x27A4</div>
-
-        {/if}
+        <div class="shift-back shift" on:click={shiftBack}>&#x27A4</div>
 
     {/if}
 
@@ -219,7 +232,78 @@
 
 <style>
 
-.node:first-child { margin-left: 0px; }
+
+
+/* Nodes */
+:global(.node) {
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+
+    min-width: 100px;
+    height: 100%;
+
+    /* background-color: var(--c-g2); */
+    color: var(--c-w);
+
+    text-align: center;
+
+    flex: none;
+    flex-shrink: 0;
+
+    padding: 0px 15px;
+
+    margin: 0px .5px;
+}
+:global(.node:nth-child(1)),
+:global(.node:nth-child(2)) {
+
+    margin: 0px;
+    padding: 0px;
+}
+:global(.node:last-child) {
+
+    margin-right: 0px;
+    padding-right: 0px;
+}
+
+
+.node .node-header {
+
+    height: 15px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+:global(.node .level-meter) {
+
+    margin: 0px 5px;
+}
+
+.parameters {
+
+    height: 60px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.node .parameter {
+
+    display: flex;
+    color: inherit;
+
+    justify-content: center;
+    align-items: center;
+}
+
 .node .node-title {
 
   position: absolute;
@@ -228,8 +312,8 @@
   width: 100%;
   text-align: center;
   font-size: .8rem;
-  height: 20px;
-  line-height: 20px;
+  height: 15px;
+  line-height: 15px;
 }
 .node .delete {
 
@@ -242,8 +326,8 @@
     top: 0px;
     cursor: pointer;
 
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
 
     z-index: 100;
 
@@ -265,8 +349,8 @@
     top: 0px;
     cursor: pointer;
 
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
 
     z-index: 100;
 
@@ -277,8 +361,8 @@
 
     display: block;
 
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
 
     position: absolute;
     left: 35px;
@@ -293,32 +377,13 @@
     transition: .4s background-color, .4s color;
 
     background-color: var(--c-o);
-    margin: 6px;
+    margin: 4px;
 }
 .enabled-btn.enabled {
 
     background-color: var(--c-bl);
 }
 
-
-
-.node .delete:hover {
-  color: var(--c-b);
-  background-color: var(--c-bl);
-}
-.node .parameter-group {
-
-
-    color: inherit;
-}
-
-.node .parameter-group {
-
-    display: flex;
-
-
-    color: inherit;
-}
 
 .node .shift {
 
@@ -363,12 +428,5 @@
 }
 
 
-.parameters {
-
-    display: flex;
-
-    justify-content: center;
-    align-items: center;
-}
 
 </style>

@@ -83,19 +83,26 @@
 
 .level-meter {
 
+    margin: 0px 5px;
+
     border-top-left-radius: 100%;
     border-top-right-radius: 100%;
 
     border-radius: 100%;
-    border: 2px solid var(--c-y);
+    /* border: 2px solid var(--c-y); */
 
     overflow: hidden;
 
     cursor: default;
 
-    width: 50px;
-    height: 50px;
-    line-height: 50px;
+    /* width: 50px; */
+    /* height: 50px; */
+    /* line-height: 50px; */
+
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+
 
     padding: 0px;
     margin: 0px;
@@ -130,7 +137,7 @@
     left: 0px;
     bottom: 0px;
 
-    background-color: var(--c-w);
+    background-color: var(--c-g2);
 
     mix-blend-mode: luminosity;
 
@@ -147,7 +154,7 @@
 
     mix-blend-mode: unset;
 
-    color: #fff;
+    color: var(--c-b);
 }
 
 

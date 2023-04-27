@@ -217,7 +217,7 @@
     {/each}
 
     <!-- Add node -->
-    <div class="add-node-btn node">
+    <div class="add-node-btn">
 
         <div class="addable-nodes">
 
@@ -276,6 +276,8 @@
 }
 
 .track-wrapper .add-node-btn {
+
+    position: relative;
 
     min-width: inherit;
     width: auto;

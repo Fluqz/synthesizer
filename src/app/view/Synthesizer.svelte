@@ -236,27 +236,7 @@
 
             <div class="add-track btn" on:click={addTrack}>+</div>
 
-
-            <div id="presets">
-                <div>
-                    <!-- <label for="savePreset">Save Preset</label> -->
-                    <input id="save-preset" type="text" placeholder="Save Preset" name="savePreset" bind:value={presetInputValue} on:keydown={onPresetInput}/>
-                </div>
-
-                <div id="load-preset">
-                    <label for="loadPreset">Load</label>
-
-                    <!-- Presets -->
-                    <Dropdown
-                        name={''}
-                        value={''}
-                        options={presets}
-                        deletableOptions={true}
-                        on:onSelect={onChangePresets} 
-                        on:onDeleteOption={onDeletePresetOption}
-                    />
-                </div>
-            </div>
+            <div id="mute" class="btn" class:active={synthesizer.isMuted} title="ALT - M" on:click={mute}>M</div>
 
             <!-- <div id="bpm" title="Shift + A">
                 <label for="bpm">BPM</label>
@@ -270,26 +250,54 @@
 
             <div id="record" class="btn" title="Space" on:click={toggleRecording} class:recording={isRecording}>&#x2609;</div>
             
-            <div id="reset" class="btn" title="ALT - Delete; Click: SHIFT -> DEFAULT, META -> RESET PRESETS" on:click={reset}>&#x2715;</div>
 
-            <div id="mute" class="btn" class:active={synthesizer.isMuted} title="ALT - M" on:click={mute}>M</div>
+            <div id="presets">
+                <div>
+                    <!-- <label for="savePreset">Save Preset</label> -->
+                    <input id="save-preset" type="text" placeholder="Save Preset" name="savePreset" bind:value={presetInputValue} on:keydown={onPresetInput}/>
+                </div>
+
+                {#if presets.length > 0 }
+                
+                    <div id="load-preset">
+
+                        <label for="loadPreset">Load</label>
+                        
+                        <!-- Presets -->
+                        <Dropdown
+                        name={''}
+                        value={''}
+                        options={presets}
+                        deletableOptions={true}
+                        on:onSelect={onChangePresets} 
+                        on:onDeleteOption={onDeletePresetOption}
+                        />
+                    </div>
+
+                {/if}
+
+            </div>
+
 
 
             <Oscilloscope output={synthesizer.gain} />
 
             <DCMeter output={synthesizer.gain} />
 
-            <LevelMeter output={synthesizer.gain} value={synthesizer.gain.gain.value} />
-
+            
             <div id="volume" title="Shift + A">
-
+                
                 <Knob 
-                    name=""
-                    value={synthesizer.volume}
-                    min={0} 
-                    max={1} 
-                    on:onChange={(e) => synthesizer.setVolume(e.detail)} />
+                name=""
+                value={synthesizer.volume}
+                min={0} 
+                max={1} 
+                on:onChange={(e) => synthesizer.setVolume(e.detail)} />
             </div>
+            <LevelMeter output={synthesizer.gain} value={synthesizer.gain.gain.value} />
+            
+            <div id="reset" class="btn" title="ALT - Delete; Click: SHIFT -> DEFAULT, META -> RESET PRESETS" on:click={reset}>&#x2715;</div>
+
 
         </div>
 
@@ -374,6 +382,8 @@
 
 .synthesizer-menu {
 
+    padding: 5px 0px;
+
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -399,6 +409,17 @@
 #volume .knob-wrapper {
 
     margin: 0;
+}
+
+/** Level meter */
+:global(.synthesizer-menu .level-meter) {
+
+    border: 2px solid var(--c-y);
+
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+
 }
 
 </style>

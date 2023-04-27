@@ -7,8 +7,6 @@ Volume vs Gain
 
 Arpeggiator in Synth and per Track
 
-Hold mode
-
 Knob mousemove distance in y axis
 
 Save Screen Shot

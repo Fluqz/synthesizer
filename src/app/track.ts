@@ -348,6 +348,8 @@ export class Track implements ISerialize {
     /** Destroy this track. */
     destroy() {
 
+        this.releaseKeys()
+
         for(let i = this.nodes.length; i >= 0; i--) this.removeNode(this.nodes[i])
 
         if(this.instrument) this.instrument.destroy()

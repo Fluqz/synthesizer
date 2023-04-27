@@ -303,7 +303,7 @@
     text-align: center;
 
     font-size: 0.7rem;
-    margin: 15px 5px 0px 5px;
+    margin: 0px 5px 0px 5px;
     color: inherit;
 
     /* min-width: 50px; */

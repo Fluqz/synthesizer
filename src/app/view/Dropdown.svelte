@@ -80,7 +80,7 @@
     text-align: center;
 
     font-size: 0.7rem;
-    /* margin: 5px 5px 0px 5px; */
+    margin: 0px 5px 0px 5px;
 
     min-width: 50px;
     height: 25px;
