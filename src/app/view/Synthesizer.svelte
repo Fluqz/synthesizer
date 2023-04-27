@@ -105,6 +105,15 @@
         }, 0)
     }
 
+    const onChannel = (e) => {
+
+        if(!e.shiftKey) synthesizer.channel++
+        if(e.shiftKey) synthesizer.channel--
+
+        if(synthesizer.channel >= Synthesizer.maxChannelCount) synthesizer.channel = 0
+        else if(synthesizer.channel < 0) synthesizer.channel = Synthesizer.maxChannelCount - 1
+    }
+
     const octaveDown = () => {
 
         synthesizer.setOctave(synthesizer.octave - 1)
@@ -242,6 +251,8 @@
                 <label for="bpm">BPM</label>
                 <input type="number" pattern="[0-1]" min="1" max="300" name="bpm"/>
             </div> -->
+
+            <div id="channel-btn" class="btn" title="Arrow Up/Down" on:click={onChannel}>{ synthesizer.channel }</div>
 
             <div id="octave-down" class="btn" title="ArrowLeft" on:click={octaveDown}>{'<'}</div>
             <div id="octave-up" class="btn" title="ArrowRight" on:click={octaveUp}>{'>'}</div>

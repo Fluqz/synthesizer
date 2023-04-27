@@ -12,6 +12,7 @@
     import { writable } from "svelte/store";
     import Synthesizer from "./Synthesizer.svelte";
     import Dropdown from "./Dropdown.svelte";
+    import LevelMeter from "./LevelMeter.svelte";
 
     export let track: Track
     // export let instrument: Instrument
@@ -45,6 +46,15 @@
     const onVolumeChange = (e) => {
 
         track.volume = e.detail
+    }
+
+    const onChannel = (e) => {
+
+        if(!e.shiftKey) track.channel++
+        if(e.shiftKey) track.channel--
+
+        if(track.channel >= Synth.maxChannelCount) track.channel = 0
+        else if(track.channel < 0) track.channel = Synth.maxChannelCount - 1
     }
 
     const onMute = (e) => {
@@ -168,6 +178,14 @@
             max={6} 
             on:onChange={onVolumeChange} />
 
+        <LevelMeter output={track.volumeNode} />
+
+        <!-- Channel Nr -->
+        <div 
+            on:click={onChannel}
+            class="btn"
+            title="Channel">{track.channel}</div>
+
         <!-- Mute -->
         <div 
             on:click={onMute}
@@ -194,6 +212,7 @@
         <!-- Duplicate -->
         <div 
             on:click={onDuplicate}
+            title="Duplicate"
             class="btn">D</div>
 
 

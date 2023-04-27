@@ -8,6 +8,7 @@ export interface ITrackSerialization extends ISerialization {
 
     enabled: boolean
 
+    channel: number
     octave: number
     volume: number
     instrument: INodeSerialization
@@ -40,7 +41,10 @@ export class Track implements ISerialize {
     private _volume: number
 
     /** Overwriting Synthesizer's octave */
-    private octave: number
+    public octave: number
+
+    /** Channel number to port to */
+    public channel: number
 
     /** Instrument used */
     public instrument: Instrument
@@ -77,6 +81,7 @@ export class Track implements ISerialize {
         this.volumeNode = new Tone.Volume(this._volume)
         this.isMuted = false
         this.soloEnabled = false
+        this.channel = synthesizer.channel
         this._holdEnabled = 'OFF'
 
         if(instrument) {
@@ -362,6 +367,7 @@ export class Track implements ISerialize {
         // if(o.name) this.name = o.name
         if(o.volume) this.volume = o.volume
         if(o.octave) this.octave = o.octave
+        if(o.channel) this.channel = o.channel
 
         // if(o.enabled) this.enabled = o.enabled
 
@@ -426,6 +432,7 @@ export class Track implements ISerialize {
             enabled: true,
 
             octave: this.octave,
+            channel: this.channel,
 
             volume: this.volume,
             instrument: this.instrument == null ? undefined : this.instrument.serializeOut(),

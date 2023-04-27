@@ -31,6 +31,10 @@ Make a sequencer and add tracks that will play the sequence.
 
 Or make a sequence per synthesizer
 
+
+
+- turn Keys off per track (Same as mute?)
+- Add a channel number to track. Change current channel to switch between several tracks ArrowUp ArrowDown
 - Enter fullscreen mode and disable all UI
 - moodlight background easy smoothly between colors
 - sequencer - use keys to click in notes for the sequencer. 

@@ -25,6 +25,7 @@ export interface ISession {
 
     volume: number,
     octave: number,
+    channel: number,
     tracks: ITrackSerialization[]
 }
 
@@ -106,6 +107,9 @@ export class Synthesizer implements ISerialize {
      * The note will play for eternity.
      */
     static activeNotes: Set<string> = new Set()
+
+    public channel: number = 0
+    static maxChannelCount: number = 8
 
     static nodes = {
         effects: {
@@ -254,7 +258,7 @@ export class Synthesizer implements ISerialize {
         this.gain.gain.setValueAtTime(this.volume, Tone.now())
     }
 
-
+    /** Mute master */
     mute(m: boolean) {
 
         this.isMuted = m === true ? true : false
@@ -294,6 +298,7 @@ export class Synthesizer implements ISerialize {
         this.set(this)
     }
 
+    /** Disconnects and removes track */
     removeTrack(track: Track) {
 
         this.tracks.splice(this.tracks.indexOf(track), 1)
@@ -308,7 +313,7 @@ export class Synthesizer implements ISerialize {
     isRunning = false
 
 
-    /** Trigger note */
+    /** Trigger note - Triggers all tracks */
     triggerNote(note, octave) {
 
         // console.log('TRIGGER with ARP', this.arpMode)
@@ -324,21 +329,27 @@ export class Synthesizer implements ISerialize {
 
             this.setArpChord(Array.from(Synthesizer.activeNotes.keys()), (note) => {
 
-                for(let tr of this.tracks) tr.triggerNote(note)
+                for(let tr of this.tracks) this.triggerTrack(tr, note)
 
             }, (note) => {
 
-                for(let tr of this.tracks) tr.releaseNote(note)
+                for(let tr of this.tracks) this.releaseTrack(tr, note)
 
             })
         }
         else 
-            for(let tr of this.tracks) tr.triggerNote(note + octave)
+            for(let tr of this.tracks) this.triggerTrack(tr, note + octave)
 
         this.set(this)
     }
 
-    /** Release note */
+    /** Trigger note on one track specifically */
+    triggerTrack(track: Track, note: string) {
+
+        if(this.channel == track.channel) track.triggerNote(note)
+    }
+
+    /** Releases note of all tracks */
     releaseNote(note:string, octave?:number) {
 
         // console.log('RELEASE with ARP', this.arpMode)
@@ -350,23 +361,28 @@ export class Synthesizer implements ISerialize {
             
             this.setArpChord(Array.from(Synthesizer.activeNotes.keys()), (note) => {
 
-                for(let tr of this.tracks) tr.triggerNote(note)
+                for(let tr of this.tracks) this.triggerTrack(tr, note)
 
             }, (note) => {
 
-                for(let tr of this.tracks) tr.releaseNote(note)
+                for(let tr of this.tracks) this.releaseTrack(tr, note)
 
             })
         }
-        else for(let tr of this.tracks) tr.releaseNote(note + octave)
+        else for(let tr of this.tracks) this.releaseTrack(tr, note + octave)
 
         this.set(this)
+    }
+
+    /** Release note of one track specifically */
+    releaseTrack(track: Track, note: string) {
+
+        if(this.channel == track.channel) track.releaseNote(note)
     }
 
     /** Will release all triggered notes that are stored in [activeNotes] */
     releaseKeys() {
 
-        for(let n of Synthesizer.activeNotes) this.releaseNote(n)
         for(let t of this.tracks) t.releaseKeys()
 
         this.set(this)
@@ -525,6 +541,7 @@ export class Synthesizer implements ISerialize {
         return {
             volume: this.volume,
             octave: this.octave,
+            channel: this.channel,
             tracks: tracks
         }
     }
@@ -533,6 +550,7 @@ export class Synthesizer implements ISerialize {
 
         if(o.volume) this.setVolume(o.volume)
         if(o.octave) this.setOctave(o.octave)
+        if(o.channel) this.channel = o.channel
 
         for(let i = this.tracks.length-1; i >= 0; i--) this.removeTrack(this.tracks[i])
 
