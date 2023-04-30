@@ -32,6 +32,7 @@ export class PresetManager {
         this.default = {
             name: 'default',
             id: -1,
+            channel: 0,
             ...DEFAULT_SESSION.currentSession
         }
 
@@ -76,7 +77,6 @@ export class PresetManager {
 
         return true
     }
-
 
     loadPreset(preset: IPreset) : boolean {
 

@@ -8,39 +8,26 @@ import type { Instrument as ToneInstrument } from 'tone/build/esm/instrument/Ins
 /** Represents a instrument  */
 export abstract class Instrument extends Node {
 
-    onTrigger
-    onRelease
-
     constructor(name) {
 
         super(name)
-
-        this.onTrigger = new Subject()
-        this.onRelease = new Subject()
     }
     
     /** On Key down */
-    triggerNote(note: string) {
+    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
-        // if(G.debug) console.log(`Instrument - Trigger | note: ${note}`)
+        // if(G.debug) console.log(`Instrument - Trigger | note: ${note} time: ${time}`)
+    }
 
-        this.onTrigger.next(this)
+    triggerReleaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
+
+        // if(G.debug) console.log(`Instrument - Trigger and Release | note: ${note} time: ${time}`)
+
     }
 
     /** On Key up */
-    releaseNote(note?: string) {
+    releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
-        // if(G.debug) console.log(`Instrument - Release | note: ${note}`)
-
-        this.onRelease.next(this)
-    }
-    
-
-    destroy() {
-
-        super.destroy()
-
-        this.onTrigger.complete()
-        this.onTrigger.complete()
+        // if(G.debug) console.log(`Instrument - Release | note: ${note} time: ${time}`)
     }
 }

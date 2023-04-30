@@ -85,6 +85,26 @@
             'rgb(21, 111, 23)',
         ]
 
+        /** LOAD FROM LOCAL STORAGE */
+        const storageData = Storage.load()
+
+        if(storageData) serializeIn(storageData, true)
+
+        else serializeIn(DEFAULT_SESSION, false)
+
+
+
+        // synthesizer.startSequence(0, ['F#2', 'D1', 'F#2', 'C#3'])
+
+        // synthesizer.startSequence(1, ['A3', 'D3', 'E3', 'B3'])
+
+        // synthesizer.startSequence(2, [['A3', 'E4'], 'A4', 'E4', 'D3'])
+
+        // synthesizer.startSequence(3, [['A3', 'E4'], ['D3', 'B4'], ['D3', 'A4'], ['E3', 'B4']])
+
+
+
+
         colors.sort(() =>  Math.ceil((Math.random() * 2) - 1) )
 
         setInterval(() => {
@@ -121,6 +141,11 @@
     const serializeOut = () => {
     
         let o = synthesizer.serializeOut()
+
+        // {
+        //     synthesizer: o,
+            // eppilepsyMessage: 
+        // }
     
         return JSON.stringify(o)
     }
@@ -177,13 +202,6 @@
     
         synthesizer.dispose()
     }
-
-    const storageData = Storage.load()
-
-    if(storageData) serializeIn(storageData, true)
-
-    else serializeIn(DEFAULT_SESSION, false)
-
 
 
     const addTrack = (e) => {

@@ -38,7 +38,8 @@ Or make a sequence per synthesizer
 - Enter fullscreen mode and disable all UI
 - moodlight background easy smoothly between colors
 - sequencer - use keys to click in notes for the sequencer. 
-- velicity knob?
+- velocity knob?
+- Midi has velocity
 
 - Master track no instrument, but add effects before gain out
 - Show ADSR 

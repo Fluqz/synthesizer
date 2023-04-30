@@ -42,7 +42,7 @@
           for (var i = 0; i < bufferLength; i++) {
 
             var v = dataArray[i] / 128.0
-            var y = v * h / 2
+            var y = v * (h / 2)
 
             // peak = Math.max(y, peak)
 

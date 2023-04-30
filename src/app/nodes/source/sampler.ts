@@ -121,6 +121,16 @@ export class Sampler extends Instrument {
         this.sampler.triggerRelease(note, Tone.now())
     }
 
+    destroy() {
+        
+        this.sampler.releaseAll()
+        this.sampler.disconnect()
+        this.sampler.dispose()
+        this.gain.disconnect()
+        this.gain.dispose()
+        
+        super.destroy()
+    }
 
     serializeIn(o) {
 

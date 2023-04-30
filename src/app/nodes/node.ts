@@ -158,6 +158,7 @@ export abstract class Node implements ISerialize {
             }
         }
     }
+    
     delete() {
 
         this.onDelete.next(this)

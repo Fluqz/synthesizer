@@ -15,31 +15,31 @@ export class Midi {
         // WebMidi
         //     .enable()
         //     .then(onEnabled)
-        //     .catch(err => alert(err))
+        //     .catch(err => console.error(err))
 
 
 
         // Function triggered when WebMidi.js is ready
         function onEnabled() {
 
-            // console.log('ENABLE MIDI')
+            console.log('ENABLE MIDI')
 
-            // // Display available MIDI input devices
-            // if (WebMidi.inputs.length < 1) {
+            // Display available MIDI input devices
+            if (WebMidi.inputs.length < 1) {
 
-            //     console.log('NO MIDI DEVICE')
+                console.log('NO MIDI DEVICE')
 
-            //     document.body.innerHTML+= "No device detected."
-            // } 
-            // else {
+                document.body.innerHTML+= "No device detected."
+            } 
+            else {
 
-            //     console.log('MIDI DEVICE CONNECTED')
+                console.log('MIDI DEVICE CONNECTED')
 
-            //     WebMidi.inputs.forEach((device, index) => {
+                WebMidi.inputs.forEach((device, index) => {
 
-            //         console.log(`${index}: ${device.name} <br>`);
-            //     })
-            // }
+                    console.log(`${index}: ${device.name} <br>`);
+                })
+            }
         }
     }
 

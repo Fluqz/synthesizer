@@ -96,6 +96,16 @@ export class Synth extends Instrument {
         this.synth.triggerRelease(note, Tone.now())
     }
 
+    destroy() {
+        
+        this.synth.releaseAll()
+        this.synth.disconnect()
+        this.synth.dispose()
+        this.gain.disconnect()
+        this.gain.dispose()
+        
+        super.destroy()
+    }
 
     serializeIn(o) {
 

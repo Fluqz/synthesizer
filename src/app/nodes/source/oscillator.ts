@@ -158,8 +158,6 @@ export class Oscillator extends Instrument {
 
     triggerNote(note) {
 
-        super.triggerNote(note)
-
         this.frequency = note
 
         this.isPlaying = true
@@ -169,8 +167,6 @@ export class Oscillator extends Instrument {
 
     releaseNote(note) {
         
-        super.releaseNote(note)
-
         this.isPlaying = false
 
         if(this.isPlaying || Synthesizer.activeNotes.size > 0) {
@@ -244,6 +240,8 @@ export class Oscillator extends Instrument {
     destroy() {
 
         this.envelope.triggerRelease(Tone.now())
+        this.envelope.disconnect()
+        this.envelope.dispose()
 
         this.osc.stop(Tone.now() + this.envelope.toSeconds(this.envelope.release))
 

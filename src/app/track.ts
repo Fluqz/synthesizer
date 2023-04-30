@@ -1,5 +1,5 @@
 import * as Tone from 'tone'
-import { Synthesizer, type ISerialization, type ISerialize } from "./synthesizer"
+import { Synthesizer, type ISerialization, type ISerialize, type Channel } from "./synthesizer"
 import { Node, type INodeSerialization } from './nodes/node'
 import type { Instrument } from './nodes'
 import { writable, type Writable } from 'svelte/store'
@@ -44,7 +44,7 @@ export class Track implements ISerialize {
     public octave: number
 
     /** Channel number to port to */
-    public channel: number
+    public channel: Channel
 
     /** Instrument used */
     public instrument: Instrument
@@ -66,7 +66,7 @@ export class Track implements ISerialize {
     /** Allow arpegiator to play this tracks instrument. */
     public arpEnabled: boolean
 
-    public activeNotes: Set<string> = new Set()
+    public activeNotes: Set<Tone.Unit.Frequency> = new Set()
 
 
     constructor(synthesizer: Synthesizer, instrument?: Instrument) {
@@ -222,40 +222,46 @@ export class Track implements ISerialize {
         this.set(this)
     }
 
+    setChannel(c: Channel) {
+
+        this.channel = c
+
+        this.releaseKeys()
+    }
+
     releaseKeys() {
 
-        for(let n of this.activeNotes) this.releaseNote(n)
+        for(let n of this.activeNotes) this.releaseNote(n, Tone.now())
     }
 
     /** Triggers the instruments note */
-    triggerNote(note: string) {
+    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         if(this.holdEnabled == 'HOLD') return
 
         // Cant keep track of notes. Also will stay in this octave only! Need to check (synth.octave - note.octave) + this.octave
-        if(this.octave != undefined) note = note.replace(/[0-9]/g, '') + this.octave
+        // if(this.octave != undefined) note = note.replace(/[0-9]/g, '') + this.octave
 
         
         this.activeNotes.add(note)
 
-        this.instrument.triggerNote(note)
-        console.log('TRACK TRIGGER', note, this.holdEnabled)
+        this.instrument.triggerNote(note, time)
 
         this.set(this)
     }
 
     /** Stops the instruments note */
-    releaseNote(note:string) {
+    releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         if(this.holdEnabled == 'HOLD' || this.holdEnabled == 'PLAY') return
 
-        if(this.octave != undefined) note = note.replace(/[0-9]/g, '') + this.octave
+        // if(this.octave != undefined) note = note.replace(/[0-9]/g, '') + this.octave
 
         this.activeNotes.delete(note)
 
-        this.instrument.releaseNote(note)
+        this.instrument.releaseNote(note, time)
 
         this.set(this)
     }
@@ -367,7 +373,7 @@ export class Track implements ISerialize {
         // if(o.name) this.name = o.name
         if(o.volume) this.volume = o.volume
         if(o.octave) this.octave = o.octave
-        if(o.channel) this.channel = o.channel
+        if(o.channel) this.channel = o.channel as Channel
 
         // if(o.enabled) this.enabled = o.enabled
 
@@ -411,7 +417,7 @@ export class Track implements ISerialize {
 
                 for(let k of o.hold.activeKeys) {
 
-                    this.triggerNote(k)
+                    this.triggerNote(k, Tone.now())
                 }
 
                 this.holdEnabled = 'HOLD'
@@ -441,7 +447,7 @@ export class Track implements ISerialize {
             soloEnabled: this.soloEnabled,
             hold: {
                 enabled: this.holdEnabled,
-                activeKeys: Array.from(this.activeNotes)
+                activeKeys: Array.from(this.activeNotes as Iterable<string>)
             },
             isMuted: this.isMuted,
 

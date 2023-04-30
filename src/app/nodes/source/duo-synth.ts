@@ -150,6 +150,17 @@ export class DuoSynth extends Instrument {
         else this.output.disconnect()
     }
 
+    destroy() {
+        
+        this.polySynth.releaseAll()
+        this.polySynth.disconnect()
+        this.polySynth.dispose()
+        this.gain.disconnect()
+        this.gain.dispose()
+        
+        super.destroy()
+    }
+
     serializeIn(o) {
 
         super.serializeIn(o)

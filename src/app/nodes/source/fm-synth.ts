@@ -146,21 +146,16 @@ export class FMSynth extends Instrument {
     }
 
 
-
-
-
-
-
-    triggerNote(note: string) {
-
-        this.synth.triggerAttack(note, Tone.now())
+    destroy() {
+        
+        this.synth.releaseAll()
+        this.synth.disconnect()
+        this.synth.dispose()
+        this.gain.disconnect()
+        this.gain.dispose()
+        
+        super.destroy()
     }
-
-    releaseNote(note: string) {
-
-        this.synth.triggerRelease(note, Tone.now())
-    }
-
 
     serializeIn(o) {
 

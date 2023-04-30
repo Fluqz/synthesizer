@@ -3,7 +3,7 @@
 <script lang="ts">
 
     import { Track } from "../track";
-    import { Synthesizer as Synth } from "../synthesizer";
+    import { Synthesizer as Synth, type Channel } from "../synthesizer";
     import type { Instrument, Node as _Node } from "../nodes";
 
     import Node from "./Node.svelte";
@@ -54,7 +54,9 @@
         if(e.shiftKey) track.channel--
 
         if(track.channel >= Synth.maxChannelCount) track.channel = 0
-        else if(track.channel < 0) track.channel = Synth.maxChannelCount - 1
+        else if(track.channel < 0) track.channel = (Synth.maxChannelCount - 1) as Channel
+
+        track.setChannel(track.channel)
     }
 
     const onMute = (e) => {
@@ -284,7 +286,7 @@
 
 .track-wrapper .track-options {
 
-    width: 250px;
+    min-width: 250px;
     height: 100%;
 
     display: inline-flex;

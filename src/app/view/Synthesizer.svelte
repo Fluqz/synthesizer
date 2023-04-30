@@ -7,21 +7,20 @@
     
     import Key from './Key.svelte'
     import Track from './Track.svelte'
+    import Sequencer from "./Sequencer.svelte"
 
     import Knob from "./Knob.svelte"
     import LevelMeter from "./LevelMeter.svelte"
     import Oscilloscope from "./Oscilloscope.svelte"
     import DCMeter from "./DCMeter.svelte"
+    import Dropdown from './Dropdown.svelte';
 
     import { Track as _Track } from '../track'
     import { Instrument, Node as _Node } from '../nodes/'
-    import { Synthesizer } from '../synthesizer'
+    import { Synthesizer, type Channel } from '../synthesizer'
     import { writable } from 'svelte/store';
     import { G } from '../core/globals';
-    import Dropdown from './Dropdown.svelte';
     import { DEFAULT_SESSION } from '../presets';
-    import { Tone } from 'tone/build/esm/core/Tone';
-    import { Volume } from 'tone';
     import { Visual } from '../p5/visual';
 
     export let synthesizer: Synthesizer
@@ -111,7 +110,7 @@
         if(e.shiftKey) synthesizer.channel--
 
         if(synthesizer.channel >= Synthesizer.maxChannelCount) synthesizer.channel = 0
-        else if(synthesizer.channel < 0) synthesizer.channel = Synthesizer.maxChannelCount - 1
+        else if(synthesizer.channel < 0) synthesizer.channel = (Synthesizer.maxChannelCount - 1) as Channel
     }
 
     const octaveDown = () => {
@@ -243,23 +242,26 @@
 
         <div class="synthesizer-menu">
 
-            <div class="add-track btn" on:click={addTrack}>+</div>
+            <div class="add-track btn" title="Add Track" on:click={addTrack}>+</div>
 
-            <div id="mute" class="btn" class:active={synthesizer.isMuted} title="ALT - M" on:click={mute}>M</div>
+            <div id="mute" class="btn" class:active={synthesizer.isMuted} title="Mute" on:click={mute}>M</div>
 
             <!-- <div id="bpm" title="Shift + A">
                 <label for="bpm">BPM</label>
                 <input type="number" pattern="[0-1]" min="1" max="300" name="bpm"/>
             </div> -->
 
-            <div id="channel-btn" class="btn" title="Arrow Up/Down" on:click={onChannel}>{ synthesizer.channel }</div>
+            <div id="channel-btn" class="btn" title="Channel - Key: Arrow Up / Down | Click to increase | Click with SHIFT to decrease" on:click={onChannel}>{ synthesizer.channel }</div>
 
-            <div id="octave-down" class="btn" title="ArrowLeft" on:click={octaveDown}>{'<'}</div>
-            <div id="octave-up" class="btn" title="ArrowRight" on:click={octaveUp}>{'>'}</div>
+            <div>
+                <div id="octave-down" class="btn" title="Octave Down - Key: Arrow Left" on:click={octaveDown}>{'<'}</div>
+                <div id="octave" class="btn deactivated" title="Octave">{synthesizer.octave}</div>
+                <div id="octave-up" class="btn" title="Octave Up - Key: Arrow Right" on:click={octaveUp}>{'>'}</div>
+            </div>
 
-            <div id="arpeggiator" class="btn" title="Shift + A" on:click={onArpChange}>Arp</div>
+            <div id="arpeggiator" class="btn" title="Arpeggiator" on:click={onArpChange}>Arp</div>
 
-            <div id="record" class="btn" title="Space" on:click={toggleRecording} class:recording={isRecording}>&#x2609;</div>
+            <div id="record" class="btn" title="Toggle recording - Key: Space" on:click={toggleRecording} class:recording={isRecording}>&#x2609;</div>
             
 
             <div id="presets">
@@ -296,7 +298,7 @@
             <DCMeter output={synthesizer.gain} />
 
             
-            <div id="volume" title="Shift + A">
+            <div id="volume" title="Master volume">
                 
                 <Knob 
                 name=""
@@ -313,6 +315,16 @@
         </div>
 
 
+        <div class="sequencers">
+            
+            {#each Array.from(Synthesizer.sequences.values()) as sequence}
+                
+                <Sequencer />
+
+            {/each}
+
+
+        </div>
         
 
         <div class="mixer">

@@ -113,6 +113,9 @@
     color: var(--c-y);
 
     transition: .2s background-color;
+
+    mix-blend-mode: unset;
+
 }
 .level-meter:active,
 .level-meter:hover {
@@ -123,7 +126,7 @@
 
 .level {
 
-    background-blend-mode: difference;
+    background-blend-mode: hue;
 
     border-top-left-radius: 100%;
     border-top-right-radius: 100%;
@@ -137,9 +140,9 @@
     left: 0px;
     bottom: 0px;
 
-    background-color: var(--c-g2);
+    background-color: var(--c-bl);
 
-    mix-blend-mode: luminosity;
+    mix-blend-mode: difference;
 
 }
 .level.clipping {
@@ -154,7 +157,7 @@
 
     mix-blend-mode: unset;
 
-    color: var(--c-b);
+    color: var(--c-y);
 }
 
 
