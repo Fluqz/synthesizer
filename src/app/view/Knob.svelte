@@ -7,8 +7,8 @@
 
     import { fromEvent, Observable } from "rxjs"
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
-    import { M } from "../core/math"
-    import { Vec2 } from "../core/math";
+    import { M } from "../util/math"
+    import { Vec2 } from "../util/math";
     import { validate_each_keys } from "svelte/internal";
 
 

@@ -1,7 +1,7 @@
 
 <script lang="ts">
     import type * as Tone from "tone";
-    import { Vec2 } from "../core/math";
+    import { Vec2 } from "../util/math";
     import { onMount } from "svelte";
 
     export let output: Tone.ToneAudioNode

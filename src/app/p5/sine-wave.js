@@ -5,7 +5,7 @@ import * as Tone from 'tone'
 
 
 import { G } from '../core/globals'
-import { M } from '../core/math'
+import { M } from '../util/math'
 
 export const sinewave = (p5) => {
 

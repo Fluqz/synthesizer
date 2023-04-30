@@ -1,7 +1,7 @@
 import { Synthesizer } from "../synthesizer"
 import { G } from "../core/globals"
-import { Grid } from "../core/grid"
-import { M } from "../core/math/math"
+import { Grid } from "../util/grid"
+import { M } from "../util/math/math"
 import { Visual } from "./visual"
 
 

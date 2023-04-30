@@ -1,7 +1,7 @@
 
 <script lang="ts">
     import * as Tone from "tone";
-    import { M } from "../core/math";
+    import { M } from "../util/math";
     import { writable } from "svelte/store";
 
     export let output: Tone.ToneAudioNode

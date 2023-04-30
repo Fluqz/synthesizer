@@ -1,11 +1,4 @@
-
-
-
-import * as Tone from 'tone'
-
-
 import { G } from '../core/globals'
-import { M } from '../core/math'
 import { Synthesizer } from '../synthesizer'
 import { ElectricFuzz } from './electric-fuzz'
 

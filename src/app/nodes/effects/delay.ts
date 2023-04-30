@@ -1,7 +1,6 @@
 import * as Tone from 'tone'
 
 import { Effect } from "./effect"
-import type { ToneWithContextOptions } from 'tone/build/esm/core/context/ToneWithContext'
 import { ParamType, Node } from '../node'
 
 
