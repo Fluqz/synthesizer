@@ -54,7 +54,7 @@ export interface INodeSerialization extends ISerialization {
 }
 
 /** Represents a Node that can be connected to eachother */
-export abstract class Node /*extends Tone.ToneAudioNode*/ implements ISerialize {
+export abstract class Node/* extends Tone.ToneAudioNode*/ implements ISerialize {
 
     static count = 0
 
@@ -104,7 +104,7 @@ export abstract class Node /*extends Tone.ToneAudioNode*/ implements ISerialize 
     get enabled() { return this._enabled }
 
     /** Connects this Nodes Output to [e]'s Input */
-    connect(n: Node | Tone.ToneAudioNode) {
+    connect(n: Node | Tone.ToneAudioNode) {
 
         if(!n) return
 
@@ -112,7 +112,7 @@ export abstract class Node /*extends Tone.ToneAudioNode*/ implements ISerialize 
     }
 
     /** Disconnects this Output from [e]'s/all Input(s) */
-    disconnect(n?: Node | Tone.ToneAudioNode) {
+    disconnect(n?: Node | Tone.ToneAudioNode) {
 
         if(n) this.output.disconnect(n instanceof Node ? n.input : n)
         else this.output.disconnect()

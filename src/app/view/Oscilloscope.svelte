@@ -88,12 +88,12 @@
     <svg xmlns="http://www.w3.org/2000/svg">
 
         <defs>
-          <polyline id="wave" stroke="#fed33a" stroke-width="2px" points={pointsString}/>
+          <polyline id="wave" stroke="#fed33a" stroke-width="2px" points={pointsString} />
         </defs>
   
-        <use href="#wave" x="0"  y="0" />
-        <!-- <use href="#wave" x="0"  y="-5" />
-        <use href="#wave" x="0"  y="5" /> -->
+        <use href="#wave" x="0"  y="0"/>
+        <!-- <use href="#wave" x="0"  y="-5" style="opacity: .2" /> -->
+        <!-- <use href="#wave" x="0"  y="5" style="opacity: .2" /> -->
 
     </svg>
 

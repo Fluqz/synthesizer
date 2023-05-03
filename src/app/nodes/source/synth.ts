@@ -60,7 +60,7 @@ export class Synth extends Instrument {
         console.log('synth', this.synth.get())
 
         this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () =>  this.volume, set: (v) => this.volume = v, min: 0, max: 1, groupID: 0 })
-        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () =>  this.detune, set: (v) => this.detune = v, min: 0, max: 1, groupID: 0 })
+        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => { return this.detune }, set: (v) => this.detune = v, min: -100, max: 100, groupID: 0 })
         this.props.set('portamento', { type: ParamType.KNOB, name: 'Portamento', get: () =>  this.portamento, set: (v) => this.portamento = v, min: 0, max: 1, groupID: 0 })
     }
 

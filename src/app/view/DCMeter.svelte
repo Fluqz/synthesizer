@@ -37,7 +37,11 @@
 
             if(i == 0) continue
 
-            tailString += `${(i - 1) * 10}, ${10 * tails[i - 1]} ${i * 10}, ${10 * tails[i]}`
+            // console.log('tail', (i - 1) * 10, 10 * tails[i - 1], i * 10, 10 * tails[i])
+
+            // tailString += `${(i - 1) * 10}, ${10 * tails[i - 1]} ${i * 10}, ${10 * tails[i]}` // TRIANGLE METER 
+
+            tailString += `${(i - 1) * 10}, ${(10 * tails[i - 1]) + 50} ${i * 10}, ${(10 * tails[i]) + 50} ` // CORRECT
         }
 
         // console.log(tailString)
@@ -68,7 +72,7 @@
 
             {#if i != 0} -->
                 
-                <polyline stroke="#fed33a" stroke-width="4px" points={tailString}/>
+                <polyline stroke="#fed33a" stroke-width="4px" points={tailString} />
 <!--             
             {/if}
             
