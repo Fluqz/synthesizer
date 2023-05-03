@@ -2,6 +2,8 @@
 <script lang="ts">
 
     import * as Tone from 'tone'
+    import { WebMidi, type NoteMessageEvent } from "webmidi";
+
     import { onMount } from 'svelte';
     import Synthesizer from './app/view/Synthesizer.svelte'
     
@@ -34,7 +36,15 @@
 
         Tone.start()
 
-        Midi.init()
+        Midi.init((e: NoteMessageEvent) => {
+
+            synthesizer.triggerNote(e.note.identifier, Tone.now(), synthesizer.channel, e.note.velocity)
+            
+        },
+        (e) => {
+    
+            synthesizer.releaseNote(e.note.identifier, Tone.now(), synthesizer.channel)
+        })
 
         // Scroll to bottom
         setTimeout(() => {

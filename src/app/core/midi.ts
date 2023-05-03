@@ -1,4 +1,6 @@
 import { WebMidi } from "webmidi";
+import { G } from "./globals";
+import * as Tone from "tone";
 
 
 
@@ -9,13 +11,13 @@ export class Midi {
 
 
 
-    static init() {
+    static init(trigger: (...args) => void, release: (...args) => void) {
 
-        // console.log('INIT MIDI')
-        // WebMidi
-        //     .enable()
-        //     .then(onEnabled)
-        //     .catch(err => console.error(err))
+        console.log('INIT MIDI')
+        WebMidi
+            .enable()
+            .then(onEnabled)
+            .catch(err => console.error(err))
 
 
 
@@ -29,8 +31,8 @@ export class Midi {
 
                 console.log('NO MIDI DEVICE')
 
-                document.body.innerHTML+= "No device detected."
-            } 
+                document.body.innerHTML += "No device detected."
+            }
             else {
 
                 console.log('MIDI DEVICE CONNECTED')
@@ -40,6 +42,20 @@ export class Midi {
                     console.log(`${index}: ${device.name} <br>`);
                 })
             }
+
+
+            WebMidi.inputs[0].addListener("noteon", e => {
+
+                trigger(e)
+
+            }, { channels: [1, 2, 3, 4, 5, 6, 7, 8] });
+
+
+            WebMidi.inputs[0].addListener("noteoff", e => {
+
+                release(e)
+
+            }, { channels: [1, 2, 3, 4, 5, 6, 7, 8] });
         }
     }
 
@@ -47,7 +63,7 @@ export class Midi {
     // private static midi: MIDIAccess
 
     // static init() {
-        
+
     //     navigator.permissions.query({ name: "midi", sysex: true }).then((result) => {
 
     //             if (result.state === "granted") {
@@ -102,7 +118,7 @@ export class Midi {
     //             ` version:'${input.version}'`
     //         )
     //     }
-      
+
     //     for (const entry of this.midi.outputs) {
 
     //         const output = entry[1]
@@ -111,7 +127,7 @@ export class Midi {
     //         )
     //     }
     // }
-      
+
 
     // private static updateDevice(e) {
 
