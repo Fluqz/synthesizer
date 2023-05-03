@@ -13,21 +13,15 @@ export abstract class Instrument extends Node {
         super(name)
     }
     
-    /** On Key down */
-    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
+    /** Trigger Note */
+    abstract triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity:number) 
+    // { // if(G.debug) console.log(`Instrument - Trigger | note: ${note} time: ${time}`) }
 
-        // if(G.debug) console.log(`Instrument - Trigger | note: ${note} time: ${time}`)
-    }
+    /** Trigger and Release Note */
+    abstract triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number)
+    // {// if(G.debug) console.log(`Instrument - Trigger and Release | note: ${note} time: ${time}`) }
 
-    triggerReleaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
-
-        // if(G.debug) console.log(`Instrument - Trigger and Release | note: ${note} time: ${time}`)
-
-    }
-
-    /** On Key up */
-    releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
-
-        // if(G.debug) console.log(`Instrument - Release | note: ${note} time: ${time}`)
-    }
+    /** Release Note */
+    abstract releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time)
+    // { // if(G.debug) console.log(`Instrument - Release | note: ${note} time: ${time}`) }
 }

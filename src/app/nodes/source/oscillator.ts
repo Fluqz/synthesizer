@@ -156,27 +156,37 @@ export class Oscillator extends Instrument {
         this.envelope.set({ release: this._release })
     }
 
-    triggerNote(note) {
 
-        this.frequency = note
+    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
+
+        this.frequency = Tone.Frequency(note).toFrequency()
 
         this.isPlaying = true
 
-        this.envelope.triggerAttack(Tone.now())
+        this.envelope.triggerAttack(time, velocity)
     }
 
-    releaseNote(note) {
+    triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
         
+        this.frequency = Tone.Frequency(note).toFrequency()
+
+        // this.isPlaying ?
+
+        this.envelope.triggerAttackRelease(duration, time, velocity)
+    }
+
+    releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
+
         this.isPlaying = false
 
         if(this.isPlaying || Synthesizer.activeNotes.size > 0) {
 
             // console.log('play other note', Synthesizer.activeNotes)
-            this.triggerNote(Array.from(Synthesizer.activeNotes).pop())
+            this.triggerNote(Array.from(Synthesizer.activeNotes).pop(), time)
             return
         }
 
-        this.envelope.triggerRelease(Tone.now())
+        this.envelope.triggerRelease(time)
     }
 
     connect(n: Node | Tone.ToneAudioNode<ToneWithContextOptions>): void {

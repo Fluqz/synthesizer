@@ -19,25 +19,21 @@ Disable Visuals completly remove() in p5 sketch
 
 Node extend Tone.ToneAudioNode
 
+
+
+
 #IDEAs
 
-Use Oscilloscope's frequency for visuals
+- Add humanize knob
 
-Make multiple synthesizers at the same time
+- Use Oscilloscope's frequency for visuals
 
-Set tracks to midi channels. Can it play multiple sequences at the same time? Every sequence on one channel?
-
-Make a sequencer and add tracks that will play the sequence.
-
-Or make a sequence per synthesizer
+- Make multiple synthesizers at the same time
 
 
+- on disconnecting nodes or anything ramp down volume of affected track
 
-- turn Keys off per track (Same as mute?)
-- Add a channel number to track. Change current channel to switch between several tracks ArrowUp ArrowDown
 - Enter fullscreen mode and disable all UI
-- moodlight background easy smoothly between colors
-- sequencer - use keys to click in notes for the sequencer. 
 - velocity knob?
 - Midi has velocity
 
@@ -47,18 +43,18 @@ Or make a sequence per synthesizer
   set: drum parts (hihat, snare etc) 
        random (aber im takt) or steady 4/4 8/8 2/4 etc or 16 bars triggering triggering
        
-- hide keyboard
-
-- Mode - random octaves on all keys (changes after pressed?)
 
 - loop mode recording - set a loop length and start record and play. loop runns and playing will overdub. also make undo 
 
 
 - Loop recordings?
-- Add different colors for different octaves (only for black keys?)
 - Add knob automation (startVal, endVal, curve, duration)
-- Pressing keys changes the color of the background/keys. Colors are chose by my synesthesia palette
 
-- Beatmachine ?
 - upload presets to database? 
 
+
+- Add different colors for different octaves (only for black keys?)
+- hide keyboard
+- Mode - random octaves on all keys (changes after pressed?)
+- Pressing keys changes the color of the background/keys. Colors are chose by my synesthesia palette
+- moodlight background easy smoothly between colors

@@ -153,13 +153,16 @@
     // ON CHANGE TAB
     
     const toggleActive = (active:boolean) => {
+
+        let nsd = Tone.Transport.nextSubdivision('8n')
+
         
         if (active) {
             // console.log('activate')
             
             synthesizer.mute(false)
             
-            Tone.Transport.start(Tone.now() + .5)
+            // Tone.Transport.start(nsd)
             
             Visual.visualsEnabled = true
             
@@ -167,10 +170,16 @@
         else {
             // console.log('deactivate')
             
-            synthesizer.releaseKeys()
+            // synthesizer.releaseKeys()
             synthesizer.mute(true)
             
-            Tone.Transport.stop(Tone.now() + .5)
+            // Tone.Transport.pause(nsd)
+            // Tone.Transport.stop(nsd)
+            // Tone.Transport.cancel(nsd)
+
+            // TODO - NOT RELEASING KEYS
+
+
             Visual.visualsEnabled = false
         }
     }
@@ -197,10 +206,12 @@
     
     // ON UNLOAD
     window.onbeforeunload = () => {
-    
+
         Storage.save(serializeOut())
+
+        synthesizer.mute(true)
     
-        synthesizer.dispose()
+        // synthesizer.dispose()
     }
 
 

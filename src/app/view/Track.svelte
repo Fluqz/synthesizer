@@ -206,7 +206,7 @@
         <div 
             on:click={onHold}
             class="btn"
-            title="Hold" 
+            title="Hold Mode - OFF: Play as usual; PLAY - Play keys to hold; HOLD: Will play activated keys endlessly"
             class:play={track.holdEnabled == 'PLAY'}
             class:hold={track.holdEnabled == 'HOLD'}>{track.holdEnabled.charAt(0)}</div>
 

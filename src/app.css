@@ -34,6 +34,7 @@
 
   mix-blend-mode: difference;
   
+  outline: none;
 
   -webkit-user-select: none; /* Safari */        
   -moz-user-select: none; /* Firefox */
@@ -59,15 +60,42 @@ body {
   -ms-scrollbar: none
 
   /* cursor: url('/src/assets/imgs/circle-sepia.gif'); */
+
+
 }
 
 html {
+
+  /* background-color: var(--c-b); */
+
   font-size: 14px;
   scrollbar-width: none;
+/* 
+  background-image: url('/src/assets/imgs/noise5.png');
+  background-size: 200%;
+  background-repeat: no-repeat; */
 }
 
 canvas {
 }
+
+input { 
+  outline: none;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+
 
 .shadow {
 
@@ -134,6 +162,31 @@ canvas {
   color: var(--c-b); */
   background-image: none;
   mix-blend-mode: difference;
+}
+
+.btn input {
+
+  display: block;
+
+  border: none;
+
+  background-color: transparent;
+
+  text-align: center;
+
+  width: 25px;
+  height: 25px;
+
+  background-color: var(--c-y);
+  color: var(--c-b);
+
+  transition: .4s background-color;
+}
+.btn input:focus,
+.btn input:hover,
+.btn input:active {
+
+  background-color: var(--c-w);
 }
 
 .shifting-GIF {

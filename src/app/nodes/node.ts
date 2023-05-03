@@ -1,5 +1,5 @@
 import { Subject, count } from 'rxjs'
-import type * as Tone from 'tone'
+import * as Tone from 'tone'
 import type { ISerialization, ISerialize } from '../synthesizer'
 import { writable, type Writable } from 'svelte/store'
 
@@ -54,7 +54,7 @@ export interface INodeSerialization extends ISerialization {
 }
 
 /** Represents a Node that can be connected to eachother */
-export abstract class Node implements ISerialize {
+export abstract class Node /*extends Tone.ToneAudioNode*/ implements ISerialize {
 
     static count = 0
 
@@ -85,6 +85,7 @@ export abstract class Node implements ISerialize {
     collapsed: boolean = false
 
     constructor(name) {
+        // super()
 
         this.id = Node.count++
 
@@ -97,17 +98,6 @@ export abstract class Node implements ISerialize {
         this.props = new Map()
 
         this.onDelete = new Subject()
-    }
-
-    set(v: any) { this.store.set(v) }
-
-    subscribe(f: (v: any) => void) : () => void {
-
-        let unsubscribe = this.store.subscribe(f)
-       
-        this.set(this)
-
-        return unsubscribe
     }
 
     set enabled(e) { this._enabled = e }

@@ -10,6 +10,7 @@ import { Sampler, Synth, DuoSynth, Instrument, FMSynth, AMSynth, Delay, Tremolo,
 import { Track, type ITrackSerialization } from './track'
 import { PresetManager, type IPreset } from './core/preset-manager'
 import { writable, type Writable } from 'svelte/store'
+import { Sequencer, type Sequence, type ISequencerSerialization } from './sequencer'
 
 export interface ISerialize {
 
@@ -27,6 +28,7 @@ export interface ISession {
     octave: number,
     channel: number,
     tracks: ITrackSerialization[]
+    sequencers: ISequencerSerialization[]
 }
 
 export interface ISynthesizerSerialization extends ISerialization {
@@ -111,8 +113,6 @@ export class Synthesizer implements ISerialize {
     public channel: Channel = 0
     static maxChannelCount: number = 8
 
-    static sequences: Map<Channel | Channel[], Tone.Unit.Frequency[]> = new Map()
-
     static nodes = {
         effects: {
 
@@ -162,9 +162,12 @@ export class Synthesizer implements ISerialize {
     /** Arpeggiator mode */
     arpMode: boolean = false
     /** Beats per minute */
-    bpm: number = 120
+    _bpm: number = 120
     
     tracks: Track[]
+
+    sequencers: Sequencer[]
+
     store: Writable<Synthesizer>
 
     isMuted: boolean = false
@@ -213,12 +216,12 @@ export class Synthesizer implements ISerialize {
 
             key.onTrigger.subscribe(k => {
 
-                this.triggerNote(k.note + k.octave, this.channel, Tone.now())
+                this.triggerNote(k.note + k.octave, Tone.now(), this.channel)
             })
 
             key.onRelease.subscribe(k => {
 
-                this.releaseNote(k.note + k.octave, this.channel, Tone.now())
+                this.releaseNote(k.note + k.octave, Tone.now(), this.channel)
             })
 
             i++
@@ -230,6 +233,11 @@ export class Synthesizer implements ISerialize {
         // this.addTrack(new Track(this, Synthesizer.nodes.sources.DuoSynth()))
         // this.addTrack(new Track(this, Synthesizer.nodes.sources.FMSynth()))
         // this.addTrack(new Track(this, Synthesizer.nodes.sources.AMSynth()))
+
+        this.sequencers = []
+        // this.addSequencer(new Sequencer(this, [['A3', 'E4'], ['D3', 'B4'], ['D3', 'A4'], ['E3', 'B4']]))
+        // this.addSequencer(new Sequencer(this, ['F#2', 'D1', 'F#2', 'C#3']))
+
 
         this.presetManager = new PresetManager(this)
 
@@ -251,6 +259,13 @@ export class Synthesizer implements ISerialize {
         this.set(this)
 
         return unsubscribe
+    }
+
+    get bpm() { return Tone.Transport.bpm.value }
+    set bpm(bpm:number) { 
+
+        // TODO - WTF Decimals all the time
+        Tone.Transport.bpm.value = bpm
     }
 
     /** Set Master Volume */
@@ -293,6 +308,8 @@ export class Synthesizer implements ISerialize {
     addTrack(track: Track, i?: number) {
 
         if(this.tracks.indexOf(track) == -1) this.tracks.push(track)
+
+        track.synthesizer = this
         
         track.connect(this.gain)
 
@@ -304,6 +321,8 @@ export class Synthesizer implements ISerialize {
 
         this.tracks.splice(this.tracks.indexOf(track), 1)
 
+        track.synthesizer = null
+
         track.disconnect(this.gain)
 
         track.destroy()
@@ -311,94 +330,89 @@ export class Synthesizer implements ISerialize {
         this.set(this)
     }
 
-    startSequence(channel: Channel, sequence: any[]) {
 
-        console.log('start', channel, sequence)
+    /** Add a track to the synthesizer. */
+    addSequencer(sequencer: Sequencer, i?: number) {
 
-        let seq = new Tone.Sequence((time: number, note: Tone.Unit.Frequency) => {
+        if(this.sequencers.indexOf(sequencer) == -1) this.sequencers.push(sequencer)
 
-            this.triggerNote(note as string, channel, time)
+        sequencer.synthesizer = this
+        
+        // sequencer.connect(this.gain)
 
-            // STORE OLD NOTE VALUE AND RELEASE WHEN A NEW NOTE IS TRIGGERED
-            setTimeout(() => {
+        this.set(this)
+    }
 
-                this.releaseNote(note as string, channel, time)
-                
-            }, (60 * 1000) / Tone.Transport.bpm.value / 4)
+    /** Disconnects and removes track */
+    removeSequencer(sequencer: Sequencer) {
 
-            console.log('SEQUENCER at Channel', channel, note, time)
+        this.sequencers.splice(this.sequencers.indexOf(sequencer), 1)
 
-        }, sequence).start()
+        sequencer.synthesizer = null
+
+        // sequencer.disconnect(this.gain)
+
+        sequencer.destroy()
+
+        this.set(this)
     }
 
 
-    isRunning = false
+
+    isPlaying = false
     /** Trigger note - Triggers all tracks */
-    triggerNote(note: Tone.Unit.Frequency, channel: Channel = 0, time: Tone.Unit.Time) {
+    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, channel: Channel = 0, velocity:number = 1) {
 
         // note = note.replace(/[0-9]/g, '')
 
-        console.log('TRIGGER', note)
+        note = Tone.Frequency(note).toNote()
 
-        if(this.isRunning == false) {
+        if(this.isPlaying == false) {
             Tone.start()
-            this.isRunning = true
+            this.isPlaying = true
         }
 
         Synthesizer.activeNotes.add(note)
-
-        // if(this.arpMode) {
-
-        //     this.setArpChord(Array.from(Synthesizer.activeNotes.keys()), (note) => {
-
-        //         for(let tr of this.tracks) this.triggerTrack(tr, note, channel)
-
-        //     }, (note) => {
-
-        //         for(let tr of this.tracks) this.releaseTrack(tr, note, channel)
-
-        //     })
-        // }
-        // else 
 
         for(let tr of this.tracks) {
 
             if(channel != tr.channel) continue
 
-            this.triggerTrack(tr, note, time)
+            this.triggerTrack(tr, note, time, velocity)
+        }
+
+        this.set(this)
+    }
+    
+    triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, channel: Channel = 0, velocity:number = 1): void {
+
+        Tone.Frequency(note).toNote()
+
+        Synthesizer.activeNotes.add(note)
+
+        const n = note
+        Tone.Transport.scheduleOnce((t) => {
+
+            Synthesizer.activeNotes.delete(n)
+
+        }, time)
+
+        for(let tr of this.tracks) {
+
+            if(channel != tr.channel) continue
+
+            this.triggerReleaseTrack(tr, note, duration, time, velocity)
         }
 
         this.set(this)
     }
 
-    /** Trigger note on one track specifically */
-    triggerTrack(track: Track, note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
-
-        track.triggerNote(note, time)
-    }
-
     /** Releases note of all tracks */
-    releaseNote(note: Tone.Unit.Frequency, channel: Channel = 0, time: Tone.Unit.Time) {
+    releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, channel: Channel = 0) {
 
-        // note = note.replace(/[0-9]/g, '')
-
-        console.log('RELEASE', note)
-
+        Tone.Frequency(note).toNote()
+        
         Synthesizer.activeNotes.delete(note)
-
-        // if(this.arpMode) {
-            
-        //     this.setArpChord(Array.from(Synthesizer.activeNotes.keys()), (note) => {
-
-        //         for(let tr of this.tracks) this.triggerTrack(tr, note, channel)
-
-        //     }, (note) => {
-
-        //         for(let tr of this.tracks) this.releaseTrack(tr, note, channel)
-
-        //     })
-        // }
-        // else 
         
         for(let tr of this.tracks) {
 
@@ -410,13 +424,25 @@ export class Synthesizer implements ISerialize {
         this.set(this)
     }
 
+    /** Trigger note on one track specifically */
+    triggerTrack(track: Track, note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
+
+        track.triggerNote(note, time, velocity)
+    }
+
+    /** Trigger and release note on one track specifically */
+    triggerReleaseTrack(track: Track, note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity: number = 1) {
+
+        track.triggerReleaseNote(note, duration, time, velocity)
+    }
+    
     /** Release note of one track specifically */
     releaseTrack(track: Track, note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
         track.releaseNote(note, time)
     }
 
-    /** Will release all triggered notes that are stored in [activeNotes] */
+    /** Will release all triggered notes that are stored in [activeNotes]. */
     releaseKeys() {
 
         for(let t of this.tracks) t.releaseKeys()
@@ -424,6 +450,26 @@ export class Synthesizer implements ISerialize {
         this.set(this)
     }
 
+    /** Will release all triggered notes of all tracks with the given channel. */
+    releaseKeysByChannel(channel: Channel) {
+
+        for(let t of this.tracks) {
+
+            if(t.channel == channel) t.releaseKeys()
+        }
+
+
+        this.set(this)
+    }
+
+    /** Will stop all sequencers. */
+    stopSequencers() {
+
+        for(let s of this.sequencers) s.stop()
+
+        this.set(this)
+    }
+    
 
 
     toggleArpMode(m) {
@@ -492,7 +538,7 @@ export class Synthesizer implements ISerialize {
     /** Toggles the recording mode */
     toggleRecording(v?:boolean) {
 
-        if(v != undefined) this.isRecording = v
+        if(v != undefined) this.isRecording = !v
 
         if(!this.isRecording) this.startRecording()
         else this.stopRecording()
@@ -516,6 +562,8 @@ export class Synthesizer implements ISerialize {
 
     /** Will stop recording and download the webm file  */
     stopRecording() {
+
+        if(!this.recorder) return
 
         this.isRecording = false
 
@@ -560,10 +608,13 @@ export class Synthesizer implements ISerialize {
         // this.presetManager.reset()
 
         this.releaseKeys()
+        this.stopSequencers()
 
         for(let t of this.tracks) t.destroy()
-
         this.tracks.length = 0
+
+        for(let s of this.sequencers) s.destroy()
+        this.sequencers.length = 0
 
         this.set(this)
     }
@@ -571,15 +622,28 @@ export class Synthesizer implements ISerialize {
     /** Disconnects everything and removes all event listeners */
     dispose() {
 
-        for(let track of this.tracks) {
+        for(let track of this.tracks) track.destroy()
+        delete this.tracks
 
-            track.destroy()
+        for(let key of Synthesizer.keys) key.dispose()
+        // delete Synthesizer.keys
+
+        for(let sequencer of this.sequencers) sequencer.destroy()
+        delete this.sequencers
+
+        this.gain.disconnect()
+        this.gain.dispose()
+        delete this.gain
+
+        delete this.presetManager
+
+        if(this.recorder) {
+            
+            this.recorder.disconnect()
+            this.recorder.dispose()
         }
 
-        for(let key of Synthesizer.keys) {
-
-            key.dispose()
-        }
+        delete this.store
     }
 
     /** Get the current session as js object */
@@ -588,11 +652,15 @@ export class Synthesizer implements ISerialize {
         let tracks: ITrackSerialization[] = []
         for(let t of this.tracks) tracks.push(t.serializeOut())
 
+        let sequencers: ISequencerSerialization[] = []
+        for(let s of this.sequencers) sequencers.push(s.serializeOut())
+
         return {
             volume: this.volume,
             octave: this.octave,
             channel: this.channel,
-            tracks: tracks
+            tracks: tracks,
+            sequencers: sequencers,
         }
     }
 
@@ -612,6 +680,19 @@ export class Synthesizer implements ISerialize {
                 let track = new Track(this)
                 track.serializeIn(t)
                 this.addTrack(track)
+            }
+        }
+
+        this.sequencers.length = 0
+        if(o.sequencers && o.sequencers.length > 0) {
+
+            for(let s of o.sequencers) {
+
+                let sequencer = new Sequencer(this)
+                sequencer.serializeIn(s)
+                this.addSequencer(sequencer)
+
+                sequencer.start()
             }
         }
     }

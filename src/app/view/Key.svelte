@@ -88,7 +88,11 @@
 .key {
 
     display: inline-block;
+    /* align-items: center;
+    justify-content: center; */
+
     width: calc(100% / 36);
+    /* height: calc(100vw / 36); */
     height: 100%;
 
     background-color: var(--c-y);

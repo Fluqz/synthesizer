@@ -4,8 +4,6 @@ import { Grid } from "../util/grid"
 import { M } from "../util/math/math"
 import { Visual } from "./visual"
 
-
-
 export const moireShader = (p5) => {
 
     let shader
@@ -28,6 +26,10 @@ export const moireShader = (p5) => {
     }
 
     p5.setup = () => {
+
+        // p5grain.setup()
+        // granulateSimple(42)
+
 
         p5.createCanvas(G.w, G.h, p5.WEBGL)
 

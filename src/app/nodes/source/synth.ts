@@ -86,15 +86,21 @@ export class Synth extends Instrument {
         this.synth.set({ portamento: this._portamento })
     }
 
-    triggerNote(note: string) {
+    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
-        this.synth.triggerAttack(note, Tone.now())
+        this.synth.triggerAttack(note, time, velocity)
     }
 
-    releaseNote(note: string) {
-
-        this.synth.triggerRelease(note, Tone.now())
+    triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
+        
+        this.synth.triggerAttackRelease(note, duration, time, velocity)
     }
+
+    releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
+
+        this.synth.triggerRelease(note, time)
+    }
+
 
     destroy() {
         

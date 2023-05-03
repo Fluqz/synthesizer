@@ -70,6 +70,9 @@ export class PresetManager {
 
         if(!preset) return false
 
+        this.synthesizer.releaseKeys()
+        this.synthesizer.stopSequencers()
+
         this.synthesizer.serializeIn({
             currentSession: preset,
             presets: this.presets

@@ -145,6 +145,20 @@ export class FMSynth extends Instrument {
         this.synth.set({ envelope: { release: this._release } })
     }
 
+    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
+
+        this.synth.triggerAttack(note, time, velocity)
+    }
+
+    triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
+        
+        this.synth.triggerAttackRelease(note, duration, time, velocity)
+    }
+
+    releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
+
+        this.synth.triggerRelease(note, time)
+    }
 
     destroy() {
         

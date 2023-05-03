@@ -235,7 +235,7 @@ export class Track implements ISerialize {
     }
 
     /** Triggers the instruments note */
-    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
+    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         if(this.holdEnabled == 'HOLD') return
@@ -246,10 +246,31 @@ export class Track implements ISerialize {
         
         this.activeNotes.add(note)
 
-        this.instrument.triggerNote(note, time)
+        this.instrument.triggerNote(note, time, velocity)
 
         this.set(this)
     }
+
+    /** Triggers the instruments note */
+    triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
+
+        // Prevent triggering while in HOLD Mode. Held sounds are already set 
+        // if(this.holdEnabled == 'HOLD') return
+        
+        this.activeNotes.add(note)
+
+        const n = note
+        Tone.Transport.scheduleOnce((t) => {
+
+            Synthesizer.activeNotes.delete(n)
+
+        }, time)
+
+        this.instrument.triggerReleaseNote(note, duration, time, velocity)
+
+        this.set(this)
+    }
+
 
     /** Stops the instruments note */
     releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
@@ -371,9 +392,9 @@ export class Track implements ISerialize {
     serializeIn(o: ITrackSerialization) {
 
         // if(o.name) this.name = o.name
-        if(o.volume) this.volume = o.volume
-        if(o.octave) this.octave = o.octave
-        if(o.channel) this.channel = o.channel as Channel
+        if(o.volume != undefined) this.volume = o.volume
+        if(o.octave != undefined) this.octave = o.octave
+        if(o.channel != undefined) this.channel = o.channel as Channel
 
         // if(o.enabled) this.enabled = o.enabled
 

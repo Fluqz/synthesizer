@@ -107,19 +107,21 @@ export class DuoSynth extends Instrument {
     get sustain1() { return this.polySynth.get().voice1.envelope.sustain }
 
 
-    triggerNote(note) {
 
-        super.triggerNote(note)
+    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
-        this.polySynth.triggerAttack(note, Tone.now())
+        this.polySynth.triggerAttack(note, time, velocity)
     }
 
-    releaseNote(note) {
+    triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
+        
+        this.polySynth.triggerAttackRelease(note, duration, time, velocity)
+    }
 
-        super.releaseNote(note)
+    releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
         if(note == undefined) this.polySynth.releaseAll(Tone.now()) 
-        else this.polySynth.triggerRelease(note, Tone.now())
+        else this.polySynth.triggerRelease(note, time)
     }
 
     connect(n: Node | Tone.ToneAudioNode): void {

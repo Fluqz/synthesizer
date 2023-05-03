@@ -106,20 +106,27 @@ export class Sampler extends Instrument {
     }
 
 
-
-    triggerNote(note: string) {
-
-        if(!this.sampler.loaded) return
-
-        this.sampler.triggerAttack(note, Tone.now())
-    }
-
-    releaseNote(note: string) {
+    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
         if(!this.sampler.loaded) return
 
-        this.sampler.triggerRelease(note, Tone.now())
+        this.sampler.triggerAttack(note, time, velocity)
     }
+
+    triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
+        
+        if(!this.sampler.loaded) return
+        
+        this.sampler.triggerAttackRelease(note, duration, time, velocity)
+    }
+
+    releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
+
+        if(!this.sampler.loaded) return
+
+        this.sampler.triggerRelease(note, time)
+    }
+    
 
     destroy() {
         
