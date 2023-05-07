@@ -83,7 +83,7 @@
 </script>
 
 
-<div id="oscilloscope" bind:this={container}>
+<div id="oscilloscope" title="Oscilloscope" bind:this={container}>
 
     <svg xmlns="http://www.w3.org/2000/svg">
 

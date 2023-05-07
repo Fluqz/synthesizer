@@ -6,11 +6,6 @@ import * as Tone from "tone";
 
 export class Midi {
 
-
-
-
-
-
     static init(trigger: (...args) => void, release: (...args) => void) {
 
         console.log('INIT MIDI')
@@ -30,8 +25,6 @@ export class Midi {
             if (WebMidi.inputs.length < 1) {
 
                 console.log('NO MIDI DEVICE')
-
-                document.body.innerHTML += "No device detected."
             }
             else {
 
@@ -41,21 +34,21 @@ export class Midi {
 
                     console.log(`${index}: ${device.name} <br>`);
                 })
+
+
+                WebMidi.inputs[0].addListener("noteon", e => {
+
+                    trigger(e)
+
+                }, { channels: [1, 2, 3, 4, 5, 6, 7, 8] });
+
+
+                WebMidi.inputs[0].addListener("noteoff", e => {
+
+                    release(e)
+
+                }, { channels: [1, 2, 3, 4, 5, 6, 7, 8] });
             }
-
-
-            WebMidi.inputs[0].addListener("noteon", e => {
-
-                trigger(e)
-
-            }, { channels: [1, 2, 3, 4, 5, 6, 7, 8] });
-
-
-            WebMidi.inputs[0].addListener("noteoff", e => {
-
-                release(e)
-
-            }, { channels: [1, 2, 3, 4, 5, 6, 7, 8] });
         }
     }
 

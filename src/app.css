@@ -57,11 +57,21 @@ body {
 
   overflow-x: hidden;
   scrollbar-width: none;
-  -ms-scrollbar: none
+  -ms-scrollbar: none;
 
   /* cursor: url('/src/assets/imgs/circle-sepia.gif'); */
 
+  mix-blend-mode: difference;
+}
 
+::-webkit-scrollbar {
+  display: none;
+}
+::-moz-scrollbar {
+  display: none;
+}
+::-ms-scrollbar {
+  display: none;
 }
 
 html {
@@ -74,9 +84,13 @@ html {
   background-image: url('/src/assets/imgs/noise5.png');
   background-size: 200%;
   background-repeat: no-repeat; */
+
+  mix-blend-mode: unset;
+  
 }
 
 canvas {
+  mix-blend-mode: difference;
 }
 
 input { 
