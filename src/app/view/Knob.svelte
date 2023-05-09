@@ -252,7 +252,8 @@
 
 <div class="knob-wrapper" bind:this={dom}>
 
-    <div class="knob-value">{ value.toFixed(2) }</div>
+    <!-- <div class="knob-value">{ value.toFixed(2) }</div> -->
+    <div class="knob-value"><input type="text" bind:value={value} step={.01} on:click={(e) => { e.target.select() }}/></div>
 
     <div class="knob shifting-GIF"
         bind:this={knobDOM}
@@ -377,6 +378,23 @@
   text-align: center;
 
   z-index: 10; */
+}
+
+.knob-wrapper .knob-value input {
+
+    width: 25px;
+
+    border: none;
+    outline: none;
+
+    border-radius: 0px;
+
+    text-decoration: none;
+
+    text-align: center;
+
+    background-color: transparent;
+    color: inherit;
 }
 
 .knob-underlay {

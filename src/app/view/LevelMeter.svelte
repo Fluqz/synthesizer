@@ -34,7 +34,7 @@
 
         percentage = Math.round(M.map(min, max, 0, 100, value) * 100) / 100
 
-        if(tails.length > maxTails) tails.shift()
+        // if(tails.length > maxTails) tails.shift()
 
         // tails.push(percentage)
 

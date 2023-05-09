@@ -11,7 +11,7 @@ export class FMSynth extends Instrument {
     /** How loud */
     _volume: number
     /** Gain node */
-    gain: Tone.Gain
+    // gain: Tone.Gain
     /** Slight detuning of the note */
     _detune: number
     /** Offset of the wave */
@@ -31,16 +31,19 @@ export class FMSynth extends Instrument {
         super('FMSynth')
 
         this.synth = new Tone.PolySynth(Tone.FMSynth)
+        this.output = this.synth
 
-        this.gain = new Tone.Gain(this.volume)
-
-        this.synth.connect(this.gain)
-
-        this.output = this.gain
-
-        this.volume = options.volume ? options.volume : 3
+        
+        this.volume = options.volume ? options.volume : .5
         this.detune = options.detune ? options.detune : .5
         this.portamento = options.portamento ? options.portamento : 0
+
+
+        // this.gain = new Tone.Gain(this.volume)
+
+        // this.synth.connect(this.gain)
+
+
 
 
         this.detune = options.detune != undefined ? options.detune : this.synth.get().detune
@@ -55,7 +58,7 @@ export class FMSynth extends Instrument {
 
 
 
-        this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () => this.volume, set: (v) => this.volume = v, min: 0, max: 1, groupID: 0 })
+        this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () => this.volume, set: (v) => this.volume = v, min: -70, max: 6, groupID: 0 })
         this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => { return this.detune }, set: (v) => this.detune = v, min: -100, max: 100, groupID: 0 })
         this.props.set('portamento', { type: ParamType.KNOB, name: 'Portamento', get: () => this.portamento, set: (v) => this.portamento = v, min: 0, max: 100, groupID: 0 })
 
@@ -77,7 +80,8 @@ export class FMSynth extends Instrument {
     set volume(v: number) {
 
         this._volume = v 
-        this.gain.gain.setValueAtTime(this.volume, Tone.now())
+        this.synth.volume.setValueAtTime(this.volume, Tone.now())
+        // this.gain.gain.setValueAtTime(this.volume, Tone.now())
     }
     get volume() { return this._volume }
 
@@ -165,8 +169,8 @@ export class FMSynth extends Instrument {
         this.synth.releaseAll()
         this.synth.disconnect()
         this.synth.dispose()
-        this.gain.disconnect()
-        this.gain.dispose()
+        // this.gain.disconnect()
+        // this.gain.dispose()
         
         super.destroy()
     }

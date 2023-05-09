@@ -19,7 +19,7 @@ export class Sampler extends Instrument {
     /** How loud */
     _volume: number
     /** Gain node */
-    gain: Tone.Gain
+    // gain: Tone.Gain
     /** Slight detuning of the note */
     _detune: number
     /** Offset of the wave */
@@ -35,9 +35,9 @@ export class Sampler extends Instrument {
         super('Sampler')
 
 
-        this.gain = new Tone.Gain(this.volume)
+        // this.gain = new Tone.Gain(this.volume)
 
-        this.output = this.gain
+        // this.output = this.gain
 
         this.volume = options.volume ? options.volume : .5
 
@@ -51,7 +51,7 @@ export class Sampler extends Instrument {
         this.attack = this.sampler.get().attack
         this.release = this.sampler.get().release
 
-        this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () =>  this.volume, set: (v) => this.volume = v, min: 0, max: 1, groupID: 0 })
+        this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () =>  this.volume, set: (v) => this.volume = v, min: -70, max: 6, groupID: 0 })
         this.props.set('attack', { type: ParamType.KNOB, name: 'Attack', get: () =>  this.attack, set: (v) => this.attack = v, min: 0, max: 1, groupID: 0 })
         this.props.set('release', { type: ParamType.KNOB, name: 'Release', get: () =>  this.release, set: (v) => this.release = v, min: 0, max: 5, groupID: 0 })
         this.props.set('sample', { type: ParamType.DROPDOWN, name: 'Sample', get: () =>  this.sample, set: (v) => this.sample = v, options: opts,min: 0, max: 1, groupID: 0 })
@@ -60,7 +60,8 @@ export class Sampler extends Instrument {
     set volume(v: number) {
 
         this._volume = v 
-        this.gain.gain.setValueAtTime(this.volume, Tone.now())
+        if(this.sampler) this.sampler.volume.setValueAtTime(this.volume, Tone.now())
+        // this.gain.gain.setValueAtTime(this.volume, Tone.now())
     }
     get volume() { return this._volume }
 
@@ -86,7 +87,8 @@ export class Sampler extends Instrument {
             },
         })
 
-        this.sampler.connect(this.gain)
+        this.output = this.sampler
+        // this.sampler.connect(this.gain)
     }
     get sample() { return this._sample }
 
@@ -133,8 +135,8 @@ export class Sampler extends Instrument {
         this.sampler.releaseAll()
         this.sampler.disconnect()
         this.sampler.dispose()
-        this.gain.disconnect()
-        this.gain.dispose()
+        // this.gain.disconnect()
+        // this.gain.dispose()
         
         super.destroy()
     }

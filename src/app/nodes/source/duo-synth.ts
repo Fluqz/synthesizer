@@ -22,12 +22,14 @@ export class DuoSynth extends Instrument {
         // this._volume = options.volume ? options.volume : .5
 
         this.polySynth = new Tone.PolySynth(Tone.DuoSynth)
+        this.output = this.polySynth
 
-        this.gain = new Tone.Gain(this.volume)
+        // this.gain = new Tone.Gain(this.volume)
 
-        this.polySynth.connect(this.gain)
+        // this.polySynth.connect(this.gain)
 
-        this.output = this.gain
+        // this.output = this.gain
+
 
         this.input = null
 
@@ -50,7 +52,7 @@ export class DuoSynth extends Instrument {
 
 
 
-        this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () => { return this.volume }, set: (v: number) => { this.volume = v }, min: 0, max: 1, group: 0 })
+        this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () => { return this.volume }, set: (v: number) => { this.volume = v }, min: -70, max: 6, group: 0 })
         
         this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => { return this.detune }, set: (v: number) => { this.detune = v }, min: -100, max: 100, group: 1 })
         this.props.set('harmonicity', { type: ParamType.KNOB, name: 'Harmonicity', get: () => { return this.harmonicity }, set: (v: number) => { this.harmonicity = v }, min: 0, max: 1, group: 1 })
@@ -73,7 +75,8 @@ export class DuoSynth extends Instrument {
     set volume(v) {
 
         this._volume = v
-        this.gain.gain.setValueAtTime(v, Tone.now())
+        // this.gain.gain.setValueAtTime(v, Tone.now())
+        this.polySynth.volume.setValueAtTime(v, Tone.now())
     }
 
     set detune(v: number) { this.polySynth.set({ detune: v }) }
@@ -126,9 +129,11 @@ export class DuoSynth extends Instrument {
 
     connect(n: Node | Tone.ToneAudioNode): void {
 
-        this.polySynth.connect(this.gain)
+        // this.polySynth.connect(this.gain)
 
-        this.output = this.gain
+        // this.output = this.gain
+        this.output = this.polySynth
+
 
         this.output.connect(n instanceof Node ? n.input : n)
     }
@@ -157,8 +162,8 @@ export class DuoSynth extends Instrument {
         this.polySynth.releaseAll()
         this.polySynth.disconnect()
         this.polySynth.dispose()
-        this.gain.disconnect()
-        this.gain.dispose()
+        // this.gain.disconnect()
+        // this.gain.dispose()
         
         super.destroy()
     }
