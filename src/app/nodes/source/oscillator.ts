@@ -189,7 +189,7 @@ export class Oscillator extends Instrument {
         this.envelope.triggerRelease(time)
     }
 
-    connect(n: Node | Tone.ToneAudioNode<ToneWithContextOptions>): void {
+    connect(destination: Tone.InputNode, outputNum?: number, inputNum?: number): this {
 
         this.osc.connect(this.envelope)
 
@@ -197,10 +197,10 @@ export class Oscillator extends Instrument {
 
         this.output = this.gain
 
-        this.output.connect(n instanceof Node ? n.input : n)
+        this.output.connect(destination, outputNum, inputNum)
     }
 
-    chain(nodes: Node[] | Tone.ToneAudioNode[]) {
+    chain(...nodes: (Node | Tone.InputNode)[]): this {
 
         if(!nodes.length || nodes.length == 0) return // this.connect(nodes)
 

@@ -54,7 +54,7 @@ export interface INodeSerialization extends ISerialization {
 }
 
 /** Represents a Node that can be connected to eachother */
-export abstract class Node/* extends Tone.ToneAudioNode*/ implements ISerialize {
+export abstract class Node extends Tone.ToneAudioNode implements ISerialize {
 
     static count = 0
 
@@ -85,7 +85,7 @@ export abstract class Node/* extends Tone.ToneAudioNode*/ implements ISerialize 
     collapsed: boolean = false
 
     constructor(name) {
-        // super()
+        super()
 
         this.id = Node.count++
 
@@ -103,28 +103,27 @@ export abstract class Node/* extends Tone.ToneAudioNode*/ implements ISerialize 
     set enabled(e) { this._enabled = e }
     get enabled() { return this._enabled }
 
-    /** Connects this Nodes Output to [e]'s Input */
-    connect(n: Node | Tone.ToneAudioNode) {
+    connect(destination: Tone.InputNode, outputNum?: number, inputNum?: number): this {
 
-        if(!n) return
+        this.output.connect(destination, outputNum, inputNum)
 
-        this.output.connect(n instanceof Node ? n.input : n)
+        return this
     }
 
-    /** Disconnects this Output from [e]'s/all Input(s) */
-    disconnect(n?: Node | Tone.ToneAudioNode) {
+    disconnect(destination?: Tone.InputNode, outputNum?: number, inputNum?: number): this {
+        
+        this.output.disconnect(destination, outputNum, inputNum)
 
-        if(n) this.output.disconnect(n instanceof Node ? n.input : n)
-        else this.output.disconnect()
+        return this
     }
 
-    chain(nodes: Node[] | Tone.ToneAudioNode[]) {
-
+    chain(...nodes: Tone.InputNode[]): this {
+        
         if(!nodes.length || nodes.length == 0) return // this.connect(nodes)
 
-        this.output.connect(nodes[0] instanceof Node ? nodes[0].input : nodes[0])
+        this.output.connect(nodes[0])
 
-        let lastNode: Tone.ToneAudioNode = nodes[0] instanceof Node ? nodes[0].output : nodes[0]
+        let lastNode = nodes[0]
 
         nodes.shift()
 
@@ -132,20 +131,23 @@ export abstract class Node/* extends Tone.ToneAudioNode*/ implements ISerialize 
 
         for(let n of nodes) {
             
-            if(n instanceof Node) {
+            // if(n instanceof Node) {
 
-                // console.log('chain Node', lastNode.name, 'to', n.name)
+            //     // console.log('chain Node', lastNode.name, 'to', n.name)
 
-                lastNode.connect(n.input)
-                lastNode = n.output
-            }
-            else {
+            //     lastNode.connect(n.input)
+            //     lastNode = n.output
+            // }
+            // else {
                 
                 // console.log('chain ToneNode', lastNode.name, 'to', n.name)
 
+                console.log('HI')
+
+                console.log(lastNode.connect)
                 lastNode.connect(n)
                 lastNode = n
-            }
+            // }
         }
     }
     
