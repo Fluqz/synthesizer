@@ -127,6 +127,11 @@ export class DuoSynth extends Instrument {
         else this.polySynth.triggerRelease(note, time)
     }
 
+    releaseAll() {
+        
+        this.polySynth.releaseAll()
+    }
+
     connect(n: Node | Tone.ToneAudioNode): void {
 
         // this.polySynth.connect(this.gain)

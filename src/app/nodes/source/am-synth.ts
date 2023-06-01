@@ -47,6 +47,7 @@ export class AMSynth extends Instrument {
         super('AMSynth')
 
         this.synth = new Tone.PolySynth(Tone.AMSynth)
+
         this.output = this.synth
 
         // this.gain = new Tone.Gain(this.volume)
@@ -174,6 +175,11 @@ export class AMSynth extends Instrument {
     releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
         this.synth.triggerRelease(note, time)
+    }
+
+    releaseAll() {
+        
+        this.synth.releaseAll()
     }
     
     destroy() {

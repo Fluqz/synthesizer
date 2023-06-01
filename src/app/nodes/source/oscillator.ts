@@ -189,6 +189,11 @@ export class Oscillator extends Instrument {
         this.envelope.triggerRelease(time)
     }
 
+    releaseAll() {
+        
+        this.envelope.triggerRelease(Tone.now())
+    }
+
     connect(n: Node | Tone.ToneAudioNode<ToneWithContextOptions>): void {
 
         this.osc.connect(this.envelope)

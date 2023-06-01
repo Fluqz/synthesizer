@@ -1,6 +1,6 @@
 import { Subject } from "rxjs"
 import type { ISession, Synthesizer } from "../synthesizer"
-import { DEFAULT_SESSION } from "../presets"
+import { DEFAULT_SESSION, DEFAULT_PRESETS } from "../presets"
 
 
 
@@ -33,11 +33,14 @@ export class PresetManager {
             name: 'default',
             id: -1,
             channel: 0,
+            bpm: 120,
             ...DEFAULT_SESSION.currentSession
         }
 
         this.onSavePreset = new Subject()
         this.onRemovePreset = new Subject()
+
+        for(let p of DEFAULT_PRESETS) this.addPreset(p)
     }
 
     getPresets() { return this.presets }
@@ -117,6 +120,7 @@ export class PresetManager {
     reset() {
 
         this.presets.length = 0
+        for(let p of DEFAULT_PRESETS) this.addPreset(p)
         this.presetID = 0
     }
 }

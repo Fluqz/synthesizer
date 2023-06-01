@@ -24,9 +24,10 @@ export interface ISerialization {}
 
 export interface ISession {
 
-    volume: number,
-    octave: number,
-    channel: number,
+    bpm: number
+    volume: number
+    octave: number
+    channel: number
     tracks: ITrackSerialization[]
     sequencers: ISequencerSerialization[]
 }
@@ -191,6 +192,7 @@ export class Synthesizer implements ISerialize {
     constructor() {
 
         // Synthesizer Volume
+        this.bpm = 120
         this.volume = .5
         this.octave = 2
 
@@ -248,6 +250,8 @@ export class Synthesizer implements ISerialize {
 
         this.onAddNode = new RxJs.Subject()
         this.onRemoveNode = new RxJs.Subject()
+
+        this.set(this)
     }
 
     set(v: any) { this.store.set(v) }
@@ -314,20 +318,30 @@ export class Synthesizer implements ISerialize {
         track.connect(this.gain)
 
         this.set(this)
+
+        console.log(this.tracks)
     }
 
     /** Disconnects and removes track */
     removeTrack(track: Track) {
 
-        this.tracks.splice(this.tracks.indexOf(track), 1)
-
-        track.synthesizer = null
-
         track.disconnect(this.gain)
+
+        this.tracks.splice(this.tracks.indexOf(track), 1)
+        
+        track.synthesizer = null
 
         track.destroy()
 
         this.set(this)
+
+        console.log('Delete', this.tracks, track.id)
+
+        let i = 0
+        for(let t of this.tracks) {
+            console.log('id', i, t.id)
+            i ++
+        }
     }
 
 
@@ -368,7 +382,7 @@ export class Synthesizer implements ISerialize {
         note = Tone.Frequency(note).toNote()
 
         if(this.isPlaying == false) {
-            Tone.start()
+            // Tone.start()
             this.isPlaying = true
         }
 
@@ -656,6 +670,7 @@ export class Synthesizer implements ISerialize {
         for(let s of this.sequencers) sequencers.push(s.serializeOut())
 
         return {
+            bpm: this.bpm,
             volume: this.volume,
             octave: this.octave,
             channel: this.channel,
@@ -668,6 +683,7 @@ export class Synthesizer implements ISerialize {
 
         if(o.volume) this.setVolume(o.volume)
         if(o.octave) this.setOctave(o.octave)
+        if(o.bpm) this.bpm = o.bpm
         if(o.channel) this.channel = o.channel as Channel
 
         for(let i = this.tracks.length-1; i >= 0; i--) this.removeTrack(this.tracks[i])

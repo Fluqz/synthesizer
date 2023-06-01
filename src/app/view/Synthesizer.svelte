@@ -90,9 +90,20 @@
 
         synthesizer.addTrack(new _Track(synthesizer, Synthesizer.nodes.sources.Oscillator()))
 
-        synthesizer.store.set(synthesizer)
+        tracksStore.set(synthesizer.tracks)
+
+        synthesizer = synthesizer
 
         scrollToBottom()
+    }
+
+    const deleteTrack = (e) => {
+
+        synthesizer.removeTrack(e.detail)
+
+        tracksStore.set(synthesizer.tracks)
+
+        synthesizer = synthesizer
     }
 
     const addSequencer = () => {
@@ -247,10 +258,13 @@
 
     const togglePlayStop = () => {
 
-        Tone.start()
-
-        if(!synthesizer.isPlaying) Tone.Transport.start()
-        else Tone.Transport.stop()
+        if(!synthesizer.isPlaying) {
+            Tone.start()
+            Tone.Transport.start()
+        }
+        else {
+            Tone.Transport.stop()
+        }
 
         synthesizer.isPlaying = !synthesizer.isPlaying
     }
@@ -280,7 +294,7 @@
                 <input type="number" pattern="[0-1]" min="1" max="300" name="bpm"/>
             </div> -->
 
-            <div id="play-btn" class="btn" title="Play" class:active={synthesizer.isPlaying} on:click={togglePlayStop}>{ synthesizer.isPlaying ? 'S' : 'P'}</div>
+            <div id="play-btn" class="btn" title="Play" class:active={synthesizer.isPlaying} on:click={togglePlayStop}>{ synthesizer.isPlaying ? '-' : '>'}</div>
 
             <div id="bpm-btn" class="btn" title="BPM"><input type="number" bind:value={ synthesizer.bpm } step="1" min="1" max="400" /></div>
 
@@ -292,7 +306,7 @@
                 <div id="octave-up" class="btn" title="Octave Up - Key: Arrow Right" on:click={octaveUp}>{'>'}</div>
             </div>
 
-            <div id="arpeggiator" class="btn" title="Arpeggiator" on:click={onArpChange}>Arp</div>
+            <!-- <div id="arpeggiator" class="btn" title="Arpeggiator" on:click={onArpChange}>Arp</div> -->
 
             <div id="record" class="btn" title="Toggle recording - Key: Space" on:click={toggleRecording} class:recording={isRecording}>&#x2609;</div>
             
@@ -351,11 +365,11 @@
 
             <div class="tracks">
 
-                {#each $tracksStore as track}
+                {#each tracks as track}
                     
                     <div class="track">
 
-                        <Track bind:track={track} on:delete />
+                        <Track bind:track={track} on:delete={deleteTrack} />
 
                     </div>
 
@@ -494,7 +508,7 @@
     border-top: 1px solid var(--c-b);
     border-top: .5px solid var(--c-b);
 
-    background-color: var(--c-bl);
+    background-color: var(--c-b);
 
 
 

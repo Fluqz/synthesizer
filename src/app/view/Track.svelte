@@ -13,6 +13,7 @@
     import Synthesizer from "./Synthesizer.svelte";
     import Dropdown from "./Dropdown.svelte";
     import LevelMeter from "./LevelMeter.svelte";
+    import Oscilloscope from "./Oscilloscope.svelte";
 
     export let track: Track
     // export let instrument: Instrument
@@ -98,7 +99,12 @@
 
     const onDelete = (e) => {
 
+        console.log('delete', track.id)
+
         dispatch('delete', track)
+
+        track.store.set(track)
+        track.set(track)
     }
     
     const addNode = (e, name?: string) => {
@@ -162,7 +168,9 @@
 
     <div class="node track-options">
 
-        <!-- { track.number } { track.id } { track.instrument.name } -->
+        { track.number } 
+        { track.id } 
+        <!-- { track.instrument.name } -->
 
         <!-- Instrument select -->
         <Dropdown
@@ -181,6 +189,9 @@
             on:onChange={onVolumeChange} />
 
         <LevelMeter output={track.volumeNode} />
+
+        <Oscilloscope output={track.volumeNode} />
+
 
         <!-- Channel Nr -->
         <div 

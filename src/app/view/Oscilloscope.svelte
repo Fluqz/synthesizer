@@ -2,7 +2,8 @@
 <script lang="ts">
     import type * as Tone from "tone";
     import { Vec2 } from "../util/math";
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
+    import { G } from "../core/globals";
 
     export let output: Tone.ToneAudioNode
 
@@ -12,7 +13,6 @@
     let pointsString = ''
     
     let active = false
-    let IID
 
     let container: HTMLElement
 
@@ -49,11 +49,14 @@
             pointsString += `${x}, ${y} `
 
             x += sliceWidth
+
+            // G.osc.set(x, y)
           }
         } 
       }
     }
 
+    let IID: any
     const connect = () => {
 
       analyser = output.context.createAnalyser()
@@ -66,8 +69,16 @@
 
       output.connect(analyser)
 
-      setInterval(draw, 50)
+      IID = setInterval(draw, 1000 / 30)
     }
+
+    const disconnect = () => {
+
+      clearInterval(IID)
+
+      output.disconnect(analyser)
+    }
+
 
     onMount(() => {
 
@@ -80,6 +91,11 @@
       }
     })
 
+    onDestroy(() => {
+
+      if(output) disconnect()
+    })
+
 </script>
 
 
@@ -88,7 +104,7 @@
     <svg xmlns="http://www.w3.org/2000/svg">
 
         <defs>
-          <polyline id="wave" stroke="#fed33a" stroke-width="2px" points={pointsString} />
+          <polyline id="wave" stroke="#fed33a" stroke-width="1px" points={pointsString} />
         </defs>
   
         <use href="#wave" x="0"  y="0"/>
@@ -105,6 +121,8 @@
 
     #oscilloscope,
     svg {
+
+        mix-blend-mode: difference;
 
         width: 100px;
         height: 50px;

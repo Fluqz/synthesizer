@@ -232,6 +232,8 @@ export class Track implements ISerialize {
     releaseKeys() {
 
         for(let n of this.activeNotes) this.releaseNote(n, Tone.now())
+
+        this.instrument.releaseAll()
     }
 
     /** Triggers the instruments note */

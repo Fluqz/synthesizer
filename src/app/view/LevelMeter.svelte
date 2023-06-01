@@ -3,12 +3,13 @@
     import * as Tone from "tone";
     import { M } from "../util/math";
     import { writable } from "svelte/store";
+    import { onDestroy, onMount } from "svelte";
 
     export let output: Tone.ToneAudioNode
 
     export let value: number = 0
 
-    let meter: Tone.Meter
+    let meter: Tone.Meter = new Tone.Meter()
 
     let min = -70
     let max = 6
@@ -41,15 +42,32 @@
         // tailsStore.set(tails)
     }
 
-    if(output != undefined) {
 
-        meter = new Tone.Meter()
 
-        output.connect(meter)
+    onMount(() => {
 
-        clearInterval(IID)
-        IID = setInterval(getValue, 80)
-    }
+        if(output != undefined) {
+
+            output.connect(meter)
+
+            clearInterval(IID)
+            IID = setInterval(getValue, 1000 / 30)
+        }
+    })
+
+    onDestroy(() => {
+
+        if(output != undefined) {
+
+            clearInterval(IID)
+
+            output.disconnect(meter)
+
+            meter.disconnect()
+            meter.dispose()
+        }
+    })
+
 
 </script>
 
