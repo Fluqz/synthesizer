@@ -98,6 +98,7 @@
 
         else serializeIn(DEFAULT_SESSION, false)
 
+        synthesizer = synthesizer
 
 
         // synthesizer.startSequence(0, ['F#2', 'D1', 'F#2', 'C#3'])
@@ -188,6 +189,8 @@
 
             Visual.visualsEnabled = false
         }
+
+        synthesizer = synthesizer
     }
     document.addEventListener('visibilitychange', (e) => {
         
@@ -218,6 +221,8 @@
         synthesizer.mute(true)
     
         // synthesizer.dispose()
+
+        synthesizer = synthesizer
     }
 
 
@@ -296,8 +301,7 @@
 
 <div class="synthesizer-wrapper" class:screen-offset={!Visual.collapsed}>
 
-    <Synthesizer synthesizer={synthesizer} 
-                    tracks={synthesizer.tracks} 
+    <Synthesizer synthesizer={synthesizer}
                     on:add={addTrack} 
                     on:remove={removeTrack} 
                     on:delete={deleteTrack} 

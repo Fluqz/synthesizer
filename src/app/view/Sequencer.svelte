@@ -1,4 +1,5 @@
 <script lang="ts">
+    
     import * as Tone from "tone";
     import { Synthesizer, type Channel } from "../synthesizer";
     import { Sequencer, type Notation } from "../sequencer";
@@ -21,11 +22,6 @@
     let currentNotation: Notation = notations[0]
 
     let sequence: { note: Tone.Unit.Frequency, length: Notation }[] = []
-
-    sequencer.store.subscribe((v) => {
-
-        // Update sequence array
-    })
 
     const onInput = (e) => {
 
@@ -53,12 +49,16 @@
 
             sequencer.sequence = input
         }
+
+        sequencer = sequencer
     }
 
     const toggleStartStop = () => {
 
         if(!sequencer.isPlaying) sequencer.start()
         else sequencer.stop()
+
+        sequencer = sequencer
     }
 
     const onChannel = (e) => {
@@ -68,6 +68,8 @@
 
         if(channel >= Synthesizer.maxChannelCount) channel = 0
         else if(channel < 0) channel = (Synthesizer.maxChannelCount - 1) as Channel
+
+        sequencer = sequencer
     }
 
     const activateChannel = (channel: Channel, val: boolean) => {
@@ -81,15 +83,21 @@
 
         if(val) sequencer.addChannel(channel)
         else sequencer.removeChannel(channel)
+
+        sequencer = sequencer
     }
 
     const onDelete = () => {
 
         dispatch('deleteSequencer', sequencer)
+
+        sequencer = sequencer
     }
 
     
     const placeholder = `["F#2","D3", ["DB3","C#2"], "E3"]`
+
+
 </script>
 
 

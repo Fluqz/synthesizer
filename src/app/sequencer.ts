@@ -1,7 +1,6 @@
 
 import * as Tone from 'tone'
-import type { Channel, ISerialization, ISerialize, Synthesizer } from './synthesizer'
-import { writable, type Writable } from 'svelte/store'
+import type { Channel, ISerialize, Synthesizer } from './synthesizer'
 
 
 export type Notation = '1' | '1/2' | '1/4' | '1/8' | '1/16' | '1/32' | '1/64'
@@ -45,8 +44,6 @@ export class Sequencer implements ISerialize {
 
     loop: boolean
 
-    store: Writable<Sequencer>
-
     humanize: number
 
     constructor(synthesizer: Synthesizer, sequence?: Sequence, channel?: Channel[]) {
@@ -60,8 +57,6 @@ export class Sequencer implements ISerialize {
         this.loop = true
 
         this.noteLength = '1/4'
-
-        this.store = writable(this)
     }
 
 
@@ -70,8 +65,6 @@ export class Sequencer implements ISerialize {
         if(this.channel.indexOf(channel) != -1) return false
 
         this.channel.push(channel)
-
-        this.store.set(this)
 
         return true
     }
@@ -85,8 +78,6 @@ export class Sequencer implements ISerialize {
 
             if(tr.channel == channel) tr.releaseKeys()
         }
-
-        this.store.set(this)
 
         return true
     }
@@ -115,9 +106,6 @@ export class Sequencer implements ISerialize {
         this.toneSequence = this.startSequence(this.sequence)
 
         this.isPlaying = true
-
-        this.store.set(this)
-
     }
 
     private lastNote: Tone.Unit.Frequency
@@ -171,8 +159,6 @@ export class Sequencer implements ISerialize {
 
         seq.start(Tone.now())
 
-        this.store.set(this)
-
         return seq
     }
 
@@ -197,8 +183,6 @@ export class Sequencer implements ISerialize {
         }
 
         this.isPlaying = false
-
-        this.store.set(this)
     }
 
     destroy() {
@@ -208,7 +192,6 @@ export class Sequencer implements ISerialize {
         if(this.toneSequence) this.toneSequence.dispose()
 
         delete this.channel
-        delete this.store
         delete this.sequence
     }
 
@@ -243,7 +226,5 @@ export class Sequencer implements ISerialize {
         if(o.channel && o.channel.length) this.channel = o.channel
         if(o.sequence && o.sequence.length) this.sequence = o.sequence
         if(o.humanize) this.humanize = o.humanize
-
-        this.store.set(this)
     }
 }

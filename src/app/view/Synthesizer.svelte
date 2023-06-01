@@ -28,27 +28,22 @@
 
     export let synthesizer: Synthesizer
 
-    export let tracks: _Track[]
+    let presets: string[] = []
 
     let keyboardVisible = true
 
     let sequencersCollapsed: boolean = false
 
-    let tracksStore = writable(tracks)
+    $: {
 
-    let presets: string[] = []
+        presets = presets
 
-    let unsubscribeSynthStore = synthesizer.store.subscribe((s: Synthesizer) => {
-
-        synthesizer = s
-        tracksStore.set(s.tracks)
-
-        presets = [  ]
-        for(let p of synthesizer.presetManager.getPresets()) presets.push(p.name)
-    })
+        setPresets()
+    }
 
     onMount(() => {
 
+        setPresets()
 
         // Events
         document.addEventListener('keydown', onKeyDown, false)
@@ -90,8 +85,6 @@
 
         synthesizer.addTrack(new _Track(synthesizer, Synthesizer.nodes.sources.Oscillator()))
 
-        tracksStore.set(synthesizer.tracks)
-
         synthesizer = synthesizer
 
         scrollToBottom()
@@ -99,9 +92,9 @@
 
     const deleteTrack = (e) => {
 
-        synthesizer.removeTrack(e.detail)
+        console.log('s delete track', e.detail.id)
 
-        tracksStore.set(synthesizer.tracks)
+        synthesizer.removeTrack(e.detail)
 
         synthesizer = synthesizer
     }
@@ -110,7 +103,7 @@
 
         synthesizer.addSequencer(new _Sequencer(synthesizer))
 
-        synthesizer.store.set(synthesizer)
+        synthesizer = synthesizer
 
         scrollToBottom()
     }
@@ -118,6 +111,8 @@
     const deleteSequencer = (e) => {
 
         synthesizer.removeSequencer(e.detail)
+
+        synthesizer = synthesizer
     }
     
     const scrollToBottom = () => {
@@ -141,21 +136,29 @@
 
         if(synthesizer.channel >= Synthesizer.maxChannelCount) synthesizer.channel = 0
         else if(synthesizer.channel < 0) synthesizer.channel = (Synthesizer.maxChannelCount - 1) as Channel
+
+        synthesizer = synthesizer
     }
 
     const octaveDown = () => {
 
         synthesizer.setOctave(synthesizer.octave - 1)
+
+        synthesizer = synthesizer
     }
     const octaveUp = () => {
 
         synthesizer.setOctave(synthesizer.octave + 1)
+
+        synthesizer = synthesizer
     }
 
 
     const onArpChange = (e) => {
 
         synthesizer.toggleArpMode(e.target.checked)
+
+        synthesizer = synthesizer
     }
 
 
@@ -164,14 +167,17 @@
     const toggleRecording = (e) => {
 
         synthesizer.toggleRecording()
+        synthesizer = synthesizer
     }
     synthesizer.onRecordingStart.subscribe(() => {
 
         isRecording = synthesizer.isRecording
+        synthesizer = synthesizer
     })
     synthesizer.onRecordingEnd.subscribe(() => {
 
         isRecording = synthesizer.isRecording
+        synthesizer = synthesizer
     })
 
 
@@ -195,13 +201,14 @@
             synthesizer.presetManager.reset()
         }
 
-        synthesizer.store.set(synthesizer)
+        synthesizer = synthesizer
     }
 
     /** Reset synthesizer button */
     const mute = (e) => {
 
         synthesizer.mute(!synthesizer.isMuted)
+        synthesizer = synthesizer
     }
 
 
@@ -216,6 +223,9 @@
         if(e.key == 'ArrowRight') synthesizer.setOctave(synthesizer.octave + 1)
         if(e.key == 'ArrowLeft') synthesizer.setOctave(synthesizer.octave - 1)
         if(e.key == ' ') synthesizer.toggleRecording()
+
+        // TODO Triggers everytime..
+        synthesizer = synthesizer
     }
 
     /** Keyup event */
@@ -224,6 +234,13 @@
         // if(G.debug) console.log('keyUp: key', e.key)
 
         if(!e) return
+    }
+
+    const setPresets = () => {
+
+        if(presets == undefined) presets = []
+        presets.length = 0
+        for(let p of synthesizer.presetManager.getPresets()) presets.push(p.name)
     }
 
     let presetInputValue: string
@@ -237,14 +254,16 @@
             synthesizer.presetManager.savePreset(presetInputValue)
         }
 
-        synthesizer.store.set(synthesizer)
+        synthesizer = synthesizer
+
+        setPresets()
     }
 
     const onChangePresets = (e) => {
 
         synthesizer.presetManager.loadPresetFromName(e.detail.target.value)
 
-        synthesizer.store.set(synthesizer)
+        synthesizer = synthesizer
 
         scrollToBottom()
     }
@@ -253,7 +272,9 @@
 
         synthesizer.presetManager.removePreset(e.detail.target.value)
 
-        synthesizer.store.set(synthesizer)
+        synthesizer = synthesizer
+
+        setPresets()
     }
 
     const togglePlayStop = () => {
@@ -267,11 +288,12 @@
         }
 
         synthesizer.isPlaying = !synthesizer.isPlaying
+        synthesizer = synthesizer
     }
 
     onDestroy(() => {
 
-        unsubscribeSynthStore()
+        // unsubscribeSynthStore()
     })
 
 </script>
@@ -294,7 +316,7 @@
                 <input type="number" pattern="[0-1]" min="1" max="300" name="bpm"/>
             </div> -->
 
-            <div id="play-btn" class="btn" title="Play" class:active={synthesizer.isPlaying} on:click={togglePlayStop}>{ synthesizer.isPlaying ? '-' : '>'}</div>
+            <div id="play-btn" class="btn" title="Play | Stop" class:active={synthesizer.isPlaying} on:click={togglePlayStop}>{ synthesizer.isPlaying ? '-' : '>'}</div>
 
             <div id="bpm-btn" class="btn" title="BPM"><input type="number" bind:value={ synthesizer.bpm } step="1" min="1" max="400" /></div>
 
@@ -365,7 +387,7 @@
 
             <div class="tracks">
 
-                {#each tracks as track}
+                {#each synthesizer.tracks as track}
                     
                     <div class="track">
 
