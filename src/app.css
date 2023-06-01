@@ -53,7 +53,7 @@ body {
 
   transition: 1s all;
 
-  transition: 1s background-color;
+  transition: 2s background-color;
 
   overflow-x: hidden;
   scrollbar-width: none;
@@ -81,7 +81,7 @@ html {
   font-size: 14px;
   scrollbar-width: none;
 /* 
-  background-image: url('/src/assets/imgs/noise5.png');
+  background-image: url('/src/assets/imgs/noise4.jpg');
   background-size: 200%;
   background-repeat: no-repeat; */
 

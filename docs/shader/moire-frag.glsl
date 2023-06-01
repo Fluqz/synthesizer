@@ -17,6 +17,7 @@ uniform float u_color1;
 uniform float u_color2;
 uniform float u_color3;
 uniform float u_activeNotes;
+uniform float u_osc;
 
 
 vec2 rotate2D (vec2 _st, float _angle) {
@@ -81,7 +82,7 @@ void main (void) {
     vec2 mst = gl_FragCoord.xy/u_mouse.xy;
     float mdist= distance(vec2(2.0,2.0), mst);
 	  // st = rotateTilePattern(st);
-    float dist = distance(st,vec2(((cos(u_time/10.0)+1.0)*0.5),(sin(u_time/10.0)+1.0)*0.5)) * 10.0;
+    float dist = distance(st,vec2(((cos(u_osc/10.0)+1.0)*0.5),(sin(u_osc/10.0)+1.0)*0.5)) * 10.0;
     st = tile(st,dist/(mdist)*(2.0*PI));
     // st = rotateTilePattern(st);
 

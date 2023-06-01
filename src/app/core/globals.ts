@@ -4,6 +4,7 @@ import type { IVisual } from "../p5/visual"
 import type { Synthesizer } from "../synthesizer"
 import { Midi } from "./midi"
 import { Visual } from "../p5/visual"
+import { Vec2 } from "../util/math"
 
 
 export class G {
@@ -19,6 +20,7 @@ export class G {
 
     static fullScreenmode: boolean = false
 
+    static osc: Vec2 = new Vec2()
 
 
 
@@ -43,7 +45,7 @@ export class G {
 
         Tone.Transport.bpm.value = 120
 
-        Tone.Transport.start()
+        // Tone.Transport.start()
     }
 
 
