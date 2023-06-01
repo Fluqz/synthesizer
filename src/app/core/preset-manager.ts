@@ -73,7 +73,7 @@ export class PresetManager {
 
         if(!preset) return false
 
-        this.synthesizer.releaseKeys()
+        this.synthesizer.releaseNotes()
         this.synthesizer.stopSequencers()
 
         this.synthesizer.serializeIn({

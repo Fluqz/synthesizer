@@ -2,7 +2,6 @@
 <script lang="ts">
     import * as Tone from "tone";
     import { M } from "../util/math";
-    import { writable } from "svelte/store";
     import { onDestroy, onMount } from "svelte";
 
     export let output: Tone.ToneAudioNode
@@ -16,12 +15,6 @@
 
     let percentage = 0
 
-    let tails: number[] = []
-    let tailsStore = writable(tails)
-    let maxTails: number = 5
-
-    $: value = meter.getValue() as number
-
     let IID
 
     const getValue = () => {
@@ -33,13 +26,7 @@
         value = Math.min(value, max)
         value = Math.max(value, min)
 
-        percentage = Math.round(M.map(min, max, 0, 100, value) * 100) / 100
-
-        // if(tails.length > maxTails) tails.shift()
-
-        // tails.push(percentage)
-
-        // tailsStore.set(tails)
+        percentage = Math.round(M.map(min, max, 0, 100, value))
     }
 
 
@@ -76,13 +63,7 @@
     <div class="btn level-meter shifting-GIF">
 
         {#if value != min }
-<!--             
-            {#each $tailsStore as tail }
-            
-                <div class="level shifting-GIF" style={`height:${tail}%;`} class:clipping={value > max}></div>
-            
-            {/each} -->
-            
+
             <div class="level shifting-GIF" style={`height:${percentage}%;background-color:#FF00FF;`} class:clipping={value > max}></div>
 
             <div id="level-value">{ value.toFixed(0) }</div>

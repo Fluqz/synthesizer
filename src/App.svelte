@@ -17,6 +17,7 @@
 
     import { DEFAULT_SESSION } from './app/presets';
     import { Midi } from './app/core/midi';
+    import { isSafari } from './app/util/browser';
 
 
     // Init globals
@@ -32,6 +33,8 @@
 
     // On document ready
     onMount(() => {
+
+        if(isSafari()) { document.body.classList.add('safari') }
 
         Midi.init((e: NoteMessageEvent) => {
 

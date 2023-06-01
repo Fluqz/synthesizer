@@ -431,18 +431,18 @@ export class Synthesizer implements ISerialize {
     }
 
     /** Will release all triggered notes that are stored in [activeNotes]. */
-    releaseKeys() {
+    releaseNotes() {
 
-        for(let t of this.tracks) t.releaseKeys()
+        for(let t of this.tracks) t.releaseNotes()
 
     }
 
     /** Will release all triggered notes of all tracks with the given channel. */
-    releaseKeysByChannel(channel: Channel) {
+    releaseNotesByChannel(channel: Channel) {
 
         for(let t of this.tracks) {
 
-            if(t.channel == channel) t.releaseKeys()
+            if(t.channel == channel) t.releaseNotes()
         }
 
 
@@ -589,7 +589,7 @@ export class Synthesizer implements ISerialize {
 
         // this.presetManager.reset()
 
-        this.releaseKeys()
+        this.releaseNotes()
         this.stopSequencers()
 
         for(let t of this.tracks) t.destroy()

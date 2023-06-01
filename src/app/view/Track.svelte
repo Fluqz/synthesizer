@@ -2,6 +2,8 @@
 
 <script lang="ts">
 
+    import * as Tone from "tone"
+
     import { Track } from "../track";
     import { Synthesizer as Synth, type Channel } from "../synthesizer";
     import type { Instrument, Node as _Node } from "../nodes";
@@ -38,13 +40,17 @@
     const effects: number[] | string[] = Object.keys(Synth.nodes.effects)
 
     
-    $: {
+    // $: {
 
-        track = track
-        track.volumeNode = track.volumeNode
-    }
+    //     track = track
+    //     track.volumeNode = track.volumeNode
+    //     // console.log('v', track.id, track.volumeNode.volume.value)
+    // }
 
-    onMount(() => {})
+    onMount(() => {
+
+        track.volume = track.volume
+    })
     onDestroy(() => {
 
         // unsubscribe()
@@ -55,6 +61,8 @@
     const onVolumeChange = (e) => {
 
         track.volume = e.detail
+
+        track.volumeNode.volume.value = track.volume
 
         track = track
 
@@ -217,7 +225,7 @@
 
         <LevelMeter output={track.volumeNode} />
 
-        <Oscilloscope output={track.volumeNode} />
+        <Oscilloscope output={track.volumeNode} id={track.id} />
 
 
         <!-- Channel Nr -->

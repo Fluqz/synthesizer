@@ -64,6 +64,12 @@ body {
   mix-blend-mode: difference;
 }
 
+body.safari {
+
+  mix-blend-mode: unset;
+
+}
+
 ::-webkit-scrollbar {
   display: none;
 }

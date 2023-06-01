@@ -76,7 +76,7 @@ export class Sequencer implements ISerialize {
 
         for(let tr of this.synthesizer.tracks) {
 
-            if(tr.channel == channel) tr.releaseKeys()
+            if(tr.channel == channel) tr.releaseNotes()
         }
 
         return true
@@ -178,7 +178,7 @@ export class Sequencer implements ISerialize {
             
             for(let tr of this.synthesizer.tracks) {
 
-                if(ch == tr.channel) tr.releaseKeys()
+                if(ch == tr.channel) tr.releaseNotes()
             }
         }
 

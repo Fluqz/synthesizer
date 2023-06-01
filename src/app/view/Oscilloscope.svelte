@@ -4,6 +4,7 @@
     import { onDestroy, onMount } from "svelte";
 
     export let output: Tone.ToneAudioNode
+    export let id:number = -1
 
     let analyser: AnalyserNode
     let bufferLength: number
@@ -23,12 +24,12 @@
 
       if (active) {
 
-        if (analyser) analyser.getByteTimeDomainData(dataArray)
+        if (analyser) {
 
-        w = container.clientWidth
-        h = container.clientHeight
+          analyser.getByteTimeDomainData(dataArray)
 
-        if (output) {
+          w = container.clientWidth
+          h = container.clientHeight
 
           var sliceWidth = w / bufferLength
           var x = 0
@@ -48,7 +49,7 @@
 
             // G.osc.set(x, y)
           }
-        } 
+        }
       }
     }
 
@@ -65,7 +66,7 @@
 
       output.connect(analyser)
 
-      console.log('OSC', output)
+      console.log('OSC', id)
 
       IID = setInterval(draw, 1000 / 30)
     }
