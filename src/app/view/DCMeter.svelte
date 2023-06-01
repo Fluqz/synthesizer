@@ -1,17 +1,12 @@
 
 <script lang="ts">
+    import { onDestroy, onMount } from "svelte";
     import { writable } from "svelte/store";
     import * as Tone from "tone";
 
     export let output: Tone.ToneAudioNode
 
-    let meter: Tone.DCMeter
-
-    let analyser: AnalyserNode
-    let bufferLength: number
-    let dataArray:Uint8Array
-
-    let active = false
+    let meter: Tone.DCMeter = new Tone.DCMeter()
 
     let value:number
 
@@ -22,7 +17,6 @@
     
     let IID
 
-    // $:
 
     const getValue = () => {
 
@@ -37,8 +31,6 @@
 
             if(i == 0) continue
 
-            // console.log('tail', (i - 1) * 10, 10 * tails[i - 1], i * 10, 10 * tails[i])
-
             // tailString += `${(i - 1) * 10}, ${10 * tails[i - 1]} ${i * 10}, ${10 * tails[i]}` // TRIANGLE METER 
 
             tailString += `${(i - 1) * 10}, ${(10 * tails[i - 1]) + 50} ${i * 10}, ${(10 * tails[i]) + 50} ` // CORRECT
@@ -51,15 +43,31 @@
         // console.log('dc',100 * meter.getValue())
     }
 
-    if(output != undefined) {
 
-        meter = new Tone.DCMeter()
 
-        output.connect(meter)
+    onMount(() => {
 
-        clearInterval(IID)
-        IID = setInterval(getValue, 80)
-    }
+        if(output != undefined) {
+
+            output.connect(meter)
+
+            clearInterval(IID)
+            IID = setInterval(getValue, 80)
+        }
+    })
+
+    onDestroy(() => {
+
+        if(output != undefined) {
+
+            clearInterval(IID)
+
+            output.disconnect(meter)
+
+            meter.disconnect()
+            meter.dispose()
+        }
+    })
 
 </script>
 
@@ -72,7 +80,7 @@
 
             {#if i != 0} -->
                 
-                <polyline stroke="#fed33a" stroke-width="4px" points={tailString} />
+                <polyline stroke="#fed33a" stroke-width="3px" points={tailString} />
 <!--             
             {/if}
             

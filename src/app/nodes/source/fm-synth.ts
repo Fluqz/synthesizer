@@ -164,6 +164,11 @@ export class FMSynth extends Instrument {
         this.synth.triggerRelease(note, time)
     }
 
+    releaseAll() {
+        
+        this.synth.releaseAll()
+    }
+
     destroy() {
         
         this.synth.releaseAll()

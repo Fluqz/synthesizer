@@ -129,6 +129,10 @@ export class Sampler extends Instrument {
         this.sampler.triggerRelease(note, time)
     }
     
+    releaseAll() {
+        
+        this.sampler.releaseAll()
+    }
 
     destroy() {
         

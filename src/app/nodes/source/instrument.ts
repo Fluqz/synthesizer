@@ -8,6 +8,8 @@ import type { Instrument as ToneInstrument } from 'tone/build/esm/instrument/Ins
 /** Represents a instrument  */
 export abstract class Instrument extends Node {
 
+    source: ToneInstrument<InstrumentOptions>
+
     constructor(name) {
 
         super(name)
@@ -24,4 +26,7 @@ export abstract class Instrument extends Node {
     /** Release Note */
     abstract releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time)
     // { // if(G.debug) console.log(`Instrument - Release | note: ${note} time: ${time}`) }
+
+    /** Release all Notes */
+    abstract releaseAll()
 }

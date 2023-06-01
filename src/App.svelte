@@ -28,13 +28,10 @@
     // Create Visuals
     let activeVisual = Visual.moire()
 
-    Tone.start()
 
 
     // On document ready
     onMount(() => {
-
-        Tone.start()
 
         Midi.init((e: NoteMessageEvent) => {
 
@@ -48,7 +45,6 @@
 
         // Scroll to bottom
         setTimeout(() => {
-            Tone.start()
 
             window.scrollTo({
                 top: 1000,

@@ -3,7 +3,7 @@
 import P5 from 'p5'
 
 import { G } from '../core/globals'
-import { moireShader } from './moire-shader'
+import { moireShader, moireShaderOptions } from './moire-shader'
 import { keyVisualizer } from './background'
 import { sinewave } from './sine-wave'
 import { envelope } from './envelope'
@@ -63,9 +63,13 @@ export class Visual {
             return this.activeVisual
         }
 
+        moireShaderOptions.timeMultiplier = 1
         const m1 = new P5(moireShader)
+
+        moireShaderOptions.timeMultiplier = 2
         const m2 = new P5(moireShader)
 
+        
         this.activeVisual = {
 
             id: visualCount++,

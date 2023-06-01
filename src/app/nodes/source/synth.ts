@@ -103,6 +103,10 @@ export class Synth extends Instrument {
         this.synth.triggerRelease(note, time)
     }
 
+    releaseAll() {
+        
+        this.synth.releaseAll()
+    }
 
     destroy() {
         

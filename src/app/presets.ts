@@ -1,3 +1,4 @@
+import type { IPreset } from "./core/preset-manager"
 
 
 export const DEFAULT_SESSION = {
@@ -5,6 +6,7 @@ export const DEFAULT_SESSION = {
     presets: [],
     currentSession: {
 
+        bpm: 120,
         volume: 1,
         octave: 2,
         channel: 0,
@@ -90,7 +92,7 @@ export const DEFAULT_SESSION = {
 }
 
 
-export const presets = [
+export const DEFAULT_PRESETS: IPreset[] = [
 
     {
         "volume": 0.5,
@@ -282,6 +284,214 @@ export const presets = [
         "name": "F#3-D2-F#3-C#3"
     },
 
+    {
+        "bpm": 80,
+        "volume": 0.5,
+        "octave": 4,
+        "channel": 2,
+        "tracks": [
+          {
+            "enabled": true,
+            "channel": 0,
+            "volume": -3.5900000000002024,
+            "instrument": {
+              "name": "DuoSynth",
+              "enabled": true,
+              "collapsed": false,
+              "volume": 0.5,
+              "detune": 0,
+              "harmonicity": 1.5,
+              "portamento": 0,
+              "vibratoAmount": 0.5,
+              "vibratoRate": 5,
+              "attack0": 0.01,
+              "decay0": 0,
+              "release0": 0.5,
+              "sustain0": 1,
+              "attack1": 0.01,
+              "decay1": 0,
+              "release1": 0.5,
+              "sustain1": 1
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+              "enabled": "OFF",
+              "activeKeys": [
+                "E2",
+                "E3"
+              ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+          },
+          {
+            "enabled": true,
+            "channel": 1,
+            "volume": 6,
+            "instrument": {
+              "name": "FMSynth",
+              "enabled": true,
+              "collapsed": false,
+              "volume": 0.5,
+              "detune": 0.5,
+              "portamento": 0,
+              "harmonicity": 3,
+              "phase": 0,
+              "attack": 0.01,
+              "decay": 0.01,
+              "sustain": 1,
+              "release": 0.5
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+              "enabled": "OFF",
+              "activeKeys": [
+                "E3"
+              ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+          },
+          {
+            "enabled": true,
+            "channel": 1,
+            "volume": 6,
+            "instrument": {
+              "name": "AMSynth",
+              "enabled": true,
+              "collapsed": false,
+              "volume": 0.5,
+              "detune": 0,
+              "portamento": 0,
+              "harmonicity": 3,
+              "phase": 0,
+              "attack": 0.01,
+              "decay": 0.01,
+              "sustain": 1,
+              "release": 0.5
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+              "enabled": "OFF",
+              "activeKeys": [
+                "E3"
+              ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+          },
+          {
+            "enabled": true,
+            "channel": 2,
+            "volume": -3,
+            "instrument": {
+              "name": "DuoSynth",
+              "enabled": true,
+              "collapsed": false,
+              "volume": 0.5,
+              "detune": 0,
+              "harmonicity": 1.5,
+              "portamento": 0,
+              "vibratoAmount": 0.5,
+              "vibratoRate": 5,
+              "attack0": 0.01,
+              "decay0": 0,
+              "release0": 0.5,
+              "sustain0": 1,
+              "attack1": 0.01,
+              "decay1": 0,
+              "release1": 0.5,
+              "sustain1": 1
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+              "enabled": "OFF",
+              "activeKeys": [
+                "A4"
+              ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+          },
+          {
+            "enabled": true,
+            "channel": 2,
+            "volume": -26.379999999999754,
+            "instrument": {
+              "name": "Sampler",
+              "enabled": true,
+              "collapsed": false,
+              "volume": 0.5
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+              "enabled": "OFF",
+              "activeKeys": [
+                "A4"
+              ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+          }
+        ],
+        "sequencers": [
+          {
+            "channel": [
+              0
+            ],
+            "sequence": [
+              "D2",
+              "E2",
+              "D2",
+              "E2"
+            ]
+          },
+          {
+            "channel": [
+              0,
+              1
+            ],
+            "sequence": [
+              "F#2",
+              "E3",
+              "F#2",
+              "E3"
+            ]
+          },
+          {
+            "channel": [
+              2
+            ],
+            "sequence": [
+              [
+                [
+                  "F#4",
+                  "A4"
+                ],
+                [
+                  "C#5",
+                  "A4"
+                ],
+                [
+                  "A4",
+                  "A4"
+                ],
+                [
+                  "A4",
+                  "A4"
+                ]
+              ]
+            ]
+          }
+        ],
+        "id": 0,
+        "name": "Blelelel"
+    },
 
 
 
@@ -422,7 +632,7 @@ export const presets = [
     },
 
     {
-        "volume": 1,
+        "volume": .3,
         "octave": 2,
         "channel": 2,
         "tracks": [
