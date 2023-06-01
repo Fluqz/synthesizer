@@ -21,32 +21,44 @@
 
     const dispatch = createEventDispatcher()
 
-    let instrumentStore = writable(track.instrument)
-    let nodesStore = writable(track.nodes)
+    // let instrumentStore = writable(track.instrument)
+    // let nodesStore = writable(track.nodes)
 
-    $: nodesStore.set(track.nodes)
-    $: instrumentStore.set(track.instrument)
+    // $: nodesStore.set(track.nodes)
+    // $: instrumentStore.set(track.instrument)
 
-    let unsubscribe = track.store.subscribe((t: Track) => {
+    // let unsubscribe = track.store.subscribe((t: Track) => {
 
-        track = t
-        instrumentStore.set(t.instrument)
-        nodesStore.set(t.nodes)
-    })
+    //     track = t
+    //     instrumentStore.set(t.instrument)
+    //     nodesStore.set(t.nodes)
+    // })
 
     const sources: number[] | string[] = Object.keys(Synth.nodes.sources)
     const effects: number[] | string[] = Object.keys(Synth.nodes.effects)
 
+    
+    $: {
+
+        track = track
+        track.volumeNode = track.volumeNode
+    }
 
     onMount(() => {})
     onDestroy(() => {
 
-        unsubscribe()
+        // unsubscribe()
+
+        console.log('DESTROY TRACK COMPONENT', track.id)
     })
 
     const onVolumeChange = (e) => {
 
         track.volume = e.detail
+
+        track = track
+
+        track.volumeNode = track.volumeNode
     }
 
     const onChannel = (e) => {
@@ -58,34 +70,39 @@
         else if(track.channel < 0) track.channel = (Synth.maxChannelCount - 1) as Channel
 
         track.setChannel(track.channel)
+
+        track = track
     }
 
     const onMute = (e) => {
 
         track.mute(!track.isMuted)
         track.isMuted = track.isMuted
+        track = track
     }
 
     const onSolo = (e) => {
 
         track.solo(!track.soloEnabled)
         track.soloEnabled = track.soloEnabled
+        track = track
     }
 
     const onHold = (e) => {
 
-        if(track.holdEnabled == 'OFF') {
+        if(track.hold == 'OFF') {
 
-            track.holdEnabled = 'PLAY'
+            track.hold = 'PLAY'
         } 
-        else if(track.holdEnabled == 'PLAY') {
+        else if(track.hold == 'PLAY') {
 
-            track.holdEnabled = 'HOLD'
+            track.hold = 'HOLD'
         }
         else {
 
-            track.holdEnabled = 'OFF'
+            track.hold = 'OFF'
         }
+        track = track
     }
 
     const onDuplicate = () => {
@@ -103,8 +120,7 @@
 
         dispatch('delete', track)
 
-        track.store.set(track)
-        track.set(track)
+        // track = track
     }
     
     const addNode = (e, name?: string) => {
@@ -113,11 +129,15 @@
 
         if(name != undefined) track.addNode(Synth.nodes.effects[name]())
         else track.addNode(Synth.nodes.effects.Delay())
+
+        track = track
     }
 
     const deleteNode = (e) => {
 
         track.removeNode(e.detail)
+
+        track = track
     }
 
     /** Shift node forward in array */
@@ -126,6 +146,8 @@
         track.shiftNodeForward(e.detail)
 
         track.connectNodes()
+
+        track = track
     }
 
     /** Shift node back in array */
@@ -134,6 +156,8 @@
         track.shiftNodeBackward(e.detail)
 
         track.connectNodes()
+
+        track = track
     }
 
     // Change Tracks Instrument
@@ -150,6 +174,8 @@
         track.setInstrument(instrument)
 
         ele.blur()
+
+        track = track
     }
 
 
@@ -158,6 +184,7 @@
         // if(!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) e.preventDefault()
 
         console.log('scroll', track.id)
+
     }
 
 </script>
@@ -168,8 +195,8 @@
 
     <div class="node track-options">
 
-        { track.number } 
-        { track.id } 
+        <!-- { track.number } -->
+        <!-- { track.id } -->
         <!-- { track.instrument.name } -->
 
         <!-- Instrument select -->
@@ -218,16 +245,14 @@
             on:click={onHold}
             class="btn"
             title="Hold Mode - OFF: Play as usual; PLAY - Play keys to hold; HOLD: Will play activated keys endlessly"
-            class:play={track.holdEnabled == 'PLAY'}
-            class:hold={track.holdEnabled == 'HOLD'}>{track.holdEnabled.charAt(0)}</div>
-
+            class:play={track.hold == 'PLAY'}
+            class:hold={track.hold == 'HOLD'}>{track.hold.charAt(0)}</div>
 
         <!-- Duplicate -->
         <div 
             on:click={onDuplicate}
             title="Duplicate"
             class="btn">D</div>
-
 
         <!-- Delete -->
         <div 
@@ -242,7 +267,7 @@
     <Node node={track.instrument} />
 
     <!-- Nodes -->
-    {#each $nodesStore as node }
+    {#each track.nodes as node }
 
         <Node bind:node={node} collapsed={node.collapsed} on:shiftForward={shiftForward} on:shiftBack={shiftBack} on:deleteNode={deleteNode} />
 

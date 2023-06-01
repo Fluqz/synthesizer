@@ -1,9 +1,7 @@
 
 <script lang="ts">
     import type * as Tone from "tone";
-    import { Vec2 } from "../util/math";
     import { onDestroy, onMount } from "svelte";
-    import { G } from "../core/globals";
 
     export let output: Tone.ToneAudioNode
 
@@ -20,8 +18,6 @@
     let h
 
     // let peak: number = 0
-
-
 
     const draw = () => {
 
@@ -69,6 +65,8 @@
 
       output.connect(analyser)
 
+      console.log('OSC', output)
+
       IID = setInterval(draw, 1000 / 30)
     }
 
@@ -76,7 +74,9 @@
 
       clearInterval(IID)
 
-      output.disconnect(analyser)
+      // output.disconnect(analyser)
+
+      analyser.disconnect()
     }
 
 

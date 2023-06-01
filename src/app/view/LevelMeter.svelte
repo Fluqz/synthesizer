@@ -61,8 +61,6 @@
 
             clearInterval(IID)
 
-            output.disconnect(meter)
-
             meter.disconnect()
             meter.dispose()
         }

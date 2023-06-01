@@ -28,10 +28,13 @@ export type HoldMode = 'OFF' | 'PLAY' | 'HOLD'
 
 export class Track implements ISerialize {
 
+    /** Track count */
     static count: number = 0
 
+    /** Track UID */
     public id: number
 
+    /** Synthesizer instance */
     public synthesizer: Synthesizer
 
     /** ToneJs Volume Node used for the track */
@@ -52,8 +55,6 @@ export class Track implements ISerialize {
     /** Array of added nodes. Nodes are chained in array order  */
     public nodes: Node[]
 
-    public store: Writable<Track> = writable(this)
-
     /** Mute this track */
     public isMuted: boolean
 
@@ -61,11 +62,12 @@ export class Track implements ISerialize {
     public soloEnabled: boolean
 
     /** When enabled, the current instrument with current note/chord is played endlessly. */
-    private _holdEnabled: HoldMode
+    private _hold: HoldMode
 
     /** Allow arpegiator to play this tracks instrument. */
     public arpEnabled: boolean
 
+    /** Map to keep track of all active/triggered notes. */
     public activeNotes: Set<Tone.Unit.Frequency> = new Set()
 
 
@@ -82,7 +84,7 @@ export class Track implements ISerialize {
         this.isMuted = false
         this.soloEnabled = false
         this.channel = synthesizer.channel
-        this._holdEnabled = 'OFF'
+        this._hold = 'OFF'
 
         if(instrument) {
 
@@ -103,18 +105,6 @@ export class Track implements ISerialize {
     /** Get the track count/order number */
     get number() { return this.synthesizer ? this.synthesizer.tracks.indexOf(this) + 1 : -1 }
 
-
-    set(v: any) { this.store.set(v) }
-
-    subscribe(f: (v: any) => void) : () => void {
-
-        let unsubscribe = this.store.subscribe(f)
-       
-        this.set(this)
-
-        return unsubscribe
-    }
-
     /** Sets the tracks source instrument and connects them in chain. 
      * Instrument will always be the first element in the chain */
     setInstrument(instrument: Instrument) {
@@ -127,8 +117,6 @@ export class Track implements ISerialize {
 
         this.instrument = instrument
         this.connectNodes()
-
-        this.set(this)
     }
 
     /** VolumeNode value */
@@ -138,8 +126,6 @@ export class Track implements ISerialize {
         this._volume = db
 
         this.volumeNode.volume.exponentialRampTo(this._volume, .04, Tone.now())
-
-        this.set(this)
     }
 
     /** Silences/Unsilences the track volume */
@@ -149,8 +135,6 @@ export class Track implements ISerialize {
 
         if(this.isMuted) this.volumeNode.volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .15, Tone.now())
         else this.volumeNode.volume.exponentialRampTo(this._volume, .15, Tone.now())
-
-        this.set(this)
     }
 
     /** Activates solo mode. Only tracks in solo mode can be heard. */
@@ -198,14 +182,18 @@ export class Track implements ISerialize {
                 }
             }
         }
-
-        this.set(this)
     }
 
-    get holdEnabled() { return this._holdEnabled }
-    set holdEnabled(hold: HoldMode) { 
+    /** Set Hold state of this track.
+     * Hold has three states. PLAY, HOLD, OFF
+     * PLAY: While 'PLAY' is active, all notes that are played will be triggered but not released.
+     * HOLD: While 'HOLD' is active, new notes wont be triggered, but active notes will play endlessly.
+     * OFF: All active notes will be released and nothing will be triggered. Its off
+     */
+    get hold() { return this._hold }
+    set hold(hold: HoldMode) { 
 
-        this._holdEnabled = hold
+        this._hold = hold
 
         if(hold == 'PLAY') {
 
@@ -216,20 +204,20 @@ export class Track implements ISerialize {
         }
         else { // OFF
 
-            this.releaseKeys()
+            this.releaseNotes()
         }
-
-        this.set(this)
     }
 
+    /** Set this track's channel number. Needs to release all triggered notes. */
     setChannel(c: Channel) {
 
         this.channel = c
 
-        this.releaseKeys()
+        this.releaseNotes()
     }
 
-    releaseKeys() {
+    /** Releases all triggered notes */
+    releaseNotes() {
 
         for(let n of this.activeNotes) this.releaseNote(n, Tone.now())
 
@@ -240,7 +228,7 @@ export class Track implements ISerialize {
     triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
-        if(this.holdEnabled == 'HOLD') return
+        if(this.hold == 'HOLD') return
 
         // Cant keep track of notes. Also will stay in this octave only! Need to check (synth.octave - note.octave) + this.octave
         // if(this.octave != undefined) note = note.replace(/[0-9]/g, '') + this.octave
@@ -249,15 +237,13 @@ export class Track implements ISerialize {
         this.activeNotes.add(note)
 
         this.instrument.triggerNote(note, time, velocity)
-
-        this.set(this)
     }
 
     /** Triggers the instruments note */
     triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
 
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
-        // if(this.holdEnabled == 'HOLD') return
+        // if(this.hold == 'HOLD') return
         
         this.activeNotes.add(note)
 
@@ -269,8 +255,6 @@ export class Track implements ISerialize {
         }, time)
 
         this.instrument.triggerReleaseNote(note, duration, time, velocity)
-
-        this.set(this)
     }
 
 
@@ -278,15 +262,13 @@ export class Track implements ISerialize {
     releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
-        if(this.holdEnabled == 'HOLD' || this.holdEnabled == 'PLAY') return
+        if(this.hold == 'HOLD' || this.hold == 'PLAY') return
 
         // if(this.octave != undefined) note = note.replace(/[0-9]/g, '') + this.octave
 
         this.activeNotes.delete(note)
 
         this.instrument.releaseNote(note, time)
-
-        this.set(this)
     }
 
     /** Adds a node to the node chain */
@@ -297,8 +279,6 @@ export class Track implements ISerialize {
         n.onDelete.subscribe(this.removeNode.bind(this))
 
         this.connectNodes()
-
-        this.set(this)
     }
 
     /** Connects all nodes in a chain */
@@ -324,8 +304,6 @@ export class Track implements ISerialize {
 
             this.instrument.chain(nodes)
         }
-
-        this.set(this)
     }
 
     /** Remove a node from the node chain */
@@ -342,10 +320,9 @@ export class Track implements ISerialize {
         n.destroy()
         
         this.connectNodes()
-
-        this.set(this)
     }
 
+    /** Move a node forward by one in the array. */
     shiftNodeForward(node: Node) {
 
         let i = this.nodes.indexOf(node)
@@ -356,6 +333,7 @@ export class Track implements ISerialize {
         this.nodes.splice(i - 1, 0, dNode)
     }
 
+    /** Move a node backward by one in the array. */
     shiftNodeBackward(node: Node) {
 
         let i = this.nodes.indexOf(node)
@@ -382,13 +360,11 @@ export class Track implements ISerialize {
     /** Destroy this track. */
     destroy() {
 
-        this.releaseKeys()
+        this.releaseNotes()
 
         for(let i = this.nodes.length; i >= 0; i--) this.removeNode(this.nodes[i])
 
         if(this.instrument) this.instrument.destroy()
-
-        this.set(this)
     }
 
     serializeIn(o: ITrackSerialization) {
@@ -432,22 +408,20 @@ export class Track implements ISerialize {
         if(o.soloEnabled) this.solo(o.soloEnabled)
         if(o.hold) {
 
-            this.holdEnabled = o.hold.enabled
+            this.hold = o.hold.enabled
             
-            if(this.holdEnabled != 'OFF') {
+            if(this.hold != 'OFF') {
 
-                this.holdEnabled = 'PLAY'
+                this.hold = 'PLAY'
 
                 for(let k of o.hold.activeKeys) {
 
                     this.triggerNote(k, Tone.now())
                 }
 
-                this.holdEnabled = 'HOLD'
+                this.hold = 'HOLD'
             }
         }
-
-        this.set(this)
     }
 
     serializeOut() : ITrackSerialization {
@@ -469,7 +443,7 @@ export class Track implements ISerialize {
 
             soloEnabled: this.soloEnabled,
             hold: {
-                enabled: this.holdEnabled,
+                enabled: this.hold,
                 activeKeys: Array.from(this.activeNotes as Iterable<string>)
             },
             isMuted: this.isMuted,
