@@ -120,7 +120,6 @@ input[type=number] {
 }
 
 
-
 .shadow {
 
   box-shadow: 10px 10px 5px 5px #444 inset;
@@ -200,6 +199,9 @@ input[type=number] {
 
   width: 25px;
   height: 25px;
+  line-height: 25px;
+
+  padding: 0px;
 
   background-color: var(--c-y);
   color: var(--c-b);
