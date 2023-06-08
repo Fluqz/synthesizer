@@ -597,7 +597,6 @@ export class Synthesizer implements ISerialize {
 
         for(let s of this.sequencers) s.destroy()
         this.sequencers.length = 0
-
     }
 
     /** Disconnects everything and removes all event listeners */

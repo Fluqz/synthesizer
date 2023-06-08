@@ -23,6 +23,7 @@
 
         if(!e) return
         if(e.repeat) return
+        if(e.target instanceof HTMLInputElement) return
 
         if(key.mapping === e.key || key.mapping === e.key.toLowerCase()) {
 
@@ -38,6 +39,7 @@
         // if(G.debug) console.log('keyUp: key', e.key)
 
         if(!e) return
+        if(e.target instanceof HTMLInputElement) return
 
         if(key.mapping === e.key || key.mapping === e.key.toLowerCase()) {
 

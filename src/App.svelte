@@ -30,7 +30,6 @@
     let activeVisual = Visual.moire()
 
 
-
     // On document ready
     onMount(() => {
 
@@ -94,14 +93,6 @@
             'rgb(21, 111, 23)',
         ]
 
-        /** LOAD FROM LOCAL STORAGE */
-        const storageData = Storage.load()
-
-        if(storageData) serializeIn(storageData, true)
-
-        else serializeIn(DEFAULT_SESSION, false)
-
-        synthesizer = synthesizer
 
 
         // synthesizer.startSequence(0, ['F#2', 'D1', 'F#2', 'C#3'])
@@ -114,7 +105,7 @@
 
 
 
-
+        // Colors
         colors.sort(() =>  Math.ceil((Math.random() * 2) - 1) )
 
         setInterval(() => {
@@ -129,37 +120,13 @@
 
             i++
 
+            synthesizer = synthesizer
+
         }, 10000)
     })
     
-    // Serialize
-    const serializeIn = (file: any, isString: boolean = false) => {
 
-        // file = ''
-        if(file == undefined) return
-    
-        let o: ISynthesizerSerialization
 
-        if(isString) o = JSON.parse(file)
-        else o = file
-    
-        synthesizer.serializeIn(o)
-
-        synthesizer = synthesizer
-    }
-    
-    const serializeOut = () => {
-    
-        let o = synthesizer.serializeOut()
-
-        // {
-        //     synthesizer: o,
-            // eppilepsyMessage: 
-        // }
-    
-        return JSON.stringify(o)
-    }
-    
     // ON CHANGE TAB
     
     const toggleActive = (active:boolean) => {
@@ -222,34 +189,11 @@
         Storage.save(serializeOut())
 
         synthesizer.mute(true)
-    
-        // synthesizer.dispose()
 
         synthesizer = synthesizer
     }
 
 
-    const addTrack = (e) => {
-
-        synthesizer.addTrack(new Track(synthesizer, Synth.nodes.sources.Oscillator()))
-
-        synthesizer = synthesizer
-    }
-
-    const removeTrack = (e) => {
-
-        synthesizer.removeTrack(e.detail)
-
-        synthesizer = synthesizer
-    }
-
-    const deleteTrack = (e) => {
-
-        synthesizer.removeTrack(e.detail)
-
-        synthesizer = synthesizer
-    }
-    
 
     const toggleVisuals = (e) => {
 
@@ -287,6 +231,47 @@
     })
 
 
+    // Serialize
+    const serializeIn = (file: any, isString: boolean = false) => {
+
+        // file = ''
+        if(file == undefined) return
+    
+        let o: ISynthesizerSerialization
+
+        if(isString) o = JSON.parse(file)
+        else o = file
+    
+        synthesizer.serializeIn(o)
+
+        synthesizer = synthesizer
+    }
+    
+    const serializeOut = () => {
+    
+        let o = synthesizer.serializeOut()
+
+        // {
+        //     synthesizer: o,
+            // eppilepsyMessage: 
+        // }
+    
+        return JSON.stringify(o)
+    }
+
+
+    /** LOAD FROM LOCAL STORAGE */
+    const storageData = Storage.load()
+
+    if(storageData) serializeIn(storageData, true)
+
+    else serializeIn(DEFAULT_SESSION, false)
+
+    synthesizer = synthesizer
+    
+    
+
+
 </script>
 
 
@@ -304,11 +289,7 @@
 
 <div class="synthesizer-wrapper" class:screen-offset={!Visual.collapsed}>
 
-    <Synthesizer synthesizer={synthesizer}
-                    on:add={addTrack} 
-                    on:remove={removeTrack} 
-                    on:delete={deleteTrack} 
-    >
+    <Synthesizer synthesizer={synthesizer}>
     <!-- on:mousemove={onMouseMove} -->
 
     <!-- 

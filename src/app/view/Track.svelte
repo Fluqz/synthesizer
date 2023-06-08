@@ -39,17 +39,13 @@
     const sources: number[] | string[] = Object.keys(Synth.nodes.sources)
     const effects: number[] | string[] = Object.keys(Synth.nodes.effects)
 
-    
-    // $: {
-
-    //     track = track
-    //     track.volumeNode = track.volumeNode
-    //     // console.log('v', track.id, track.volumeNode.volume.value)
-    // }
 
     onMount(() => {
 
         track.volume = track.volume
+        track = track
+
+        console.log('track mount',track.id, track.volumeNode)
     })
     onDestroy(() => {
 
@@ -195,11 +191,21 @@
 
     }
 
+
+    const onClick = (e) => {
+
+        // if(!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) e.preventDefault()
+
+        // console.log('click', track.id, track.volumeNode, track.volumeNode.volume.value)
+
+    }
+    onClick
+
 </script>
 
 
 
-<div class="track-wrapper" on:wheel={onScroll}>
+<div class="track-wrapper" on:wheel={onScroll} on:click={onClick}>
 
     <div class="node track-options">
 
@@ -288,7 +294,7 @@
 
             {#each effects as ef }
             
-                <div class="addable-node" on:click={(e) => addNode(e, ef)}>
+                <div class="addable-node" title={ef} on:click={(e) => addNode(e, ef)}>
 
                     <!-- <div class="addable-node-inner"> -->
 

@@ -101,6 +101,10 @@ canvas {
 
 input { 
   outline: none;
+  height: 25px;
+  line-height: 25px;
+  border: none;
+  padding: 0px 5px;
 }
 
 /* Chrome, Safari, Edge, Opera */

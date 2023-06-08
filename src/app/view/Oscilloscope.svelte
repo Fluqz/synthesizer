@@ -1,6 +1,6 @@
 
 <script lang="ts">
-    import type * as Tone from "tone";
+    import * as Tone from "tone";
     import { onDestroy, onMount } from "svelte";
 
     export let output: Tone.ToneAudioNode
@@ -18,6 +18,7 @@
     let w 
     let h
 
+
     // let peak: number = 0
 
     const draw = () => {
@@ -26,23 +27,25 @@
 
         if (analyser) {
 
+          
           analyser.getByteTimeDomainData(dataArray)
-
+          
           w = container.clientWidth
           h = container.clientHeight
-
+          
           var sliceWidth = w / bufferLength
           var x = 0
-
+          
+          if(output instanceof Tone.Volume) console.log('VOL', id, output.volume.value, dataArray[0])
           pointsString = ''
-
+          
           for (var i = 0; i < bufferLength; i++) {
-
+            
             var v = dataArray[i] / 128.0
             var y = v * (h / 2)
-
+            
             // peak = Math.max(y, peak)
-
+            
             pointsString += `${x}, ${y} `
 
             x += sliceWidth
@@ -56,7 +59,7 @@
     let IID: any
     const connect = () => {
 
-      analyser = output.context.createAnalyser()
+      analyser = Tone.context.createAnalyser()
       analyser.fftSize = 2048//4096
       bufferLength = analyser.frequencyBinCount
       dataArray = new Uint8Array(bufferLength)
@@ -66,7 +69,9 @@
 
       output.connect(analyser)
 
-      console.log('OSC', id)
+      console.log('OSC', id, output, output.name, analyser)
+
+      output = output
 
       IID = setInterval(draw, 1000 / 30)
     }
@@ -104,11 +109,12 @@
 
     <svg xmlns="http://www.w3.org/2000/svg">
 
-        <defs>
+      <!-- MAKES IT SINGLETON SOMEHOW. ALL WAVES LOOK THE SAME -->
+        <!-- <defs> -->
           <polyline id="wave" stroke="#fed33a" stroke-width="1px" points={pointsString} />
-        </defs>
+        <!-- </defs> -->
   
-        <use href="#wave" x="0"  y="0"/>
+        <!-- <use href="#wave" x="0"  y="0"/> -->
         <!-- <use href="#wave" x="0"  y="-5" style="opacity: .2" /> -->
         <!-- <use href="#wave" x="0"  y="5" style="opacity: .2" /> -->
 

@@ -39,6 +39,8 @@
         presets = presets
 
         setPresets()
+
+        synthesizer.tracks = synthesizer.tracks
     }
 
     onMount(() => {
@@ -217,6 +219,7 @@
 
         if(!e) return
         if(e.repeat) return
+        if(e.target instanceof HTMLInputElement) return
 
         // console.log('onKeyDown: key', e.key)
 
@@ -334,6 +337,7 @@
             
 
             <div id="presets">
+
                 <div>
                     <!-- <label for="savePreset">Save Preset</label> -->
                     <input id="save-preset" type="text" placeholder="Save Preset" name="savePreset" bind:value={presetInputValue} on:keydown={onPresetInput}/>
@@ -343,7 +347,7 @@
                 
                     <div id="load-preset">
 
-                        <label for="loadPreset">Load</label>
+                        <!-- <label for="loadPreset">Load</label> -->
                         
                         <!-- Presets -->
                         <Dropdown

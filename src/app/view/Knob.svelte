@@ -383,6 +383,9 @@
 .knob-wrapper .knob-value input {
 
     width: 25px;
+    height: auto;
+    line-height: inherit;
+    padding: 0px;
 
     border: none;
     outline: none;
