@@ -79,10 +79,10 @@ float concentricCircles(in vec2 st, in vec2 radius, in float resolution, in floa
 void main (void) {
 
     vec2 st = gl_FragCoord.xy/u_resolution.xy;
-    vec2 mst = gl_FragCoord.xy/u_mouse.xy;
+    vec2 mst = gl_FragCoord.xy/u_mouse*1.0;
     float mdist= distance(vec2(2.0,2.0), mst);
 	  // st = rotateTilePattern(st);
-    float dist = distance(st,vec2(((cos(u_osc/10.0)+1.0)*0.5),(sin(u_osc/10.0)+1.0)*0.5)) * 10.0;
+    float dist = distance(st,vec2(((cos(u_time/10.0)+1.0)*0.5),(sin(u_time/10.0)+1.0)*0.5)) * 10.0;
     st = tile(st,dist/(mdist)*(2.0*PI));
     // st = rotateTilePattern(st);
 
@@ -96,13 +96,16 @@ void main (void) {
     // but you can use whatever design you want.
     // gl_FragColor = vec4(vec3(concentricCircles(st, vec2(0.0,0.0), 4.5, 2.0),concentricCircles(st, vec2(0.0,0.0), 3.0, 3.3),concentricCircles(st, vec2(0.0,0.0), 1.0, 3.0)),1.0) - vec4(0.4, 0.4, 0.4, 0.4);
     // gl_FragColor = vec4(vec3(concentricCircles(st, vec2(0.0,0.0), 1.0, 1.0),concentricCircles(st, vec2(0.0,0.0), 1.0, 1.0),concentricCircles(st, vec2(0.0,0.0), 1.0, 1.0)), 1.0);
+
     gl_FragColor = vec4(
+
         vec3(
-            concentricCircles(st, vec2(u_activeNotes,u_color2), u_color1, 0.8),
+            concentricCircles(st, vec2(u_activeNotes, u_color2), u_color1, 0.8),
             concentricCircles(st, vec2(u_color3,1.0), 1.0, 1.0),
             concentricCircles(st, vec2(u_color2, u_color1), u_color2, 1.0)
         ),
+        
         u_color1
-    ) + 
-    vec4(u_color1 / 2.0, u_color2 / 2.0, (u_activeNotes + 6.0) / 10.0, 0.0);
+
+    ) + vec4(u_color1 / 2.0, u_color2 / 2.0, (u_activeNotes + 6.0) / 10.0, 0.0);
 }
