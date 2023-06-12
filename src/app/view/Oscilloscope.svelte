@@ -36,7 +36,6 @@
           var sliceWidth = w / bufferLength
           var x = 0
           
-          if(output instanceof Tone.Volume) console.log('VOL', id, output.volume.value, dataArray[0])
           pointsString = ''
           
           for (var i = 0; i < bufferLength; i++) {
@@ -68,8 +67,6 @@
       active = true
 
       output.connect(analyser)
-
-      console.log('OSC', id, output, output.name, analyser)
 
       output = output
 

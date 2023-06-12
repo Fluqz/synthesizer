@@ -47,61 +47,14 @@ export class Synthesizer implements ISerialize {
     /** Array of keys on the synthesizer */
     static keyMap: string[] = [
         // Upper
-        'q',
-        '2',
-        'w',
-        '3',
-        'e',
-        'r',
-        '5',
-        't',
-        '6',
-        'z',
-        '7',
-        'u',
-        'i',
-        '9',
-        'o',
-        '0',
-        'p',
+        'q', '2', 'w', '3', 'e', 'r', '5', 't', '6', 'z', '7', 'u', 'i', '9', 'o', '0', 'p',
 
         //lower
-        '<',
-        'a',
-        'y',
-        's',
-        'x',
-        'd',
-        'c',
-        'v',
-        'g',
-        'b',
-        'h',
-        'n',
-        'm',
-        'k',
-        ',',
-        'l',
-        '.',
-        'ö',
-        '-',
+        '<','a','y','s','x','d','c','v','g','b','h','n','m','k', ',', 'l', '.', 'ö', '-',
     ]
 
     /** Array of all notes */
-    static notes: string[] = [
-        'C',
-        'C#',
-        'D',
-        'D#',
-        'E',
-        'F',
-        'F#',
-        'G',
-        'G#',
-        'A',
-        'A#',
-        'B',
-    ]
+    static notes: string[] = [ 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B' ]
 
     /** 
      * This array is used to keep track which notes are currently triggered. 
@@ -622,8 +575,6 @@ export class Synthesizer implements ISerialize {
             this.recorder.disconnect()
             this.recorder.dispose()
         }
-
-        delete this.store
     }
 
     /** Get the current session as js object */

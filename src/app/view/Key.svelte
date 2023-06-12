@@ -77,9 +77,9 @@
     style={key.isPressed ? 'transform: scale(1.1); transform-origin: center;' : ''}>
     
 
-    <div class="key-mapping">{@html key.mapping.toLocaleUpperCase() + '<br/>' }</div>
+    <div class="key-text key-mapping">{@html key.mapping.toLocaleUpperCase() + '<br/>' }</div>
 
-    <div class="key-note">{ key.note + (key.octave ? key.octave.toString() : '') }</div>
+    <div class="key-text key-note">{ key.note + (key.octave ? key.octave.toString() : '') }</div>
 
 </div>
 
@@ -95,7 +95,7 @@
 
     width: calc(100% / 36);
     /* height: calc(100vw / 36); */
-    height: 100%;
+    height: 70px;
 
     background-color: var(--c-y);
 
@@ -103,7 +103,6 @@
     color: var(--c-b);
     text-align: center;
 
-    padding-top: 5px;
     /* border-radius: 3px; */
 
     transition: .4s transform;
@@ -113,9 +112,13 @@
     background-color: var(--c-b);
     color: var(--c-w);
 }
-.key .key-mapping {
+.key .key-text {
+    height: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.key .key-note {
+.key.black .key-note {
 }
 .key.pressed {
 

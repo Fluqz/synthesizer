@@ -35,9 +35,9 @@ export class Visual {
 
         this._visualsEnabled = v
 
-        if(!this.activeVisual) return
+        if (!Visual.activeVisual) return
 
-        if(Visual.visualsEnabled) Visual.activeVisual.restart()
+        if (Visual.visualsEnabled) Visual.activeVisual.restart()
         else Visual.activeVisual.pause()
     }
 
@@ -54,7 +54,7 @@ export class Visual {
 
         const name = 'moire'
 
-        if(this.visuals.has(name)) {
+        if (this.visuals.has(name)) {
 
             this.activeVisual = this.visuals.get(name)
 
@@ -69,7 +69,7 @@ export class Visual {
         moireShaderOptions.timeMultiplier = 2
         const m2 = new P5(moireShader)
 
-        
+
         this.activeVisual = {
 
             id: visualCount++,

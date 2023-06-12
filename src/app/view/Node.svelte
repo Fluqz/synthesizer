@@ -17,7 +17,11 @@
 
     export let node: Node
 
-    export let collapsed: Boolean = false
+    export let collapsed: boolean = false
+
+    export let index: number
+
+    console.log(node.name, index)
 
     $: {
 
@@ -129,11 +133,10 @@
 
 
 <div class="node" class:collapsed={collapsed}>
-
     
-    {#if !isInstrument && !collapsed }
+    {#if !isInstrument && !collapsed && index > 1 }
         
-        <div class="shift-forward shift arrow-left" on:click={shiftForward}>&#x27A4</div>
+        <div class="shift-forward shift arrow-left" on:click={shiftForward}>&#8596;</div>
 
     {/if}
 
@@ -220,11 +223,11 @@
     </div>
 
 
-    {#if !isInstrument }
+    <!-- {#if !isInstrument }
 
-        <div class="shift-back shift" on:click={shiftBack}>&#x27A4</div>
+        <div class="shift-back shift" on:click={shiftBack}>&#8596;</div>
 
-    {/if}
+    {/if} -->
 
 </div>
 

@@ -234,56 +234,59 @@
         <Oscilloscope output={track.volumeNode} id={track.id} />
 
 
-        <!-- Channel Nr -->
-        <div 
-            on:click={onChannel}
-            class="btn"
-            title="Channel">{track.channel}</div>
+        <div class="track-btns">
 
-        <!-- Mute -->
-        <div 
-            on:click={onMute}
-            class="btn"
-            title="Mute" 
-            class:active={track.isMuted}>M</div>
+            <!-- Channel Nr -->
+            <div 
+                on:click={onChannel}
+                class="btn"
+                title="Channel">{track.channel}</div>
 
-        <!-- Solo -->
-        <div 
-            on:click={onSolo}
-            class="btn"
-            title="Solo" 
-            class:active={track.soloEnabled}>S</div>
+            <!-- Mute -->
+            <div 
+                on:click={onMute}
+                class="btn"
+                title="Mute" 
+                class:active={track.isMuted}>M</div>
 
-        <!-- Hold -->
-        <div 
-            on:click={onHold}
-            class="btn"
-            title="Hold Mode - OFF: Play as usual; PLAY - Play keys to hold; HOLD: Will play activated keys endlessly"
-            class:play={track.hold == 'PLAY'}
-            class:hold={track.hold == 'HOLD'}>{track.hold.charAt(0)}</div>
+            <!-- Solo -->
+            <div 
+                on:click={onSolo}
+                class="btn"
+                title="Solo" 
+                class:active={track.soloEnabled}>S</div>
 
-        <!-- Duplicate -->
-        <div 
-            on:click={onDuplicate}
-            title="Duplicate"
-            class="btn">D</div>
+            <!-- Hold -->
+            <div 
+                on:click={onHold}
+                class="btn"
+                title="Hold Mode - OFF: Play as usual; PLAY - Play keys to hold; HOLD: Will play activated keys endlessly"
+                class:play={track.hold == 'PLAY'}
+                class:hold={track.hold == 'HOLD'}>{track.hold.charAt(0)}</div>
 
-        <!-- Delete -->
-        <div 
-            class="btn"
-            title="Delete" 
-            on:click={onDelete}>&#x2715;</div>
+            <!-- Duplicate -->
+            <div 
+                on:click={onDuplicate}
+                title="Duplicate"
+                class="btn">D</div>
+
+            <!-- Delete -->
+            <div 
+                class="btn"
+                title="Delete" 
+                on:click={onDelete}>&#x2715;</div>
+        </div>
 
     </div>
 
     <!-- Node -->
     <!-- Instrument -->
-    <Node node={track.instrument} />
+    <Node node={track.instrument} index={0} />
 
     <!-- Nodes -->
-    {#each track.nodes as node }
+    {#each track.nodes as node, i }
 
-        <Node bind:node={node} collapsed={node.collapsed} on:shiftForward={shiftForward} on:shiftBack={shiftBack} on:deleteNode={deleteNode} />
+        <Node bind:node={node} collapsed={node.collapsed} index={i + 1} on:shiftForward={shiftForward} on:shiftBack={shiftBack} on:deleteNode={deleteNode} />
 
     {/each}
 
@@ -344,6 +347,12 @@
 
     background-color: var(--c-y);
     color: var(--c-b);
+}
+
+.track-wrapper .track-options .track-btns {
+
+    display: inline-block;
+    width: 100px;
 }
 
 .track-wrapper .add-node-btn {

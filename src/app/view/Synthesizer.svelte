@@ -351,13 +351,13 @@
                         
                         <!-- Presets -->
                         <Dropdown
-                        name={''}
-                        value={''}
-                        options={presets}
-                        deletableOptions={true}
-                        on:onSelect={onChangePresets} 
-                        on:onDeleteOption={onDeletePresetOption}
-                        />
+                            name={''}
+                            value={''}
+                            options={presets}
+                            deletableOptions={true}
+                            on:onSelect={onChangePresets} 
+                            on:onDeleteOption={onDeletePresetOption}
+                            />
                     </div>
 
                 {/if}

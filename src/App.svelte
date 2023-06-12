@@ -52,6 +52,7 @@
                 top: 1000,
                 left: 0,
                 behavior: 'smooth',
+                
             })
 
         }, 1500)
@@ -80,7 +81,7 @@
     
             //   Cyan        Black      Red      blue
             '#166f4a', '#161616', '#691616', '#16164a',
-            'rgb(128, 122, 255)',
+            // 'rgb(128, 122, 255)',
             'rgb(255, 121, 159)',
             'rgb(128, 255, 255)',
             'rgb(255, 255, 159)',
@@ -88,11 +89,13 @@
             'rgb(105, 22, 22)',
             'rgb(22, 22, 74)',
             'rgb(22, 22, 22)',
-            'rgb(105, 111, 22)',
+            // 'rgb(105, 111, 22)',
             'rgb(105, 22, 74)',
             'rgb(21, 111, 23)',
         ]
 
+
+        // colors = [ 'rgb(128, 255, 255)' ]
 
 
         // synthesizer.startSequence(0, ['F#2', 'D1', 'F#2', 'C#3'])
@@ -116,13 +119,14 @@
                 colors.sort(() =>  Math.ceil((Math.random() * 2) - 1) )
             }
 
+            console.log('col', colors[i])
             document.body.style.backgroundColor = colors[i]
 
             i++
 
             synthesizer = synthesizer
 
-        }, 10000)
+        }, 30000)
     })
     
 
@@ -227,7 +231,21 @@
     document.addEventListener('click', () => {
 
         Tone.start()
+        Tone.Transport.start()
 
+        // console.log('click')
+
+        // let s = new Tone.PolySynth(Tone.DuoSynth).toDestination()
+
+        // let seq = new Tone.Sequence((time: number, note: Tone.Unit.Frequency) => {
+
+        //     console.log('yo',time, note)
+
+        //     s.triggerAttackRelease(note, .1, Tone.now())
+
+        // }, [['A3', 'A3'], ['F3', 'F3', 'F3'], ['D3', 'D3', 'D3', 'D3', 'D3', 'D3']], '4n')
+
+        // seq.start(Tone.now())
     })
 
 
