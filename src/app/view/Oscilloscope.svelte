@@ -6,6 +6,8 @@
     export let output: Tone.ToneAudioNode
     export let id:number = -1
 
+    let scheduleID
+
     let analyser: AnalyserNode
     let bufferLength: number
     let dataArray: Uint8Array
@@ -55,7 +57,6 @@
       }
     }
 
-    let IID: any
     const connect = () => {
 
       analyser = Tone.context.createAnalyser()
@@ -70,12 +71,14 @@
 
       output = output
 
-      IID = setInterval(draw, 1000 / 30)
+      if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
+
+      scheduleID = Tone.Transport.scheduleRepeat(draw, 1 / 30, Tone.now(), 1000000000)
     }
 
     const disconnect = () => {
 
-      clearInterval(IID)
+      if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
 
       // output.disconnect(analyser)
 

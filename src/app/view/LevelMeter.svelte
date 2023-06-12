@@ -8,6 +8,8 @@
 
     export let value: number = 0
 
+    let scheduleID
+
     let meter: Tone.Meter = new Tone.Meter()
 
     let min = -70
@@ -37,8 +39,9 @@
 
             output.connect(meter)
 
-            clearInterval(IID)
-            IID = setInterval(getValue, 1000 / 30)
+            if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
+
+            scheduleID = Tone.Transport.scheduleRepeat(getValue, 1 / 30, Tone.now(), 100000000)
         }
     })
 
@@ -46,7 +49,8 @@
 
         if(output != undefined) {
 
-            clearInterval(IID)
+        if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
+
 
             meter.disconnect()
             meter.dispose()

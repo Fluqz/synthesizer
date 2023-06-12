@@ -6,6 +6,8 @@
 
     export let output: Tone.ToneAudioNode
 
+    let scheduleID
+
     let meter: Tone.DCMeter = new Tone.DCMeter()
 
     let value:number
@@ -51,8 +53,9 @@
 
             output.connect(meter)
 
-            clearInterval(IID)
-            IID = setInterval(getValue, 80)
+            if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
+
+            scheduleID = Tone.Transport.scheduleRepeat(getValue, 1 / 30, Tone.now(), 1000000)
         }
     })
 
@@ -60,7 +63,7 @@
 
         if(output != undefined) {
 
-            clearInterval(IID)
+            if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
 
             meter.disconnect()
             meter.dispose()
