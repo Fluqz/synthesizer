@@ -105,10 +105,8 @@ export class Synthesizer implements ISerialize {
     
     /** Octave number */
     octave: number
-    /** Master volume node */
-    volume: number
-    /** ToneJs Gain Node as Master Gain */
-    gain: Tone.Gain
+    /** ToneJs Volume Node as Master Volume */
+    volume: Tone.Volume
     /** Arpeggiator Tone.Pattern */
     arp: Tone.Pattern<string>
     /** Arpeggiator array */
@@ -142,13 +140,12 @@ export class Synthesizer implements ISerialize {
 
     constructor() {
 
-        // Synthesizer Volume
         this.bpm = 120
-        this.volume = .5
         this.octave = 2
-
-        this.gain = new Tone.Gain(this.volume)
-        this.gain.toDestination()
+        
+        // Synthesizer Master Volume
+        this.volume = new Tone.Volume(-3)
+        this.volume.toDestination()
 
         this.isRecording = false
 
@@ -200,6 +197,8 @@ export class Synthesizer implements ISerialize {
         this.onAddNode = new RxJs.Subject()
         this.onRemoveNode = new RxJs.Subject()
 
+
+        this.setVolume(-3)
     }
 
     get bpm() { return Tone.Transport.bpm.value }
@@ -210,10 +209,9 @@ export class Synthesizer implements ISerialize {
     }
 
     /** Set Master Volume */
-    setVolume(v) {
+    setVolume(v:number) {
 
-        this.volume = v
-        this.gain.gain.setValueAtTime(this.volume, Tone.now())
+        this.volume.volume.setValueAtTime(v, Tone.now())
     }
 
     /** Mute master */
@@ -222,7 +220,7 @@ export class Synthesizer implements ISerialize {
         this.isMuted = m === true ? true : false
 
         if(this.isMuted) Tone.Destination.volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .2, Tone.now())
-        else Tone.Destination.volume.exponentialRampTo(this.volume, .2, Tone.now())
+        else Tone.Destination.volume.exponentialRampTo(this.volume.volume.value, .2, Tone.now())
 
         // Tone.Destination.mute = this.isMuted
 
@@ -250,7 +248,7 @@ export class Synthesizer implements ISerialize {
 
         track.synthesizer = this
         
-        track.connect(this.gain)
+        track.connect(this.volume)
 
 
         console.log(this.tracks)
@@ -262,7 +260,7 @@ export class Synthesizer implements ISerialize {
         
         this.tracks.splice(this.tracks.indexOf(track), 1)
         
-        track.disconnect(this.gain)
+        track.disconnect(this.volume)
 
         // track.synthesizer = null
 
@@ -308,12 +306,13 @@ export class Synthesizer implements ISerialize {
 
         // note = note.replace(/[0-9]/g, '')
 
-        note = Tone.Frequency(note).toNote()
-
         if(this.isPlaying == false) {
-            // Tone.start()
+            Tone.start()
+            Tone.Transport.start()
             this.isPlaying = true
         }
+
+        note = Tone.Frequency(note).toNote()
 
         Synthesizer.activeNotes.add(note)
 
@@ -328,6 +327,12 @@ export class Synthesizer implements ISerialize {
     
     /** Triggers and releases a note - Triggers all track's triggerReleaseNote function */
     triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, channel: Channel = 0, velocity:number = 1): void {
+
+        if(this.isPlaying == false) {
+            Tone.start()
+            Tone.Transport.start()
+            this.isPlaying = true
+        }
 
         Tone.Frequency(note).toNote()
 
@@ -564,9 +569,9 @@ export class Synthesizer implements ISerialize {
         for(let sequencer of this.sequencers) sequencer.destroy()
         delete this.sequencers
 
-        this.gain.disconnect()
-        this.gain.dispose()
-        delete this.gain
+        this.volume.disconnect()
+        this.volume.dispose()
+        delete this.volume
 
         delete this.presetManager
 
@@ -588,7 +593,7 @@ export class Synthesizer implements ISerialize {
 
         return {
             bpm: this.bpm,
-            volume: this.volume,
+            volume: this.volume.volume.value,
             octave: this.octave,
             channel: this.channel,
             tracks: tracks,

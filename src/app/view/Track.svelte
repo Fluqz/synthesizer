@@ -18,23 +18,8 @@
     import Oscilloscope from "./Oscilloscope.svelte";
 
     export let track: Track
-    // export let instrument: Instrument
-    // export let nodes: _Node[]
 
     const dispatch = createEventDispatcher()
-
-    // let instrumentStore = writable(track.instrument)
-    // let nodesStore = writable(track.nodes)
-
-    // $: nodesStore.set(track.nodes)
-    // $: instrumentStore.set(track.instrument)
-
-    // let unsubscribe = track.store.subscribe((t: Track) => {
-
-    //     track = t
-    //     instrumentStore.set(t.instrument)
-    //     nodesStore.set(t.nodes)
-    // })
 
     const sources: number[] | string[] = Object.keys(Synth.nodes.sources)
     const effects: number[] | string[] = Object.keys(Synth.nodes.effects)

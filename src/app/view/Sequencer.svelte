@@ -9,34 +9,37 @@
 
     export let sequencer: Sequencer
 
-    let channelCount: boolean[] = []
-    let channel: Channel = 0
+    let channels: boolean[] = []
+    // let channels: Channel = 0
 
-    for(let i = 0; i < Synthesizer.maxChannelCount; i++) channelCount.push(false)
+    for(let i = 0; i < Synthesizer.maxChannelCount; i++) channels.push(false)
 
-    channelCount[0] = true
+    $: {
+        for(let i = 0; i < Synthesizer.maxChannelCount; i++) channels[i] = false
+        for(let c of sequencer.channels) channels[c] = true
+    }
 
     let inputValue: string
 
     const notations: Notation[] = ['1', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64']
     let currentNotation: Notation = notations[0]
 
-    let sequence: { note: Tone.Unit.Frequency, length: Notation }[] = []
+    // let sequence: { note: Tone.Unit.Frequency, length: Notation }[] = []
+
+    const changeNotation = (notation: Notation) => {
+
+
+        console.log('NOTATION',notation)
+
+        currentNotation = notation
+        sequencer.setSubdivision(currentNotation)
+
+        sequencer = sequencer
+    }
 
     const onInput = (e) => {
 
         e.stopPropagation()
-
-        if(e.key == ' ' && e.target.value != null) {
-
-            console.log('Space', e.target.value)
-
-            // PARSE TEXT AND ADD TO SEQUENCE
-
-            // e.target.value = ''
-            // e.preventDefault()
-        }
-
 
         if(e.key == 'Enter' && e.target.value != null) {
 
@@ -53,21 +56,36 @@
         sequencer = sequencer
     }
 
-    const toggleStartStop = () => {
+    const onChangeNote = (e, i:number, i2?:number) => {
 
-        if(!sequencer.isPlaying) sequencer.start()
-        else sequencer.stop()
+        e.stopPropagation()
+
+        if(e.key == 'Enter' && e.target.value != null) {
+
+            const note = e.target.value
+
+            console.log(sequencer.toneSequence.events, i, i2)
+
+            if(i2 == undefined && Number.isInteger(i)) sequencer.toneSequence.events[i] = note
+            else if(Number.isInteger(i2)) {
+
+                sequencer.toneSequence.events[i][i2] = note
+                // sequencer.sequence = sequencer.toneSequence.events
+                sequencer.toneSequence.events[i] = sequencer.toneSequence.events[i]
+                sequencer.toneSequence.events = sequencer.toneSequence.events
+                sequencer.toneSequence = sequencer.toneSequence
+                console.log('ww', sequencer.toneSequence.events[i][i2], sequencer.toneSequence.events)
+
+            }
+        }
 
         sequencer = sequencer
     }
 
-    const onChannel = (e) => {
+    const toggleStartStop = () => {
 
-        if(!e.shiftKey) channel++
-        if(e.shiftKey) channel--
-
-        if(channel >= Synthesizer.maxChannelCount) channel = 0
-        else if(channel < 0) channel = (Synthesizer.maxChannelCount - 1) as Channel
+        if(!sequencer.isPlaying) sequencer.start()
+        else sequencer.stop()
 
         sequencer = sequencer
     }
@@ -77,7 +95,7 @@
         // Toggle
         val = !val
 
-        channelCount[channel] = val
+        channels[channel] = val
 
         console.log(channel,val)
 
@@ -93,10 +111,8 @@
 
         sequencer = sequencer
     }
-
     
     const placeholder = `["F#2","D3", ["DB3","C#2"], "E3"]`
-
 
 </script>
 
@@ -109,28 +125,49 @@
 
             {#each notations as notation }
 
-                <div class="btn notation" class:active={currentNotation == notation} on:click={() => currentNotation = notation}>{notation}</div>
+                <div class="btn notation" class:active={currentNotation == notation} on:click={() => changeNotation(notation)}>{notation}</div>
 
             {/each}
 
         </div>
             
         <div class="sequence">
-<!-- 
-            <div class="notes">
 
-                {#each sequencer.sequence as note }
-                    
-                    <div class="note">
+            <!-- <input on:keydown={onInput} placeholder={placeholder}/> -->
 
+            <div class="sequence-wrapper">
+
+                {#each sequencer.sequence as bar, i }
+
+                    <div class="bar">
+
+                        {#if bar instanceof Array } 
+                        
+                            {#each bar as note, i2 }
+
+                                <div class="note">
+            
+                                    <input bind:value={ note } on:keydown={(e) => onChangeNote(e, i, i2)}/>
+            
+                                </div>
+                                
+                            {/each}
+
+                        {:else}
+
+                            <div class="note">
+                
+                                <input bind:value={ bar } on:keydown={(e) => onChangeNote(e, i)}/>
+        
+                            </div>
+
+                        {/if}
 
                     </div>
 
                 {/each}
 
-            </div> -->
-
-            <input on:keydown={onInput} placeholder={placeholder}/>
+            </div>
 
         </div>
 
@@ -141,7 +178,7 @@
 
         <div>
 
-            {#each channelCount as cc, i}
+            {#each channels as cc, i}
                 
                 <div class="btn" class:active={cc} title="Channels to sequence" on:click={() => activateChannel(i, cc)}>{ i }</div>
 
@@ -149,13 +186,7 @@
 
         </div>
 
-        <!-- <div id="channel-btn" class="btn" title="Channel - Key: Arrow Up / Down | Click to increase | Click with SHIFT to decrease" on:click={onChannel}>{ channel }</div> -->
-        <!-- <div class="btn" title="" on:click={}></div> -->
-        <!-- <div class="btn" title="" on:click={}>+</div> -->
-
-
         <div class="btn delete" on:click={onDelete}>&#x2715;</div>
-
 
     </div>
 
@@ -191,25 +222,54 @@
     width: 100%;
 }
 
+.sequencer-wrapper .sequence-wrapper {
 
-.sequencer-wrapper .sequence .notes {
+    width: 100%;
+    height: 100%;
 
     display: inline-flex;
+
     justify-content: center;
     align-items: center;
-
-    height: 100%;
-    width: 100%;
 }
 
-.sequencer-wrapper .sequence .notes .note {
+.sequencer-wrapper .sequence .bar {
 
-    width: 25px;
+    width: 50px;
+    height: 50px;
+
+    background-color: var(--c-bl);
+
+}
+
+.sequencer-wrapper .sequence .bar .note {
+
+    /* width: 25px; */
+
+    background-color: var(--c-y);
+    color: var(--c-b);
+
+    display: inline-flex;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.sequencer-wrapper .sequence .bar .note input {
+
+    min-width: unset;
+    width: 50px;
     height: 25px;
-    background-color: var(--c-b);
+    line-height: 25px;
+
+    padding: 0px 5px;
+
+    border: none;
+
+    font-size: 1rem;
 }
 
-.sequence input {
+.sequencer-wrapper .sequence input {
 
     min-width: 200px;
     height: 25px;

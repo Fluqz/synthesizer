@@ -1,6 +1,3 @@
-
-
-
 <script lang="ts">
 
     import * as Tone from 'tone'
@@ -41,6 +38,8 @@
         setPresets()
 
         synthesizer.tracks = synthesizer.tracks
+
+        synthesizer = synthesizer
     }
 
     onMount(() => {
@@ -260,15 +259,33 @@
         synthesizer = synthesizer
 
         setPresets()
+
+        synthesizer = synthesizer
     }
 
     const onChangePresets = (e) => {
 
-        synthesizer.presetManager.loadPresetFromName(e.detail.target.value)
+        const isMuted = synthesizer.isMuted
 
-        synthesizer = synthesizer
+        synthesizer.mute(true)
 
-        scrollToBottom()
+        setTimeout(() => {
+
+            synthesizer.presetManager.loadPresetFromName(e.detail.target.value)
+            
+            synthesizer = synthesizer
+
+            synthesizer.presetManager = synthesizer.presetManager
+
+            scrollToBottom()
+
+            setTimeout(() => {
+                
+                synthesizer.mute(isMuted)
+
+            }, 200)
+            
+        }, 200)
     }
 
     const onDeletePresetOption = (e) => {
@@ -366,21 +383,22 @@
 
 
 
-            <Oscilloscope output={synthesizer.gain} />
+            <Oscilloscope output={synthesizer.volume} />
 
-            <DCMeter output={synthesizer.gain} />
+            <DCMeter output={synthesizer.volume} />
 
             
             <div id="volume" title="Master volume">
                 
                 <Knob 
                 name=""
-                value={synthesizer.volume}
-                min={0} 
-                max={1} 
+                value={synthesizer.volume.volume.value}
+                min={-70} 
+                max={6} 
                 on:onChange={(e) => synthesizer.setVolume(e.detail)} />
             </div>
-            <LevelMeter output={synthesizer.gain} value={synthesizer.gain.gain.value} />
+            
+            <LevelMeter output={synthesizer.volume} value={synthesizer.volume.volume.value} />
             
             <div id="reset" class="btn" title="ALT - Delete; Click: SHIFT -> DEFAULT, META -> RESET PRESETS" on:click={reset}>&#x2715;</div>
 
@@ -413,8 +431,6 @@
                 
                 {#each synthesizer.sequencers as sequencer, i}
                     
-                    <div>{i}</div>
-
                     <Sequencer sequencer={sequencer} on:deleteSequencer={deleteSequencer} />
 
                 {/each}

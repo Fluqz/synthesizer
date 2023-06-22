@@ -36,7 +36,7 @@ export class Sequencer implements ISerialize {
 
     toneSequence: Tone.Sequence
 
-    channel: Channel[]
+    channels: Channel[]
 
     noteLength: Notation
 
@@ -46,12 +46,12 @@ export class Sequencer implements ISerialize {
 
     humanize: number
 
-    constructor(synthesizer: Synthesizer, sequence?: Sequence, channel?: Channel[]) {
+    constructor(synthesizer: Synthesizer, sequence?: Sequence, channels?: Channel[]) {
 
         this.synthesizer = synthesizer
         this.sequence = sequence == undefined ? [] : sequence
 
-        this.channel = channel == undefined ? [0] : channel
+        this.channels = channels == undefined ? [0] : channels
 
         this.isPlaying = false
         this.loop = true
@@ -62,17 +62,15 @@ export class Sequencer implements ISerialize {
 
     addChannel(channel: Channel) {
 
-        if(this.channel.indexOf(channel) != -1) return false
+        if(this.channels.indexOf(channel) != -1) return
 
-        this.channel.push(channel)
-
-        return true
+        this.channels.push(channel)
     }
     removeChannel(channel: Channel) {
 
-        if(this.channel.indexOf(channel) == -1) return false
+        if(this.channels.indexOf(channel) == -1) return false
 
-        this.channel.splice(this.channel.indexOf(channel), 1)
+        this.channels.splice(this.channels.indexOf(channel), 1)
 
         for(let tr of this.synthesizer.tracks) {
 
@@ -83,7 +81,7 @@ export class Sequencer implements ISerialize {
     }
 
 
-    addNote(note: Tone.Unit.Frequency, length: Notation, index:number, ) {
+    addNote(note: Tone.Unit.Frequency, i:number, i2:number) {
 
     }
 
@@ -103,7 +101,7 @@ export class Sequencer implements ISerialize {
 
         }
 
-        this.toneSequence = this.startSequence(this.sequence)
+        this.startSequence(this.sequence)
 
         this.isPlaying = true
     }
@@ -120,46 +118,50 @@ export class Sequencer implements ISerialize {
 
         console.log('start', sequence)
 
+        this.isPlaying = true
 
-        // let seq = new Tone.Sequence((time: number, note: Tone.Unit.Frequency) => {
+        this.toneSequence = new Tone.Sequence((time: number, note: Tone.Unit.Frequency) => {
 
-        //     for(let channel of this.channel) {
+            console.log(this.channels)
 
-        //         this.synthesizer.triggerReleaseNote(Tone.Frequency(note).toNote(), ((60) / Tone.Transport.bpm.value) - .01, time, channel)
+            for(let channel of this.channels) {
 
-        //         console.log('SEQUENCER at Channel', channel, note, time)
-        //     }
-
-        // }, sequence, getNotationLength(this.noteLength))
-
-                
-        this.lastNote = undefined
-
-        let seq = new Tone.Sequence((time: number, note: Tone.Unit.Frequency) => {
-
-            for(let channel of this.channel) {
-
-                if(this.lastNote != undefined) {
-
-                    this.synthesizer.releaseNote(this.lastNote, time, channel)
-                }
-
-                this.synthesizer.triggerNote(note, time, channel)
+                this.synthesizer.triggerReleaseNote(Tone.Frequency(note).toNote(), ((60) / Tone.Transport.bpm.value) - .01, time, channel)
 
                 console.log('SEQUENCER at Channel', channel, note, time)
             }
 
-            this.lastNote = note
+        }, sequence, getNotationLength(this.noteLength))
 
-        }, sequence, '4n')
+        console.log('nota', getNotationLength(this.noteLength))
+                
+        // this.lastNote = undefined
+
+        // this.toneSequence = new Tone.Sequence((time: number, note: Tone.Unit.Frequency) => {
+
+        //     for(let channel of this.channel) {
+
+        //         if(this.lastNote != undefined) {
+
+        //             this.synthesizer.releaseNote(this.lastNote, time, channel)
+        //         }
+
+        //         this.synthesizer.triggerNote(note, time, channel)
+
+        //         console.log('SEQUENCER at Channel', channel, note, time)
+        //     }
+
+        //     this.lastNote = note
+
+        // }, sequence, '4n')
 
 
-        seq.humanize = false
-        // seq.probability = 
+        this.toneSequence.humanize = false
+        // this.toneSequence.probability = 
 
-        seq.start(Tone.now())
+        this.toneSequence.start(Tone.now())
 
-        return seq
+        return this.toneSequence
     }
 
     stop() {
@@ -172,9 +174,9 @@ export class Sequencer implements ISerialize {
         }
 
 
-        for(let channel of this.channel) this.synthesizer.releaseNote(this.lastNote, Tone.now(), channel)
+        for(let channel of this.channels) this.synthesizer.releaseNote(this.lastNote, Tone.now(), channel)
         
-        for(let ch of this.channel) {
+        for(let ch of this.channels) {
             
             for(let tr of this.synthesizer.tracks) {
 
@@ -185,13 +187,18 @@ export class Sequencer implements ISerialize {
         this.isPlaying = false
     }
 
+    setSubdivision(subdivision: Tone.Unit.Time) {
+
+        // if(this.toneSequence) this.toneSequence.set({ subdivision: getNotationLength(subdivision) })
+    }
+
     destroy() {
 
         this.stop()
 
         if(this.toneSequence) this.toneSequence.dispose()
 
-        delete this.channel
+        delete this.channels
         delete this.sequence
     }
 
@@ -216,14 +223,14 @@ export class Sequencer implements ISerialize {
 
         return {
 
-            channel: this.channel,
+            channel: this.channels,
             sequence: this.sequence,
             humanize: this.humanize
         }
     }
     serializeIn(o: ISequencerSerialization) {
 
-        if(o.channel && o.channel.length) this.channel = o.channel
+        if(o.channel && o.channel.length) this.channels = o.channel
         if(o.sequence && o.sequence.length) this.sequence = o.sequence
         if(o.humanize) this.humanize = o.humanize
     }

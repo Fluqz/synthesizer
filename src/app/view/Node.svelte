@@ -325,7 +325,7 @@
     align-items: center;
 
     position: absolute;
-    right: 15px;
+    right: 0px;
     top: 0px;
     cursor: pointer;
 

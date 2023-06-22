@@ -12,6 +12,16 @@
       <div id="app"></div>
     </div>
     
+    <script>
+
+      const cb = (response) => {
+
+        console.log('CountAPI', response)
+      }
+
+    </script>
+    <script async src="https://api.countapi.xyz/hit/fluqz.github.io/visits?callback=cb"></script>
     <script type="module" src="/src/main.ts"></script>
+
   </body>
 </html>

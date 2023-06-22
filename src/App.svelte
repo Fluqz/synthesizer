@@ -29,9 +29,13 @@
     // Create Visuals
     let activeVisual = Visual.moire()
 
+    let storedMuteState = !synthesizer.isMuted
+
 
     // On document ready
     onMount(() => {
+
+        synthesizer.setVolume(0)
 
         if(isSafari()) { document.body.classList.add('safari') }
 
@@ -52,7 +56,6 @@
                 top: 1000,
                 left: 0,
                 behavior: 'smooth',
-                
             })
 
         }, 1500)
@@ -119,7 +122,7 @@
                 colors.sort(() =>  Math.ceil((Math.random() * 2) - 1) )
             }
 
-            console.log('col', colors[i])
+            // console.log('col', colors[i])
             document.body.style.backgroundColor = colors[i]
 
             i++
@@ -170,15 +173,20 @@
         
         if (document.visibilityState == "visible") {
             
-            toggleActive(true)
+            toggleActive(storedMuteState)
         }
         else {
-
+            
+            storedMuteState = !synthesizer.isMuted
             toggleActive(false)
         }
     })
-    window.addEventListener('focus', () => toggleActive(true))
-    window.addEventListener('blur', () => toggleActive(false))
+    window.addEventListener('focus', () => toggleActive(storedMuteState))
+    window.addEventListener('blur', () => {
+
+        storedMuteState = !synthesizer.isMuted
+        toggleActive(false)
+    })
 
     
     window.addEventListener('resize', () => {
