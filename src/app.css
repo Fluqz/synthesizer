@@ -219,8 +219,9 @@ input[type=number] {
 
   /* background-blend-mode: difference; */
 
+  background-image: url('/src/assets/imgs/circle-noir.gif');
   background-image: url('/src/assets/imgs/circle-monochrome.gif');
-  background-size: 1000%;
+  background-size: 400%;
   background-position: center;
   background-repeat: no-repeat;
 }

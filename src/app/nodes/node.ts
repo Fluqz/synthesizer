@@ -45,6 +45,7 @@ export interface SwitchNodeParameter extends NodeParameter {
     enabled: boolean
 }
 
+export type NodeParameterType = KnobNodeParameter | SwitchNodeParameter | DropDownNodeParameter
 
 export interface INodeSerialization extends ISerialization {
 
@@ -76,7 +77,7 @@ export abstract class Node/* extends Tone.ToneAudioNode*/ implements ISerialize 
     onDelete
 
     /** Array of settable properties */
-    props: Map<string, KnobNodeParameter | SwitchNodeParameter | DropDownNodeParameter> 
+    props: Map<string, NodeParameterType> 
 
     /** instance Store */
     store: Writable<Node>

@@ -8,12 +8,23 @@ import type { ToneWithContextOptions } from 'tone/build/esm/core/context/ToneWit
 
 /** 
  * 
+detune : Cents	
+frequency : Frequency	
+harmonicity : Positive	
+modulationIndex : Positive	
+modulationType : AllNonCustomOscillatorType	
+partialCount : number	
+partials : number	[]	
+phase : Degrees	
+type : ToneOscillatorType	
+volume : Decibels	
+
  */
-export class Oscillator extends Instrument {
+export class FMOscillator extends Instrument {
 
     public envelope: Tone.AmplitudeEnvelope
 
-    public osc: Tone.Oscillator
+    public osc: Tone.FMOscillator
 
     /** Gain node */
     public gain: Tone.Gain
@@ -34,6 +45,11 @@ export class Oscillator extends Instrument {
     /** Wave types. Sine, Triangle, Square, Saw */
     private _wavePartial: string = ''
 
+    private _modulationType: string = ''
+
+    private _harmonicity: number
+    private _modulationIndex: number
+
 
     private _attack: number
     private _decay: number
@@ -47,10 +63,12 @@ export class Oscillator extends Instrument {
     /** freq, detune, volume, waveform,  */
     constructor(volume?: number, frequency?: number, detune?: number) {
 
-        super('Oscillator')
+        super('FMOscillator')
 
-        this.osc = new Tone.Oscillator(this.frequency)
+        this.osc = new Tone.FMOscillator(this.frequency)
         this.osc.start(Tone.now())
+
+        console.log('AMOSC', this.osc.get())
 
         this.envelope = new Tone.AmplitudeEnvelope()
         this.gain = new Tone.Gain(1)
@@ -59,23 +77,34 @@ export class Oscillator extends Instrument {
 
         this.isPlaying = false
 
+        const oscDefaults = this.osc.get()
+        const envDefaults = this.envelope.get()
+
         this.volume = volume ? volume : .4
-        this.detune = this.osc.get().detune
-        this.phase = this.osc.get().phase
-        this.attack = this.envelope.get().attack as number
-        this.decay = this.envelope.get().decay as number
-        this.sustain = this.envelope.get().sustain
-        this.release = this.envelope.get().release as number
+        this.detune = oscDefaults.detune
+        this.phase = oscDefaults.phase
+        this.attack = envDefaults.attack as number
+        this.decay = envDefaults.decay as number
+        this.sustain = envDefaults.sustain
+        this.release = envDefaults.release as number
         this._wave = 'sine'
         this._wavePartial = ''
+        this.harmonicity = oscDefaults.harmonicity
+        this.modulationIndex = oscDefaults.modulationIndex
+        this.modulationType = oscDefaults.modulationType
 
 
         this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () => this.volume, set: (v:number) => this.volume = v, min: 0, max:1, groupID: 0 })
 
-        this.props.set('wave', { type: ParamType.DROPDOWN, name: 'Wave', get: () => this.wave, set: (v:string) => this.wave = v, options: [ 'sine', 'square', 'sawtooth', 'triangle', 'pulse', ], groupID: 1 })
+        this.props.set('modulationType', { type: ParamType.DROPDOWN, name: 'Modulation Wave', get: () => this.modulationType, set: (v:string) => this.modulationType = v, options: [ 'sine', 'square', 'sawtooth', 'triangle', 'pwm', ], groupID: 1 })
+
+        this.props.set('harmonicity', { type: ParamType.KNOB, name: 'Harmonicity', get: () => this.harmonicity, set: (v:number) => this.harmonicity = v, min: 0, max: 5, groupID: 1 })
+        this.props.set('modulationIndex', { type: ParamType.KNOB, name: 'Modulation Index', get: () => this.modulationIndex, set: (v:number) => this.modulationIndex = v, min: 0, max: 10, groupID: 1 })
+
+        this.props.set('wave', { type: ParamType.DROPDOWN, name: 'Wave', get: () => this.wave, set: (v:Tone.ToneOscillatorType) => this.wave = v, options: [ 'sine', 'square', 'sawtooth', 'triangle', 'pulse', ], groupID: 1 })
         this.props.set('wavePartial', { type: ParamType.DROPDOWN, name: 'Wave Partial', get: () => this.wavePartial, set: (v:string) => this.wavePartial = v, options: ['', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], group: 1 })
 
-        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => { return this.detune }, set: (v) => this.detune = v, min: -100, max: 100, groupID: 2 })
+        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => { return this.detune }, set: (v) => this.detune = v, min: -1500, max: 1500, groupID: 2 })
         this.props.set('phase', { type: ParamType.KNOB, name: 'Phase', get: () => this.phase, set: (v:number) => this.phase = v, min: 0, max: 1, groupID: 2 })
         
         this.props.set('attack', { type: ParamType.KNOB, name: 'Attack', get: () => this.attack, set: (v:number) => this.attack = v, min: .1, max: 5, groupID: 4 })
@@ -98,6 +127,30 @@ export class Oscillator extends Instrument {
         this._volume = v
 
         this.gain.gain.setValueAtTime(this._volume, Tone.now())
+    }
+
+    get harmonicity() { return this._harmonicity }
+    set harmonicity(v) {
+
+        this._harmonicity = v
+
+        this.osc.set({ harmonicity: this._harmonicity })
+    }
+
+    get modulationIndex() { return this._modulationIndex }
+    set modulationIndex(v) {
+
+        this._modulationIndex = v
+
+        this.osc.set({ modulationIndex: this._modulationIndex })
+    }
+
+    get modulationType() { return this._modulationType }
+    set modulationType(v) {
+
+        this._modulationType = v
+
+        this.osc.set({ modulationType: this._modulationType })
     }
 
     get wave() { return this._wave }
@@ -276,6 +329,9 @@ export class Oscillator extends Instrument {
         if(o.enabled != undefined) this.enabled = o.enabled
         if(o.volume != undefined) this.volume = o.volume
 
+        if(o.harmonicity != undefined) this.harmonicity = o.harmonicity
+        if(o.modulationIndex != undefined) this.modulationIndex = o.modulationIndex
+        if(o.modulationType != undefined) this.modulationType = o.modulationType
         if(o.detune != undefined) this.detune = o.detune
         if(o.phase != undefined) this.phase = o.phase
         if(o.wave != undefined) this.wave = o.wave
@@ -298,6 +354,9 @@ export class Oscillator extends Instrument {
             name: this.name,
             enabled: this.enabled,
             
+            modulationIndex: this.modulationIndex,
+            modulationType: this.modulationType,
+            harmonicity: this.harmonicity,
             detune: this.detune,
             phase: this.phase,
             wave: this.wave,

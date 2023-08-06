@@ -24,6 +24,7 @@ export class DuoSynth extends Instrument {
         this.polySynth = new Tone.PolySynth(Tone.DuoSynth)
         this.output = this.polySynth
 
+        this.volume = 0
         // this.gain = new Tone.Gain(this.volume)
 
         // this.polySynth.connect(this.gain)

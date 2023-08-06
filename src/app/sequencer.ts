@@ -5,7 +5,14 @@ import type { Channel, ISerialize, Synthesizer } from './synthesizer'
 
 export type Notation = '1' | '1/2' | '1/4' | '1/8' | '1/16' | '1/32' | '1/64'
 
-export type Sequence = (Tone.Unit.Frequency | Tone.Unit.Frequency[])[]
+export type REST = ''
+
+export type SequenceObject = { 
+    note: Tone.Unit.Frequency | REST,
+    time: Tone.Unit.Time,
+    length: Tone.Unit.Time,
+    velocity?: number
+}
 
 export const getNotationLength = (n: Notation) => {
 
@@ -24,7 +31,7 @@ export const getNotationLength = (n: Notation) => {
 export interface ISequencerSerialization {
 
     channel: Channel[]
-    sequence: Sequence
+    sequence: SequenceObject[]
     humanize: number
 }
 
@@ -32,9 +39,11 @@ export class Sequencer implements ISerialize {
 
     synthesizer: Synthesizer
 
-    sequence: Sequence
+    sequence: SequenceObject[]
 
-    toneSequence: Tone.Sequence
+    _bars: number
+
+    toneSequence: Tone.Part
 
     channels: Channel[]
 
@@ -46,10 +55,12 @@ export class Sequencer implements ISerialize {
 
     humanize: number
 
-    constructor(synthesizer: Synthesizer, sequence?: Sequence, channels?: Channel[]) {
+    constructor(synthesizer: Synthesizer, sequence?: SequenceObject[], channels?: Channel[]) {
 
         this.synthesizer = synthesizer
         this.sequence = sequence == undefined ? [] : sequence
+
+        this.bars = this.sequence.length == 0 ? 4 : this.sequence.length
 
         this.channels = channels == undefined ? [0] : channels
 
@@ -59,6 +70,17 @@ export class Sequencer implements ISerialize {
         this.noteLength = '1/4'
     }
 
+
+    get bars() { return this._bars }
+    set bars(v: number) { 
+
+        this._bars = v
+
+        if(this.toneSequence) {
+
+            this.toneSequence.loopEnd = this._bars
+        }
+    }
 
     addChannel(channel: Channel) {
 
@@ -80,13 +102,54 @@ export class Sequencer implements ISerialize {
         return true
     }
 
+    addNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, length: Tone.Unit.Time, velocity: number) {
 
-    addNote(note: Tone.Unit.Frequency, i:number, i2:number) {
+        console.log('add', note, time, length)
 
+        if(!Tone.isNote(note)) return
+
+        const n = { note, time, length, velocity }
+
+        this.sequence.push(n)
+        
+        if(this.toneSequence) this.toneSequence.add(n)
     }
 
-    removeNote(note: Tone.Unit.Frequency, index:number) {
+    updateNote(i:number, note: Tone.Unit.Frequency, time: Tone.Unit.Time, length: Tone.Unit.Time, velocity: number) {
 
+        if(!Tone.isNote(note)) return
+
+        for(let c of this.channels) this.synthesizer.releaseNote(Tone.Frequency(this.sequence[i].note).toNote(), Tone.now(), c)
+
+        this.sequence[i].note = note
+        this.sequence[i].time = time
+        this.sequence[i].length = length
+        this.sequence[i].velocity = velocity
+    }
+
+    removeNote(i:number, note) {
+
+        for(let c of this.channels) this.synthesizer.releaseNote(Tone.Frequency(this.sequence[i].note).toNote(), Tone.now(), c)
+
+        this.sequence.splice(i, 1)
+
+        if(this.toneSequence) this.toneSequence.remove(note)
+    }
+
+    addBar() {
+
+        this.bars++
+
+        this.toneSequence.loopEnd = this.bars
+    }
+
+    removeBar() {
+
+        this.bars--
+
+        if(this.bars <= 0) this.bars = 1
+
+        this.toneSequence.loopEnd = this.bars
     }
 
     // [F#2, G#3, F#2, F#3]
@@ -107,31 +170,36 @@ export class Sequencer implements ISerialize {
     }
 
     private lastNote: Tone.Unit.Frequency
-    private startSequence(sequence: Sequence) {
+    private startSequence(sequence: SequenceObject[]) {
 
         if(this.toneSequence) {
             
             this.toneSequence.cancel(Tone.now())
             this.toneSequence.clear()
             this.toneSequence.stop(Tone.now())
+            this.toneSequence.dispose()
         }
 
         console.log('start', sequence)
 
         this.isPlaying = true
 
-        this.toneSequence = new Tone.Sequence((time: number, note: Tone.Unit.Frequency) => {
-
-            console.log(this.channels)
+        this.toneSequence = new Tone.Part((time, value) => {
 
             for(let channel of this.channels) {
 
-                this.synthesizer.triggerReleaseNote(Tone.Frequency(note).toNote(), ((60) / Tone.Transport.bpm.value) - .01, time, channel)
+                this.synthesizer.triggerReleaseNote(Tone.Frequency(value.note).toNote(), '8n', time, channel, 1)
 
-                console.log('SEQUENCER at Channel', channel, note, time)
+                console.log('SEQUENCER at Channel', channel, Tone.Frequency(value.note).toNote(), time, value, sequence)
             }
 
-        }, sequence, getNotationLength(this.noteLength))
+        }, sequence)
+
+        // [
+        //     { note: 'A2', time: '0:0:0', velocity: 1},
+        //     { note: 'G3', time: '0:1:0', velocity: 1},
+        //     { note: 'C3', time: '0:2:0', velocity: 1},
+        // ]
 
         console.log('nota', getNotationLength(this.noteLength))
                 
@@ -156,6 +224,10 @@ export class Sequencer implements ISerialize {
         // }, sequence, '4n')
 
 
+        this.toneSequence.loop = this.loop
+
+        this.toneSequence.loopEnd = this.bars
+
         this.toneSequence.humanize = false
         // this.toneSequence.probability = 
 
@@ -171,8 +243,8 @@ export class Sequencer implements ISerialize {
             this.toneSequence.cancel(Tone.now())
             this.toneSequence.clear()
             this.toneSequence.stop(Tone.now())
+            this.toneSequence.dispose()
         }
-
 
         for(let channel of this.channels) this.synthesizer.releaseNote(this.lastNote, Tone.now(), channel)
         
@@ -187,11 +259,6 @@ export class Sequencer implements ISerialize {
         this.isPlaying = false
     }
 
-    setSubdivision(subdivision: Tone.Unit.Time) {
-
-        // if(this.toneSequence) this.toneSequence.set({ subdivision: getNotationLength(subdivision) })
-    }
-
     destroy() {
 
         this.stop()
@@ -201,23 +268,6 @@ export class Sequencer implements ISerialize {
         delete this.channels
         delete this.sequence
     }
-
-    static parse(st: string) {
-
-        let split = st.split(' ')
-        let notes: Tone.Unit.Frequency[] = []
-
-        for(let s of split) {
-
-            if(!Tone.isNote(s)) continue
-
-            notes.push(s)
-        }
-
-        console.log('split', split)
-        console.log('notes', notes)
-    }
-
 
     serializeOut(): ISequencerSerialization {
 

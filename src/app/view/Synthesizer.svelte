@@ -329,6 +329,8 @@
 
             <div class="add-track btn" title="Add Track" on:click={addTrack}>&#x2b;</div>
 
+            <div class="add-sequencer btn" title="Add Sequencer" on:click={addSequencer}>&#x2b;</div>
+
             <div id="mute" class="btn" class:active={synthesizer.isMuted} title="Mute" on:click={mute}>M</div>
 
             <!-- <div id="bpm" title="Shift + A">
@@ -435,7 +437,7 @@
 
                 {/each}
 
-                <div class="add-sequencer-btn" on:click={addSequencer}>&#x2b;</div>
+                <!-- <div class="add-sequencer-btn" on:click={addSequencer}>&#x2b;</div> -->
 
             </div>
             
@@ -540,23 +542,23 @@
 }
 
 .sequencers {
-
+/* 
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-start; */
 
     width: 100%;
-    height: 75px;
+    /* height: 75px; */
     border-top: 1px solid var(--c-b);
     border-top: .5px solid var(--c-b);
 
     background-color: var(--c-b);
 
 
-
+/* 
     overflow-x: auto;
     overflow-y: hidden;
-    scrollbar-width: none;
+    scrollbar-width: none; */
 }
 
 .sequencers .add-sequencer-btn {

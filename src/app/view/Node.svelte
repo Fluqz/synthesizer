@@ -5,11 +5,15 @@
     import { createEventDispatcher, onDestroy } from "svelte";
     import { writable, type Writable } from "svelte/store";
 
+    import { Storage } from '../util/storage'
+    import { G } from '../core/globals'
+
     import { ParamType, type Node, type NodeParameter, type NodeParameterGroup, type GroupID, Instrument, Effect } from "../nodes";
 
     import Knob from "./Knob.svelte"
     import Dropdown from "./Dropdown.svelte"
     import LevelMeter from "./LevelMeter.svelte";
+    import { Synthesizer } from '../synthesizer';
 
 
     const dispatch = createEventDispatcher()
@@ -63,7 +67,20 @@
     let groups: Writable<NodeParameter[][]> = writable(Array.from(groupNodeParameter($nodeParameters).values()))
 
 
+    // Knobs
+    const onChange = (e, nodeParam: NodeParameter) => { 
 
+        Storage.saveUndo(G.synthesizer.serializeOut())
+
+        nodeParam.set(e.detail)
+    }
+
+    const onSelect = (e, nodeParam: NodeParameter) => {
+        
+        Storage.saveUndo(G.synthesizer.serializeOut())
+        
+        nodeParam.set(e.detail.target.value)
+    }
 
     // console.log('node props', node.name, groups)
 
@@ -82,6 +99,8 @@
     }
 
     const toggleShrinking = () => {
+
+        Storage.saveUndo(G.synthesizer.serializeOut())
 
         node.collapsed = !node.collapsed
 
@@ -103,6 +122,8 @@
     const enable = () => {
 
         if(isInstrument) return
+
+        Storage.saveUndo(G.synthesizer.serializeOut())
 
         const e = (node as Effect)
 
@@ -186,7 +207,7 @@
                                         min={n.min}
                                         max={n.max}
                                         value={n.get()}
-                                        on:onChange={(e) => n.set(e.detail) } 
+                                        on:onChange={(e) => onChange(e, n) } 
                                     />
 
                                 {/if}
@@ -198,7 +219,7 @@
                                         name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
                                         value={n.get()}
                                         options={n.options}
-                                        on:onSelect={(e) => n.set(e.detail.target.value) } 
+                                        on:onSelect={(e) => onSelect(e, n) } 
                                     />
 
                                 {/if}

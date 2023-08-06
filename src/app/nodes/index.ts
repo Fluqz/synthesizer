@@ -3,7 +3,6 @@
 
 export * from './node'
 
-export * from './effects/LFO'
 export * from './effects/tremolo'
 export * from './effects/delay'
 export * from './effects/chorus'
@@ -21,7 +20,13 @@ export * from './source/am-synth'
 export * from './source/fm-synth'
 export * from './source/duo-synth'
 export * from './source/oscillator'
+export * from './source/pwm-oscillator'
+export * from './source/pulse-oscillator'
+export * from './source/am-oscillator'
+export * from './source/fm-oscillator'
+export * from './source/fat-oscillator'
 export * from './source/synth'
+export * from './source/noise'
 
 // export * from './source/metal-synth'
 // export * from './source/pluck-synth'

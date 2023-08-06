@@ -28,7 +28,6 @@
       if (active) {
 
         if (analyser) {
-
           
           analyser.getByteTimeDomainData(dataArray)
           

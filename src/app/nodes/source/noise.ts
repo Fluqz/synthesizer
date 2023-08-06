@@ -8,32 +8,30 @@ import type { ToneWithContextOptions } from 'tone/build/esm/core/context/ToneWit
 
 /** 
  * 
+fadeIn : Time	
+fadeOut : Time	
+playbackRate : Positive	
+type : NoiseType	
+volume : Decibels	
+
  */
-export class Oscillator extends Instrument {
+export class Noise extends Instrument {
 
     public envelope: Tone.AmplitudeEnvelope
 
-    public osc: Tone.Oscillator
+    public noise: Tone.Noise
 
     /** Gain node */
     public gain: Tone.Gain
 
     /** How loud */
     private _volume: number
-    /** Frequency */
-    private _frequency: number
-    /** Slight detuning of the note */
-    private _detune: number
-    /** The phase is the starting position within the oscillator's cycle. 
-     * For example a phase of 180 would start halfway through the oscillator's cycle. */
-    private _phase: number = 0
-
     /** Wave types. Sine, Triangle, Square, Saw */
-    private _wave: Tone.ToneOscillatorType = 'sine'
+    private _wave: Tone.NoiseType
 
-    /** Wave types. Sine, Triangle, Square, Saw */
-    private _wavePartial: string = ''
-
+    private _fadeIn: Tone.Unit.Time
+    private _fadeOut: Tone.Unit.Time
+    private _playbackRate: number
 
     private _attack: number
     private _decay: number
@@ -47,10 +45,10 @@ export class Oscillator extends Instrument {
     /** freq, detune, volume, waveform,  */
     constructor(volume?: number, frequency?: number, detune?: number) {
 
-        super('Oscillator')
+        super('Noise')
 
-        this.osc = new Tone.Oscillator(this.frequency)
-        this.osc.start(Tone.now())
+        this.noise = new Tone.Noise()
+        this.noise.start(Tone.now())
 
         this.envelope = new Tone.AmplitudeEnvelope()
         this.gain = new Tone.Gain(1)
@@ -59,37 +57,32 @@ export class Oscillator extends Instrument {
 
         this.isPlaying = false
 
+        const noiseDefaults = this.noise.get()
+        const envDefaults = this.envelope.get()
+
         this.volume = volume ? volume : .4
-        this.detune = this.osc.get().detune
-        this.phase = this.osc.get().phase
-        this.attack = this.envelope.get().attack as number
-        this.decay = this.envelope.get().decay as number
-        this.sustain = this.envelope.get().sustain
-        this.release = this.envelope.get().release as number
-        this._wave = 'sine'
-        this._wavePartial = ''
+        this.fadeIn = noiseDefaults.fadeIn
+        this.fadeOut = noiseDefaults.fadeOut
+        this.playbackRate = noiseDefaults.playbackRate
+        this.attack = envDefaults.attack as number
+        this.decay = envDefaults.decay as number
+        this.sustain = envDefaults.sustain
+        this.release = envDefaults.release as number
+        this.wave = noiseDefaults.type
 
 
         this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () => this.volume, set: (v:number) => this.volume = v, min: 0, max:1, groupID: 0 })
 
-        this.props.set('wave', { type: ParamType.DROPDOWN, name: 'Wave', get: () => this.wave, set: (v:string) => this.wave = v, options: [ 'sine', 'square', 'sawtooth', 'triangle', 'pulse', ], groupID: 1 })
-        this.props.set('wavePartial', { type: ParamType.DROPDOWN, name: 'Wave Partial', get: () => this.wavePartial, set: (v:string) => this.wavePartial = v, options: ['', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], group: 1 })
+        this.props.set('fadeIn', { type: ParamType.KNOB, name: 'Fade In', get: () => this.fadeIn, set: (v:number) => this.fadeIn = v, min: 0, max:1, groupID: 0 })
+        this.props.set('fadeOut', { type: ParamType.KNOB, name: 'Fade Out', get: () => this.fadeOut, set: (v:number) => this.fadeOut = v, min: 0, max:1, groupID: 0 })
+        this.props.set('playbackRate', { type: ParamType.KNOB, name: 'Playback Rate', get: () => this.playbackRate, set: (v:number) => this.playbackRate = v, min: 0, max:1, groupID: 0 })
 
-        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => { return this.detune }, set: (v) => this.detune = v, min: -100, max: 100, groupID: 2 })
-        this.props.set('phase', { type: ParamType.KNOB, name: 'Phase', get: () => this.phase, set: (v:number) => this.phase = v, min: 0, max: 1, groupID: 2 })
+        this.props.set('wave', { type: ParamType.DROPDOWN, name: 'Wave', get: () => this.wave, set: (v:string) => this.wave = v, options: [ 'white', 'brown', 'pink' ], groupID: 1 })
         
         this.props.set('attack', { type: ParamType.KNOB, name: 'Attack', get: () => this.attack, set: (v:number) => this.attack = v, min: .1, max: 5, groupID: 4 })
         this.props.set('decay', { type: ParamType.KNOB, name: 'Decay', get: () => this.decay, set: (v:number) => this.decay = v, min: 0, max: 5, groupID: 4 })
         this.props.set('sustain', { type: ParamType.KNOB, name: 'Sustain', get: () => this.sustain, set: (v:number) => this.sustain = v, min: 0, max: 1, groupID: 4 })
         this.props.set('release', { type: ParamType.KNOB, name: 'Release', get: () => this.release, set: (v:number) => this.release = v, min: 0, max: 5, groupID: 4 })
-    }
-
-    get frequency() { return this._frequency }
-    set frequency(f) {
-
-        this._frequency = f
-
-        this.osc.frequency.setValueAtTime(this._frequency, Tone.now())
     }
 
     get volume() { return this._volume }
@@ -100,34 +93,35 @@ export class Oscillator extends Instrument {
         this.gain.gain.setValueAtTime(this._volume, Tone.now())
     }
 
+    get fadeIn() { return this._fadeIn }
+    set fadeIn(f) {
+
+        this._fadeIn = f
+
+        this.noise.set({ fadeIn: this._fadeIn })
+    }
+
+    get fadeOut() { return this._fadeOut }
+    set fadeOut(f) {
+
+        this._fadeOut = f
+
+        this.noise.set({ fadeOut: this._fadeOut })
+    }
+
+    get playbackRate() { return this._playbackRate }
+    set playbackRate(f) {
+
+        this._playbackRate = f
+
+        this.noise.set({ playbackRate: this._playbackRate })
+    }
+
     get wave() { return this._wave }
     set wave(w) {
 
         this._wave = w
-        this.osc.set({ type: this._wave })
-    }
-
-    get wavePartial() { return this._wavePartial }
-    set wavePartial(w) {
-
-        this._wavePartial = w
-        this.osc.set({ type: this._wave })
-    }
-
-    get detune() { return this._detune }
-    set detune(d) {
-
-
-        this._detune = d
-
-        this.osc.detune.set({ detune: this._detune })
-    }
-
-    get phase() { return this._phase }
-    set phase(d) {
-
-        this._phase = d
-        this.osc.set({ phase: this._phase })
+        this.noise.set({ type: this._wave })
     }
 
     get attack() { return this._attack }
@@ -161,8 +155,6 @@ export class Oscillator extends Instrument {
 
     triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
-        this.frequency = Tone.Frequency(note).toFrequency()
-
         this.isPlaying = true
 
         this.envelope.triggerAttack(time, velocity)
@@ -170,8 +162,6 @@ export class Oscillator extends Instrument {
 
     triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
         
-        this.frequency = Tone.Frequency(note).toFrequency()
-
         // this.isPlaying ?
 
         this.envelope.triggerAttackRelease(duration, time, velocity)
@@ -198,7 +188,7 @@ export class Oscillator extends Instrument {
 
     connect(n: Node | Tone.ToneAudioNode<ToneWithContextOptions>): void {
 
-        this.osc.connect(this.envelope)
+        this.noise.connect(this.envelope)
 
         this.envelope.connect(this.gain)
 
@@ -211,7 +201,7 @@ export class Oscillator extends Instrument {
 
         if(!nodes.length || nodes.length == 0) return // this.connect(nodes)
 
-        this.osc.connect(this.envelope)
+        this.noise.connect(this.envelope)
 
         this.envelope.connect(this.gain)
 
@@ -260,10 +250,10 @@ export class Oscillator extends Instrument {
         this.envelope.disconnect()
         this.envelope.dispose()
 
-        this.osc.stop(Tone.now() + this.envelope.toSeconds(this.envelope.release))
+        this.noise.stop(Tone.now() + this.envelope.toSeconds(this.envelope.release))
 
-        this.osc.disconnect()
-        this.osc.dispose()
+        this.noise.disconnect()
+        this.noise.dispose()
 
         super.destroy()
     }
@@ -276,10 +266,10 @@ export class Oscillator extends Instrument {
         if(o.enabled != undefined) this.enabled = o.enabled
         if(o.volume != undefined) this.volume = o.volume
 
-        if(o.detune != undefined) this.detune = o.detune
-        if(o.phase != undefined) this.phase = o.phase
         if(o.wave != undefined) this.wave = o.wave
-        if(o.wavePartial != undefined) this.wavePartial = o.wavePartial
+        if(o.fadeIn != undefined) this.fadeIn = o.fadeIn
+        if(o.fadeOut != undefined) this.fadeOut = o.fadeOut
+        if(o.playbackRate != undefined) this.playbackRate = o.playbackRate
 
         if(o.attack != undefined) this.attack = o.attack
         if(o.decay != undefined) this.decay = o.decay
@@ -297,11 +287,12 @@ export class Oscillator extends Instrument {
 
             name: this.name,
             enabled: this.enabled,
-            
-            detune: this.detune,
-            phase: this.phase,
+
             wave: this.wave,
-            wavePartial: this.wavePartial,
+            
+            fadeIn: this.fadeIn,
+            fadeOut: this.fadeOut,
+            playbackRate: this.playbackRate,
 
             attack: this.attack,
             decay: this.decay,

@@ -1,6 +1,6 @@
 
 <script lang="ts">
-
+    
     import * as Tone from 'tone'
     import { WebMidi, type NoteMessageEvent } from "webmidi";
 

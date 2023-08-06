@@ -5,7 +5,7 @@ import * as RxJs from 'rxjs'
 
 import { Key } from './key'
 
-import { Sampler, Synth, DuoSynth, Instrument, FMSynth, AMSynth, Delay, Tremolo, Reverb, Chorus, Distortion, Oscillator, Effect, AutoFilter, Phaser, Vibrato} from './nodes'
+import { Sampler, Synth, DuoSynth, Instrument, FMSynth, AMSynth, Delay, Tremolo, Reverb, Chorus, Distortion, Oscillator, Effect, AutoFilter, Phaser, Vibrato, FatOscillator, FMOscillator, AMOscillator, Noise, PWMOscillator, PulseOscillator} from './nodes'
 
 import { Track, type ITrackSerialization } from './track'
 import { PresetManager, type IPreset } from './core/preset-manager'
@@ -20,7 +20,7 @@ export interface ISerialize {
     serializeIn: (o: ISerialization) => void
 }
 
-export interface ISerialization {}
+export type ISerialization = {}
 
 export interface ISession {
 
@@ -81,14 +81,22 @@ export class Synthesizer implements ISerialize {
         },
         sources: {
 	
+            Synth: () => { return new Synth() },
             FMSynth: () => { return new FMSynth() },
             AMSynth: () => { return new AMSynth() },
+            DuoSynth: () => { return new DuoSynth() },
             // MonoSynth: () => {},
             // MetalSynth:	() => {},
             // PluckSynth:	() => {},
+
             Oscillator: () => { return new Oscillator() },
-            Synth: () => { return new Synth() },
-            DuoSynth: () => { return new DuoSynth() },
+            PulseOscillator: () => { return new PulseOscillator() },
+            PWMOscillator: () => { return new PWMOscillator() },
+            AMOscillator: () => { return new AMOscillator() },
+            FMOscillator: () => { return new FMOscillator() },
+            FatOscillator: () => { return new FatOscillator() },
+
+            Noise: () => { return new Noise() },
             Sampler: () => { return new Sampler() },
         }
     }
@@ -183,12 +191,10 @@ export class Synthesizer implements ISerialize {
         // this.addTrack(new Track(this, Synthesizer.nodes.sources.AMSynth()))
 
         this.sequencers = []
-        // this.addSequencer(new Sequencer(this, [['A3', 'E4'], ['D3', 'B4'], ['D3', 'A4'], ['E3', 'B4']]))
+        // this.addSequencer(new Sequencer(this))
         // this.addSequencer(new Sequencer(this, ['F#2', 'D1', 'F#2', 'C#3']))
 
-
         this.presetManager = new PresetManager(this)
-
 
         // Events
         this.onRecordingStart = new RxJs.Subject()
@@ -196,7 +202,6 @@ export class Synthesizer implements ISerialize {
 
         this.onAddNode = new RxJs.Subject()
         this.onRemoveNode = new RxJs.Subject()
-
 
         this.setVolume(-3)
     }
@@ -223,7 +228,6 @@ export class Synthesizer implements ISerialize {
         else Tone.Destination.volume.exponentialRampTo(this.volume.volume.value, .2, Tone.now())
 
         // Tone.Destination.mute = this.isMuted
-
     }
 
     /** Set the octave number */
@@ -238,7 +242,6 @@ export class Synthesizer implements ISerialize {
 
             i++
         }
-
     }
 
     /** Add a track to the synthesizer. */
@@ -250,22 +253,17 @@ export class Synthesizer implements ISerialize {
         
         track.connect(this.volume)
 
-
         console.log(this.tracks)
     }
 
     /** Disconnects and removes track */
     removeTrack(track: Track) {
-
         
         this.tracks.splice(this.tracks.indexOf(track), 1)
         
         track.disconnect(this.volume)
 
-        // track.synthesizer = null
-
         track.destroy()
-
 
         console.log('Delete', this.tracks, track.id)
 
@@ -283,9 +281,6 @@ export class Synthesizer implements ISerialize {
         if(this.sequencers.indexOf(sequencer) == -1) this.sequencers.push(sequencer)
 
         sequencer.synthesizer = this
-        
-        // sequencer.connect(this.gain)
-
     }
 
     /** Disconnects and removes track */
@@ -293,15 +288,13 @@ export class Synthesizer implements ISerialize {
 
         this.sequencers.splice(this.sequencers.indexOf(sequencer), 1)
 
-        // sequencer.synthesizer = null
-
         sequencer.destroy()
     }
 
 
 
     isPlaying = false
-    /** Trigger note - Triggers all tracks */
+    /** Trigger a note - Triggers all tracks */
     triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, channel: Channel = 0, velocity:number = 1) {
 
         // note = note.replace(/[0-9]/g, '')
@@ -322,7 +315,6 @@ export class Synthesizer implements ISerialize {
 
             this.triggerTrack(tr, note, time, velocity)
         }
-
     }
     
     /** Triggers and releases a note - Triggers all track's triggerReleaseNote function */
@@ -392,7 +384,6 @@ export class Synthesizer implements ISerialize {
     releaseNotes() {
 
         for(let t of this.tracks) t.releaseNotes()
-
     }
 
     /** Will release all triggered notes of all tracks with the given channel. */
@@ -402,8 +393,6 @@ export class Synthesizer implements ISerialize {
 
             if(t.channel == channel) t.releaseNotes()
         }
-
-
     }
 
     /** Will stop all sequencers. */
@@ -611,9 +600,9 @@ export class Synthesizer implements ISerialize {
 
         for(let i = this.tracks.length-1; i >= 0; i--) this.removeTrack(this.tracks[i])
 
-        this.tracks.length = 0
         if(o.tracks && o.tracks.length > 0) {
 
+            this.tracks.length = 0
             for(let t of o.tracks) {
 
                 let track = new Track(this)
@@ -622,9 +611,9 @@ export class Synthesizer implements ISerialize {
             }
         }
 
-        this.sequencers.length = 0
         if(o.sequencers && o.sequencers.length > 0) {
 
+            this.sequencers.length = 0
             for(let s of o.sequencers) {
 
                 let sequencer = new Sequencer(this)

@@ -2,7 +2,7 @@
     
     import * as Tone from "tone";
     import { Synthesizer, type Channel } from "../synthesizer";
-    import { Sequencer, type Notation } from "../sequencer";
+    import { Sequencer, type Notation, getNotationLength } from "../sequencer";
     import { createEventDispatcher } from "svelte";
 
     const dispatch = createEventDispatcher()
@@ -32,55 +32,86 @@
         console.log('NOTATION',notation)
 
         currentNotation = notation
-        sequencer.setSubdivision(currentNotation)
+        // sequencer.setSubdivision(currentNotation)
 
         sequencer = sequencer
     }
+    
+    const addNoteToBar = (e, i: number) => {
 
-    const onInput = (e) => {
+        // sequencer.addNote('D2', i)
+    }
+
+    const onNoteInput = (e) => {
 
         e.stopPropagation()
 
         if(e.key == 'Enter' && e.target.value != null) {
 
-            sequencer.stop()
+            // sequencer.stop()
 
-            // Sequencer.parse(e.target.value)
+            // // Sequencer.parse(e.target.value)
 
-            console.log('PARSE', e.target.value)
-            let input = JSON.parse(e.target.value)
+            // console.log('PARSE', e.target.value)
+            // let input = JSON.parse(e.target.value)
 
-            sequencer.sequence = input
+            // sequencer.sequence = input
         }
+    }
+
+    const addBar = (e) => {
+
+        sequencer.addBar()
+
+        // sequencer.start()
+
+        sequencer.sequence = sequencer.sequence
 
         sequencer = sequencer
     }
 
-    const onChangeNote = (e, i:number, i2?:number) => {
+    const onTimelineDblClick = (e: MouseEvent) => {
+
+    }
+
+    const onTimelineClick = (e: MouseEvent) => {
+
+        timelineRect = timeline.getBoundingClientRect()
+
+        const bars = sequencer.bars
+        const width = timelineRect.width
+        const posX = e.clientX - timelineRect.left 
+
+        let xInPercent = posX / width
+
+        let time = Math.round(bars * xInPercent * 1000) / 1000
+
+        sequencer.addNote('C3', time, '4n', 1)
+
+        // sequencer.start()
+
+        sequencer = sequencer
+
+        console.log('seq',sequencer.sequence)
+    }
+
+    const onNoteClick = (e) => {
+
+        e.stopPropagation()
+    }
+
+    const onNoteDblClick = (e, note, i) => {
 
         e.stopPropagation()
 
-        if(e.key == 'Enter' && e.target.value != null) {
-
-            const note = e.target.value
-
-            console.log(sequencer.toneSequence.events, i, i2)
-
-            if(i2 == undefined && Number.isInteger(i)) sequencer.toneSequence.events[i] = note
-            else if(Number.isInteger(i2)) {
-
-                sequencer.toneSequence.events[i][i2] = note
-                // sequencer.sequence = sequencer.toneSequence.events
-                sequencer.toneSequence.events[i] = sequencer.toneSequence.events[i]
-                sequencer.toneSequence.events = sequencer.toneSequence.events
-                sequencer.toneSequence = sequencer.toneSequence
-                console.log('ww', sequencer.toneSequence.events[i][i2], sequencer.toneSequence.events)
-
-            }
-        }
+        sequencer.removeNote(i, note)
 
         sequencer = sequencer
     }
+
+    
+
+
 
     const toggleStartStop = () => {
 
@@ -90,16 +121,16 @@
         sequencer = sequencer
     }
 
-    const activateChannel = (channel: Channel, val: boolean) => {
+    const activateChannel = (channel: Channel, active: boolean) => {
 
         // Toggle
-        val = !val
+        active = !active
 
-        channels[channel] = val
+        channels[channel] = active
 
-        console.log(channel,val)
+        console.log(channel, active)
 
-        if(val) sequencer.addChannel(channel)
+        if(active) sequencer.addChannel(channel)
         else sequencer.removeChannel(channel)
 
         sequencer = sequencer
@@ -111,8 +142,19 @@
 
         sequencer = sequencer
     }
-    
-    const placeholder = `["F#2","D3", ["DB3","C#2"], "E3"]`
+
+
+    let timeline: HTMLElement
+    let timelineRect: DOMRect
+    const onResizeTimeline = (e) => {
+
+        console.log('YOOO CREATED', e, timeline)
+
+        if(e instanceof Event) timelineRect = (e.target as HTMLElement).getBoundingClientRect()
+        else timelineRect = e.getBoundingClientRect()
+        
+        timelineRect = timelineRect
+    }
 
 </script>
 
@@ -121,72 +163,82 @@
 
     <div class="sequencer-wrapper">
 
-        <div class="notations">
+        <div class="sequencer-menu">
 
-            {#each notations as notation }
+            <div class="btn delete" on:click={onDelete}>&#x2715;</div>
 
-                <div class="btn notation" class:active={currentNotation == notation} on:click={() => changeNotation(notation)}>{notation}</div>
+            <div class="btn play" class:active={sequencer.isPlaying} title="Play" on:click={toggleStartStop}>{ !sequencer.isPlaying ? 'Play' : 'Stop'}</div>
 
-            {/each}
 
-        </div>
-            
-        <div class="sequence">
+            <div>
 
-            <!-- <input on:keydown={onInput} placeholder={placeholder}/> -->
+                {#each channels as cc, i}
+                    
+                    <div class="btn" class:active={cc} title="Channels to sequence" on:click={() => activateChannel(i, cc)}>{ i }</div>
 
-            <div class="sequence-wrapper">
+                {/each}
 
-                {#each sequencer.sequence as bar, i }
+            </div>
 
-                    <div class="bar">
 
-                        {#if bar instanceof Array } 
-                        
-                            {#each bar as note, i2 }
+            <div class="notations">
 
-                                <div class="note">
-            
-                                    <input bind:value={ note } on:keydown={(e) => onChangeNote(e, i, i2)}/>
-            
-                                </div>
-                                
-                            {/each}
+                {#each notations as notation }
 
-                        {:else}
-
-                            <div class="note">
-                
-                                <input bind:value={ bar } on:keydown={(e) => onChangeNote(e, i)}/>
-        
-                            </div>
-
-                        {/if}
-
-                    </div>
+                    <div class="btn notation" class:active={currentNotation == notation} on:click={() => changeNotation(notation)}>{notation}</div>
 
                 {/each}
 
             </div>
 
         </div>
+            
+        <div class="sequence">
 
-
-
-        <div class="btn" class:active={sequencer.isPlaying} title="Play" on:click={toggleStartStop}>{ !sequencer.isPlaying ? 'Play' : 'Stop'}</div>
-
-
-        <div>
-
-            {#each channels as cc, i}
+            <div class="sequence-wrapper">
                 
-                <div class="btn" class:active={cc} title="Channels to sequence" on:click={() => activateChannel(i, cc)}>{ i }</div>
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <div class="timeline" bind:this={timeline} on:click={onTimelineClick} on:dblclick={onTimelineDblClick} on:resize={onResizeTimeline} use:onResizeTimeline>
+                    
+                    {#if timelineRect != undefined } 
 
-            {/each}
+                        {#each Array(sequencer.bars) as _, bar }
+
+                            <div class="bar" style:width={timelineRect.width+'px'} style:height={timelineRect.height+'px'}>
+
+
+                            </div>
+
+
+                            <div class="bar-line" style:left={(((timelineRect.width / (sequencer.bars)) * bar) - 1) + 'px'}></div>
+
+                        {/each}
+
+                        <div class="bar-line" style:right={'-1px'} style:left="unset"></div>
+
+                        {#each sequencer.sequence as note, i }
+
+                            <div class="note" 
+                                    on:click={onNoteClick}
+                                    on:dblclick={(e) => { onNoteDblClick(e, note, i) }}
+                                    style:left={((Tone.Time(note.time).toSeconds() / sequencer.bars) * timelineRect.width) + 'px'} >
+
+                                    <input bind:value={ note.note } on:keydown={(e) => onNoteInput(e)}/>
+ 
+                            </div>
+
+                        {/each}
+
+                    {/if}
+
+                </div>
+
+                <div class="add-bar" on:click={(e) => addBar(e)}>+</div>
+
+
+            </div>
 
         </div>
-
-        <div class="btn delete" on:click={onDelete}>&#x2715;</div>
 
     </div>
 
@@ -203,13 +255,20 @@
     justify-content: center;
     align-items: center;
 
-    height: 75px;
+    /* height: 75px; */
     min-width: 400px;
+    width: 100%;
 
     background-color: var(--c-b);
 
     border: none;
+}
 
+.sequencer-menu {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .sequencer-wrapper .sequence {
@@ -219,10 +278,12 @@
     align-items: center;
 
     height: 100%;
-    width: 100%;
+    width: 100px;
 }
 
 .sequencer-wrapper .sequence-wrapper {
+
+    position: relative;
 
     width: 100%;
     height: 100%;
@@ -233,54 +294,78 @@
     align-items: center;
 }
 
+.sequencer-wrapper .sequence .timeline {
+
+    display: inline-flex;
+    width: 100%;
+    height: 100%;
+}
+
 .sequencer-wrapper .sequence .bar {
 
-    width: 50px;
-    height: 50px;
+    position: relative;
+    max-width: 2000px;
+    min-width: 40px;
+    height: 100%;
+
+    text-align: center;
 
     background-color: var(--c-bl);
 
 }
+.sequencer-wrapper .sequence .bar-line {
 
-.sequencer-wrapper .sequence .bar .note {
+    position: absolute;
+    left: -1px;
+    top: 0px;
+    height: 100%;
+    width: 2px;
+
+    background-color: var(--c-y);
+}
+.sequencer-wrapper .sequence .add-bar,
+.sequencer-wrapper .sequence .add-note-to-bar {
+
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+}
+
+.sequencer-wrapper .sequence .note {
 
     /* width: 25px; */
 
+    position: absolute;
+
+    width: 50px;
+    min-width: 2px;
+    height: 100%;
+
     background-color: var(--c-y);
-    color: var(--c-b);
+    color: var(--c-o);
+
+    opacity: .5;
+
+    text-align: center;
 
     display: inline-flex;
-
     justify-content: center;
     align-items: center;
 }
 
-.sequencer-wrapper .sequence .bar .note input {
+.sequencer-wrapper .sequence .note input {
 
     min-width: unset;
-    width: 50px;
-    height: 25px;
-    line-height: 25px;
-
-    padding: 0px 5px;
+    width: 100%;
+    height: 100%;
 
     border: none;
 
     font-size: 1rem;
-}
 
-.sequencer-wrapper .sequence input {
-
-    min-width: 200px;
-    height: 25px;
-    line-height: 25px;
-
-    padding: 0px 5px;
-
-    border: none;
-
-    font-size: 1rem;
-    /* font-family: 'Courier'; */
+    text-align: center;
 }
 
 </style>
