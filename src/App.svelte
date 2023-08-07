@@ -41,12 +41,12 @@
 
         Midi.init((e: NoteMessageEvent) => {
 
-            synthesizer.triggerNote(e.note.identifier, Tone.now(), synthesizer.channel, e.note.velocity)
+            synthesizer.triggerAttack(e.note.identifier, Tone.now(), synthesizer.channel, e.note.velocity)
             
         },
         (e) => {
     
-            synthesizer.releaseNote(e.note.identifier, Tone.now(), synthesizer.channel)
+            synthesizer.triggerRelease(e.note.identifier, Tone.now(), synthesizer.channel)
         })
 
         // Scroll to bottom

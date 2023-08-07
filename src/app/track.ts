@@ -111,6 +111,8 @@ export class Track implements ISerialize {
 
         if(this.instrument && this.instrument != instrument) {
 
+            this.releaseNotes()
+
             this.instrument.disconnect()
             this.instrument.destroy()
         }
@@ -219,13 +221,13 @@ export class Track implements ISerialize {
     /** Releases all triggered notes */
     releaseNotes() {
 
-        for(let n of this.activeNotes) this.releaseNote(n, Tone.now())
+        for(let n of this.activeNotes) this.triggerRelease(n, Tone.now())
 
         this.instrument.releaseAll()
     }
 
     /** Triggers the instruments note */
-    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
+    triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         if(this.hold == 'HOLD') return
@@ -236,11 +238,11 @@ export class Track implements ISerialize {
         
         this.activeNotes.add(note)
 
-        this.instrument.triggerNote(note, time, velocity)
+        this.instrument.triggerAttack(note, time, velocity)
     }
 
     /** Triggers the instruments note */
-    triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
+    triggerAttackRelease(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
 
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         // if(this.hold == 'HOLD') return
@@ -252,14 +254,14 @@ export class Track implements ISerialize {
 
             Synthesizer.activeNotes.delete(n)
 
-        }, time)
+        }, Tone.Time(time).toSeconds() + Tone.Time(duration).toSeconds())
 
-        this.instrument.triggerReleaseNote(note, duration, time, velocity)
+        this.instrument.triggerAttackRelease(note, duration, time, velocity)
     }
 
 
     /** Stops the instruments note */
-    releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
+    triggerRelease(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         if(this.hold == 'HOLD' || this.hold == 'PLAY') return
@@ -268,7 +270,7 @@ export class Track implements ISerialize {
 
         this.activeNotes.delete(note)
 
-        this.instrument.releaseNote(note, time)
+        this.instrument.triggerRelease(note, time)
     }
 
     /** Adds a node to the node chain */
@@ -416,7 +418,7 @@ export class Track implements ISerialize {
 
                 for(let k of o.hold.activeKeys) {
 
-                    this.triggerNote(k, Tone.now())
+                    this.triggerAttack(k, Tone.now())
                 }
 
                 this.hold = 'HOLD'

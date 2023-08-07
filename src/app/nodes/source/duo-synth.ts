@@ -112,17 +112,17 @@ export class DuoSynth extends Instrument {
 
 
 
-    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
+    triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
         this.polySynth.triggerAttack(note, time, velocity)
     }
 
-    triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
+    triggerAttackRelease(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
         
         this.polySynth.triggerAttackRelease(note, duration, time, velocity)
     }
 
-    releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
+    triggerRelease(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
         if(note == undefined) this.polySynth.releaseAll(Tone.now()) 
         else this.polySynth.triggerRelease(note, time)

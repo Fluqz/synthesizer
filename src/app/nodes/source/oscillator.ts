@@ -75,8 +75,8 @@ export class Oscillator extends Instrument {
         this.props.set('wave', { type: ParamType.DROPDOWN, name: 'Wave', get: () => this.wave, set: (v:string) => this.wave = v, options: [ 'sine', 'square', 'sawtooth', 'triangle', 'pulse', ], groupID: 1 })
         this.props.set('wavePartial', { type: ParamType.DROPDOWN, name: 'Wave Partial', get: () => this.wavePartial, set: (v:string) => this.wavePartial = v, options: ['', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], group: 1 })
 
-        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => { return this.detune }, set: (v) => this.detune = v, min: -100, max: 100, groupID: 2 })
-        this.props.set('phase', { type: ParamType.KNOB, name: 'Phase', get: () => this.phase, set: (v:number) => this.phase = v, min: 0, max: 1, groupID: 2 })
+        this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => { return this.detune }, set: (v) => this.detune = v, min: -1000, max: 1000, groupID: 2 })
+        this.props.set('phase', { type: ParamType.KNOB, name: 'Phase', get: () => this.phase, set: (v:number) => this.phase = v, min: 0, max: 100, groupID: 2 })
         
         this.props.set('attack', { type: ParamType.KNOB, name: 'Attack', get: () => this.attack, set: (v:number) => this.attack = v, min: .1, max: 5, groupID: 4 })
         this.props.set('decay', { type: ParamType.KNOB, name: 'Decay', get: () => this.decay, set: (v:number) => this.decay = v, min: 0, max: 5, groupID: 4 })
@@ -89,7 +89,7 @@ export class Oscillator extends Instrument {
 
         this._frequency = f
 
-        this.osc.frequency.setValueAtTime(this._frequency, Tone.now())
+        this.osc.frequency.value = this._frequency
     }
 
     get volume() { return this._volume }
@@ -120,7 +120,7 @@ export class Oscillator extends Instrument {
 
         this._detune = d
 
-        this.osc.detune.set({ detune: this._detune })
+        this.osc.detune.setValueAtTime(this._detune, Tone.now())
     }
 
     get phase() { return this._phase }
@@ -159,7 +159,7 @@ export class Oscillator extends Instrument {
     }
 
 
-    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
+    triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
         this.frequency = Tone.Frequency(note).toFrequency()
 
@@ -168,7 +168,7 @@ export class Oscillator extends Instrument {
         this.envelope.triggerAttack(time, velocity)
     }
 
-    triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
+    triggerAttackRelease(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
         
         this.frequency = Tone.Frequency(note).toFrequency()
 
@@ -177,14 +177,14 @@ export class Oscillator extends Instrument {
         this.envelope.triggerAttackRelease(duration, time, velocity)
     }
 
-    releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
+    triggerRelease(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
         this.isPlaying = false
 
         if(this.isPlaying || Synthesizer.activeNotes.size > 0) {
 
             // console.log('play other note', Synthesizer.activeNotes)
-            this.triggerNote(Array.from(Synthesizer.activeNotes).pop(), time)
+            this.triggerAttack(Array.from(Synthesizer.activeNotes).pop(), time)
             return
         }
 

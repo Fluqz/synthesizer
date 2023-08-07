@@ -10,7 +10,7 @@ import { Sampler, Synth, DuoSynth, Instrument, FMSynth, AMSynth, Delay, Tremolo,
 import { Track, type ITrackSerialization } from './track'
 import { PresetManager, type IPreset } from './core/preset-manager'
 import { writable, type Writable } from 'svelte/store'
-import { Sequencer, type Sequence, type ISequencerSerialization } from './sequencer'
+import { Sequencer, type ISequencerSerialization } from './sequencer'
 
 export interface ISerialize {
 
@@ -172,12 +172,12 @@ export class Synthesizer implements ISerialize {
 
             key.onTrigger.subscribe(k => {
 
-                this.triggerNote(k.note + k.octave, Tone.now(), this.channel)
+                this.triggerAttack(k.note + k.octave, Tone.now(), this.channel)
             })
 
             key.onRelease.subscribe(k => {
 
-                this.releaseNote(k.note + k.octave, Tone.now(), this.channel)
+                this.triggerRelease(k.note + k.octave, Tone.now(), this.channel)
             })
 
             i++
@@ -191,7 +191,7 @@ export class Synthesizer implements ISerialize {
         // this.addTrack(new Track(this, Synthesizer.nodes.sources.AMSynth()))
 
         this.sequencers = []
-        // this.addSequencer(new Sequencer(this))
+        this.addSequencer(new Sequencer(this))
         // this.addSequencer(new Sequencer(this, ['F#2', 'D1', 'F#2', 'C#3']))
 
         this.presetManager = new PresetManager(this)
@@ -295,7 +295,7 @@ export class Synthesizer implements ISerialize {
 
     isPlaying = false
     /** Trigger a note - Triggers all tracks */
-    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, channel: Channel = 0, velocity:number = 1) {
+    triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, channel: Channel = 0, velocity:number = 1) {
 
         // note = note.replace(/[0-9]/g, '')
 
@@ -317,8 +317,8 @@ export class Synthesizer implements ISerialize {
         }
     }
     
-    /** Triggers and releases a note - Triggers all track's triggerReleaseNote function */
-    triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, channel: Channel = 0, velocity:number = 1): void {
+    /** Triggers and releases a note - Triggers all track's triggerAttackRelease function */
+    triggerAttackRelease(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, channel: Channel = 0, velocity:number = 1): void {
 
         if(this.isPlaying == false) {
             Tone.start()
@@ -326,7 +326,7 @@ export class Synthesizer implements ISerialize {
             this.isPlaying = true
         }
 
-        Tone.Frequency(note).toNote()
+        note = Tone.Frequency(note).toNote()
 
         Synthesizer.activeNotes.add(note)
 
@@ -335,7 +335,7 @@ export class Synthesizer implements ISerialize {
 
             Synthesizer.activeNotes.delete(n)
 
-        }, time)
+        }, Tone.Time(time).toSeconds() + Tone.Time(duration).toSeconds())
 
         for(let tr of this.tracks) {
 
@@ -347,7 +347,7 @@ export class Synthesizer implements ISerialize {
     }
 
     /** Releases note of all tracks */
-    releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, channel: Channel = 0) {
+    triggerRelease(note: Tone.Unit.Frequency, time: Tone.Unit.Time, channel: Channel = 0) {
 
         Tone.Frequency(note).toNote()
         
@@ -365,19 +365,19 @@ export class Synthesizer implements ISerialize {
     /** Trigger note on one track specifically */
     triggerTrack(track: Track, note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
-        track.triggerNote(note, time, velocity)
+        track.triggerAttack(note, time, velocity)
     }
 
     /** Trigger and release note on one track specifically */
     triggerReleaseTrack(track: Track, note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity: number = 1) {
 
-        track.triggerReleaseNote(note, duration, time, velocity)
+        track.triggerAttackRelease(note, duration, time, velocity)
     }
     
     /** Release note of one track specifically */
     releaseTrack(track: Track, note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
-        track.releaseNote(note, time)
+        track.triggerRelease(note, time)
     }
 
     /** Will release all triggered notes that are stored in [activeNotes]. */

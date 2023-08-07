@@ -163,7 +163,7 @@ export class PWMOscillator extends Instrument {
     }
 
 
-    triggerNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
+    triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
         this.frequency = Tone.Frequency(note).toFrequency()
 
@@ -172,7 +172,7 @@ export class PWMOscillator extends Instrument {
         this.envelope.triggerAttack(time, velocity)
     }
 
-    triggerReleaseNote(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
+    triggerAttackRelease(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
         
         this.frequency = Tone.Frequency(note).toFrequency()
 
@@ -181,14 +181,14 @@ export class PWMOscillator extends Instrument {
         this.envelope.triggerAttackRelease(duration, time, velocity)
     }
 
-    releaseNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
+    triggerRelease(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
         this.isPlaying = false
 
         if(this.isPlaying || Synthesizer.activeNotes.size > 0) {
 
             // console.log('play other note', Synthesizer.activeNotes)
-            this.triggerNote(Array.from(Synthesizer.activeNotes).pop(), time)
+            this.triggerAttack(Array.from(Synthesizer.activeNotes).pop(), time)
             return
         }
 

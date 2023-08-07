@@ -158,6 +158,7 @@
 
         if(!Object.hasOwn(Synth.nodes.sources, source)) return
 
+
         const instrument: Instrument = Synth.nodes.sources[source]()
 
         track.setInstrument(instrument)

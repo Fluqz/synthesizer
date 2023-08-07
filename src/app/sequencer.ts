@@ -3,7 +3,7 @@ import * as Tone from 'tone'
 import type { Channel, ISerialize, Synthesizer } from './synthesizer'
 
 
-export type Notation = '1' | '1/2' | '1/4' | '1/8' | '1/16' | '1/32' | '1/64'
+export type NoteLength = '1' | '1/2' | '1/4' | '1/8' | '1/16' | '1/32' | '1/64'
 
 export type REST = ''
 
@@ -14,19 +14,6 @@ export type SequenceObject = {
     velocity?: number
 }
 
-export const getNotationLength = (n: Notation) => {
-
-    switch(n) {
-
-        case '1': return '1n'
-        case '1/2': return '2n'
-        case '1/4': return '4n'
-        case '1/8': return '8n'
-        case '1/16': return '16n'
-        case '1/32': return '32n'
-        case '1/64': return '64n'
-    }
-}
 
 export interface ISequencerSerialization {
 
@@ -47,7 +34,7 @@ export class Sequencer implements ISerialize {
 
     channels: Channel[]
 
-    noteLength: Notation
+    noteLength: NoteLength
 
     isPlaying: boolean
 
@@ -119,7 +106,7 @@ export class Sequencer implements ISerialize {
 
         if(!Tone.isNote(note)) return
 
-        for(let c of this.channels) this.synthesizer.releaseNote(Tone.Frequency(this.sequence[i].note).toNote(), Tone.now(), c)
+        for(let c of this.channels) this.synthesizer.triggerRelease(Tone.Frequency(this.sequence[i].note).toNote(), Tone.now(), c)
 
         this.sequence[i].note = note
         this.sequence[i].time = time
@@ -129,7 +116,7 @@ export class Sequencer implements ISerialize {
 
     removeNote(i:number, note) {
 
-        for(let c of this.channels) this.synthesizer.releaseNote(Tone.Frequency(this.sequence[i].note).toNote(), Tone.now(), c)
+        for(let c of this.channels) this.synthesizer.triggerRelease(Tone.Frequency(this.sequence[i].note).toNote(), Tone.now(), c)
 
         this.sequence.splice(i, 1)
 
@@ -140,7 +127,7 @@ export class Sequencer implements ISerialize {
 
         this.bars++
 
-        this.toneSequence.loopEnd = this.bars
+        if(this.toneSequence) this.toneSequence.loopEnd = this.bars
     }
 
     removeBar() {
@@ -149,7 +136,7 @@ export class Sequencer implements ISerialize {
 
         if(this.bars <= 0) this.bars = 1
 
-        this.toneSequence.loopEnd = this.bars
+        if(this.toneSequence) this.toneSequence.loopEnd = this.bars
     }
 
     // [F#2, G#3, F#2, F#3]
@@ -188,41 +175,12 @@ export class Sequencer implements ISerialize {
 
             for(let channel of this.channels) {
 
-                this.synthesizer.triggerReleaseNote(Tone.Frequency(value.note).toNote(), '8n', time, channel, 1)
+                this.synthesizer.triggerAttackRelease(Tone.Frequency(value.note).toNote(), value.length, time, channel, value.velocity)
 
                 console.log('SEQUENCER at Channel', channel, Tone.Frequency(value.note).toNote(), time, value, sequence)
             }
 
         }, sequence)
-
-        // [
-        //     { note: 'A2', time: '0:0:0', velocity: 1},
-        //     { note: 'G3', time: '0:1:0', velocity: 1},
-        //     { note: 'C3', time: '0:2:0', velocity: 1},
-        // ]
-
-        console.log('nota', getNotationLength(this.noteLength))
-                
-        // this.lastNote = undefined
-
-        // this.toneSequence = new Tone.Sequence((time: number, note: Tone.Unit.Frequency) => {
-
-        //     for(let channel of this.channel) {
-
-        //         if(this.lastNote != undefined) {
-
-        //             this.synthesizer.releaseNote(this.lastNote, time, channel)
-        //         }
-
-        //         this.synthesizer.triggerNote(note, time, channel)
-
-        //         console.log('SEQUENCER at Channel', channel, note, time)
-        //     }
-
-        //     this.lastNote = note
-
-        // }, sequence, '4n')
-
 
         this.toneSequence.loop = this.loop
 
@@ -246,7 +204,7 @@ export class Sequencer implements ISerialize {
             this.toneSequence.dispose()
         }
 
-        for(let channel of this.channels) this.synthesizer.releaseNote(this.lastNote, Tone.now(), channel)
+        for(let channel of this.channels) this.synthesizer.triggerRelease(this.lastNote, Tone.now(), channel)
         
         for(let ch of this.channels) {
             
