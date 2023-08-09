@@ -320,8 +320,6 @@
         sequencer = sequencer
     }
 
-
-
 </script>
 
 
@@ -456,7 +454,9 @@
 
     background-color: var(--c-b);
 
-    border: none;
+    border: .5px solid var(--c-b);
+
+    overflow: hidden;
 }
 
 .sequencer-menu {
@@ -540,14 +540,18 @@
     background-color: var(--c-y);
 }
 
-.sequencer-wrapper .sequence .add-bar,
-.sequencer-wrapper .sequence .add-note-to-bar {
+.sequencer-wrapper .sequence .add-bar {
 
     display: inline-flex;
     justify-content: center;
     align-items: center;
 
     cursor: pointer;
+
+    width: 100px;
+    height: 100px;
+    background-color: var(--c-w);
+    color: var(--c-b);
 }
 
 .sequencer-wrapper .sequence .note {

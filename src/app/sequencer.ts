@@ -20,7 +20,8 @@ export interface ISequencerSerialization {
 
     channel: Channel[]
     sequence: SequenceObject[]
-    humanize: number
+    humanize: boolean
+    bars: number
 }
 
 export class Sequencer implements ISerialize {
@@ -43,7 +44,7 @@ export class Sequencer implements ISerialize {
 
     loop: boolean
 
-    humanize: number
+    humanize: boolean = false
 
     constructor(synthesizer: Synthesizer, sequence?: SequenceObject[], channels?: Channel[]) {
 
@@ -58,6 +59,7 @@ export class Sequencer implements ISerialize {
         this.loop = true
 
         this.noteLength = '1/4'
+        this.bars = 1
     }
 
 
@@ -233,8 +235,8 @@ export class Sequencer implements ISerialize {
 
         this.toneSequence.loopEnd = this.bars
 
-        this.toneSequence.humanize = false
-        // this.toneSequence.probability = 
+        this.toneSequence.humanize = this.humanize
+        this.toneSequence.probability = 1
 
         this.toneSequence.start(Tone.now())
 
@@ -280,7 +282,8 @@ export class Sequencer implements ISerialize {
 
             channel: this.channels,
             sequence: this.sequence,
-            humanize: this.humanize
+            humanize: this.humanize,
+            bars: this.bars
         }
     }
     serializeIn(o: ISequencerSerialization) {
@@ -292,5 +295,6 @@ export class Sequencer implements ISerialize {
             for(let s of o.sequence) this.addNote(s.note, s.time, s.length, s.velocity)
         }
         if(o.humanize) this.humanize = o.humanize
+        if(o.bars) this.bars = o.bars
     }
 }
