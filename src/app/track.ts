@@ -349,7 +349,7 @@ export class Track implements ISerialize {
 
 
     /** Connect the output gain node to passed in output */
-    connect(i: Node | Tone.ToneAudioNode) {
+    connect(i: Node | Tone.ToneAudioNode) {
         
         this.volumeNode.connect(i instanceof Node ? i.input : i)
     }

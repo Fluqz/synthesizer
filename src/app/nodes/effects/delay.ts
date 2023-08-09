@@ -57,50 +57,24 @@ export class Delay extends Effect {
     }
 
 
-    // THINGS NEED TO CONNECT TO DELAY AND PAST IT
 
-    /** Connects this Nodes Output to [e]'s Input */
-    connect(n: Node | Tone.ToneAudioNode): void {
+    // chain(nodes: Node[] | Tone.ToneAudioNode[]) {
 
-        if(!n) return
+    //     if(!nodes.length || nodes.length == 0) return // this.connect(nodes)
 
-        this.output.connect(n instanceof Node ? n.input : n)
+    //     // this.connect(nodes[0])
 
-        // Bypass NOT WORKING
-        // this.input.input.connect(n instanceof Node ? n.input : n)
-    }
+    //     let n1: Tone.ToneAudioNode
+    //     let n2: Tone.ToneAudioNode
 
-    /** Disconnects this Output from [e]'s/all Input(s) */
-    disconnect(n?: Node | Tone.ToneAudioNode) {
+    //     for(let i = 0; i < nodes.length - 1; i++) {
 
-        if(n) {
-            this.output.disconnect(n instanceof Node ? n.input : n)
-            // this.input.input.disconnect(n instanceof Node ? n.input : n)
-        }
-        else {
-            this.output.disconnect()
-            // this.input.input.disconnect()
-        }
+    //         n1 = (nodes[i] instanceof Node ? nodes[i].output : nodes[i]) as Tone.ToneAudioNode
+    //         n2 = (nodes[i + 1] instanceof Node ? nodes[i + 1].output : nodes[i + 1]) as Tone.ToneAudioNode
 
-    }
-
-    chain(nodes: Node[] | Tone.ToneAudioNode[]) {
-
-        if(!nodes.length || nodes.length == 0) return // this.connect(nodes)
-
-        // this.connect(nodes[0])
-
-        let n1: Tone.ToneAudioNode
-        let n2: Tone.ToneAudioNode
-
-        for(let i = 0; i < nodes.length - 1; i++) {
-
-            n1 = (nodes[i] instanceof Node ? nodes[i].output : nodes[i]) as Tone.ToneAudioNode
-            n2 = (nodes[i + 1] instanceof Node ? nodes[i + 1].output : nodes[i + 1]) as Tone.ToneAudioNode
-
-            n1.connect(n2)
-        }
-    }
+    //         n1.connect(n2)
+    //     }
+    // }
 
     
 

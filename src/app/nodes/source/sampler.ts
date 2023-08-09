@@ -95,7 +95,6 @@ export class Sampler extends Instrument {
 
         super('Sampler')
 
-
         // this.gain = new Tone.Gain(this.volume)
 
         // this.output = this.gain
@@ -131,34 +130,22 @@ export class Sampler extends Instrument {
             if(s.name == v) return s.path
         })
 
-
-        if(path == undefined) {
-
-            // if(this.sampler == undefined) this.sampler = new Tone.Sampler()
-            return
-        }
-
-        console.log(v, path)
+        if(path == undefined) return
+        if(v == this._sample) return
 
         this._sample = v
 
-        if(!this.sampler) {
+        this.sampler = new Tone.Sampler({
 
-            this.sampler = new Tone.Sampler({
-                urls: {
-                    F2: path,
-                },
-            })
-        }
+            urls: {
+                F2: path,
+            }
+        })
 
-        // this.sampler.set({
-        //     urls: {
-        //         C2: path,
-        //     },
-        // })
-        
-        
         this.output = this.sampler
+
+        console.log(Array.from(this.connectedInputs.values()).reverse())
+        this.chain(Array.from(this.connectedInputs.values()).reverse())
 
         // this.sampler.connect(this.gain)
     }

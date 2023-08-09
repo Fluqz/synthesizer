@@ -257,7 +257,7 @@ export class FMOscillator extends Instrument {
 
         this.output = this.gain
 
-        this.output.connect(n instanceof Node ? n.input : n)
+        super.connect(n)
     }
 
     chain(nodes: Node[] | Tone.ToneAudioNode[]) {
@@ -270,42 +270,9 @@ export class FMOscillator extends Instrument {
 
         this.output = this.gain
 
-        this.output.connect(nodes[0] instanceof Node ? nodes[0].input : nodes[0])
-
-        let lastNode: Tone.ToneAudioNode = nodes[0] instanceof Node ? nodes[0].output : nodes[0]
-
-        nodes.shift()
-
-        // console.log('chain', this.output.name, 'to', lastNode.name)
-
-        for(let n of nodes) {
-            
-            if(n instanceof Node) {
-
-                // console.log('chain Node', lastNode.name, 'to', n.name)
-
-                lastNode.connect(n.input)
-                lastNode = n.output
-            }
-            else {
-                
-                // console.log('chain ToneNode', lastNode.name, 'to', n.name)
-
-                lastNode.connect(n)
-                lastNode = n
-            }
-        }
+        super.chain(nodes)
     }
 
-    disconnect(n?: Node | Tone.ToneAudioNode<ToneWithContextOptions>): void {
-        
-        if(n == undefined) {
-
-            if(n instanceof Node) this.output.disconnect(n.input)
-            else this.output.disconnect(n)
-        }
-        else this.output.disconnect()
-    }
 
     destroy() {
 

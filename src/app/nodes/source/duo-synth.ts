@@ -135,32 +135,9 @@ export class DuoSynth extends Instrument {
 
     connect(n: Node | Tone.ToneAudioNode): void {
 
-        // this.polySynth.connect(this.gain)
-
-        // this.output = this.gain
         this.output = this.polySynth
 
-
-        this.output.connect(n instanceof Node ? n.input : n)
-    }
-
-    chain(nodes: Node[] | Tone.ToneAudioNode[]) {
-
-        // this.polySynth.connect(this.gain)
-
-        // this.output = this.gain
-
-        super.chain(nodes)
-    }
-
-    disconnect(n?: Node | Tone.ToneAudioNode): void {
-        
-        if(n == undefined) {
-
-            if(n instanceof Node) this.output.disconnect(n.input)
-            else this.output.disconnect(n)
-        }
-        else this.output.disconnect()
+        super.connect(n)
     }
 
     destroy() {

@@ -222,11 +222,11 @@ export class Sequencer implements ISerialize {
         }, sequence)
 
 
-        Tone.Transport.scheduleRepeat((time) => {
+        // Tone.Transport.scheduleRepeat((time) => {
 
-            console.log('time',time, this.toneSequence.now(), this.toneSequence)
+        //     console.log('time',time, this.toneSequence.now(), this.toneSequence)
 
-        }, .01)
+        // }, .01)
 
 
         this.toneSequence.loop = this.loop

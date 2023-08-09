@@ -38,7 +38,7 @@ export interface ISynthesizerSerialization extends ISerialization {
     currentSession: ISession
 }
 
-export type Channel = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
+export type Channel = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15
 
 
 /** Synthesizer */
@@ -65,7 +65,7 @@ export class Synthesizer implements ISerialize {
     static activeNotes: Set<Tone.Unit.Frequency> = new Set()
 
     public channel: Channel = 0
-    static maxChannelCount: number = 8
+    static maxChannelCount: number = 16
 
     static nodes = {
         effects: {
