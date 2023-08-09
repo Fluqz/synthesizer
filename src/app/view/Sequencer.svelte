@@ -37,6 +37,14 @@
         for(let c of sequencer.channels) channels[c] = true
     }
 
+    let currentLinePos
+    Tone.Transport.scheduleRepeat((time) => {
+
+        currentLinePos = (((sequencer.toneSequence.immediate() % sequencer.bars)) * (timelineRect.width / sequencer.bars)) - 1
+
+    }, 1 / 24, Tone.now(), Number.POSITIVE_INFINITY)
+
+
     /** Set default note length*/
     const noteLengths: NoteLength[] = ['1', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64']
     let currentNoteLength: NoteLength = noteLengths[4]
@@ -372,6 +380,9 @@
                     
                     {#if timelineRect != undefined } 
 
+                        <div class="current-line" style:left={currentLinePos + 'px'}></div>
+
+
                         {#each Array(sequencer.bars) as _, bar }
 
                             <div class="bar" 
@@ -540,6 +551,19 @@
     background-color: var(--c-y);
 }
 
+.sequencer-wrapper .sequence .current-line {
+
+    z-index: 1;
+    position: absolute;
+    left: 1px;
+    top: 0px;
+    height: 100%;
+    width: 2px;
+    opacity: 1;
+
+    background-color: #fff;
+}
+
 .sequencer-wrapper .sequence .add-bar {
 
     display: inline-flex;
@@ -576,6 +600,8 @@
     align-items: center;
 
     cursor: grab !important;
+
+    border: 1px solid var(--c-o);
 }
 
 .sequencer-wrapper .sequence .note.selected {

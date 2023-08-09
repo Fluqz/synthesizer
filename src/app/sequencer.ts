@@ -214,6 +214,8 @@ export class Sequencer implements ISerialize {
 
         this.toneSequence = new Tone.Part((time, value) => {
 
+            // console.log('t', time, this.toneSequence.immediate(), this.toneSequence.now(), this.toneSequence.blockTime, this.toneSequence.progress, this.toneSequence.toSeconds())
+
             for(let channel of this.channels) {
 
                 this.synthesizer.triggerAttackRelease(Tone.Frequency(value.note).toNote(), value.length, time, channel, value.velocity)
