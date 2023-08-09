@@ -127,23 +127,4 @@ export class G {
 
         }
     }
-      
-    //   const el = document.getElementById("fullscreen-div");
-      
-    //   el.addEventListener("fullscreenchange", fullscreenchanged);
-    //   // or
-    //   el.onfullscreenchange = fullscreenchanged;
-      
-    //   // When the toggle button is clicked, enter/exit fullscreen
-    //   document
-    //     .getElementById("toggle-fullscreen")
-    //     .addEventListener("click", (event) => {
-    //       if (document.fullscreenElement) {
-    //         // exitFullscreen is only available on the Document object.
-    //         document.exitFullscreen();
-    //       } else {
-    //         el.requestFullscreen();
-    //       }
-    //     });
-      
 }

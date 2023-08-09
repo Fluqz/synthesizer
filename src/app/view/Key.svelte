@@ -71,11 +71,11 @@
     class="key" 
     class:black={key.note[1] == '#' || key.note[1] === 'b'}
     class:pressed={key.isPressed} 
-    on:pointerdown={onTrigger} 
-    on:pointerup={onRelease} 
-    on:pointerleave={onRelease}
     style={key.isPressed ? 'transform: scale(1.1); transform-origin: center;' : ''}>
     
+    <!-- on:pointerdown={onTrigger}  -->
+    <!-- on:pointerup={onRelease}  -->
+    <!-- on:pointerleave={onRelease} -->
 
     <div class="key-text key-mapping">{@html key.mapping.toLocaleUpperCase() + '<br/>' }</div>
 
