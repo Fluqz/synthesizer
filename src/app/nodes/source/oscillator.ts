@@ -181,12 +181,13 @@ export class Oscillator extends Instrument {
 
         this.isPlaying = false
 
-        if(this.isPlaying || Synthesizer.activeNotes.size > 0) {
+        // const otherPlayedNote = Array.from(Synthesizer.activeNotes).pop()
+        // if(this.isPlaying || Synthesizer.activeNotes.size > 0 && otherPlayedNote != note) {
 
-            // console.log('play other note', Synthesizer.activeNotes)
-            this.triggerAttack(Array.from(Synthesizer.activeNotes).pop(), time)
-            return
-        }
+        //     console.log('play other note', Synthesizer.activeNotes)
+        //     this.triggerAttack(otherPlayedNote, time)
+        //     return
+        // }
 
         this.envelope.triggerRelease(time)
     }

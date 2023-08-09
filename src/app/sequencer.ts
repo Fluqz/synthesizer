@@ -8,6 +8,7 @@ export type NoteLength = '1' | '1/2' | '1/4' | '1/8' | '1/16' | '1/32' | '1/64'
 export type REST = ''
 
 export type SequenceObject = { 
+    id: number,
     note: Tone.Unit.Frequency | REST,
     time: Tone.Unit.Time,
     length: Tone.Unit.Time,
@@ -23,6 +24,8 @@ export interface ISequencerSerialization {
 }
 
 export class Sequencer implements ISerialize {
+
+    private count: number = 0
 
     synthesizer: Synthesizer
 
@@ -69,12 +72,14 @@ export class Sequencer implements ISerialize {
         }
     }
 
+    /** Add a channel to send through */
     addChannel(channel: Channel) {
 
         if(this.channels.indexOf(channel) != -1) return
 
         this.channels.push(channel)
     }
+    /** Remove a channel */
     removeChannel(channel: Channel) {
 
         if(this.channels.indexOf(channel) == -1) return false
@@ -89,40 +94,74 @@ export class Sequencer implements ISerialize {
         return true
     }
 
+    /** Add a note to the sequence */
     addNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, length: Tone.Unit.Time, velocity: number) {
-
-        console.log('add', note, time, length)
 
         if(!Tone.isNote(note)) return
 
-        const n = { note, time, length, velocity }
+        const n = { id: this.count++, note, time, length, velocity }
 
         this.sequence.push(n)
         
         if(this.toneSequence) this.toneSequence.add(n)
     }
 
-    updateNote(i:number, note: Tone.Unit.Frequency, time: Tone.Unit.Time, length: Tone.Unit.Time, velocity: number) {
+    updateNote(id:number, note: Tone.Unit.Frequency, time: Tone.Unit.Time, length: Tone.Unit.Time, velocity: number) {
 
         if(!Tone.isNote(note)) return
 
-        for(let c of this.channels) this.synthesizer.triggerRelease(Tone.Frequency(this.sequence[i].note).toNote(), Tone.now(), c)
+        for(let s of this.sequence) {
+            
+            if(s.id == id) {
 
-        this.sequence[i].note = note
-        this.sequence[i].time = time
-        this.sequence[i].length = length
-        this.sequence[i].velocity = velocity
+                let i = this.sequence.indexOf(s)
+
+                // Trigger Release for this note
+                for(let c of this.channels) this.synthesizer.triggerRelease(Tone.Frequency(this.sequence[i].note).toNote(), Tone.now(), c)
+
+                this.toneSequence.remove(this.sequence[i].time)
+
+                // Update note
+                this.sequence[i].note = note
+                this.sequence[i].time = time
+                this.sequence[i].length = length
+                this.sequence[i].velocity = velocity
+
+                this.toneSequence.at(this.sequence[i].time, this.sequence[i])
+
+                return this.sequence[i]
+            }
+        }
+
+        return null
     }
 
-    removeNote(i:number, note) {
+    /** Remove a note from the sequence */
+    removeNote(id:number) {
 
-        for(let c of this.channels) this.synthesizer.triggerRelease(Tone.Frequency(this.sequence[i].note).toNote(), Tone.now(), c)
+        for(let s of this.sequence) {
+            
+            if(s.id == id) {
 
-        this.sequence.splice(i, 1)
+                let i = this.sequence.indexOf(s)
 
-        if(this.toneSequence) this.toneSequence.remove(note)
+                // Trigger Release for this note
+                for(let c of this.channels) this.synthesizer.triggerRelease(Tone.Frequency(this.sequence[i].note).toNote(), Tone.now(), c)
+
+                // Remove from tone sequencer
+                if(this.toneSequence) this.toneSequence.remove(this.sequence[i].time)
+                
+                // Remove note
+                this.sequence.splice(i, 1)
+
+                return true
+            }
+        }
+
+        return false
     }
 
+    /** Add a bar to the sequencer */
     addBar() {
 
         this.bars++
@@ -130,6 +169,7 @@ export class Sequencer implements ISerialize {
         if(this.toneSequence) this.toneSequence.loopEnd = this.bars
     }
 
+    /** Remove a bar from the sequencer */
     removeBar() {
 
         this.bars--
@@ -139,7 +179,6 @@ export class Sequencer implements ISerialize {
         if(this.toneSequence) this.toneSequence.loopEnd = this.bars
     }
 
-    // [F#2, G#3, F#2, F#3]
     start() {
 
         if(this.toneSequence) {
@@ -177,10 +216,18 @@ export class Sequencer implements ISerialize {
 
                 this.synthesizer.triggerAttackRelease(Tone.Frequency(value.note).toNote(), value.length, time, channel, value.velocity)
 
-                console.log('SEQUENCER at Channel', channel, Tone.Frequency(value.note).toNote(), time, value, sequence)
+                // console.log('SEQUENCER at Channel', channel, Tone.Frequency(value.note).toNote(), time, value, sequence)
             }
-
+            
         }, sequence)
+
+
+        Tone.Transport.scheduleRepeat((time) => {
+
+            console.log('time',time, this.toneSequence.now(), this.toneSequence)
+
+        }, .01)
+
 
         this.toneSequence.loop = this.loop
 
@@ -239,7 +286,11 @@ export class Sequencer implements ISerialize {
     serializeIn(o: ISequencerSerialization) {
 
         if(o.channel && o.channel.length) this.channels = o.channel
-        if(o.sequence && o.sequence.length) this.sequence = o.sequence
+        if(o.sequence && o.sequence.length) {
+
+            this.sequence.length = 0
+            for(let s of o.sequence) this.addNote(s.note, s.time, s.length, s.velocity)
+        }
         if(o.humanize) this.humanize = o.humanize
     }
 }

@@ -2,7 +2,7 @@
     
     import * as Tone from "tone";
     import { Synthesizer, type Channel } from "../synthesizer";
-    import { Sequencer, type NoteLength } from "../sequencer";
+    import { Sequencer, type NoteLength, type SequenceObject } from "../sequencer";
     import { createEventDispatcher } from "svelte";
 
 
@@ -46,14 +46,6 @@
 
         currentNoteLength = noteLength
 
-        const l = convertNoteLength(currentNoteLength)
-
-        console.log('CHANGE LENGTH', l)
-        for(const s of sequencer.sequence) {
-
-            s.length = l
-        }
-
         sequencer = sequencer
     }
 
@@ -91,6 +83,9 @@
         let time = Math.round(bars * xInPercent * 1000) / 1000
 
         addNote(time)
+
+        sequencer.sequence = sequencer.sequence
+        sequencer = sequencer
     }
 
     /** Click Timeline event */
@@ -114,18 +109,93 @@
     /** Click Note Event  */
     const onNoteClick = (e) => {
 
-        e.stopPropagation()
     }
 
     /** DblClick Note Event  */
-    const onNoteDblClick = (e, note, i) => {
+    const onNoteDblClick = (e, note: SequenceObject) => {
 
         e.stopPropagation()
 
-        sequencer.removeNote(i, note)
+        sequencer.removeNote(note.id)
 
+        sequencer.sequence = sequencer.sequence
         sequencer = sequencer
     }
+
+
+    let isNoteMouseDown = false
+    let selectedNote: SequenceObject
+    let clickOffset: number = 0
+    let time: Tone.Unit.Time
+    const noteMouseDown = (e, note: SequenceObject) => {
+        console.log('down', note)
+
+        isNoteMouseDown = true
+
+        selectedNote = note
+        time = selectedNote.time
+
+        clickOffset = e.pageX - e.target.getBoundingClientRect().left
+    }
+
+    const noteMouseMove = (e) => {
+
+        if(!isNoteMouseDown) return
+
+        if(!selectedNote) return
+
+        console.log('move')
+
+        const bars = sequencer.bars
+        const width = timelineRect.width
+        const posX = e.clientX - timelineRect.left - clickOffset
+
+        let xInPercent = posX / width
+
+        time = Math.round(bars * xInPercent * 1000) / 1000
+
+        sequencer = sequencer
+
+        sequencer.sequence = sequencer.sequence
+    }
+
+    const noteMouseUp = (e) => {
+        console.log('up')
+       
+        isNoteMouseDown = false
+        
+        if(selectedNote) {
+
+            // sequencer.removeNote(selectedNote.id)
+            // sequencer.addNote(selectedNote.note, selectedNote.time, selectedNote.length, selectedNote.velocity)
+            sequencer.updateNote(selectedNote.id, selectedNote.note, time, selectedNote.length, selectedNote.velocity)
+
+            selectedNote = null
+
+            sequencer.sequence = sequencer.sequence
+            sequencer = sequencer
+        }
+
+        clickOffset = 0
+    }
+
+
+    const noteHandleMouseDown = (e) => {
+
+    }
+
+    const noteHandleMouseMove = (e) => {
+        
+    }
+
+    const noteHandleMouseUp = (e) => {
+        
+    }
+
+
+
+
+
 
     /** Toggle sequencer on/off */
     const toggleStartStop = () => {
@@ -204,7 +274,14 @@
             <div class="sequence-wrapper">
                 
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <div class="timeline" bind:this={timeline} on:click={onTimelineClick} on:dblclick={onTimelineDblClick} on:resize={onResizeTimeline} use:onResizeTimeline>
+                <div class="timeline" 
+                        bind:this={timeline} 
+                        on:pointerup={(e) => noteMouseUp(e)}
+                        on:pointermove={(e) => noteMouseMove(e)}
+                        on:click={onTimelineClick} 
+                        on:dblclick={onTimelineDblClick} 
+                        on:resize={onResizeTimeline} 
+                        use:onResizeTimeline>
                     
                     {#if timelineRect != undefined } 
 
@@ -231,9 +308,14 @@
                         {#each sequencer.sequence as note, i }
 
                             <div class="note" 
+                                    on:pointerdown={(e) => noteMouseDown(e, note)}
+                                    
                                     on:click={onNoteClick}
-                                    on:dblclick={(e) => { onNoteDblClick(e, note, i) }}
+                                    on:dblclick={(e) => { onNoteDblClick(e, note) }}
                                     style:left={((Tone.Time(note.time).toSeconds() / sequencer.bars) * timelineRect.width) + 'px'} >
+
+                                    <div class="drag-hangle drag-left"></div>
+                                    <div class="drag-hangle drag-right"></div>
 
                                     <input bind:value={ note.note } />
  
@@ -308,6 +390,7 @@
 
 .sequencer-wrapper .sequence .timeline {
 
+    mix-blend-mode: color-dodge;
     position: relative;
 
     display: inline-flex;
@@ -333,6 +416,7 @@
 }
 .sequencer-wrapper .sequence .bar-line {
 
+    z-index: 1;
     position: absolute;
     left: -1px;
     top: 0px;
@@ -343,6 +427,7 @@
 }
 .sequencer-wrapper .sequence .note-line {
 
+    z-index: 1;
     position: absolute;
     left: -.5px;
     top: 0px;
@@ -366,7 +451,6 @@
 .sequencer-wrapper .sequence .note {
 
     /* width: 25px; */
-
     position: absolute;
 
     width: 50px;
@@ -383,14 +467,16 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
+
+    cursor: grab;
 }
 
 .sequencer-wrapper .sequence .note input {
 
-    z-index: 1;
+    z-index: 2;
 
     min-width: unset;
-    width: 100%;
+    width: 90%;
     height: 25px;
 
     border: none;
@@ -403,8 +489,32 @@
 
     padding: 0px;
     margin: 0px;
+}
 
-    color: aliceblue;
+.sequencer-wrapper .sequence .drag-hangle {
+
+    position: absolute;
+    top: 0px;
+
+    min-width: 4px;
+    max-width: 10px;
+    width: 5%;
+    height: 100%;
+
+    background-color: var(--c-gr);
+    
+    cursor: ew-resize;
+}
+
+.sequencer-wrapper .sequence .drag-left {
+
+    left: 0px;
+
+}
+
+.sequencer-wrapper .sequence .drag-right {
+
+    right: 0px;
 }
 
 </style>

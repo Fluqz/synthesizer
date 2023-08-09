@@ -241,7 +241,8 @@
         Tone.start()
         Tone.Transport.start()
 
-        // console.log('click')
+
+        console.log('click', synthesizer.presetManager.getPresets())
 
         // let s = new Tone.PolySynth(Tone.DuoSynth).toDestination()
 

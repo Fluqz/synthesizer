@@ -254,7 +254,8 @@ export class Track implements ISerialize {
 
             Synthesizer.activeNotes.delete(n)
 
-        }, Tone.Time(time).toSeconds() + Tone.Time(duration).toSeconds())
+        }, time)
+        // }, Tone.Time(time).toSeconds() + Tone.Time(duration).toSeconds())
 
         this.instrument.triggerAttackRelease(note, duration, time, velocity)
     }

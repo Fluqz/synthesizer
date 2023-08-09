@@ -335,7 +335,8 @@ export class Synthesizer implements ISerialize {
 
             Synthesizer.activeNotes.delete(n)
 
-        }, Tone.Time(time).toSeconds() + Tone.Time(duration).toSeconds())
+        }, time)
+        // }, Tone.Time(time).toSeconds() + Tone.Time(duration).toSeconds())
 
         for(let tr of this.tracks) {
 
