@@ -119,7 +119,7 @@ export class Sequencer implements ISerialize {
                 // Trigger Release for this note
                 for(let c of this.channels) this.synthesizer.triggerRelease(Tone.Frequency(this.sequence[i].note).toNote(), Tone.now(), c)
 
-                this.toneSequence.remove(this.sequence[i].time)
+                if(this.toneSequence) this.toneSequence.remove(this.sequence[i].time)
 
                 // Update note
                 this.sequence[i].note = note
@@ -127,7 +127,7 @@ export class Sequencer implements ISerialize {
                 this.sequence[i].length = length
                 this.sequence[i].velocity = velocity
 
-                this.toneSequence.at(this.sequence[i].time, this.sequence[i])
+                if(this.toneSequence) this.toneSequence.at(this.sequence[i].time, this.sequence[i])
 
                 return this.sequence[i]
             }
