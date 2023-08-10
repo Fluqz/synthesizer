@@ -397,7 +397,6 @@
 
 .track-wrapper .add-node-btn .addable-nodes .addable-node:hover {
 
-
     background-color: var(--c-b);
     color: var(--c-y);
 }

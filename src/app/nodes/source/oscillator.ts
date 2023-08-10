@@ -158,7 +158,6 @@ export class Oscillator extends Instrument {
         this.envelope.set({ release: this._release })
     }
 
-
     triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
         this.frequency = Tone.Frequency(note).toFrequency()
@@ -172,8 +171,6 @@ export class Oscillator extends Instrument {
         
         this.frequency = Tone.Frequency(note).toFrequency()
 
-        // this.isPlaying ?
-
         this.envelope.triggerAttackRelease(duration, time, velocity)
     }
 
@@ -181,14 +178,14 @@ export class Oscillator extends Instrument {
 
         this.isPlaying = false
 
-        // const otherPlayedNote = Array.from(Synthesizer.activeNotes).pop()
-        // if(this.isPlaying || Synthesizer.activeNotes.size > 0 && otherPlayedNote != note) {
+        const otherPlayedNote = Array.from(Synthesizer.activeNotes).pop()
+        if(this.isPlaying || Synthesizer.activeNotes.size > 0 && otherPlayedNote != note) {
 
-        //     console.log('play other note', Synthesizer.activeNotes)
-        //     this.triggerAttack(otherPlayedNote, time)
-        //     return
-        // }
-
+            console.log('play other note', Synthesizer.activeNotes)
+            this.triggerAttack(otherPlayedNote, time)
+            return
+        }
+        
         this.envelope.triggerRelease(time)
     }
 

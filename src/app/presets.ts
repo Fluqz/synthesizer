@@ -5,90 +5,417 @@ export const DEFAULT_SESSION = {
 
     presets: [],
     currentSession: {
-
-        bpm: 120,
-        volume: 1,
-        octave: 2,
-        channel: 0,
-        tracks: [
+        "bpm": 120,
+        "volume": 0,
+        "octave": 2,
+        "channel": 15,
+        "tracks": [
             {
-                muted: false,
-                channel: 0,
-                instrument: {
-                    name: "DuoSynth",
-                    enabled: true,
-                    volume: 0.5,
-                    detune: 0,
-                    harmonicity: 1,
-                    portamento: 0,
-                    vibratoAmount: 0.5,
-                    vibratoRate: 5,
-                    attack0: 2.96,
-                    decay0: 0,
-                    release0: 0.5,
-                    sustain0: 1,
-                    attack1: 0,
-                    decay1: 0,
-                    release1: 0.1600000000000001,
-                    sustain1: 0.6300000000000001
-                },
-                nodes: [
-                    {
-                        name: "Delay",
-                        enabled: true,
-                        wet: 1,
-                        delayTime: 0,
-                        feedback: 0.8200000000000001
-                    },
-                    {
-                        name: "Tremolo",
-                        enabled: true,
-                        wet: 0,
-                        frequency: 87.34000000000009,
-                        depth: 0.04
-                    }
-                ],
-                volume: -3
+            "enabled": true,
+            "channel": 0,
+            "volume": -3,
+            "instrument": {
+                "name": "Sampler",
+                "enabled": true,
+                "collapsed": false,
+                "volume": 6,
+                "sample": "Kick2"
+            },
+            "nodes": [
+                {
+                "name": "Tremolo",
+                "enabled": true,
+                "collapsed": false,
+                "wet": 0,
+                "frequency": 87.34000000000009,
+                "depth": 0.04
+                }
+            ],
+            "soloEnabled": false,
+            "hold": {
+                "enabled": "OFF",
+                "activeKeys": [
+                "C2",
+                "D2"
+                ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
             },
             {
-                channel: 0,
-                muted: false,
-                instrument: {
-                    name: "FMSynth",
-                    enabled: true,
-                    volume: 3,
-                    detune: 0.5,
-                    portamento: 0,
-                    harmonicity: 3,
-                    phase: 0,
-                    attack: 0.01,
-                    decay: 0.01,
-                    sustain: 1,
-                    release: 0.5
-                },
-                nodes: [],
-                volume: -3
+            "enabled": true,
+            "channel": 1,
+            "volume": -3,
+            "instrument": {
+                "name": "Sampler",
+                "enabled": true,
+                "collapsed": false,
+                "volume": 6,
+                "sample": "Snare3"
+            },
+            "nodes": [
+                {
+                "name": "Delay",
+                "enabled": true,
+                "collapsed": false,
+                "wet": 1,
+                "delayTime": 0.12,
+                "feedback": 0.18999999999999995
+                }
+            ],
+            "soloEnabled": false,
+            "hold": {
+                "enabled": "OFF",
+                "activeKeys": [
+                "F2"
+                ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
             },
             {
-                channel: 0,
-                muted: false,
-                instrument: {
-                    name: "Oscillator",
-                    enabled: true,
-                    detune: 0,
-                    phase: 0,
-                    wave: "sine",
-                    wavePartial: "",
-                    attack: 0.01,
-                    decay: 0.1,
-                    sustain: 0.5,
-                    release: 1
-                },
-                nodes: [],
-                volume: -3
+            "enabled": true,
+            "channel": 2,
+            "volume": -3,
+            "instrument": {
+                "name": "Sampler",
+                "enabled": true,
+                "collapsed": false,
+                "volume": 6,
+                "sample": "Hihat1"
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+                "enabled": "OFF",
+                "activeKeys": [
+                "F2",
+                "A2",
+                "A1"
+                ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+            },
+            {
+            "enabled": true,
+            "channel": 15,
+            "volume": -3,
+            "instrument": {
+                "name": "Synth",
+                "enabled": true,
+                "collapsed": false,
+                "volume": 0,
+                "detune": 0.5,
+                "attack": 0.005,
+                "attackCurve": "linear",
+                "decay": 0.1,
+                "decayCurve": "exponential",
+                "release": 1,
+                "releaseCurve": "exponential",
+                "sustain": 0.3,
+                "partialCount": 0,
+                "partials": [],
+                "phase": 0,
+                "type": "triangle",
+                "portamento": 0
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+                "enabled": "OFF",
+                "activeKeys": [
+                "C2",
+                "D2"
+                ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+            },
+            {
+            "enabled": true,
+            "channel": 15,
+            "volume": -3,
+            "instrument": {
+                "name": "PulseOscillator",
+                "enabled": true,
+                "collapsed": false,
+                "detune": 0,
+                "width": 0.2,
+                "phase": 0,
+                "attack": 0.01,
+                "decay": 0.1,
+                "sustain": 0.5,
+                "release": 1
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+                "enabled": "OFF",
+                "activeKeys": [
+                "C2",
+                "D2"
+                ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+            },
+            {
+            "enabled": true,
+            "channel": 15,
+            "volume": 5.959999999999994,
+            "instrument": {
+                "name": "Sampler",
+                "enabled": true,
+                "collapsed": false,
+                "volume": 0.5,
+                "sample": "Back Home F"
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+                "enabled": "OFF",
+                "activeKeys": [
+                "C2",
+                "D2"
+                ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
             }
-        ]
+        ],
+        "sequencers": [
+            {
+            "channel": [
+                0,
+                15
+            ],
+            "sequence": [
+                {
+                "id": 0,
+                "note": "C3",
+                "time": -31419130815508.19,
+                "length": -31419130815509.543,
+                "velocity": 1
+                },
+                {
+                "id": 1,
+                "note": "C3",
+                "time": -9029385698377.71,
+                "length": -9029385698377.71,
+                "velocity": 1
+                },
+                {
+                "id": 2,
+                "note": "C3",
+                "time": -8.327,
+                "length": -9.009,
+                "velocity": 1
+                },
+                {
+                "id": 3,
+                "note": "D2",
+                "time": 1.998,
+                "length": 0.992,
+                "velocity": 1
+                },
+                {
+                "id": 4,
+                "note": "C2",
+                "time": 3.985,
+                "length": 1.0100000000000002,
+                "velocity": 1
+                },
+                {
+                "id": 5,
+                "note": "C2",
+                "time": 6.005,
+                "length": 0.8769999999999998,
+                "velocity": 1
+                },
+                {
+                "id": 6,
+                "note": "C2",
+                "time": 0.013,
+                "length": 0.984,
+                "velocity": 1
+                },
+                {
+                "id": 7,
+                "note": "D2",
+                "time": 2.508,
+                "length": 0.9969999999999999,
+                "velocity": 1
+                },
+                {
+                "id": 8,
+                "note": "C2",
+                "time": 6.778,
+                "length": 0.24600000000000044,
+                "velocity": 1
+                },
+                {
+                "id": 9,
+                "note": "C2",
+                "time": 7.004,
+                "length": 0.9720000000000004,
+                "velocity": 1
+                }
+            ],
+            "humanize": false,
+            "bars": 8
+            },
+            {
+            "channel": [
+                1
+            ],
+            "sequence": [
+                {
+                "id": 0,
+                "note": "F2",
+                "time": 0.858,
+                "length": 0.9750000000000001,
+                "velocity": 1
+                },
+                {
+                "id": 1,
+                "note": "F2",
+                "time": 2.9,
+                "length": 0.5049999999999999,
+                "velocity": 1
+                }
+            ],
+            "humanize": false,
+            "bars": 4
+            },
+            {
+            "channel": [
+                2
+            ],
+            "sequence": [
+                {
+                "id": 0,
+                "note": "F2",
+                "time": 0.249,
+                "length": "16n",
+                "velocity": 1
+                },
+                {
+                "id": 1,
+                "note": "A2",
+                "time": 0.499,
+                "length": "16n",
+                "velocity": 1
+                },
+                {
+                "id": 2,
+                "note": "A1",
+                "time": 0.749,
+                "length": "16n",
+                "velocity": 1
+                },
+                {
+                "id": 3,
+                "note": "F2",
+                "time": 0,
+                "length": "16n",
+                "velocity": 1
+                }
+            ],
+            "humanize": false,
+            "bars": 1
+            },
+        ],
+        "id": 0,
+        "name": "DEFAULT"
     }
+
+
+    // currentSession: {
+
+    //     bpm: 120,
+    //     volume: 1,
+    //     octave: 2,
+    //     channel: 0,
+    //     tracks: [
+    //         {
+    //             muted: false,
+    //             channel: 0,
+    //             instrument: {
+    //                 name: "DuoSynth",
+    //                 enabled: true,
+    //                 volume: 0.5,
+    //                 detune: 0,
+    //                 harmonicity: 1,
+    //                 portamento: 0,
+    //                 vibratoAmount: 0.5,
+    //                 vibratoRate: 5,
+    //                 attack0: 2.96,
+    //                 decay0: 0,
+    //                 release0: 0.5,
+    //                 sustain0: 1,
+    //                 attack1: 0,
+    //                 decay1: 0,
+    //                 release1: 0.1600000000000001,
+    //                 sustain1: 0.6300000000000001
+    //             },
+    //             nodes: [
+    //                 {
+    //                     name: "Delay",
+    //                     enabled: true,
+    //                     wet: 1,
+    //                     delayTime: 0,
+    //                     feedback: 0.8200000000000001
+    //                 },
+    //                 {
+    //                     name: "Tremolo",
+    //                     enabled: true,
+    //                     wet: 0,
+    //                     frequency: 87.34000000000009,
+    //                     depth: 0.04
+    //                 }
+    //             ],
+    //             volume: -3
+    //         },
+    //         {
+    //             channel: 0,
+    //             muted: false,
+    //             instrument: {
+    //                 name: "FMSynth",
+    //                 enabled: true,
+    //                 volume: 3,
+    //                 detune: 0.5,
+    //                 portamento: 0,
+    //                 harmonicity: 3,
+    //                 phase: 0,
+    //                 attack: 0.01,
+    //                 decay: 0.01,
+    //                 sustain: 1,
+    //                 release: 0.5
+    //             },
+    //             nodes: [],
+    //             volume: -3
+    //         },
+    //         {
+    //             channel: 0,
+    //             muted: false,
+    //             instrument: {
+    //                 name: "Oscillator",
+    //                 enabled: true,
+    //                 detune: 0,
+    //                 phase: 0,
+    //                 wave: "sine",
+    //                 wavePartial: "",
+    //                 attack: 0.01,
+    //                 decay: 0.1,
+    //                 sustain: 0.5,
+    //                 release: 1
+    //             },
+    //             nodes: [],
+    //             volume: -3
+    //         }
+    //     ]
+    // }
 }
 
 
@@ -2208,6 +2535,345 @@ export const DEFAULT_PRESETS: IPreset[] = [
     ],
     "id": 0,
     "name": "beepbeepbebeep"
+    },
+
+
+
+
+
+
+    {
+        "bpm": 120,
+        "volume": 0,
+        "octave": 2,
+        "channel": 15,
+        "tracks": [
+            {
+            "enabled": true,
+            "channel": 0,
+            "volume": -3,
+            "instrument": {
+                "name": "Sampler",
+                "enabled": true,
+                "collapsed": false,
+                "volume": 6,
+                "sample": "Kick2"
+            },
+            "nodes": [
+                {
+                "name": "Tremolo",
+                "enabled": true,
+                "collapsed": false,
+                "wet": 0,
+                "frequency": 87.34000000000009,
+                "depth": 0.04
+                }
+            ],
+            "soloEnabled": false,
+            "hold": {
+                "enabled": "OFF",
+                "activeKeys": [
+                "C2",
+                "D2"
+                ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+            },
+            {
+            "enabled": true,
+            "channel": 1,
+            "volume": -3,
+            "instrument": {
+                "name": "Sampler",
+                "enabled": true,
+                "collapsed": false,
+                "volume": 6,
+                "sample": "Snare3"
+            },
+            "nodes": [
+                {
+                "name": "Delay",
+                "enabled": true,
+                "collapsed": false,
+                "wet": 1,
+                "delayTime": 0.12,
+                "feedback": 0.18999999999999995
+                }
+            ],
+            "soloEnabled": false,
+            "hold": {
+                "enabled": "OFF",
+                "activeKeys": [
+                "F2"
+                ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+            },
+            {
+            "enabled": true,
+            "channel": 2,
+            "volume": -3,
+            "instrument": {
+                "name": "Sampler",
+                "enabled": true,
+                "collapsed": false,
+                "volume": 6,
+                "sample": "Hihat1"
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+                "enabled": "OFF",
+                "activeKeys": [
+                "F2",
+                "A2",
+                "A1"
+                ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+            },
+            {
+            "enabled": true,
+            "channel": 15,
+            "volume": -3,
+            "instrument": {
+                "name": "Synth",
+                "enabled": true,
+                "collapsed": false,
+                "volume": 0,
+                "detune": 0.5,
+                "attack": 0.005,
+                "attackCurve": "linear",
+                "decay": 0.1,
+                "decayCurve": "exponential",
+                "release": 1,
+                "releaseCurve": "exponential",
+                "sustain": 0.3,
+                "partialCount": 0,
+                "partials": [],
+                "phase": 0,
+                "type": "triangle",
+                "portamento": 0
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+                "enabled": "OFF",
+                "activeKeys": [
+                "C2",
+                "D2"
+                ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+            },
+            {
+            "enabled": true,
+            "channel": 15,
+            "volume": -3,
+            "instrument": {
+                "name": "PulseOscillator",
+                "enabled": true,
+                "collapsed": false,
+                "detune": 0,
+                "width": 0.2,
+                "phase": 0,
+                "attack": 0.01,
+                "decay": 0.1,
+                "sustain": 0.5,
+                "release": 1
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+                "enabled": "OFF",
+                "activeKeys": [
+                "C2",
+                "D2"
+                ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+            },
+            {
+            "enabled": true,
+            "channel": 15,
+            "volume": 5.959999999999994,
+            "instrument": {
+                "name": "Sampler",
+                "enabled": true,
+                "collapsed": false,
+                "volume": 0.5,
+                "sample": "Back Home F"
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+                "enabled": "OFF",
+                "activeKeys": [
+                "C2",
+                "D2"
+                ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+            }
+        ],
+        "sequencers": [
+            {
+            "channel": [
+                0,
+                15
+            ],
+            "sequence": [
+                {
+                "id": 0,
+                "note": "C3",
+                "time": -31419130815508.19,
+                "length": -31419130815509.543,
+                "velocity": 1
+                },
+                {
+                "id": 1,
+                "note": "C3",
+                "time": -9029385698377.71,
+                "length": -9029385698377.71,
+                "velocity": 1
+                },
+                {
+                "id": 2,
+                "note": "C3",
+                "time": -8.327,
+                "length": -9.009,
+                "velocity": 1
+                },
+                {
+                "id": 3,
+                "note": "D2",
+                "time": 1.998,
+                "length": 0.992,
+                "velocity": 1
+                },
+                {
+                "id": 4,
+                "note": "C2",
+                "time": 3.985,
+                "length": 1.0100000000000002,
+                "velocity": 1
+                },
+                {
+                "id": 5,
+                "note": "C2",
+                "time": 6.005,
+                "length": 0.8769999999999998,
+                "velocity": 1
+                },
+                {
+                "id": 6,
+                "note": "C2",
+                "time": 0.013,
+                "length": 0.984,
+                "velocity": 1
+                },
+                {
+                "id": 7,
+                "note": "D2",
+                "time": 2.508,
+                "length": 0.9969999999999999,
+                "velocity": 1
+                },
+                {
+                "id": 8,
+                "note": "C2",
+                "time": 6.778,
+                "length": 0.24600000000000044,
+                "velocity": 1
+                },
+                {
+                "id": 9,
+                "note": "C2",
+                "time": 7.004,
+                "length": 0.9720000000000004,
+                "velocity": 1
+                }
+            ],
+            "humanize": false,
+            "bars": 8
+            },
+            {
+            "channel": [
+                1
+            ],
+            "sequence": [
+                {
+                "id": 0,
+                "note": "F2",
+                "time": 0.858,
+                "length": 0.9750000000000001,
+                "velocity": 1
+                },
+                {
+                "id": 1,
+                "note": "F2",
+                "time": 2.9,
+                "length": 0.5049999999999999,
+                "velocity": 1
+                }
+            ],
+            "humanize": false,
+            "bars": 4
+            },
+            {
+            "channel": [
+                2
+            ],
+            "sequence": [
+                {
+                "id": 0,
+                "note": "F2",
+                "time": 0.249,
+                "length": "16n",
+                "velocity": 1
+                },
+                {
+                "id": 1,
+                "note": "A2",
+                "time": 0.499,
+                "length": "16n",
+                "velocity": 1
+                },
+                {
+                "id": 2,
+                "note": "A1",
+                "time": 0.749,
+                "length": "16n",
+                "velocity": 1
+                },
+                {
+                "id": 3,
+                "note": "F2",
+                "time": 0,
+                "length": "16n",
+                "velocity": 1
+                }
+            ],
+            "humanize": false,
+            "bars": 1
+            },
+            {
+            "channel": [
+                0
+            ],
+            "sequence": [],
+            "humanize": false,
+            "bars": 2
+            }
+        ],
+        "id": 0,
+        "name": "DEFAULT"
     }
 ]
 

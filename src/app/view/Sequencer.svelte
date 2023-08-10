@@ -57,10 +57,20 @@
         sequencer = sequencer
     }
 
-    /** Add new bar to sequencer */
+    /** Add a new bar to sequencer */
     const addBar = (e) => {
 
         sequencer.addBar()
+
+        sequencer.sequence = sequencer.sequence
+
+        sequencer = sequencer
+    }
+
+    /** Remove one bar from sequencer */
+    const removeBar = (e) => {
+
+        sequencer.removeBar()
 
         sequencer.sequence = sequencer.sequence
 
@@ -96,9 +106,10 @@
         sequencer = sequencer
     }
 
-    /** Click Timeline event */
+    /** Pointerdown Timeline event */
     const onTimelineClick = (e: MouseEvent) => {
 
+        selectedNote = null
     }
 
     /** Timeline HTML element ref */
@@ -136,6 +147,8 @@
     let clickOffset: number = 0
     let time: Tone.Unit.Time
     const noteMouseDown = (e, note: SequenceObject) => {
+
+        // e.stopPropagation()
 
         if(e.target instanceof HTMLInputElement) return
         console.log('mousedown', note)
@@ -193,7 +206,7 @@
             sequencer = sequencer
         }
 
-        selectedNote = null
+        // selectedNote = null
 
         clickOffset = 0
     }
@@ -298,7 +311,16 @@
     /** Toggle sequencer on/off */
     const toggleStartStop = () => {
 
-        if(!sequencer.isPlaying) sequencer.start()
+        if(!sequencer.isPlaying) {
+
+            Tone.Transport.scheduleOnce((time) => {
+
+
+
+            }, 0)
+
+            sequencer.start()
+        }
         else sequencer.stop()
 
         sequencer = sequencer
@@ -373,7 +395,7 @@
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <div class="timeline" 
                         bind:this={timeline} 
-                        on:click={onTimelineClick} 
+                        on:pointerdown={onTimelineClick} 
                         on:dblclick={onTimelineDblClick} 
                         on:resize={onResizeTimeline} 
                         use:onResizeTimeline>
@@ -432,8 +454,12 @@
 
                 </div>
 
-                <div class="add-bar" on:click={(e) => addBar(e)}>+</div>
+                <div class="add-remove-cont">
 
+                    <div class="add-bar" on:click={(e) => addBar(e)}>+</div>
+                    <div class="remove-bar" on:click={(e) => removeBar(e)}>-</div>
+
+                </div>
 
             </div>
 
@@ -563,7 +589,13 @@
 
     background-color: #fff;
 }
+.sequencer-wrapper .sequence .add-remove-cont {
 
+    height: 100%;
+    width: 50px;
+}
+ 
+.sequencer-wrapper .sequence .remove-bar,
 .sequencer-wrapper .sequence .add-bar {
 
     display: inline-flex;
@@ -572,10 +604,17 @@
 
     cursor: pointer;
 
-    width: 100px;
-    height: 100px;
+    width: 50px;
+    height: 50%;
     background-color: var(--c-w);
     color: var(--c-b);
+}
+
+.sequencer-wrapper .sequence .remove-bar:hover,
+.sequencer-wrapper .sequence .add-bar:hover {
+
+    background-color: var(--c-b);
+    color: var(--c-y);
 }
 
 .sequencer-wrapper .sequence .note {
@@ -607,6 +646,7 @@
 .sequencer-wrapper .sequence .note.selected {
     background-color: var(--c-o);
     cursor: grabbing !important;
+    z-index: 4;
 }
 
 .sequencer-wrapper .sequence .note.note.selected input {
@@ -636,15 +676,20 @@
 
 .sequencer-wrapper .sequence .drag-hangle {
 
+    z-index: 3;
+
     position: absolute;
     top: 0px;
 
-    min-width: 4px;
-    max-width: 10px;
-    width: 5%;
+    min-width: 10px;
+    max-width: 20px;
     height: 100%;
 
     cursor: ew-resize;
+
+    background-color: #fff;
+
+    opacity: .3;
 }
 
 .sequencer-wrapper .sequence .drag-start {

@@ -260,7 +260,7 @@
 
     // Serialize
     const serializeIn = (file: any, isString: boolean = false) => {
-
+        
         // file = ''
         if(file == undefined) return
     
@@ -268,6 +268,8 @@
 
         if(isString) o = JSON.parse(file)
         else o = file
+
+        console.log('Serialize In', o)
     
         synthesizer.serializeIn(o)
 

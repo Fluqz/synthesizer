@@ -214,7 +214,7 @@ export class Sequencer implements ISerialize {
 
         this.toneSequence = new Tone.Part((time, value) => {
 
-            // console.log('t', time, this.toneSequence.immediate(), this.toneSequence.now(), this.toneSequence.blockTime, this.toneSequence.progress, this.toneSequence.toSeconds())
+            // console.log('t', time.toFixed(5), this.toneSequence.immediate().toFixed(5), this.toneSequence.progress.toFixed(5), this.toneSequence.toSeconds().toFixed(5))
 
             for(let channel of this.channels) {
 
@@ -228,7 +228,7 @@ export class Sequencer implements ISerialize {
 
         // Tone.Transport.scheduleRepeat((time) => {
 
-        //     console.log('time',time, this.toneSequence.now(), this.toneSequence)
+        //     console.log('progress', this.toneSequence.progress)
 
         // }, .01)
 
@@ -291,9 +291,9 @@ export class Sequencer implements ISerialize {
     serializeIn(o: ISequencerSerialization) {
 
         if(o.channel && o.channel.length) this.channels = o.channel
+        this.sequence.length = 0
         if(o.sequence && o.sequence.length) {
 
-            this.sequence.length = 0
             for(let s of o.sequence) this.addNote(s.note, s.time, s.length, s.velocity)
         }
         if(o.humanize) this.humanize = o.humanize
