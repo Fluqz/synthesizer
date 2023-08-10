@@ -84,11 +84,14 @@
 
     const addTrack = () => {
 
-        synthesizer.addTrack(new _Track(synthesizer, Synthesizer.nodes.sources.Oscillator()))
+        const t = new _Track(synthesizer, Synthesizer.nodes.sources.Oscillator())
+        synthesizer.addTrack(t)
 
         synthesizer = synthesizer
 
         scrollToBottom()
+
+        return t
     }
 
     const deleteTrack = (e) => {
@@ -100,13 +103,29 @@
         synthesizer = synthesizer
     }
 
+    const duplicateTrack = (e) => {
+
+        if(!e.detail) return
+
+        console.log(e)
+
+        let duplicate = addTrack()
+
+        duplicate.serializeIn(e.detail.serializeOut())
+
+        synthesizer = synthesizer
+    }
+
     const addSequencer = () => {
 
-        synthesizer.addSequencer(new _Sequencer(synthesizer))
+        const s = new _Sequencer(synthesizer)
+        synthesizer.addSequencer(s)
 
         synthesizer = synthesizer
 
         scrollToBottom()
+
+        return s
     }
     
     const deleteSequencer = (e) => {
@@ -116,18 +135,32 @@
         synthesizer = synthesizer
     }
     
+    const duplicateSequencer = (e) => {
+
+        if(!e.detail) return
+
+        let duplicate = addSequencer()
+
+        duplicate.serializeIn(e.detail.serializeOut())
+
+        scrollToBottom()
+
+        synthesizer = synthesizer
+    }
+
+    
     const scrollToBottom = () => {
 
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            window.scrollTo({
-                top: G.h,
-                left: 0,
-                behavior: 'smooth',
+        //     window.scrollTo({
+        //         top: 1000000000,
+        //         left: 0,
+        //         behavior: 'smooth',
                 
-            });
+        //     });
 
-        }, 0)
+        // }, 0)
     }
 
     const onChannel = (e) => {
@@ -415,7 +448,7 @@
                     
                     <div class="track">
 
-                        <Track bind:track={track} on:delete={deleteTrack} />
+                        <Track bind:track={track} on:delete={deleteTrack} on:duplicate={duplicateTrack} />
 
                     </div>
 
@@ -433,7 +466,7 @@
                 
                 {#each synthesizer.sequencers as sequencer, i}
                     
-                    <Sequencer sequencer={sequencer} on:deleteSequencer={deleteSequencer} />
+                    <Sequencer sequencer={sequencer} on:deleteSequencer={deleteSequencer} on:duplicate={duplicateSequencer}/>
 
                 {/each}
 

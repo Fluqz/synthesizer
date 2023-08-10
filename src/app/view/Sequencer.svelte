@@ -40,7 +40,7 @@
     let currentLinePos
     Tone.Transport.scheduleRepeat((time) => {
 
-        currentLinePos = (((sequencer.toneSequence.immediate() % sequencer.bars)) * (timelineRect.width / sequencer.bars)) - 1
+        if(sequencer.isPlaying) currentLinePos = (((sequencer.toneSequence.immediate() % sequencer.bars)) * (timelineRect.width / sequencer.bars)) - 1
 
     }, 1 / 24, Tone.now(), Number.POSITIVE_INFINITY)
 
@@ -342,6 +342,12 @@
         sequencer = sequencer
     }
 
+    /** Duplicate Sequence */
+    const onDuplicate = () => {
+
+        dispatch('duplicate', sequencer)
+    }
+
     /** Delete sequencer */
     const onDelete = () => {
 
@@ -360,6 +366,8 @@
         <div class="sequencer-menu">
 
             <div class="btn delete" on:click={onDelete}>&#x2715;</div>
+            
+            <div class="btn duplicate" on:click={onDuplicate}>D</div>
 
             <div class="btn play" class:active={sequencer.isPlaying} title="Play" on:click={toggleStartStop}>{ !sequencer.isPlaying ? 'Play' : 'Stop'}</div>
 

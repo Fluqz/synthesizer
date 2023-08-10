@@ -96,11 +96,7 @@
 
     const onDuplicate = () => {
 
-        let duplicate = new Track(track.synthesizer)
-
-        duplicate.serializeIn(track.serializeOut())
-
-        track.synthesizer.addTrack(duplicate)
+        dispatch('duplicate', track)
     }
 
     const onDelete = (e) => {
