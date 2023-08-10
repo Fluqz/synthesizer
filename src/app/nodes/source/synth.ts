@@ -229,9 +229,9 @@ export class Synth extends Instrument {
 
         this.synth.releaseAll()
         this.synth.disconnect()
+        
         this.synth.dispose()
-        // this.gain.disconnect()
-        // this.gain.dispose()
+        this.synth.context._timeouts.cancel(0)
 
         super.destroy()
     }

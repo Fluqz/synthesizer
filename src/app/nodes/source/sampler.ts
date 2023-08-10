@@ -197,9 +197,9 @@ export class Sampler extends Instrument {
         
         this.sampler.releaseAll()
         this.sampler.disconnect()
+        
         this.sampler.dispose()
-        // this.gain.disconnect()
-        // this.gain.dispose()
+        this.sampler.context._timeouts.cancel(0)
         
         super.destroy()
     }

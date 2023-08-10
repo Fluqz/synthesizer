@@ -283,7 +283,9 @@ export class FMOscillator extends Instrument {
         this.osc.stop(Tone.now() + this.envelope.toSeconds(this.envelope.release))
 
         this.osc.disconnect()
+        
         this.osc.dispose()
+        this.osc.context._timeouts.cancel(0)
 
         super.destroy()
     }

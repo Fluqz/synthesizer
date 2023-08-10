@@ -220,6 +220,7 @@ export class Noise extends Instrument {
 
         this.noise.disconnect()
         this.noise.dispose()
+        this.noise.context._timeouts.cancel(0)
 
         super.destroy()
     }

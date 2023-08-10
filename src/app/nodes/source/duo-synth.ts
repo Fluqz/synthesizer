@@ -19,18 +19,10 @@ export class DuoSynth extends Instrument {
 
         super('DuoSynth')
 
-        // this._volume = options.volume ? options.volume : .5
-
         this.polySynth = new Tone.PolySynth(Tone.DuoSynth)
         this.output = this.polySynth
 
         this.volume = 0
-        // this.gain = new Tone.Gain(this.volume)
-
-        // this.polySynth.connect(this.gain)
-
-        // this.output = this.gain
-
 
         this.input = null
 
@@ -141,12 +133,12 @@ export class DuoSynth extends Instrument {
     }
 
     destroy() {
-        
+
         this.polySynth.releaseAll()
         this.polySynth.disconnect()
+
         this.polySynth.dispose()
-        // this.gain.disconnect()
-        // this.gain.dispose()
+        this.polySynth.context._timeouts.cancel(0)
         
         super.destroy()
     }

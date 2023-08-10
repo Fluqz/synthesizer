@@ -232,6 +232,7 @@ export class PulseOscillator extends Instrument {
 
         this.osc.disconnect()
         this.osc.dispose()
+        this.osc.context._timeouts.cancel(0)
 
         super.destroy()
     }
