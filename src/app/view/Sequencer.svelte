@@ -109,7 +109,7 @@
     /** Pointerdown Timeline event */
     const onTimelineClick = (e: MouseEvent) => {
 
-        selectedNote = null
+        // selectedNote = null
     }
 
     /** Timeline HTML element ref */
