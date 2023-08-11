@@ -252,8 +252,6 @@ export class Synthesizer implements ISerialize {
         track.synthesizer = this
         
         track.connect(this.volume)
-
-        console.log(this.tracks)
     }
 
     /** Disconnects and removes track */
@@ -264,8 +262,6 @@ export class Synthesizer implements ISerialize {
         track.disconnect(this.volume)
 
         track.destroy()
-
-        console.log('Delete', this.tracks, track.id)
 
         let i = 0
         for(let t of this.tracks) {

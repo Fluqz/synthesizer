@@ -29,8 +29,6 @@
 
         track.volume = track.volume
         track = track
-
-        console.log('track mount',track.id, track.volumeNode)
     })
     onDestroy(() => {
 
@@ -100,8 +98,6 @@
     }
 
     const onDelete = (e) => {
-
-        console.log('delete', track.id)
 
         dispatch('delete', track)
 

@@ -103,7 +103,6 @@ export class Sampler extends Instrument {
 
         const opts = samples.map((a) => { return a.name })
         
-        console.log('options',opts)
         this.sample = opts[0]
 
         this.attack = this.sampler.get().attack
@@ -144,7 +143,6 @@ export class Sampler extends Instrument {
 
         this.output = this.sampler
 
-        console.log(Array.from(this.connectedInputs.values()).reverse())
         this.chain(Array.from(this.connectedInputs.values()).reverse())
 
         // this.sampler.connect(this.gain)

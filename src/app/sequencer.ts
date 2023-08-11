@@ -208,8 +208,6 @@ export class Sequencer implements ISerialize {
             this.toneSequence.dispose()
         }
 
-        console.log('start', sequence)
-
         this.isPlaying = true
 
         this.toneSequence = new Tone.Part((time, value) => {

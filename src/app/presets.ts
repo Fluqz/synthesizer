@@ -2724,153 +2724,145 @@ export const DEFAULT_PRESETS: IPreset[] = [
         ],
         "sequencers": [
             {
-            "channel": [
-                0,
-                15
-            ],
-            "sequence": [
-                {
-                "id": 0,
-                "note": "C3",
-                "time": -31419130815508.19,
-                "length": -31419130815509.543,
-                "velocity": 1
-                },
-                {
-                "id": 1,
-                "note": "C3",
-                "time": -9029385698377.71,
-                "length": -9029385698377.71,
-                "velocity": 1
-                },
-                {
-                "id": 2,
-                "note": "C3",
-                "time": -8.327,
-                "length": -9.009,
-                "velocity": 1
-                },
-                {
-                "id": 3,
-                "note": "D2",
-                "time": 1.998,
-                "length": 0.992,
-                "velocity": 1
-                },
-                {
-                "id": 4,
-                "note": "C2",
-                "time": 3.985,
-                "length": 1.0100000000000002,
-                "velocity": 1
-                },
-                {
-                "id": 5,
-                "note": "C2",
-                "time": 6.005,
-                "length": 0.8769999999999998,
-                "velocity": 1
-                },
-                {
-                "id": 6,
-                "note": "C2",
-                "time": 0.013,
-                "length": 0.984,
-                "velocity": 1
-                },
-                {
-                "id": 7,
-                "note": "D2",
-                "time": 2.508,
-                "length": 0.9969999999999999,
-                "velocity": 1
-                },
-                {
-                "id": 8,
-                "note": "C2",
-                "time": 6.778,
-                "length": 0.24600000000000044,
-                "velocity": 1
-                },
-                {
-                "id": 9,
-                "note": "C2",
-                "time": 7.004,
-                "length": 0.9720000000000004,
-                "velocity": 1
-                }
-            ],
-            "humanize": false,
-            "bars": 8
+                "channel": [
+                    0,
+                    15
+                ],
+                "sequence": [
+                    {
+                    "id": 0,
+                    "note": "C3",
+                    "time": -31419130815508.19,
+                    "length": -31419130815509.543,
+                    "velocity": 1
+                    },
+                    {
+                    "id": 1,
+                    "note": "C3",
+                    "time": -9029385698377.71,
+                    "length": -9029385698377.71,
+                    "velocity": 1
+                    },
+                    {
+                    "id": 2,
+                    "note": "C3",
+                    "time": -8.327,
+                    "length": -9.009,
+                    "velocity": 1
+                    },
+                    {
+                    "id": 3,
+                    "note": "D2",
+                    "time": 1.998,
+                    "length": 0.992,
+                    "velocity": 1
+                    },
+                    {
+                    "id": 4,
+                    "note": "C2",
+                    "time": 3.985,
+                    "length": 1.0100000000000002,
+                    "velocity": 1
+                    },
+                    {
+                    "id": 5,
+                    "note": "C2",
+                    "time": 6.005,
+                    "length": 0.8769999999999998,
+                    "velocity": 1
+                    },
+                    {
+                    "id": 6,
+                    "note": "C2",
+                    "time": 0.013,
+                    "length": 0.984,
+                    "velocity": 1
+                    },
+                    {
+                    "id": 7,
+                    "note": "D2",
+                    "time": 2.508,
+                    "length": 0.9969999999999999,
+                    "velocity": 1
+                    },
+                    {
+                    "id": 8,
+                    "note": "C2",
+                    "time": 6.778,
+                    "length": 0.24600000000000044,
+                    "velocity": 1
+                    },
+                    {
+                    "id": 9,
+                    "note": "C2",
+                    "time": 7.004,
+                    "length": 0.9720000000000004,
+                    "velocity": 1
+                    }
+                ],
+                "humanize": false,
+                "bars": 8
             },
             {
-            "channel": [
-                1
-            ],
-            "sequence": [
-                {
-                "id": 0,
-                "note": "F2",
-                "time": 0.858,
-                "length": 0.9750000000000001,
-                "velocity": 1
-                },
-                {
-                "id": 1,
-                "note": "F2",
-                "time": 2.9,
-                "length": 0.5049999999999999,
-                "velocity": 1
-                }
-            ],
-            "humanize": false,
-            "bars": 4
+                "channel": [
+                    1
+                ],
+                "sequence": [
+                    {
+                    "id": 0,
+                    "note": "F2",
+                    "time": 0.858,
+                    "length": 0.9750000000000001,
+                    "velocity": 1
+                    },
+                    {
+                    "id": 1,
+                    "note": "F2",
+                    "time": 2.9,
+                    "length": 0.5049999999999999,
+                    "velocity": 1
+                    }
+                ],
+                "humanize": false,
+                "bars": 4
             },
             {
-            "channel": [
-                2
-            ],
-            "sequence": [
-                {
-                "id": 0,
-                "note": "F2",
-                "time": 0.249,
-                "length": "16n",
-                "velocity": 1
-                },
-                {
-                "id": 1,
-                "note": "A2",
-                "time": 0.499,
-                "length": "16n",
-                "velocity": 1
-                },
-                {
-                "id": 2,
-                "note": "A1",
-                "time": 0.749,
-                "length": "16n",
-                "velocity": 1
-                },
-                {
-                "id": 3,
-                "note": "F2",
-                "time": 0,
-                "length": "16n",
-                "velocity": 1
-                }
-            ],
-            "humanize": false,
-            "bars": 1
+                "channel": [
+                    2
+                ],
+                "sequence": [
+                    {
+                    "id": 0,
+                    "note": "F2",
+                    "time": 0.249,
+                    "length": "16n",
+                    "velocity": 1
+                    },
+                    {
+                    "id": 1,
+                    "note": "A2",
+                    "time": 0.499,
+                    "length": "16n",
+                    "velocity": 1
+                    },
+                    {
+                    "id": 2,
+                    "note": "A1",
+                    "time": 0.749,
+                    "length": "16n",
+                    "velocity": 1
+                    },
+                    {
+                    "id": 3,
+                    "note": "F2",
+                    "time": 0,
+                    "length": "16n",
+                    "velocity": 1
+                    }
+                ],
+                "humanize": false,
+                "bars": 1
             },
-            {
-            "channel": [
-                0
-            ],
-            "sequence": [],
-            "humanize": false,
-            "bars": 2
-            }
         ],
         "id": 0,
         "name": "DEFAULT"

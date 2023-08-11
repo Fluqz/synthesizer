@@ -47,7 +47,7 @@
 
     /** Set default note length*/
     const noteLengths: NoteLength[] = ['1', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64']
-    let currentNoteLength: NoteLength = noteLengths[3]
+    let currentNoteLength: NoteLength = sequencer.noteLength
 
     /** Set default note length */
     const changeNoteLength = (noteLength: NoteLength) => {
@@ -150,11 +150,9 @@
     let time: Tone.Unit.Time
     const noteMouseDown = (e, note: SequenceObject) => {
 
-        console.log('MOUSE DOWN')
         e.stopPropagation()
 
         if(e.target instanceof HTMLInputElement) return
-        console.log('mousedown', note)
 
         isNoteMouseDown = true
 
@@ -171,8 +169,7 @@
         if(isDrag) return
 
         if(!selectedNote) return
-
-        console.log('mousemove')
+        // console.log('mousemove')
 
         const bars = sequencer.bars
         const width = timelineRect.width
@@ -220,7 +217,7 @@
     let dragOffset: number = 0
     let handle = 0
     const handleDown = (e, note: SequenceObject, which: 'start' | 'end') => {
-        console.log('handle down', note)
+        // console.log('handle down', note)
 
         e.stopPropagation()
 
@@ -244,7 +241,7 @@
         
         if(!resizeNote) return
         
-        console.log('move')
+        // console.log('move')
         // console.log('move')
 
 
@@ -260,7 +257,6 @@
 
         let l: Tone.Unit.Time
         if(handle == 0) {
-            console.log('start')
 
             if(time < 0) time = 0
 
@@ -272,8 +268,6 @@
         }
         else {
 
-            console.log('end')
-
             if(time < 0) time = 0
 
             endTime = time
@@ -284,7 +278,6 @@
 
             sequencer.updateNote(resizeNote.id, resizeNote.note, resizeNote.time, l, resizeNote.velocity)
         }
-
 
         sequencer = sequencer
 

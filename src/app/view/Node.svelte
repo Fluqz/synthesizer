@@ -25,8 +25,6 @@
 
     export let index: number
 
-    console.log(node.name, index)
-
     $: {
 
         $nodeParameters = [...node.props.values()]
