@@ -31,6 +31,8 @@
 
     let storedMuteState = !synthesizer.isMuted
 
+    G.w = window.innerWidth
+    G.h = window.innerHeight
 
     // On document ready
     onMount(() => {
@@ -119,7 +121,7 @@
             if(i >= colors.length) { 
                 
                 i = 0 
-                colors.sort(() =>  Math.ceil((Math.random() * 2) - 1) )
+                colors.sort(() =>  Math.ceil((Math.random() * 2) - 1))
             }
 
             // console.log('col', colors[i])
@@ -319,14 +321,6 @@
 <div class="synthesizer-wrapper" class:screen-offset={!Visual.collapsed}>
 
     <Synthesizer synthesizer={synthesizer}>
-    <!-- on:mousemove={onMouseMove} -->
-
-    <!-- 
-        
-        <svg class="svg-line">
-            
-            <line x1={mousePosition.x} y1={mousePosition.y} x2={elementPosition.x} y2={elementPosition.y} stroke="#FFFFFF"></line>
-        </svg> -->
         
         
     </Synthesizer>
