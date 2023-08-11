@@ -47,7 +47,7 @@
 
     /** Set default note length*/
     const noteLengths: NoteLength[] = ['1', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64']
-    let currentNoteLength: NoteLength = noteLengths[4]
+    let currentNoteLength: NoteLength = noteLengths[3]
 
     /** Set default note length */
     const changeNoteLength = (noteLength: NoteLength) => {
@@ -109,7 +109,7 @@
     /** Pointerdown Timeline event */
     const onTimelineClick = (e: MouseEvent) => {
 
-        // selectedNote = null
+        selectedNote = null
     }
 
     /** Timeline HTML element ref */
@@ -133,6 +133,8 @@
     /** DblClick Note Event  */
     const onNoteDblClick = (e, note: SequenceObject) => {
 
+        if(isDrag) return
+
         e.stopPropagation()
 
         sequencer.removeNote(note.id)
@@ -148,7 +150,8 @@
     let time: Tone.Unit.Time
     const noteMouseDown = (e, note: SequenceObject) => {
 
-        // e.stopPropagation()
+        console.log('MOUSE DOWN')
+        e.stopPropagation()
 
         if(e.target instanceof HTMLInputElement) return
         console.log('mousedown', note)
@@ -189,13 +192,10 @@
     }
 
     const noteMouseUp = (e) => {
-        console.log('mouseup')
 
         isNoteMouseDown = false
         
         if(selectedNote) {
-
-            console.log('m update',selectedNote.note, selectedNote.length)
 
             // sequencer.removeNote(selectedNote.id)
             // sequencer.addNote(selectedNote.note, selectedNote.time, selectedNote.length, selectedNote.velocity)
@@ -220,7 +220,7 @@
     let dragOffset: number = 0
     let handle = 0
     const handleDown = (e, note: SequenceObject, which: 'start' | 'end') => {
-        console.log('down', note)
+        console.log('handle down', note)
 
         e.stopPropagation()
 
@@ -247,9 +247,12 @@
         console.log('move')
         // console.log('move')
 
+
+        selectedNote = null
+
         const bars = sequencer.bars
         const width = timelineRect.width
-        const posX = e.clientX - timelineRect.left
+        const posX = e.clientX - timelineRect.left + (handle == 0 ? -dragOffset : dragOffset)
 
         let xInPercent = posX / width
 
@@ -289,7 +292,7 @@
     }
 
     const handleUp = (e) => {
-        console.log('up')
+        // console.log('up')
         
         e.stopPropagation()
 
@@ -376,6 +379,10 @@
 
                 {#each channels as cc, i}
                     
+                    {#if i == 7 } 
+                        <br />  
+                    {/if}
+
                     <div class="btn" class:active={cc} title="Channels to sequence" on:click={() => activateChannel(i, cc)}>{ i }</div>
 
                 {/each}
@@ -438,7 +445,6 @@
                             <div class="note" 
                                     class:selected={selectedNote == note}
                                     on:pointerdown={(e) => noteMouseDown(e, note)}
-                                    on:click={onNoteClick}
                                     on:dblclick={(e) => { onNoteDblClick(e, note) }}
                                     style:left={((Tone.Time(note.time).toSeconds() / sequencer.bars) * timelineRect.width) + 'px'}
                                     style:width={((Tone.Time(note.length).toSeconds() / sequencer.bars) * timelineRect.width) + 'px'} >
