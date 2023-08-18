@@ -14,6 +14,7 @@
 
     let min = -70
     let max = 6
+    let clipping = 0
 
     let percentage = 0
 
@@ -64,11 +65,11 @@
 
 {#if output != undefined }
     
-    <div class="btn level-meter shifting-GIF">
+    <div class="btn level-meter" class:shifting-GIF={value < clipping}>
 
         {#if value != min }
 
-            <div class="level shifting-GIF" style={`height:${percentage}%;background-color:#FF00FF;`} class:clipping={value > max}></div>
+            <div class="level" style={`height:${percentage}%;background-color:#FF00FF;`} class:clipping={value > clipping}></div>
 
             <div id="level-value">{ value.toFixed(0) }</div>
             
@@ -148,7 +149,7 @@
 }
 .level.clipping {
 
-    background-color: var(--c-o);
+    background-color: var(--c-r) !important;
 }
 
 #level-value {

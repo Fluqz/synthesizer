@@ -114,8 +114,6 @@
     /** On 'mousedown' event callback */
     const onMouseDown = (e) => {
 
-        // console.log('mousedown', e)
-
         e.preventDefault()
         e.stopPropagation()
 

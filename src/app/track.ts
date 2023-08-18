@@ -1,7 +1,7 @@
 import * as Tone from 'tone'
 import { Synthesizer, type ISerialization, type ISerialize, type Channel } from "./synthesizer"
 import { Node, type INodeSerialization } from './nodes/node'
-import type { Instrument } from './nodes'
+import { InstrumentType, type Instrument } from './nodes'
 import { writable, type Writable } from 'svelte/store'
 
 export interface ITrackSerialization extends ISerialization {
@@ -229,13 +229,13 @@ export class Track implements ISerialize {
     /** Triggers the instruments note */
     triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
+        console.log('trigger attack', note, this.instrument.name)
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         if(this.hold == 'HOLD') return
 
         // Cant keep track of notes. Also will stay in this octave only! Need to check (synth.octave - note.octave) + this.octave
         // if(this.octave != undefined) note = note.replace(/[0-9]/g, '') + this.octave
 
-        
         this.activeNotes.add(note)
 
         this.instrument.triggerAttack(note, time, velocity)
@@ -243,6 +243,8 @@ export class Track implements ISerialize {
 
     /** Triggers the instruments note */
     triggerAttackRelease(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
+
+        console.log('trigger attackr', note, this.instrument.name)
 
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         // if(this.hold == 'HOLD') return
@@ -254,8 +256,8 @@ export class Track implements ISerialize {
 
             Synthesizer.activeNotes.delete(n)
 
-        }, time)
-        // }, Tone.Time(time).toSeconds() + Tone.Time(duration).toSeconds())
+        // }, time)
+        }, Tone.Time(time).toSeconds() + Tone.Time(duration).toSeconds())
 
         this.instrument.triggerAttackRelease(note, duration, time, velocity)
     }
@@ -272,6 +274,13 @@ export class Track implements ISerialize {
         this.activeNotes.delete(note)
 
         this.instrument.triggerRelease(note, time)
+
+        if(this.instrument.type == InstrumentType.MONO && (this.activeNotes.size > 0)) {
+
+            // console.log('play other note', this.activeNotes)
+            this.triggerAttack(Array.from(this.activeNotes).pop(), time)
+            return
+        }
     }
 
     /** Adds a node to the node chain */

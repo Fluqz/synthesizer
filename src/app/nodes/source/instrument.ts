@@ -5,14 +5,24 @@ import { Node } from '../node'
 import type { InstrumentOptions } from 'tone/build/esm/instrument/Instrument'
 import type { Instrument as ToneInstrument } from 'tone/build/esm/instrument/Instrument'
 
+export enum InstrumentType {
+
+    MONO = 'MONO',
+    POLY = 'POLY'
+} 
+
 /** Represents a instrument  */
 export abstract class Instrument extends Node {
 
     source: ToneInstrument<InstrumentOptions>
 
-    constructor(name) {
+    type: InstrumentType
+
+    constructor(name, type) {
 
         super(name)
+
+        this.type = type
     }
     
     /** Trigger Note */

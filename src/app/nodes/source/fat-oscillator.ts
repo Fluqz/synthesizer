@@ -1,5 +1,5 @@
 import * as Tone from 'tone'
-import { Instrument } from './instrument';
+import { Instrument, InstrumentType } from './instrument';
 import { Synthesizer } from '../../synthesizer';
 import { ParamType, Node } from '../node';
 import type { ToneWithContextOptions } from 'tone/build/esm/core/context/ToneWithContext';
@@ -60,7 +60,7 @@ export class FatOscillator extends Instrument {
     /** freq, detune, volume, waveform,  */
     constructor(volume?: number, frequency?: number, detune?: number) {
 
-        super('FatOscillator')
+        super('FatOscillator', InstrumentType.MONO)
 
         this.osc = new Tone.FatOscillator(this.frequency)
         this.osc.start(Tone.now())
@@ -205,13 +205,6 @@ export class FatOscillator extends Instrument {
     triggerRelease(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
         this.isPlaying = false
-
-        if(this.isPlaying || Synthesizer.activeNotes.size > 0) {
-
-            // console.log('play other note', Synthesizer.activeNotes)
-            this.triggerAttack(Array.from(Synthesizer.activeNotes).pop(), time)
-            return
-        }
 
         this.envelope.triggerRelease(time)
     }

@@ -1,5 +1,5 @@
 import * as Tone from 'tone'
-import { Instrument } from './instrument';
+import { Instrument, InstrumentType } from './instrument';
 import { Synthesizer } from '../../synthesizer';
 import { ParamType, Node } from '../node';
 import type { ToneWithContextOptions } from 'tone/build/esm/core/context/ToneWithContext';
@@ -59,7 +59,7 @@ export class AMOscillator extends Instrument {
     /** freq, detune, volume, waveform,  */
     constructor(volume?: number, frequency?: number, detune?: number) {
 
-        super('AMOscillator')
+        super('AMOscillator', InstrumentType.MONO)
 
         this.osc = new Tone.AMOscillator(this.frequency)
         this.osc.start(Tone.now())
@@ -200,21 +200,12 @@ export class AMOscillator extends Instrument {
         
         this.frequency = Tone.Frequency(note).toFrequency()
 
-        // this.isPlaying ?
-
         this.envelope.triggerAttackRelease(duration, time, velocity)
     }
 
     triggerRelease(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
         this.isPlaying = false
-
-        if(this.isPlaying || Synthesizer.activeNotes.size > 0) {
-
-            // console.log('play other note', Synthesizer.activeNotes)
-            this.triggerAttack(Array.from(Synthesizer.activeNotes).pop(), time)
-            return
-        }
 
         this.envelope.triggerRelease(time)
     }

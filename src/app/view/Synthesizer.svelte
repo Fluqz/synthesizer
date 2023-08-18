@@ -477,21 +477,25 @@
         {/if}
 
         
-        <div class="keys">
-            
-            {#if keyboardVisible }
+        {#if synthesizer.tracks.length > 0 }
 
-                {#each Synthesizer.keys as key }
-
-                    <Key key={key} />
-                    
-                {/each}
+            <div class="keys">
                 
-            {/if}
+                {#if keyboardVisible }
 
-            <!-- <div on:click={() => keyboardVisible = !keyboardVisible}>:</div> -->
+                    {#each Synthesizer.keys as key }
 
-        </div>
+                        <Key key={key} />
+                        
+                    {/each}
+                    
+                {/if}
+
+                <!-- <div on:click={() => keyboardVisible = !keyboardVisible}>:</div> -->
+
+            </div>
+
+        {/if}
 
     </div>
 

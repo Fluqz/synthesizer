@@ -1,5 +1,5 @@
 import * as Tone from 'tone'
-import { Instrument } from './instrument';
+import { Instrument, InstrumentType } from './instrument';
 import { Synthesizer } from '../../synthesizer';
 import { ParamType, Node } from '../node';
 import type { ToneWithContextOptions } from 'tone/build/esm/core/context/ToneWithContext';
@@ -52,7 +52,7 @@ export class OmniOscillator extends Instrument {
     /** freq, detune, volume, waveform,  */
     constructor(volume?: number, frequency?: number, detune?: number) {
 
-        super('OmniOscillator')
+        super('OmniOscillator', InstrumentType.MONO)
 
         this.osc = new Tone.OmniOscillator(this.frequency)
         this.osc.start(Tone.now())
@@ -223,12 +223,6 @@ export class OmniOscillator extends Instrument {
 
         this.isPlaying = false
 
-        if(this.isPlaying || Synthesizer.activeNotes.size > 0) {
-
-            // console.log('play other note', Synthesizer.activeNotes)
-            this.triggerAttack(Array.from(Synthesizer.activeNotes).pop(), time)
-            return
-        }
 
         this.envelope.triggerRelease(time)
     }

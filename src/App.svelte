@@ -19,6 +19,8 @@
     import { Midi } from './app/core/midi';
     import { isSafari } from './app/util/browser';
 
+    import Menu from './app/view/Menu.svelte';
+
 
     // Init globals
     G.init()
@@ -194,7 +196,11 @@
         synthesizer = synthesizer
     }
 
+    let isMenuOpen = false
+    const toggleMenu = (e) => {
 
+        isMenuOpen = !isMenuOpen
+    }
 
     const toggleVisuals = (e) => {
 
@@ -264,15 +270,10 @@
 
         synthesizer = synthesizer
     }
-    
+    // MAKE VERSIONING HERE TOO FRO COMPATIBILITY
     const serializeOut = () => {
     
         let o = synthesizer.serializeOut()
-
-        // {
-        //     synthesizer: o,
-            // eppilepsyMessage: 
-        // }
     
         return JSON.stringify(o)
     }
@@ -295,13 +296,23 @@
 
 {#if !G.fullScreenmode }
 
-<div class="main-ui">
+    <div class="main-ui">
 
-    <div class="btn" on:click={collapseVisuals}>&#x2715;</div>
-    <div class="btn" on:click={saveVisuals}>I</div>
-    <div class="btn" on:click={toggleVisuals}>V</div>
+        <div class="btn" title="Remove Visuals" on:click={collapseVisuals}>&#x2715;</div>
+        <div class="btn" title="Download Visual" on:click={saveVisuals}>I</div>
+        <div class="btn" title="Visuals On/Off" on:click={toggleVisuals}>V</div>
 
-</div>
+        <div class="btn" title="Menu On/Off" on:click={toggleMenu} on:close={toggleMenu} style="float:right;"></div>
+
+
+    </div>
+
+    {#if isMenuOpen }
+
+        <Menu active={isMenuOpen}></Menu>
+
+    {/if}
+
 
 {/if}
 

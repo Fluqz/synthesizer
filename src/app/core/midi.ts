@@ -40,14 +40,14 @@ export class Midi {
 
                     trigger(e)
 
-                }, { channels: [1, 2, 3, 4, 5, 6, 7, 8] });
+                }, { channels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] });
 
 
                 WebMidi.inputs[0].addListener("noteoff", e => {
 
                     release(e)
 
-                }, { channels: [1, 2, 3, 4, 5, 6, 7, 8] });
+                }, { channels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15] });
             }
         }
     }

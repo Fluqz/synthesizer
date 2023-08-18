@@ -37,16 +37,18 @@
         for(let c of sequencer.channels) channels[c] = true
     }
 
+    // Update position of timeline line
     let currentLinePos
     Tone.Transport.scheduleRepeat((time) => {
 
         if(sequencer.isPlaying) currentLinePos = (((sequencer.toneSequence.immediate() % sequencer.bars)) * (timelineRect.width / sequencer.bars)) - 1
 
-    }, 1 / 24, Tone.now(), Number.POSITIVE_INFINITY)
+    }, 1 / 30, Tone.now(), Number.POSITIVE_INFINITY)
 
 
     /** Set default note length*/
     const noteLengths: NoteLength[] = ['1', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64']
+    /** Currently selected note length */
     let currentNoteLength: NoteLength = sequencer.noteLength
 
     /** Set default note length */
@@ -235,7 +237,7 @@
 
     const handleMove = (e) => {
 
-        e.stopPropagation()
+        // e.stopPropagation()
 
         if(!isDrag) return
         
@@ -287,7 +289,7 @@
     const handleUp = (e) => {
         // console.log('up')
         
-        e.stopPropagation()
+        // e.stopPropagation()
 
         isDrag = false
 
@@ -666,7 +668,7 @@
     z-index: 2;
 
     min-width: unset;
-    width: 90%;
+    width: 50px;
     height: 25px;
 
     border: none;

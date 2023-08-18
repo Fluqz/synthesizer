@@ -1,5 +1,5 @@
 import * as Tone from 'tone'
-import { Instrument } from './instrument';
+import { Instrument, InstrumentType } from './instrument';
 import { Synthesizer } from '../../synthesizer';
 import { ParamType } from '../node';
 
@@ -28,7 +28,7 @@ export class FMSynth extends Instrument {
     /** freq, detune, volume, waveform,  */
     constructor(options:any = {}) {
 
-        super('FMSynth')
+        super('FMSynth', InstrumentType.POLY)
 
         this.synth = new Tone.PolySynth(Tone.FMSynth)
         this.output = this.synth

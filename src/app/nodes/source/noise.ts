@@ -1,5 +1,5 @@
 import * as Tone from 'tone'
-import { Instrument } from './instrument';
+import { Instrument, InstrumentType } from './instrument';
 import { Synthesizer } from '../../synthesizer';
 import { ParamType, Node } from '../node';
 import type { ToneWithContextOptions } from 'tone/build/esm/core/context/ToneWithContext';
@@ -45,7 +45,7 @@ export class Noise extends Instrument {
     /** freq, detune, volume, waveform,  */
     constructor(volume?: number, frequency?: number, detune?: number) {
 
-        super('Noise')
+        super('Noise', InstrumentType.MONO)
 
         this.noise = new Tone.Noise()
         this.noise.start(Tone.now())
@@ -171,12 +171,6 @@ export class Noise extends Instrument {
 
         this.isPlaying = false
 
-        if(this.isPlaying || Synthesizer.activeNotes.size > 0) {
-
-            // console.log('play other note', Synthesizer.activeNotes)
-            this.triggerAttack(Array.from(Synthesizer.activeNotes).pop(), time)
-            return
-        }
 
         this.envelope.triggerRelease(time)
     }

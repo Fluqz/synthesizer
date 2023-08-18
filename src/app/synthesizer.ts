@@ -191,7 +191,7 @@ export class Synthesizer implements ISerialize {
         // this.addTrack(new Track(this, Synthesizer.nodes.sources.AMSynth()))
 
         this.sequencers = []
-        this.addSequencer(new Sequencer(this))
+        // this.addSequencer(new Sequencer(this))
         // this.addSequencer(new Sequencer(this, ['F#2', 'D1', 'F#2', 'C#3']))
 
         this.presetManager = new PresetManager(this)
@@ -331,8 +331,10 @@ export class Synthesizer implements ISerialize {
 
             Synthesizer.activeNotes.delete(n)
 
-        }, time)
-        // }, Tone.Time(time).toSeconds() + Tone.Time(duration).toSeconds())
+            console.log('delete note', n)
+
+        // }, time)
+        }, Tone.Time(time).toSeconds() + Tone.Time(duration).toSeconds())
 
         for(let tr of this.tracks) {
 
