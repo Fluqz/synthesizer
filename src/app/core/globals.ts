@@ -43,9 +43,7 @@ export class G {
 
         }, '32n')
 
-        Tone.Transport.bpm.value = 120
-
-        // Tone.Transport.start()
+        // Tone.Transport.bpm.value = 120
     }
 
 

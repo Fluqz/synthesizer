@@ -9,15 +9,28 @@ Arpeggiator in Synth and per Track
 
 Knob mousemove distance in y axis
 
+Knob input field not working
+
+Global Play / Stop button
+
+Menu styling and text
+
+Epilepsy warning on welcome
+
+Save Menu Options in LocalStorage too
+
+Timeline line is not synced with Transport time
+
+Keys are terrible
+
+
 Save Screen Shot
 
-Midi access
+Midi access - Firefox
 
 implement more synths, oscs and effects
 
 Disable Visuals completly remove() in p5 sketch
-
-Node extend Tone.ToneAudioNode
 
 
 

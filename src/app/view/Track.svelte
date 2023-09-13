@@ -6,7 +6,7 @@
 
     import { Track } from "../track";
     import { Synthesizer as Synth, type Channel } from "../synthesizer";
-    import type { Instrument, Node as _Node } from "../nodes";
+    import { Instrument, type Node as _Node } from "../nodes";
 
     import Node from "./Node.svelte";
     import Knob from "./Knob.svelte"
@@ -177,7 +177,6 @@
         // console.log('click', track.id, track.volumeNode, track.volumeNode.volume.value)
 
     }
-    onClick
 
 </script>
 
@@ -185,7 +184,7 @@
 
 <div class="track-wrapper" on:wheel={onScroll} on:click={onClick}>
 
-    <div class="node track-options">
+    <div class="node track-options" class:playing={false}> <!-- todo - not reactive -->
 
         <!-- { track.number } -->
         <!-- { track.id } -->
@@ -209,7 +208,7 @@
 
         <LevelMeter output={track.volumeNode} />
 
-        <Oscilloscope output={track.volumeNode} id={track.id} />
+        <Oscilloscope output={track.volumeNode} />
 
 
         <div class="track-btns">
@@ -325,6 +324,10 @@
 
     background-color: var(--c-y);
     color: var(--c-b);
+}
+
+.track-wrapper .track-options.playing {
+    background-color: var(--c-o);
 }
 
 .track-wrapper .track-options .track-btns {

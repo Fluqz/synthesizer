@@ -1,6 +1,6 @@
 
 import * as Tone from 'tone'
-import type { Channel, ISerialize, Synthesizer } from './synthesizer'
+import { Synthesizer, type Channel, type ISerialize, type IComponent } from './synthesizer'
 
 
 export type NoteLength = '1' | '1/2' | '1/4' | '1/8' | '1/16' | '1/32' | '1/64'
@@ -18,15 +18,22 @@ export type SequenceObject = {
 
 export interface ISequencerSerialization {
 
+    index: number
     channel: Channel[]
     sequence: SequenceObject[]
     humanize: boolean
     bars: number
 }
 
-export class Sequencer implements ISerialize {
+export class Sequencer implements ISerialize, IComponent {
+
+    /** Starting time of the first sequencer */
+    static startTime: number
 
     private count: number = 0
+
+    index: number
+    name: 'track' | 'sequencer' = 'sequencer'
 
     synthesizer: Synthesizer
 
@@ -193,8 +200,6 @@ export class Sequencer implements ISerialize {
         }
 
         this.startSequence(this.sequence)
-
-        this.isPlaying = true
     }
 
     private lastNote: Tone.Unit.Frequency
@@ -208,7 +213,6 @@ export class Sequencer implements ISerialize {
             this.toneSequence.dispose()
         }
 
-        this.isPlaying = true
 
         this.toneSequence = new Tone.Part((time, value) => {
 
@@ -226,8 +230,10 @@ export class Sequencer implements ISerialize {
 
         // Tone.Transport.scheduleRepeat((time) => {
 
-        //     console.log('progress', this.toneSequence.progress)
-
+        //     console.log('progress', 
+            
+        //     ((Tone.now() - Tone.Time(Sequencer.startTime).toSeconds()) % Tone.Time('1m').toSeconds()).toFixed(2))
+            
         // }, .01)
 
 
@@ -238,7 +244,25 @@ export class Sequencer implements ISerialize {
         this.toneSequence.humanize = this.humanize
         this.toneSequence.probability = 1
 
-        this.toneSequence.start(Tone.now())
+        let startTime
+
+        if(Sequencer.startTime == null) {
+            
+            Sequencer.startTime = Tone.Transport.now()
+            startTime = Sequencer.startTime
+
+            console.log('Starting first', Sequencer.startTime)
+        }
+        else {
+
+            startTime = Tone.now() + (Tone.now() - Tone.Time(Sequencer.startTime).toSeconds()) % Tone.Time('1m').toSeconds()
+            console.log('now, startOffset, count, nextOffset, start', Tone.now(), Tone.now() - Tone.Time(Sequencer.startTime).toSeconds(), (Tone.now() - Tone.Time(Sequencer.startTime).toSeconds()) / Tone.Time('1m').toSeconds() ,(Tone.now() - Tone.Time(Sequencer.startTime).toSeconds()) % Tone.Time('1m').toSeconds(), startTime)
+            console.log('length, ', Tone.Time('1m').toSeconds(), )
+        }
+
+        this.toneSequence.start(startTime, 0)
+
+        this.isPlaying = true
 
         return this.toneSequence
     }
@@ -264,6 +288,10 @@ export class Sequencer implements ISerialize {
         }
 
         this.isPlaying = false
+
+        if(this.synthesizer.getActiveSequencers().length == 0) Sequencer.startTime = null
+
+        console.log('stop', Sequencer.startTime, this.synthesizer.getActiveSequencers().length)
     }
 
     destroy() {
@@ -280,6 +308,7 @@ export class Sequencer implements ISerialize {
 
         return {
 
+            index: this.index,
             channel: this.channels,
             sequence: this.sequence,
             humanize: this.humanize,
@@ -288,6 +317,7 @@ export class Sequencer implements ISerialize {
     }
     serializeIn(o: ISequencerSerialization) {
 
+        if(o.index) this.index = o.index
         if(o.channel && o.channel.length) this.channels = o.channel
         this.sequence.length = 0
         if(o.sequence && o.sequence.length) {

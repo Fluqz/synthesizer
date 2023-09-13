@@ -40,6 +40,14 @@ export interface ISynthesizerSerialization extends ISerialization {
 
 export type Channel = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15
 
+export type Component = Track | Sequencer
+
+export interface IComponent {
+
+    index: number
+    name: 'track' | 'sequencer'
+}
+
 
 /** Synthesizer */
 export class Synthesizer implements ISerialize {
@@ -55,6 +63,9 @@ export class Synthesizer implements ISerialize {
 
     /** Array of all notes */
     static notes: string[] = [ 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B' ]
+
+    static octaves: number[] = [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+
 
     /** 
      * This array is used to keep track which notes are currently triggered. 
@@ -128,6 +139,8 @@ export class Synthesizer implements ISerialize {
 
     sequencers: Sequencer[]
 
+    components: Component[]
+
     isMuted: boolean = false
 
     /** ToneJs Recorder instance */
@@ -156,6 +169,7 @@ export class Synthesizer implements ISerialize {
         this.volume.toDestination()
 
         this.isRecording = false
+        this.components = []
 
         console.log('Register keys', Synthesizer.keyMap, Synthesizer.keyMap.length)
         let key
@@ -209,8 +223,10 @@ export class Synthesizer implements ISerialize {
     get bpm() { return Tone.Transport.bpm.value }
     set bpm(bpm:number) { 
 
+        if(bpm == null) bpm = 1
         // TODO - WTF Decimals all the time
         Tone.Transport.bpm.value = bpm
+        console.log('bpm', Tone.Transport.bpm.value)
     }
 
     /** Set Master Volume */
@@ -247,11 +263,28 @@ export class Synthesizer implements ISerialize {
     /** Add a track to the synthesizer. */
     addTrack(track: Track, i?: number) {
 
-        if(this.tracks.indexOf(track) == -1) this.tracks.push(track)
+        if(this.tracks.indexOf(track) == -1) {
+
+            this.tracks.push(track)
+        }
 
         track.synthesizer = this
-        
+            
         track.connect(this.volume)
+
+        let index = this.components.indexOf(track)
+        if(index == -1) {
+
+            if(i == undefined) this.components.push(track)
+            else this.components.splice(i, 0, track)
+        }
+        else if(i != undefined) {
+
+            this.components.splice(index, 1)
+            this.components.splice(i, 0, track)
+        }
+
+        track.index = this.components.indexOf(track)
     }
 
     /** Disconnects and removes track */
@@ -268,15 +301,35 @@ export class Synthesizer implements ISerialize {
             console.log('id', i, t.id)
             i ++
         }
+
+        this.components.splice(this.components.indexOf(track), 1)
     }
 
 
     /** Add a track to the synthesizer. */
     addSequencer(sequencer: Sequencer, i?: number) {
 
-        if(this.sequencers.indexOf(sequencer) == -1) this.sequencers.push(sequencer)
-
+        if(this.sequencers.indexOf(sequencer) == -1) {
+            
+            this.sequencers.push(sequencer)
+        }
+        
         sequencer.synthesizer = this
+
+        let index = this.components.indexOf(sequencer)
+        if(index == -1) {
+
+            if(i == undefined) this.components.push(sequencer)
+            else this.components.splice(i, 0, sequencer)
+
+        }
+        else if(i != undefined) {
+
+            this.components.splice(index, 1)
+            this.components.splice(i, 0, sequencer)
+        }
+
+        sequencer.index = this.components.indexOf(sequencer)
     }
 
     /** Disconnects and removes track */
@@ -285,6 +338,16 @@ export class Synthesizer implements ISerialize {
         this.sequencers.splice(this.sequencers.indexOf(sequencer), 1)
 
         sequencer.destroy()
+
+        this.components.splice(this.components.indexOf(sequencer), 1)
+    }
+
+    getActiveSequencers() {
+
+        return this.sequencers.map(s => {
+
+            if(s.isPlaying) return s
+        })
     }
 
 
@@ -296,6 +359,7 @@ export class Synthesizer implements ISerialize {
         // note = note.replace(/[0-9]/g, '')
 
         if(this.isPlaying == false) {
+
             Tone.start()
             Tone.Transport.start()
             this.isPlaying = true
@@ -318,7 +382,6 @@ export class Synthesizer implements ISerialize {
 
         if(this.isPlaying == false) {
             Tone.start()
-            Tone.Transport.start()
             this.isPlaying = true
         }
 
@@ -330,8 +393,6 @@ export class Synthesizer implements ISerialize {
         Tone.Transport.scheduleOnce((t) => {
 
             Synthesizer.activeNotes.delete(n)
-
-            console.log('delete note', n)
 
         // }, time)
         }, Tone.Time(time).toSeconds() + Tone.Time(duration).toSeconds())
@@ -543,6 +604,8 @@ export class Synthesizer implements ISerialize {
 
         for(let s of this.sequencers) s.destroy()
         this.sequencers.length = 0
+
+        this.components.length = 0
     }
 
     /** Disconnects everything and removes all event listeners */
@@ -606,7 +669,7 @@ export class Synthesizer implements ISerialize {
 
                 let track = new Track(this)
                 track.serializeIn(t)
-                this.addTrack(track)
+                this.addTrack(track, track.index)
             }
         }
 
@@ -617,7 +680,7 @@ export class Synthesizer implements ISerialize {
 
                 let sequencer = new Sequencer(this)
                 sequencer.serializeIn(s)
-                this.addSequencer(sequencer)
+                this.addSequencer(sequencer, sequencer.index)
 
                 sequencer.start()
             }

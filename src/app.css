@@ -16,7 +16,7 @@
   --c-gr: rgb(22, 111, 74);
 }
 
-
+/* yellow #ffcc19 */
 
 * {
 
@@ -32,7 +32,7 @@
   width: auto;
   height: auto;
 
-  mix-blend-mode: difference;
+  /* mix-blend-mode: difference; */
   
   outline: none;
 
@@ -53,7 +53,7 @@ body {
 
   transition: 1s all;
 
-  transition: 2s background-color;
+  /* transition: 2s background-color; */
 
   overflow-x: hidden;
   scrollbar-width: none;
@@ -61,7 +61,7 @@ body {
 
   /* cursor: url('/src/assets/imgs/circle-sepia.gif'); */
 
-  mix-blend-mode: difference;
+  /* mix-blend-mode: difference; */
 }
 
 body.safari {

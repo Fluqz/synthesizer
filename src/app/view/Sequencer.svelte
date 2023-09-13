@@ -41,7 +41,8 @@
     let currentLinePos
     Tone.Transport.scheduleRepeat((time) => {
 
-        if(sequencer.isPlaying) currentLinePos = (((sequencer.toneSequence.immediate() % sequencer.bars)) * (timelineRect.width / sequencer.bars)) - 1
+        if(sequencer.isPlaying) currentLinePos = ((((sequencer.toneSequence.immediate() - Sequencer.startTime) % sequencer.bars)) * (timelineRect.width / sequencer.bars)) - 1
+        else currentLinePos = 0
 
     }, 1 / 30, Tone.now(), Number.POSITIVE_INFINITY)
 
@@ -127,11 +128,6 @@
         timelineRect = timelineRect
     }
     
-    /** Click Note Event  */
-    const onNoteClick = (e) => {
-
-    }
-
     /** DblClick Note Event  */
     const onNoteDblClick = (e, note: SequenceObject) => {
 
@@ -218,7 +214,7 @@
     let endTime: number = 0
     let dragOffset: number = 0
     let handle = 0
-    const handleDown = (e, note: SequenceObject, which: 'start' | 'end') => {
+    const handleHorizontalDown = (e, note: SequenceObject, which: 'start' | 'end') => {
         // console.log('handle down', note)
 
         e.stopPropagation()
@@ -235,7 +231,7 @@
         handle = which == 'start' ? 0 : 1
     }
 
-    const handleMove = (e) => {
+    const handleHorizontalMove = (e) => {
 
         // e.stopPropagation()
 
@@ -286,7 +282,7 @@
         sequencer.sequence = sequencer.sequence
     }
 
-    const handleUp = (e) => {
+    const handleHorizontalUp = (e) => {
         // console.log('up')
         
         // e.stopPropagation()
@@ -300,6 +296,59 @@
         startTime = 0
         endTime = 0
     }
+
+
+    let velocity = .7
+
+
+    let currentNote: string
+    const onNoteClick = (e, note: SequenceObject) => {
+
+        currentNote = Tone.Frequency(note.note).toNote().toString()
+
+        const octave = currentNote[currentNote.length - 1]
+
+        currentNote = currentNote.replace(octave, '')
+
+        let i = Synthesizer.notes.indexOf(currentNote)
+
+        if(!e.shiftKey) i++
+        if(e.shiftKey) i--
+
+        if(i > Synthesizer.notes.length - 1) i = 0
+        else if(i < 0) i = Synthesizer.notes.length - 1
+
+        note.note = Synthesizer.notes[i] + octave
+
+        sequencer = sequencer
+    }
+
+    const onOctaveClick = (e, note: SequenceObject) => {
+
+        e.stopPropagation()
+
+        currentNote = Tone.Frequency(note.note).toNote().toString()
+
+        const octave = currentNote[currentNote.length - 1]
+
+        currentNote = currentNote.replace(octave, '')
+
+        let i = Synthesizer.octaves.indexOf(+octave)
+
+        if(!e.shiftKey) i++
+        if(e.shiftKey) i--
+
+        if(i > Synthesizer.octaves.length - 1) i = 0
+        else if(i < 0) i = Synthesizer.octaves.length - 1
+
+        console.log('octave', i, Synthesizer.octaves[i])
+
+        note.note = currentNote + Synthesizer.octaves[i]
+
+        sequencer = sequencer
+    }
+
+
 
 
 
@@ -444,17 +493,32 @@
                                     style:left={((Tone.Time(note.time).toSeconds() / sequencer.bars) * timelineRect.width) + 'px'}
                                     style:width={((Tone.Time(note.length).toSeconds() / sequencer.bars) * timelineRect.width) + 'px'} >
 
-                                    <div class="drag-hangle drag-start" 
-                                            on:pointerdown={(e) => handleDown(e, note, 'start')}
-                                            on:pointermove={(e) => handleMove(e)}
-                                            on:pointerup={(e) => handleUp(e)}></div>
-                                    <div class="drag-hangle drag-end" 
-                                            on:pointerdown={(e) => handleDown(e, note, 'end')}
-                                            on:pointermove={(e) => handleMove(e)}
-                                            on:pointerup={(e) => handleUp(e)}></div>
+                                    
+                                <div class="drag-handle drag-start" 
+                                        on:pointerdown={(e) => handleHorizontalDown(e, note, 'start')}
+                                        on:pointermove={(e) => handleHorizontalMove(e)}
+                                        on:pointerup={(e) => handleHorizontalUp(e)}></div>
+                                <div class="drag-handle drag-end" 
+                                        on:pointerdown={(e) => handleHorizontalDown(e, note, 'end')}
+                                        on:pointermove={(e) => handleHorizontalMove(e)}
+                                        on:pointerup={(e) => handleHorizontalUp(e)}></div>
 
-                                    <input bind:value={ note.note } />
- 
+                                
+                                <input bind:value={ note.note } />
+                                
+                                
+                                <div class="btn" title="Note - Click to increase; Shift - Click to decrease" on:click={e => onNoteClick(e, note)}></div>
+                                <div class="btn" title="Octave - Click to increase; Shift - Click to decrease" on:click={e => onOctaveClick(e, note)}></div>
+                                
+                                <div class="velocity" class:changed={ velocity < 1 } style:height={velocity * 100 + '%'}>
+                                
+                                    <div class="drag-handle drag-velocity" 
+                                            on:pointerdown={(e) => handleHorizontalDown(e, note, 'end')}
+                                            on:pointermove={(e) => handleHorizontalMove(e)}
+                                            on:pointerup={(e) => handleHorizontalUp(e)}></div>
+
+                                </div>
+                                
                             </div>
 
                         {/each}
@@ -482,8 +546,8 @@
 <svelte:body 
         on:pointerup={(e) => noteMouseUp(e)}
         on:pointermove={(e) => noteMouseMove(e)}
-        on:pointerup={(e) => handleUp(e)}
-        on:pointermove={(e) => handleMove(e)} />
+        on:pointerup={(e) => handleHorizontalUp(e)}
+        on:pointermove={(e) => handleHorizontalMove(e)} />
 
 
 <style>
@@ -683,22 +747,26 @@
     margin: 0px;
 }
 
-.sequencer-wrapper .sequence .drag-hangle {
+.sequencer-wrapper .sequence .note .btn {
+
+    z-index: 2;
+}
+
+.sequencer-wrapper .sequence .drag-handle {
 
     z-index: 3;
 
     position: absolute;
     top: 0px;
 
-    min-width: 10px;
-    max-width: 20px;
+    width: 10px;
     height: 100%;
 
     cursor: ew-resize;
 
-    background-color: #fff;
+    /* background-color: #fff; */
 
-    opacity: .3;
+    /* opacity: .3; */
 }
 
 .sequencer-wrapper .sequence .drag-start {
@@ -710,6 +778,30 @@
 .sequencer-wrapper .sequence .drag-end {
 
     right: 0px;
+}
+
+.sequencer-wrapper .sequence .drag-velocity {
+
+    left: 0px;
+
+    width: 100%;
+    height: 10px;
+
+    cursor: row-resize;
+}
+
+.sequencer-wrapper .sequence .velocity {
+
+    position:absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+}
+.sequencer-wrapper .sequence .velocity.changed {
+
+    background-color: #fff;
+    opacity: .2;
 }
 
 </style>

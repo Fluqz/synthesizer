@@ -38,7 +38,7 @@ export const moireShader = (p5) => {
 
         p5.createCanvas(G.w, G.h, p5.WEBGL)
 
-        p5.frameRate(30)
+        p5.frameRate(24)
         // p5.noLoop()
 
         p5.canvas.style.position = 'absolute'
@@ -70,7 +70,7 @@ export const moireShader = (p5) => {
 
         // console.log('draw')
 
-        p5.clear()
+        // p5.clear()
 
         p5.shader(shader)
 

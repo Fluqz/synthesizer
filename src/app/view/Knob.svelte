@@ -251,7 +251,7 @@
 <div class="knob-wrapper" bind:this={dom}>
 
     <!-- <div class="knob-value">{ value.toFixed(2) }</div> -->
-    <div class="knob-value"><input type="text" bind:value={value} step={.01} on:click={(e) => { e.target.select() }}/></div>
+    <div class="knob-value"><input type="text" bind:value={value} step={.01} on:click={(e) => { e.target.select() }} on:keydown={ (e) => e.key == 'Enter' ? setValue(value) : null }/></div>
 
     <div class="knob shifting-GIF"
         bind:this={knobDOM}

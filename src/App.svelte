@@ -39,7 +39,7 @@
     // On document ready
     onMount(() => {
 
-        synthesizer.setVolume(0)
+        synthesizer.setVolume(-3)
 
         if(isSafari()) { document.body.classList.add('safari') }
 
@@ -63,6 +63,18 @@
             })
 
         }, 1500)
+
+
+        // Tone.Transport.scheduleRepeat(() => {
+
+        //     // console.log(Tone.Transport.position)
+        //     // console.log(Tone.Transport.seconds)
+        //     // console.log(Tone.Transport.PPQ)
+        //     console.log('s',Tone.Transport.nextSubdivision('4n'))
+        //     console.log('now',Tone.Transport.now())
+        //     // console.log(Tone.Transport.sampleTime)
+
+        // }, .1)
 
         /**
          * 
@@ -121,6 +133,11 @@
             synthesizer = synthesizer
 
         }, 30000 * (Tone.Transport.bpm.value * .01))
+
+
+        // Add wildcard css at the beginning
+        // this will be removed/readded when opening/closing the menu
+        document.styleSheets[0].insertRule('* { mix-blend-mode: difference; }', 0)
     })
     
 
@@ -199,7 +216,23 @@
     let isMenuOpen = false
     const toggleMenu = (e) => {
 
+        console.log('TOGGLE MENU',)
+
         isMenuOpen = !isMenuOpen
+
+        // Add css dynamicly via document to use the wildcard  * { ... }
+        if(isMenuOpen) {
+
+            document.styleSheets[0].deleteRule(0)
+            document.styleSheets[0].insertRule('html, body {margin: 0; height: 100%; overflow: hidden }', 1) // Could use a class here too
+        }
+        else {
+
+            document.styleSheets[0].deleteRule(1) // Could use a class here too
+            document.styleSheets[0].insertRule('* { mix-blend-mode: difference; }', 0)
+        }
+
+        console.log('stylesheet', isMenuOpen, document.styleSheets[0].cssRules[0])
     }
 
     const toggleVisuals = (e) => {
@@ -234,7 +267,6 @@
     document.addEventListener('click', () => {
 
         Tone.start()
-        Tone.Transport.start()
 
 
         console.log('click', synthesizer.presetManager.getPresets())
@@ -302,16 +334,13 @@
         <div class="btn" title="Download Visual" on:click={saveVisuals}>I</div>
         <div class="btn" title="Visuals On/Off" on:click={toggleVisuals}>V</div>
 
-        <div class="btn" title="Menu On/Off" on:click={toggleMenu} on:close={toggleMenu} style="float:right;"></div>
+        <div class="btn" title="Menu On/Off" on:click={toggleMenu} style="float:right;"></div>
 
 
     </div>
 
-    {#if isMenuOpen }
 
-        <Menu active={isMenuOpen}></Menu>
-
-    {/if}
+    <Menu bind:active={isMenuOpen} on:close={toggleMenu}></Menu>
 
 
 {/if}

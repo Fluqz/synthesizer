@@ -4,7 +4,7 @@
     import { onDestroy, onMount } from "svelte";
 
     export let output: Tone.ToneAudioNode
-    export let id:number = -1
+    
 
     let scheduleID
 
@@ -72,7 +72,7 @@
 
       if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
 
-      scheduleID = Tone.Transport.scheduleRepeat(draw, 1 / 30, Tone.now(), 1000000000)
+      scheduleID = Tone.Transport.scheduleRepeat(draw, 1 / 30, Tone.now())
     }
 
     const disconnect = () => {

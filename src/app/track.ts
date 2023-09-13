@@ -1,13 +1,14 @@
 import * as Tone from 'tone'
-import { Synthesizer, type ISerialization, type ISerialize, type Channel } from "./synthesizer"
+import { Synthesizer, type ISerialization, type ISerialize, type Channel, type IComponent } from "./synthesizer"
 import { Node, type INodeSerialization } from './nodes/node'
-import { InstrumentType, type Instrument } from './nodes'
+import { InstrumentType, type Instrument, Delay } from './nodes'
 import { writable, type Writable } from 'svelte/store'
 
 export interface ITrackSerialization extends ISerialization {
 
     enabled: boolean
 
+    index: number
     channel: number
     octave: number
     volume: number
@@ -26,10 +27,14 @@ export interface ITrackSerialization extends ISerialization {
 
 export type HoldMode = 'OFF' | 'PLAY' | 'HOLD'
 
-export class Track implements ISerialize {
+export class Track implements ISerialize, IComponent {
 
     /** Track count */
     static count: number = 0
+
+    index: number 
+
+    name: 'track' | 'sequencer' = 'track'
 
     /** Track UID */
     public id: number
@@ -229,7 +234,7 @@ export class Track implements ISerialize {
     /** Triggers the instruments note */
     triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
-        console.log('trigger attack', note, this.instrument.name)
+        // console.log('trigger attack', note, this.instrument.name)
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         if(this.hold == 'HOLD') return
 
@@ -244,7 +249,7 @@ export class Track implements ISerialize {
     /** Triggers the instruments note */
     triggerAttackRelease(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
 
-        console.log('trigger attackr', note, this.instrument.name)
+        // console.log('trigger attackr', note, this.instrument.name)
 
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         // if(this.hold == 'HOLD') return
@@ -381,6 +386,7 @@ export class Track implements ISerialize {
 
     serializeIn(o: ITrackSerialization) {
 
+        if(o.index != undefined) this.index = o.index
         // if(o.name) this.name = o.name
         if(o.volume != undefined) this.volume = o.volume
         if(o.octave != undefined) this.octave = o.octave
@@ -445,6 +451,8 @@ export class Track implements ISerialize {
 
             // name: this.name,
             enabled: true,
+
+            index: this.index,
 
             octave: this.octave,
             channel: this.channel,

@@ -17,7 +17,7 @@
     import { Track as _Track } from '../track'
     import { Sequencer as _Sequencer } from '../sequencer'
     import { Instrument, Node as _Node } from '../nodes/'
-    import { Synthesizer, type Channel } from '../synthesizer'
+    import { Synthesizer, type Channel, type Component } from '../synthesizer'
     import { writable } from 'svelte/store';
     import { G } from '../core/globals';
     import { DEFAULT_SESSION } from '../presets';
@@ -39,6 +39,8 @@
 
         synthesizer.tracks = synthesizer.tracks
 
+        synthesizer.components = synthesizer.components
+
         synthesizer = synthesizer
     }
 
@@ -49,37 +51,6 @@
         // Events
         document.addEventListener('keydown', onKeyDown, false)
         document.addEventListener('keyup', onKeyUp, false)
-
-        // savePreset.addEventListener('keydown', (e) => {
-
-        //     e.stopPropagation()
-
-        //     if(e.key == 'Enter' && e.target.value != null) {
-
-        //         synthesizer.presetManager.savePreset(e.target.value)
-        //     }
-        // })
-
-
-        // let presetDropdown = new Dropdown(ps, undefined, false, true)
-        // presetDropdown.onSelectOption.subscribe((o) => {
-
-        //     synthesizer.loadPreset(o)
-        // })
-        // presetDropdown.onDeleteOption.subscribe((o) => {
-
-        //     synthesizer.removePreset(o)
-        // })
-        // loadPreset.appendChild(presetDropdown.dom)
-
-        // synthesizer.onSavePreset.subscribe((p) => {
-
-        //     presetDropdown.add(p.name)
-        // })
-        // synthesizer.onRemovePreset.subscribe((p) => {
-
-        //     presetDropdown.remove(p.name)
-        // })
     })
 
     const addTrack = () => {
@@ -106,8 +77,6 @@
     const duplicateTrack = (e) => {
 
         if(!e.detail) return
-
-        console.log(e)
 
         let duplicate = addTrack()
 
@@ -335,6 +304,7 @@
         if(!synthesizer.isPlaying) {
             Tone.start()
             Tone.Transport.start()
+            console.log('START', Tone.Transport.now())
         }
         else {
             Tone.Transport.stop()
@@ -342,6 +312,22 @@
 
         synthesizer.isPlaying = !synthesizer.isPlaying
         synthesizer = synthesizer
+    }
+
+    const getTrack = (c: Component) => {
+
+        for(let t of synthesizer.tracks) {
+
+            if(t == c) return t
+        }
+    }
+
+    const getSequencer = (c: Component) => {
+
+        for(let s of synthesizer.sequencers) {
+
+            if(s == c) return s
+        }
     }
 
     onDestroy(() => {
@@ -366,14 +352,9 @@
 
             <div id="mute" class="btn" class:active={synthesizer.isMuted} title="Mute" on:click={mute}>M</div>
 
-            <!-- <div id="bpm" title="Shift + A">
-                <label for="bpm">BPM</label>
-                <input type="number" pattern="[0-1]" min="1" max="300" name="bpm"/>
-            </div> -->
-
             <div id="play-btn" class="btn" title="Play | Stop" class:active={synthesizer.isPlaying} on:click={togglePlayStop}>{ synthesizer.isPlaying ? '-' : '>'}</div>
 
-            <div id="bpm-btn" class="btn" title="BPM"><input type="number" bind:value={ synthesizer.bpm } step="1" min="1" max="400" /></div>
+            <div id="bpm-btn" class="btn" title="BPM"><input type="number" bind:value={ synthesizer.bpm } pattern="[0-1]" step="1" min="1" max="400" /></div>
 
             <div id="channel-btn" class="btn" title="Channel - Key: Arrow Up / Down | Click to increase | Click with SHIFT to decrease" on:click={onChannel}>{ synthesizer.channel }</div>
 
@@ -440,7 +421,8 @@
 
         </div>
 
-        <div class="mixer">
+        
+        <!-- <div class="mixer">
 
             <div class="tracks">
 
@@ -456,25 +438,62 @@
 
             </div>
 
+
+            {#if !sequencersCollapsed }
+                
+                <div class="sequencers">
+
+                    
+                    {#each synthesizer.sequencers as sequencer, i}
+                        
+                        <Sequencer sequencer={sequencer} on:deleteSequencer={deleteSequencer} on:duplicate={duplicateSequencer}/>
+
+                    {/each}
+
+
+                </div>
+                
+            {/if}
+
+        </div> -->
+
+
+
+
+
+
+        <div class="mixer">
+
+            {#each synthesizer.components as component}
+
+                {#if component.name == 'track' }
+                    
+                    <div class="track">
+
+                        <Track track={getTrack(component)} on:delete={deleteTrack} on:duplicate={duplicateTrack} />
+
+                    </div>
+
+                {/if}
+
+                {#if component.name == 'sequencer' }
+
+                    <Sequencer sequencer={getSequencer(component)} on:deleteSequencer={deleteSequencer} on:duplicate={duplicateSequencer}/>
+
+                {/if}
+
+            {/each}
+
         </div>
 
 
-        {#if !sequencersCollapsed }
-            
-            <div class="sequencers">
 
-                
-                {#each synthesizer.sequencers as sequencer, i}
-                    
-                    <Sequencer sequencer={sequencer} on:deleteSequencer={deleteSequencer} on:duplicate={duplicateSequencer}/>
 
-                {/each}
 
-                <!-- <div class="add-sequencer-btn" on:click={addSequencer}>&#x2b;</div> -->
 
-            </div>
-            
-        {/if}
+
+
+
 
         
         {#if synthesizer.tracks.length > 0 }
@@ -532,10 +551,6 @@
     justify-content: center;
 }
 
-.synthesizer > .mixer > .tracks{
-    width: 100%;
-}
-
 .synthesizer-menu {
 
     padding: 5px 0px;
@@ -578,27 +593,7 @@
 
 }
 
-.sequencers {
-/* 
-    display: flex;
-    align-items: center;
-    justify-content: flex-start; */
-
-    width: 100%;
-    /* height: 75px; */
-    border-top: 1px solid var(--c-b);
-    border-top: .5px solid var(--c-b);
-
-    background-color: var(--c-b);
-
-
-/* 
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: none; */
-}
-
-.sequencers .add-sequencer-btn {
+.mixer .add-sequencer-btn {
 
     width: 75px;
     min-width: 75px;

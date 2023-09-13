@@ -18,11 +18,15 @@ export abstract class Instrument extends Node {
 
     type: InstrumentType
 
+    isPlaying: boolean
+
     constructor(name, type) {
 
         super(name)
 
         this.type = type
+
+        this.isPlaying = false
     }
     
     /** Trigger Note */

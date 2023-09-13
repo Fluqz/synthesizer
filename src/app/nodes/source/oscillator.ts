@@ -40,9 +40,6 @@ export class Oscillator extends Instrument {
     private _sustain: number
     private _release: number
 
-    /** Is the osc already playing */
-    private isPlaying: boolean
-
 
     /** freq, detune, volume, waveform,  */
     constructor(volume?: number, frequency?: number, detune?: number) {
@@ -56,8 +53,6 @@ export class Oscillator extends Instrument {
         this.gain = new Tone.Gain(1)
 
         this.output = this.gain
-
-        this.isPlaying = false
 
         this.volume = volume ? volume : .4
         this.detune = this.osc.get().detune
@@ -172,6 +167,14 @@ export class Oscillator extends Instrument {
         this.frequency = Tone.Frequency(note).toFrequency()
 
         this.envelope.triggerAttackRelease(duration, time, velocity)
+
+        this.isPlaying = true
+
+        Tone.Transport.scheduleOnce((time) => {
+
+            this.isPlaying = false
+            
+        }, Tone.Time(time).toSeconds() + Tone.Time(duration).toSeconds())
     }
 
     triggerRelease(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
@@ -181,7 +184,7 @@ export class Oscillator extends Instrument {
         const otherPlayedNote = Array.from(Synthesizer.activeNotes).pop()
         if(this.isPlaying || Synthesizer.activeNotes.size > 0 && otherPlayedNote != note) {
 
-            console.log('play other note', Synthesizer.activeNotes)
+            // console.log('play other note', Synthesizer.activeNotes)
             this.triggerAttack(otherPlayedNote, time)
             return
         }
