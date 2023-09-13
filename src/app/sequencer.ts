@@ -27,6 +27,9 @@ export interface ISequencerSerialization {
 
 export class Sequencer implements ISerialize, IComponent {
 
+    /** Sequencer count */
+    static count: number = 0
+
     /** Starting time of the first sequencer */
     static startTime: number
 
@@ -35,7 +38,11 @@ export class Sequencer implements ISerialize, IComponent {
     index: number
     name: 'track' | 'sequencer' = 'sequencer'
 
+    /** Sequencer UID */
+    id: number
+
     synthesizer: Synthesizer
+
 
     sequence: SequenceObject[]
 
@@ -57,6 +64,8 @@ export class Sequencer implements ISerialize, IComponent {
 
         this.synthesizer = synthesizer
         this.sequence = sequence == undefined ? [] : sequence
+
+        this.id = Sequencer.count++
 
         this.bars = this.sequence.length == 0 ? 4 : this.sequence.length
 
@@ -213,10 +222,13 @@ export class Sequencer implements ISerialize, IComponent {
             this.toneSequence.dispose()
         }
 
+        const now = Tone.now()
 
         this.toneSequence = new Tone.Part((time, value) => {
 
-            // console.log('t', time.toFixed(5), this.toneSequence.immediate().toFixed(5), this.toneSequence.progress.toFixed(5), this.toneSequence.toSeconds().toFixed(5))
+            // console.log('t', time.toFixed(5), Tone.now().toFixed(5), this.toneSequence.progress.toFixed(5), this.toneSequence.toSeconds().toFixed(5))
+
+            console.log('time', this.id, time, Sequencer.startTime)
 
             for(let channel of this.channels) {
 
@@ -248,15 +260,24 @@ export class Sequencer implements ISerialize, IComponent {
 
         if(Sequencer.startTime == null) {
             
-            Sequencer.startTime = Tone.Transport.now()
+            Sequencer.startTime = now
             startTime = Sequencer.startTime
 
             console.log('Starting first', Sequencer.startTime)
         }
         else {
+            
+            const duration = (now - Tone.Time(Sequencer.startTime).toSeconds())
+            let time = Sequencer.startTime
+            while(duration > time) {
+                
+                time += Tone.Time('1m').toSeconds()
+            }
 
-            startTime = Tone.now() + (Tone.now() - Tone.Time(Sequencer.startTime).toSeconds()) % Tone.Time('1m').toSeconds()
-            console.log('now, startOffset, count, nextOffset, start', Tone.now(), Tone.now() - Tone.Time(Sequencer.startTime).toSeconds(), (Tone.now() - Tone.Time(Sequencer.startTime).toSeconds()) / Tone.Time('1m').toSeconds() ,(Tone.now() - Tone.Time(Sequencer.startTime).toSeconds()) % Tone.Time('1m').toSeconds(), startTime)
+            console.log('TIME', time, now)
+
+            startTime = time
+            console.log('now, startOffset, count, nextOffset, start', now, now - Tone.Time(Sequencer.startTime).toSeconds(), (now - Tone.Time(Sequencer.startTime).toSeconds()) / Tone.Time('1m').toSeconds() ,(now - Tone.Time(Sequencer.startTime).toSeconds()) % Tone.Time('1m').toSeconds(), startTime)
             console.log('length, ', Tone.Time('1m').toSeconds(), )
         }
 

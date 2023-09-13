@@ -41,10 +41,12 @@
     let currentLinePos
     Tone.Transport.scheduleRepeat((time) => {
 
-        if(sequencer.isPlaying) currentLinePos = ((((sequencer.toneSequence.immediate() - Sequencer.startTime) % sequencer.bars)) * (timelineRect.width / sequencer.bars)) - 1
+        // if(sequencer.isPlaying) console.log('pos', ((Tone.immediate() - Sequencer.startTime) % sequencer.bars))
+        // if(sequencer.isPlaying) console.log('pos',((((Tone.now() - Sequencer.startTime) % sequencer.bars)), (timelineRect.width / sequencer.bars)) - 1)
+        if(sequencer.isPlaying) currentLinePos = ((((Tone.immediate() - Sequencer.startTime) % sequencer.bars)) * (timelineRect.width / sequencer.bars))
         else currentLinePos = 0
 
-    }, 1 / 30, Tone.now(), Number.POSITIVE_INFINITY)
+    }, 1 / 60, Tone.now(), Number.POSITIVE_INFINITY)
 
 
     /** Set default note length*/
@@ -713,7 +715,7 @@
 
     cursor: grab !important;
 
-    border: 1px solid var(--c-o);
+    /* border: 1px solid var(--c-o); */
 }
 
 .sequencer-wrapper .sequence .note.selected {

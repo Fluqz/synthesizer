@@ -266,22 +266,11 @@
 
     document.addEventListener('click', () => {
 
-        Tone.start()
+        // Tone.start()
+        // Tone.Transport.start()
 
 
-        console.log('click', synthesizer.presetManager.getPresets())
-
-        // let s = new Tone.PolySynth(Tone.DuoSynth).toDestination()
-
-        // let seq = new Tone.Sequence((time: number, note: Tone.Unit.Frequency) => {
-
-        //     console.log('yo',time, note)
-
-        //     s.triggerAttackRelease(note, .1, Tone.now())
-
-        // }, [['A3', 'A3'], ['F3', 'F3', 'F3'], ['D3', 'D3', 'D3', 'D3', 'D3', 'D3']], '4n')
-
-        // seq.start(Tone.now())
+        // console.log('click', synthesizer.presetManager.getPresets())
     })
 
 

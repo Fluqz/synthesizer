@@ -165,7 +165,7 @@
 
         <div class="node-header">
 
-            <div class="toggle-shrink-btn" on:click={toggleShrinking}>&#x2689;</div>
+            <div class="toggle-shrink-btn" on:click={toggleShrinking}></div>
     
             {#if isEffect }
                 
@@ -337,6 +337,11 @@
   height: 15px;
   line-height: 15px;
 }
+.node.collapsed .node-title {
+
+    top: calc(50% - (15px / 2));
+}
+
 .node .delete {
 
     display: flex;
@@ -362,17 +367,21 @@
 
 .toggle-shrink-btn {
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: block;
+
+    width: 7px;
+    height: 7px;
 
     position: absolute;
-    left: 15px;
     top: 0px;
-    cursor: pointer;
+    left: 20px;
 
-    width: 15px;
-    height: 15px;
+    border-radius: 100%;
+
+    background-color: var(--c-w);
+    margin: 4px;
+
+    cursor: pointer;
 
     z-index: 100;
 

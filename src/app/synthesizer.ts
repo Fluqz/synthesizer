@@ -342,17 +342,18 @@ export class Synthesizer implements ISerialize {
         this.components.splice(this.components.indexOf(sequencer), 1)
     }
 
+    /** Returns a new array with currently active sequencers. */
     getActiveSequencers() {
 
-        return this.sequencers.map(s => {
+        return this.sequencers.filter(s => {
 
-            if(s.isPlaying) return s
+            return s.isPlaying
         })
     }
 
 
 
-    isPlaying = false
+    private isPlaying = false
     /** Trigger a note - Triggers all tracks */
     triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, channel: Channel = 0, velocity:number = 1) {
 
@@ -682,7 +683,7 @@ export class Synthesizer implements ISerialize {
                 sequencer.serializeIn(s)
                 this.addSequencer(sequencer, sequencer.index)
 
-                sequencer.start()
+                // sequencer.start()
             }
         }
     }
