@@ -183,7 +183,6 @@ export class PulseOscillator extends Instrument {
 
         this.isPlaying = false
 
-
         this.envelope.triggerRelease(time)
     }
 

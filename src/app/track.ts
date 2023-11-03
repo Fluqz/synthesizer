@@ -278,14 +278,14 @@ export class Track implements ISerialize, IComponent {
 
         this.activeNotes.delete(note)
 
-        this.instrument.triggerRelease(note, time)
-
-        if(this.instrument.type == InstrumentType.MONO && (this.activeNotes.size > 0)) {
+        if(this.instrument.type == InstrumentType.MONO && (this.activeNotes.size > 0 && !this.activeNotes.has(note))) {
 
             // console.log('play other note', this.activeNotes)
-            this.triggerAttack(Array.from(this.activeNotes).pop(), time)
+            // this.triggerAttack(Array.from(this.activeNotes).pop(), time)
             return
         }
+
+        this.instrument.triggerRelease(note, time)
     }
 
     /** Adds a node to the node chain */
