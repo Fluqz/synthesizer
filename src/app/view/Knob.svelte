@@ -3,25 +3,22 @@
 
 <script lang="ts">
 
-    import * as Tone from "tone"
-
     import { fromEvent, Observable } from "rxjs"
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import { M } from "../util/math"
     import { Vec2 } from "../util/math";
-    import { validate_each_keys } from "svelte/internal";
 
 
     /** Name of Knob */
     export let name: string
-    /** value */
+    /** Current value */
     export let value: number = 0
     /** Minimum possible value */
     export let min: number = 0
     /** Maximum possible value */
     export let max: number = 1
-    /** Division of (max - min) / division */
-    export let division: number = 100
+    /** The steps to go. Default is abs(max - min) / 360 */
+    export let steps: number = Math.abs(max - min) / 360
 
     /** Initial value */
     const initValue: number = value
@@ -41,14 +38,17 @@
     let mousePosition: Vec2 = new Vec2()
     /** Current mouse position { x, y } */
     let mouseDownPosition: Vec2 = new Vec2()
+    /** Mouse offset from center of knob */
+    let offsetMousePosition: Vec2 = new Vec2()
+
+    /** Drag init value */
+    let dragInitValue: number
+    /** Drag starting position */
+    let dragStartPosition: Vec2 = new Vec2()
+
 
     /** Current angle when turning knob */
     let angle: number = 0
-    /** New incoming angle when turning knob */
-    let newAngle: number = 0
-    /** Fix offset to start angle at 12 o clock */
-    let offsetAngle: number = -Math.PI / 2
-
 
     /** Is mouse drag active */
     let drag: boolean = false
@@ -71,9 +71,6 @@
     // ADD FIRST LETTER OF NAME TO MIDDLE OF KNOB
 
 
-    angle = (value / ((max - min) / (Math.PI * 2)))
-
-
 
     const reset = () => {
 
@@ -85,28 +82,24 @@
         
         value = v
 
-        value = M.map(0, 1, min, max, value)
+        // value = M.map(0, 1, min, max, value)
+
+
+        // console.log('Change', name, 'to :', value, initValue)
 
         value = M.clamb(min, max, value)
-
-        angle = (value / ((max - min) / (Math.PI * 2)))
         
-        console.log('Change', name, 'to :', value, initValue)
+        getAngle()
 
         dispatch('onChange', value)
     }
 
-    /** Calculate value from current angle */
-    const setValueFromAngle = () => {
+    const getAngle = () => {
 
-        value = (angle) / Math.PI / 2
-
-        setValue(value)
+        const oneDegree = ((max - min) / (Math.PI * 2))
+        
+        return angle = (value / oneDegree) - (min / oneDegree)
     }
-
-
-
-
 
 
     // EVENTS
@@ -128,6 +121,8 @@
         clientRect = knobDOM.getBoundingClientRect()
 
         centerPosition.set( clientRect.x + (clientRect.width / 2), clientRect.y + (clientRect.height / 2))
+
+        offsetMousePosition.set(mousePosition.x - centerPosition.x, mousePosition.y - centerPosition.y)
     }
 
     /** On 'mousemove' event callback */
@@ -136,6 +131,7 @@
         e.preventDefault()
         e.stopPropagation()
         
+        // If mouse is not clicked while moving
         if(!isMouseDown) return
 
         // console.log('mousemove', e)
@@ -143,28 +139,30 @@
         // Keep track of mouse position
         mousePosition.set(e.clientX, e.clientY)
 
-        // Check if mouse has moved more than clickRange
-        if(mouseDownPosition.distanceTo(mousePosition) > clickRange) drag = true
+        // Keep track of mouse position offset
+        offsetMousePosition.set(mousePosition.x - centerPosition.x, mousePosition.y - centerPosition.y)
 
+
+        // Check if mouse has moved more than clickRange
+        if(mouseDownPosition.distanceTo(mousePosition) > clickRange) {
+         
+            if(drag == false) {
+
+                dragStartPosition.copy(mousePosition)
+                dragInitValue = value
+            }
+
+            drag = true
+        }
+
+        // Dragging 
         if(!drag) return
 
-        // Angle
-        newAngle = centerPosition.angleTo(mousePosition)
+        const distance = dragStartPosition.y - mousePosition.y
 
-        if(angle < newAngle) {
+        const val = M.clamb(min, max, dragInitValue + (distance * steps))
 
-            if(newAngle < Math.PI * 2) angle = newAngle
-            else angle = Math.PI * 2
-        }
-
-        else if(angle > newAngle) {
-
-            if(newAngle > 0) angle = newAngle
-            else angle = 0
-        }
-
-        // Update value from angle
-        setValueFromAngle()
+        setValue(val)
     }
 
     /** On 'mouseup' event callback */
@@ -186,8 +184,8 @@
     /** On 'keydown' event callback */
     const onKeyDown = (e) => {
 
-        if(e.key === 'Meta') division *= 40
-        // if(e.key === 'Meta') division /= 4
+        if(e.key === 'Meta') steps *= 40
+        // if(e.key === 'Meta') steps /= 4
 
         isKeyDown = true
     }
@@ -195,8 +193,8 @@
     const onKeyUp = (e) => {
 
 
-        if(e.key === 'Meta') division /= 40
-        // if(e.key === 'Meta') division *= 4
+        if(e.key === 'Meta') steps /= 40
+        // if(e.key === 'Meta') steps *= 4
 
         isKeyDown = false
     }
@@ -207,8 +205,11 @@
         e.preventDefault()
         e.stopPropagation()
 
-        if(e.wheelDelta > 0) setValue(M.map(min, max, 0, 1, value - ((1 / division) * Math.round(Math.abs(e.wheelDelta / 5)))))
-        else if(e.wheelDelta < 0) setValue(M.map(min, max, 0, 1, value + ((1 / division) * Math.round(Math.abs(e.wheelDelta / 5)))))
+        // if(e.wheelDelta > 0) setValue(M.clamb(min, max, M.map(min, max, 0, 1, value - ((1 / steps) * Math.round(Math.abs(e.wheelDelta / 5))))))
+        // else if(e.wheelDelta < 0) setValue(M.clamb(min, max, M.map(min, max, 0, 1, value + ((1 / steps) * Math.round(Math.abs(e.wheelDelta / 5))))))
+
+        if(e.wheelDelta > 0) setValue(M.clamb(min, max, value - (steps * Math.round(Math.abs(e.wheelDelta / 5)))))
+        else if(e.wheelDelta < 0) setValue(M.clamb(min, max, value + (steps * Math.round(Math.abs(e.wheelDelta / 5)))))
     }
 
     document.addEventListener('pointermove', onMouseMove)
@@ -224,6 +225,8 @@
     let unsubscribeWheelObserver
 
     onMount(() => {
+
+        getAngle()
 
         wheelObservable = fromEvent(knobDOM, 'wheel', { bubbles: false })
         wheelObservable.subscribe(onScroll)
