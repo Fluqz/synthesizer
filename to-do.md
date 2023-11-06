@@ -3,6 +3,8 @@
 
 #Unfinished
 
+
+
 Volume vs Gain
 
 Arpeggiator in Synth and per Track
@@ -36,6 +38,9 @@ Disable Visuals completly remove() in p5 sketch
 
 
 #IDEAs
+
+
+CHANNELS ARE BASICLY GROUPS? USE INDEX TO GROUP THEM VISUALLY?
 
 - Add humanize knob
 

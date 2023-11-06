@@ -32,8 +32,10 @@ export class Track implements ISerialize, IComponent {
     /** Track count */
     static count: number = 0
 
+    /** Tracks order number for the view */
     index: number 
 
+    /** Type of component to differentiate Track & Sequencers */
     name: 'track' | 'sequencer' = 'track'
 
     /** Track UID */

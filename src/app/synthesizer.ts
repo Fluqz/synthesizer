@@ -54,6 +54,7 @@ export class Synthesizer implements ISerialize {
 
     /** Array of keys on the synthesizer */
     static keyMap: string[] = [
+        
         // Upper
         'q', '2', 'w', '3', 'e', 'r', '5', 't', '6', 'z', '7', 'u', 'i', '9', 'o', '0', 'p',
 
