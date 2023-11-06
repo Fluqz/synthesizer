@@ -42,22 +42,42 @@
     <div>
 
         Manual
+
+            This is a short manual for this website.
+
             Introduction
+
+                This tool is a sort of synthesizer builder playable by keys or sequencers.                
+                All running with ToneJS.
+
                 Interface
+
+                #Plus
+                The Menu bar lets you create Tracks and Sequencers. 
+
+                #Tracks
+                All tracks have a source instrument. This can be a several Oscillator, Prebuild Synthesizers, a Sampler or Noise.
+
+                #Sequencer
+                Sequencers will let you play notes or samples automatically. 
+                You can build chains of notes to make a melody or a drum beat.
+
+
                 Synth
+                Hold mode
                 Sequencer
                 Channel
                 Midi Info
-            Epilepsy 
             Keybindings (Show in Introduction?)
         Settings
         Credits
         Links
 
+        Epilepsy
 
         Welcome
 
-        
+        Works & looks best in firefox
 
         Warning to everyone with Epilepsy. Please disable the visuals in the top left corner!
 
