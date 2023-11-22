@@ -9,10 +9,6 @@ Volume vs Gain
 
 Arpeggiator in Synth and per Track
 
-Knob mousemove distance in y axis
-
-Knob input field not working
-
 Global Play / Stop button
 
 Menu styling and text
@@ -52,6 +48,7 @@ CHANNELS ARE BASICLY GROUPS? USE INDEX TO GROUP THEM VISUALLY?
 - on disconnecting nodes or anything ramp down volume of affected track
 
 - Enter fullscreen mode and disable all UI
+
 - velocity knob?
 - Midi has velocity
 
@@ -60,6 +57,7 @@ CHANNELS ARE BASICLY GROUPS? USE INDEX TO GROUP THEM VISUALLY?
 - drum machine generator
   set: drum parts (hihat, snare etc) 
        random (aber im takt) or steady 4/4 8/8 2/4 etc or 16 bars triggering triggering
+  Make sampler with predefined drums 
        
 
 - loop mode recording - set a loop length and start record and play. loop runns and playing will overdub. also make undo 
