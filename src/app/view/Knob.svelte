@@ -79,6 +79,9 @@
 
     /** Set value between 0 - 1 */
     const setValue = (v: number) => {
+
+        // console.log('val', v, Number.isNaN(v))
+        if(Number.isNaN(v)) return
         
         value = v
 
@@ -103,6 +106,13 @@
 
 
     // EVENTS
+
+    const onInputChannge = (e) => {
+
+        setValue(e.target.valueAsNumber)
+
+        if(e instanceof KeyboardEvent && e.key == 'Enter') (e.target as HTMLInputElement).blur()
+    }
 
     /** On 'mousedown' event callback */
     const onMouseDown = (e) => {
@@ -208,8 +218,8 @@
         // if(e.wheelDelta > 0) setValue(M.clamb(min, max, M.map(min, max, 0, 1, value - ((1 / steps) * Math.round(Math.abs(e.wheelDelta / 5))))))
         // else if(e.wheelDelta < 0) setValue(M.clamb(min, max, M.map(min, max, 0, 1, value + ((1 / steps) * Math.round(Math.abs(e.wheelDelta / 5))))))
 
-        if(e.wheelDelta > 0) setValue(M.clamb(min, max, value - (steps * Math.round(Math.abs(e.wheelDelta / 5)))))
-        else if(e.wheelDelta < 0) setValue(M.clamb(min, max, value + (steps * Math.round(Math.abs(e.wheelDelta / 5)))))
+        if(e.wheelDelta > 0) setValue(M.clamb(min, max, value - (steps * Math.round(Math.abs(e.wheelDelta))) / 30))
+        else if(e.wheelDelta < 0) setValue(M.clamb(min, max, value + (steps * Math.round(Math.abs(e.wheelDelta))) / 30))
     }
 
     document.addEventListener('pointermove', onMouseMove)
@@ -254,7 +264,14 @@
 <div class="knob-wrapper" bind:this={dom}>
 
     <!-- <div class="knob-value">{ value.toFixed(2) }</div> -->
-    <div class="knob-value"><input type="text" bind:value={value} step={.01} on:click={(e) => { e.target.select() }} on:keydown={ (e) => e.key == 'Enter' ? setValue(value) : null }/></div>
+    <div class="knob-value">
+        <input type="number"
+                value={value ?? ''}
+                step={steps} 
+                on:click={(e) => { e.target.select() }} 
+                on:keydown={ (e) => e.key == 'Enter' ? onInputChannge(e) : null }
+                on:change={ (e) => onInputChannge(e) } />
+    </div>
 
     <div class="knob shifting-GIF"
         bind:this={knobDOM}
