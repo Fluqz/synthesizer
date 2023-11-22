@@ -2,12 +2,13 @@ import * as Tone from 'tone'
 
 import { Effect } from "./effect"
 import { ParamType, Node } from '../node'
+import type { ToneWithContextOptions } from 'tone/build/esm/core/context/ToneWithContext'
 
 
 
 /** Delay node */
 export class Delay extends Effect {
-  
+
     feedbackDelay: Tone.FeedbackDelay
 
     /** How fast the delay is played in seconds */
@@ -23,6 +24,8 @@ export class Delay extends Effect {
 
         this.input = this.feedbackDelay
         this.output = this.feedbackDelay
+
+        this.directBypass = true
 
         this.wet = this.feedbackDelay.get().wet
         this.delayTime = delayTime ? delayTime : 1.12

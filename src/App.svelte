@@ -271,6 +271,15 @@
 
 
         // console.log('click', synthesizer.presetManager.getPresets())
+
+        // synthesizer.tracks.forEach(track => {
+
+        //     console.log('Instrument', track.instrument.name, track.instrument.connectedInputs, track.instrument.connectedOutputs)
+        //     track.nodes.forEach(node => {
+
+        //         console.log('Node', node.name, node.connectedInputs, node.connectedOutputs)
+        //     })
+        // })
     })
 
 

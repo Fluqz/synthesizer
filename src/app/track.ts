@@ -300,7 +300,7 @@ export class Track implements ISerialize, IComponent {
         this.connectNodes()
     }
 
-    /** Connects all nodes in a chain */
+    /** Connects all nodes in a chain starting with the instrument as source. */
     connectNodes() {
 
         if(this.instrument) {
@@ -320,8 +320,22 @@ export class Track implements ISerialize, IComponent {
 
             nodes.push(this.volumeNode)
 
-
             this.instrument.chain(nodes)
+
+            // Node's Direct Bypass
+            for(let n of this.nodes) {
+
+                if(n.directBypass === true) {
+
+                    for(let ci of Array.from(n.connectedInputs)) {
+
+                        for(let co of Array.from(n.connectedOutputs)) {
+
+                            ci.connect(co)
+                        }
+                    }
+                }
+            }
         }
     }
 

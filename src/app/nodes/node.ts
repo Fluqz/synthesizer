@@ -79,6 +79,9 @@ export abstract class Node/* extends Tone.ToneAudioNode*/ implements ISerialize 
     /** Node that is connected to the input */
     connectedOutputs: Set<Tone.ToneAudioNode> = new Set()
 
+    /** If true, this nodes connectedInput's will be connected too the connectedOutput's. */
+    directBypass: boolean = false
+
     /** OnDelete Observable */
     onDelete
 
@@ -117,7 +120,8 @@ export abstract class Node/* extends Tone.ToneAudioNode*/ implements ISerialize 
 
         const node = n instanceof Node ? n.input : n
 
-        this.connectedInputs.add(node)
+        if(n instanceof Node) n.connectedInputs.add(this.output)
+        this.connectedOutputs.add(node)
 
         this.output.connect(node)
     }
@@ -125,17 +129,21 @@ export abstract class Node/* extends Tone.ToneAudioNode*/ implements ISerialize 
     /** Disconnects this Output from [e]'s/all Input(s) */
     disconnect(n?: Node | Tone.ToneAudioNode) {
 
-        const node = n instanceof Node ? n.input : n
         if(n) {
 
-            if(this.connectedInputs.has(node)) {
+            const node = n instanceof Node ? n.input : n
 
-                this.output.disconnect(node)
-                this.connectedInputs.delete(node)
-            }
-            else this.output.disconnect(node)
+            if(n instanceof Node) n.connectedInputs.delete(this.output)
+            this.connectedOutputs.delete(node)
+
+            this.output.disconnect(node)
         }
-        else this.output.disconnect()
+        else {
+            
+            this.output.disconnect()
+
+            this.connectedOutputs.clear()
+        }
     }
 
     chain(nodes: Node[] | Tone.ToneAudioNode[]) {
@@ -143,10 +151,11 @@ export abstract class Node/* extends Tone.ToneAudioNode*/ implements ISerialize 
         if(!nodes.length || nodes.length == 0) return
         // Prev
         let lastNode: Tone.ToneAudioNode = nodes[0] instanceof Node ? nodes[0].output : nodes[0]
+        let ln: Node | Tone.ToneAudioNode = nodes[0]
 
-        this.output.connect(lastNode)
+        this.connect(ln)
 
-        this.connectedInputs.add(lastNode)
+        // this.connectedOutputs.add(lastNode)
         
         nodes.shift()
 
@@ -155,26 +164,35 @@ export abstract class Node/* extends Tone.ToneAudioNode*/ implements ISerialize 
         for(let n of nodes) {
 
             // if(lastNode === n) continue
-            
-            if(n instanceof Node) {
 
-                // console.log('chain Node', lastNode.name, 'to', n.name)
+            if(ln instanceof Node) {
 
-                lastNode.connect(n.input)
+                ln.connect(n)
 
-                this.connectedInputs.add(n.input)
-
-                lastNode = n.output
-            }
+                ln = n
+            } 
             else {
-                
-                // console.log('chain ToneNode', lastNode.name, 'to', n.name)
 
-                lastNode.connect(n)
-
-                this.connectedInputs.add(n)
-
-                lastNode = n
+                if(n instanceof Node) {
+                    
+                    // console.log('chain Node', lastNode.name, 'to', n.name)
+                    
+                    lastNode.connect(n.input)
+                    
+                    n.connectedInputs.add(lastNode)
+                    
+                    lastNode = n.output
+                    ln = n
+                }
+                else {
+                    
+                    // console.log('chain ToneNode', lastNode.name, 'to', n.name)
+                    
+                    lastNode.connect(n)
+                    
+                    lastNode = n
+                    ln = n
+                }
             }
         }
     }
