@@ -137,6 +137,8 @@
 
         e.stopPropagation()
 
+        console.log('why')
+
         sequencer.removeNote(note.id)
 
         sequencer.sequence = sequencer.sequence
@@ -304,13 +306,37 @@
 
 
     let currentNote: string
+    let currentOctave: string
+
+    const getNote = (note: SequenceObject) => {
+
+        let n = Tone.Frequency(note.note).toNote().toString()
+
+        const o = n[n.length - 1]
+
+        n = n.replace(o, '')
+
+        return n
+    }
+
+    const getOctave = (note: SequenceObject) => {
+
+        let n = Tone.Frequency(note.note).toNote().toString()
+
+        const o = n[n.length - 1]
+
+        return o
+    }
+
     const onNoteClick = (e, note: SequenceObject) => {
+
+        e.stopPropagation()
 
         currentNote = Tone.Frequency(note.note).toNote().toString()
 
-        const octave = currentNote[currentNote.length - 1]
+        currentOctave = currentNote[currentNote.length - 1]
 
-        currentNote = currentNote.replace(octave, '')
+        currentNote = currentNote.replace(currentOctave, '')
 
         let i = Synthesizer.notes.indexOf(currentNote)
 
@@ -320,7 +346,7 @@
         if(i > Synthesizer.notes.length - 1) i = 0
         else if(i < 0) i = Synthesizer.notes.length - 1
 
-        note.note = Synthesizer.notes[i] + octave
+        note.note = Synthesizer.notes[i] + currentOctave
 
         sequencer = sequencer
     }
@@ -331,11 +357,11 @@
 
         currentNote = Tone.Frequency(note.note).toNote().toString()
 
-        const octave = currentNote[currentNote.length - 1]
+        currentOctave = currentNote[currentNote.length - 1]
 
-        currentNote = currentNote.replace(octave, '')
+        currentNote = currentNote.replace(currentOctave, '')
 
-        let i = Synthesizer.octaves.indexOf(+octave)
+        let i = Synthesizer.octaves.indexOf(+currentOctave)
 
         if(!e.shiftKey) i++
         if(e.shiftKey) i--
@@ -454,11 +480,11 @@
                 
 
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <div class="timeline" 
-                        bind:this={timeline} 
-                        on:pointerdown={onTimelineClick} 
-                        on:dblclick={onTimelineDblClick} 
-                        on:resize={onResizeTimeline} 
+                <div class="timeline"
+                        bind:this={timeline}
+                        on:pointerdown={onTimelineClick}
+                        on:dblclick={onTimelineDblClick}
+                        on:resize={onResizeTimeline}
                         use:onResizeTimeline>
                     
                     {#if timelineRect != undefined } 
@@ -491,7 +517,7 @@
                             <div class="note" 
                                     class:selected={selectedNote == note}
                                     on:pointerdown={(e) => noteMouseDown(e, note)}
-                                    on:dblclick={(e) => { onNoteDblClick(e, note) }}
+                                    on:dblclick|self={(e) => { onNoteDblClick(e, note) }}
                                     style:left={((Tone.Time(note.time).toSeconds() / sequencer.bars) * timelineRect.width) + 'px'}
                                     style:width={((Tone.Time(note.length).toSeconds() / sequencer.bars) * timelineRect.width) + 'px'} >
 
@@ -506,18 +532,24 @@
                                         on:pointerup={(e) => handleHorizontalUp(e)}></div>
 
                                 
-                                <input bind:value={ note.note } />
+                                <!-- <input bind:value={ note.note } /> -->
                                 
                                 
-                                <div class="btn" title="Note - Click to increase; Shift - Click to decrease" on:click={e => onNoteClick(e, note)}></div>
-                                <div class="btn" title="Octave - Click to increase; Shift - Click to decrease" on:click={e => onOctaveClick(e, note)}></div>
+                                <div class="btn" 
+                                        title="Note - Click to increase; Shift - Click to decrease" 
+                                        on:dblclick|stopPropagation={e => {}} 
+                                        on:click|stopPropagation={e => onNoteClick(e, note)}>{ getNote(note) }</div>
+                                <div class="btn" 
+                                        title="Octave - Click to increase; Shift - Click to decrease" 
+                                        on:dblclick|stopPropagation={e => {}} 
+                                        on:click|stopPropagation={e => onOctaveClick(e, note)}>{ getOctave(note) }</div>
                                 
                                 <div class="velocity" class:changed={ velocity < 1 } style:height={velocity * 100 + '%'}>
-                                
+<!--                                 
                                     <div class="drag-handle drag-velocity" 
                                             on:pointerdown={(e) => handleHorizontalDown(e, note, 'end')}
                                             on:pointermove={(e) => handleHorizontalMove(e)}
-                                            on:pointerup={(e) => handleHorizontalUp(e)}></div>
+                                            on:pointerup={(e) => handleHorizontalUp(e)}></div> -->
 
                                 </div>
                                 
@@ -554,256 +586,256 @@
 
 <style>
 
-.sequencer-wrapper {
+    .sequencer-wrapper {
 
-    display: inline-flex;
-    align-items: center;
+        display: inline-flex;
+        align-items: center;
 
-    /* height: 75px; */
-    min-width: 400px;
-    width: 100%;
-    height: 100px;
+        /* height: 75px; */
+        min-width: 400px;
+        width: 100%;
+        height: 100px;
 
-    background-color: var(--c-b);
+        background-color: var(--c-b);
 
-    border: .5px solid var(--c-b);
+        border: .5px solid var(--c-b);
 
-    overflow: hidden;
-}
+        overflow: hidden;
+    }
 
-.sequencer-menu {
+    .sequencer-menu {
 
-    width: 250px;
+        width: 250px;
 
-    display: inline-block;
-}
+        display: inline-block;
+    }
 
-.sequencer-wrapper .sequence {
+    .sequencer-wrapper .sequence {
 
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
 
-    width: calc(100% - 250px);
-    height: 100%;
-}
+        width: calc(100% - 250px);
+        height: 100%;
+    }
 
-.sequencer-wrapper .sequence-wrapper {
+    .sequencer-wrapper .sequence-wrapper {
 
-    position: relative;
+        position: relative;
 
-    width: 100%;
-    height: 100%;
+        width: 100%;
+        height: 100%;
 
-    display: inline-flex;
+        display: inline-flex;
 
-    justify-content: center;
-    align-items: center;
-}
+        justify-content: center;
+        align-items: center;
+    }
 
-.sequencer-wrapper .sequence .timeline {
+    .sequencer-wrapper .sequence .timeline {
 
-    mix-blend-mode: color-dodge;
-    position: relative;
+        mix-blend-mode: color-dodge;
+        position: relative;
 
-    display: inline-flex;
-    width: 100%;
-    height: 100%;
+        display: inline-flex;
+        width: 100%;
+        height: 100%;
 
-    overflow: hidden;
-}
+        overflow: hidden;
+    }
 
-.sequencer-wrapper .sequence .bar {
+    .sequencer-wrapper .sequence .bar {
 
-    position: absolute;
-    left: 0px;
-    top: 0px;
+        position: absolute;
+        left: 0px;
+        top: 0px;
 
-    max-width: 2000px;
-    min-width: 40px;
-    height: 100%;
+        max-width: 2000px;
+        min-width: 40px;
+        height: 100%;
 
-    text-align: center;
-/* 
-    background-color: var(--c-w);
-    opacity: .01; */
-}
-.sequencer-wrapper .sequence .bar-line {
+        text-align: center;
+    /* 
+        background-color: var(--c-w);
+        opacity: .01; */
+    }
+    .sequencer-wrapper .sequence .bar-line {
 
-    z-index: 1;
-    position: absolute;
-    left: -1px;
-    top: 0px;
-    height: 100%;
-    width: 2px;
+        z-index: 1;
+        position: absolute;
+        left: -1px;
+        top: 0px;
+        height: 100%;
+        width: 2px;
 
-    background-color: var(--c-y);
-}
-.sequencer-wrapper .sequence .note-line {
+        background-color: var(--c-y);
+    }
+    .sequencer-wrapper .sequence .note-line {
 
-    z-index: 1;
-    position: absolute;
-    left: -.5px;
-    top: 0px;
-    height: 100%;
-    width: 1px;
-    opacity: .3;
+        z-index: 1;
+        position: absolute;
+        left: -.5px;
+        top: 0px;
+        height: 100%;
+        width: 1px;
+        opacity: .3;
 
-    background-color: var(--c-y);
-}
+        background-color: var(--c-y);
+    }
 
-.sequencer-wrapper .sequence .current-line {
+    .sequencer-wrapper .sequence .current-line {
 
-    z-index: 1;
-    position: absolute;
-    left: 1px;
-    top: 0px;
-    height: 100%;
-    width: 2px;
-    opacity: 1;
+        z-index: 1;
+        position: absolute;
+        left: 1px;
+        top: 0px;
+        height: 100%;
+        width: 2px;
+        opacity: 1;
 
-    background-color: #fff;
-}
-.sequencer-wrapper .sequence .add-remove-cont {
+        background-color: #fff;
+    }
+    .sequencer-wrapper .sequence .add-remove-cont {
 
-    height: 100%;
-    width: 50px;
-}
- 
-.sequencer-wrapper .sequence .remove-bar,
-.sequencer-wrapper .sequence .add-bar {
+        height: 100%;
+        width: 50px;
+    }
+    
+    .sequencer-wrapper .sequence .remove-bar,
+    .sequencer-wrapper .sequence .add-bar {
 
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
 
-    cursor: pointer;
+        cursor: pointer;
 
-    width: 50px;
-    height: 50%;
-    background-color: var(--c-w);
-    color: var(--c-b);
-}
+        width: 50px;
+        height: 50%;
+        background-color: var(--c-w);
+        color: var(--c-b);
+    }
 
-.sequencer-wrapper .sequence .remove-bar:hover,
-.sequencer-wrapper .sequence .add-bar:hover {
+    .sequencer-wrapper .sequence .remove-bar:hover,
+    .sequencer-wrapper .sequence .add-bar:hover {
 
-    background-color: var(--c-b);
-    color: var(--c-y);
-}
+        background-color: var(--c-b);
+        color: var(--c-y);
+    }
 
-.sequencer-wrapper .sequence .note {
-    z-index: 2;
+    .sequencer-wrapper .sequence .note {
+        z-index: 2;
 
-    /* width: 25px; */
-    position: absolute;
+        /* width: 25px; */
+        position: absolute;
 
-    width: 50px;
-    min-width: 2px;
-    height: 100%;
+        width: 50px;
+        min-width: 2px;
+        height: 100%;
 
-    background-color: var(--c-y);
-    color: var(--c-o);
+        background-color: var(--c-y);
+        color: var(--c-o);
 
-    opacity: .5;
+        opacity: .5;
 
-    text-align: center;
+        text-align: center;
 
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
 
-    cursor: grab !important;
+        cursor: grab !important;
 
-    /* border: 1px solid var(--c-o); */
-}
+        /* border: 1px solid var(--c-o); */
+    }
 
-.sequencer-wrapper .sequence .note.selected {
-    background-color: var(--c-o);
-    cursor: grabbing !important;
-    z-index: 4;
-}
+    .sequencer-wrapper .sequence .note.selected {
+        background-color: var(--c-o);
+        cursor: grabbing !important;
+        z-index: 4;
+    }
 
-.sequencer-wrapper .sequence .note.note.selected input {
+    .sequencer-wrapper .sequence .note.note.selected input {
 
-    cursor: grabbing !important;
-}
+        cursor: grabbing !important;
+    }
 
-.sequencer-wrapper .sequence .note input {
+    .sequencer-wrapper .sequence .note input {
 
-    z-index: 2;
+        z-index: 2;
 
-    min-width: unset;
-    width: 50px;
-    height: 25px;
+        min-width: unset;
+        width: 50px;
+        height: 25px;
 
-    border: none;
+        border: none;
 
-    font-size: 1rem;
+        font-size: 1rem;
 
-    text-align: center;
+        text-align: center;
 
-    background-color: transparent;
+        background-color: transparent;
 
-    padding: 0px;
-    margin: 0px;
-}
+        padding: 0px;
+        margin: 0px;
+    }
 
-.sequencer-wrapper .sequence .note .btn {
+    .sequencer-wrapper .sequence .note .btn {
 
-    z-index: 2;
-}
+        z-index: 2;
+    }
 
-.sequencer-wrapper .sequence .drag-handle {
+    .sequencer-wrapper .sequence .drag-handle {
 
-    z-index: 3;
+        z-index: 3;
 
-    position: absolute;
-    top: 0px;
+        position: absolute;
+        top: 0px;
 
-    width: 10px;
-    height: 100%;
+        width: 10px;
+        height: 100%;
 
-    cursor: ew-resize;
+        cursor: ew-resize;
 
-    /* background-color: #fff; */
+        /* background-color: #fff; */
 
-    /* opacity: .3; */
-}
+        /* opacity: .3; */
+    }
 
-.sequencer-wrapper .sequence .drag-start {
+    .sequencer-wrapper .sequence .drag-start {
 
-    left: 0px;
+        left: 0px;
 
-}
+    }
 
-.sequencer-wrapper .sequence .drag-end {
+    .sequencer-wrapper .sequence .drag-end {
 
-    right: 0px;
-}
+        right: 0px;
+    }
 
-.sequencer-wrapper .sequence .drag-velocity {
+    .sequencer-wrapper .sequence .drag-velocity {
 
-    left: 0px;
+        left: 0px;
 
-    width: 100%;
-    height: 10px;
+        width: 100%;
+        height: 10px;
 
-    cursor: row-resize;
-}
+        cursor: row-resize;
+    }
 
-.sequencer-wrapper .sequence .velocity {
+    .sequencer-wrapper .sequence .velocity {
 
-    position:absolute;
-    bottom: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-}
-.sequencer-wrapper .sequence .velocity.changed {
+        position:absolute;
+        bottom: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+    }
+    .sequencer-wrapper .sequence .velocity.changed {
 
-    background-color: #fff;
-    opacity: .2;
-}
+        background-color: #fff;
+        opacity: .2;
+    }
 
 </style>

@@ -92,7 +92,7 @@ export const moireShader = (p5) => {
             // Get last pressed key
             let key = Synthesizer.keys.find((k) => {
 
-                if(k.note + k.octave == Array.from(Synthesizer.activeNotes).pop()) return k
+                if(Synthesizer.activeNotes.has(k.note + k.octave)) return k
             })
 
             // If key set position from key index in keymap array
@@ -122,7 +122,7 @@ export const moireShader = (p5) => {
                 let normal
 
                 let time = (Math.random() * 500) + 100
-                let rMin = 33.33333 // ~30fps
+                let rMin = 50//33.33333 // ~30fps
                 let rMax = 110
                 let randomMizeIntervalLength = Math.random() * 100
                 let interval = Math.round(Math.random() * (rMax - rMin)) + rMin
