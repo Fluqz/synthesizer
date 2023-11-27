@@ -1,7 +1,6 @@
 
 
 
-
 <script lang="ts">
 
     import { createEventDispatcher } from "svelte";
@@ -29,8 +28,6 @@
         dispatch('close')
     }
 
-
-
 </script>
 
 
@@ -52,13 +49,13 @@
 
                 Interface
 
-                #Plus
+                Plus
                 The Menu bar lets you create Tracks and Sequencers. 
 
-                #Tracks
+                Tracks
                 All tracks have a source instrument. This can be a several Oscillator, Prebuild Synthesizers, a Sampler or Noise.
 
-                #Sequencer
+                Sequencer
                 Sequencers will let you play notes or samples automatically. 
                 You can build chains of notes to make a melody or a drum beat.
 
