@@ -258,6 +258,7 @@ export class PulseOscillator extends Instrument {
 
             name: this.name,
             enabled: this.enabled,
+            volume: this.volume,
             
             detune: this.detune,
             width: this.width,

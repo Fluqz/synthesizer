@@ -16,9 +16,7 @@ export class G {
 
     static synthesizer: Synthesizer
 
-    static beat: Subject<number> = new Subject()
-
-    static fullScreenmode: boolean = false
+    // static beat: Subject<number> = new Subject()
 
     static osc: Vec2 = new Vec2()
 
@@ -28,22 +26,8 @@ export class G {
 
         G.w = innerWidth
         G.h = innerHeight
-
-        this.fullScreenmode = false
         
-        let events = ['', 'webkit', 'moz', 'ms']
-        events.forEach(prefix => document.addEventListener(prefix + 'fullscreenchange', this.onFullscreenMode, false))
-
         Visual.init()
-
-
-        Tone.Transport.scheduleRepeat(time => {
-
-            this.beat.next(time)
-
-        }, '32n')
-
-        // Tone.Transport.bpm.value = 120
     }
 
 
@@ -104,25 +88,5 @@ export class G {
         ele.append(generatedImg)
 
         document.body.append(ele)
-    }
-
-    private static onFullscreenMode(event) {
-
-        console.log('SOONOIANSFÜAPMüpmppppppppp')
-
-        // document.fullscreenElement will point to the element that
-        // is in fullscreen mode if there is one. If not, the value
-        // of the property is null.
-        if (document.fullscreenElement) {
-
-          console.log(`Element: ${document.fullscreenElement.id} entered fullscreen mode.`)
-          this.fullScreenmode = true
-        } 
-        else {
-
-          console.log("Leaving fullscreen mode.");
-          this.fullScreenmode = false
-
-        }
     }
 }

@@ -57,7 +57,9 @@ export const keyVisualizer = (p5) => {
 
     p5.setup = () => {
 
-        p5.createCanvas(G.w, G.h)
+        let p5Canvas = p5.createCanvas(G.w, G.h)
+        p5Canvas.parent("p5-canvas-cont");
+
         p5.background('#161616')
 
         p5.canvas.style.position = 'absolute'

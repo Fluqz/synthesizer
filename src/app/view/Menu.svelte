@@ -101,31 +101,36 @@
 
     #menu-wrapper {
 
-        position: absolute;
+        position: relative;
 
-        top: 0px;
-        left: 0px;
+        overflow: hidden;
 
         width: 100%;
-        height: 100vh;
 
-        background-color: aqua;
+        height: 0px;
 
-        transform-origin: bottom left;
-        transform: rotate(-90deg);
-
-        transition: transform .4s;
+        background-color: var(--c-y);
 
         -webkit-user-select: auto;
         -moz-user-select: auto;
         -ms-user-select: auto;
         user-select: auto;
+
+        transition: height 1s cubic-bezier(0.215, 0.610, 0.355, 1);
     }
 
     #menu-wrapper.active {
 
-        transform: rotate(0deg);
+        height: 100vh;
     }
+
+    #menu-wrapper .btn {
+
+        position: relative;
+
+        z-index: 10;
+    }
+
 
     :global(canvas.active) {
 

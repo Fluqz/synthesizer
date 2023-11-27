@@ -79,7 +79,7 @@
 
     <div class="key-text key-mapping">{@html key.mapping.toLocaleUpperCase() + '<br/>' }</div>
 
-    <div class="key-text key-note">{ key.note + (key.octave ? key.octave.toString() : '') }</div>
+    <div class="key-text key-note">{ key.note + (key.octave != undefined ? key.octave.toString() : '') }</div>
 
 </div>
 

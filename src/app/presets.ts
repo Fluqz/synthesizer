@@ -188,7 +188,7 @@ export const DEFAULT_SESSION = {
               "detune": 1,
               "harmonicity": 1,
               "portamento": 0,
-              "vibratoAmount": 0.6599999999999997,
+              "vibratoAmount": 0.45,
               "vibratoRate": 1,
               "attack0": 0.01,
               "decay0": 0,

@@ -27,7 +27,7 @@ export const moireShader = (p5) => {
     let passFrame = true
 
     p5.preload = () => {
-        shader = p5.loadShader('./shader/moire-vert.glsl', './shader/moire-frag.glsl');
+        shader = p5.loadShader('./shader/moire/moire-vert.glsl', './shader/moire/moire-frag.glsl');
     }
 
     p5.setup = () => {

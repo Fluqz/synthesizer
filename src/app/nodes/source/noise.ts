@@ -248,6 +248,7 @@ export class Noise extends Instrument {
 
             name: this.name,
             enabled: this.enabled,
+            volume: this.volume,
 
             wave: this.wave,
             

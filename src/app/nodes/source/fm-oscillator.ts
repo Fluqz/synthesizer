@@ -316,6 +316,7 @@ export class FMOscillator extends Instrument {
 
             name: this.name,
             enabled: this.enabled,
+            volume: this.volume,
             
             modulationIndex: this.modulationIndex,
             modulationType: this.modulationType,

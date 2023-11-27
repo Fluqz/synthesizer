@@ -4,7 +4,7 @@
     import * as Tone from 'tone'
     import { WebMidi, type NoteMessageEvent } from "webmidi";
 
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import Synthesizer from './app/view/Synthesizer.svelte'
     
     import { Synthesizer as Synth, type ISynthesizerSerialization } from './app/synthesizer'
@@ -20,6 +20,7 @@
     import { isSafari } from './app/util/browser';
 
     import Menu from './app/view/Menu.svelte';
+    import { COLORS } from './app/core/colors';
 
 
     // Init globals
@@ -28,21 +29,52 @@
     // Create Synthesizer
     let synthesizer = G.synthesizer = new Synth()
 
-    // Create Visuals
-    let activeVisual = Visual.moire()
-
     let storedMuteState = !synthesizer.isMuted
 
     G.w = window.innerWidth
     G.h = window.innerHeight
 
+
+
     // On document ready
     onMount(() => {
 
+        // Create Visuals
+        // let IID = setInterval(() => {
+
+        //     const rnd = Math.round(Math.random() * 3)
+
+        //     Visual.activeVisual.remove()
+
+        //     console.log('rnd', rnd)
+        //     switch(rnd) {
+
+        //         case 0:
+        //             Visual.flowField()
+        //         break
+        //         case 1:
+        //             Visual.noise()
+        //         break
+        //         case 2:
+        //             Visual.moire()
+        //         break
+        //         case 3:
+        //             Visual.flowField()
+        //         break
+        //     }
+
+        // }, 1000)
+
+        Visual.flowField()
+
+        // Set initial volume
         synthesizer.setVolume(-3)
 
+        // Safari css support
         if(isSafari()) { document.body.classList.add('safari') }
 
+
+        // Add midi support
         Midi.init((e: NoteMessageEvent) => {
 
             synthesizer.triggerAttack(e.note.identifier, Tone.now(), synthesizer.channel, e.note.velocity)
@@ -52,6 +84,7 @@
     
             synthesizer.triggerRelease(e.note.identifier, Tone.now(), synthesizer.channel)
         })
+
 
         // Scroll to bottom
         setTimeout(() => {
@@ -65,63 +98,19 @@
         }, 1500)
 
 
-        // Tone.Transport.scheduleRepeat(() => {
 
-        //     // console.log(Tone.Transport.position)
-        //     // console.log(Tone.Transport.seconds)
-        //     // console.log(Tone.Transport.PPQ)
-        //     console.log('s',Tone.Transport.nextSubdivision('4n'))
-        //     console.log('now',Tone.Transport.now())
-        //     // console.log(Tone.Transport.sampleTime)
-
-        // }, .1)
-
-        /**
-         * 
-         *  RGB
-         * 
-'rgb(128, 122, 255)',
-'rgb(255, 121, 159)',
-'rgb(128, 255, 255)',
-'rgb(255, 255, 159)',
-'rgb(21, 111, 74)',
-'rgb(105, 22, 22)',
-'rgb(22, 22, 74)',
-'rgb(22, 22, 22)',
-'rgb(105, 111, 22)',
-'rgb(105, 22, 74)',
-'rgb(21, 111, 23)',
-         */
-
-        let i = 0
-        let colors = [
-            
-            // '#FFFFFF', '#FFFF00', '#00FFFF', '#FF00FF', '#FF0000', '#00FF00',
-    
-            //   Cyan        Black      Red      blue
-            '#166f4a', '#161616', '#691616', '#16164a',
-            // 'rgb(128, 122, 255)',
-            'rgb(255, 121, 159)',
-            'rgb(128, 255, 255)',
-            'rgb(255, 255, 159)',
-            'rgb(21, 111, 74)',
-            'rgb(105, 22, 22)',
-            'rgb(22, 22, 74)',
-            'rgb(22, 22, 22)',
-            // 'rgb(105, 111, 22)',
-            'rgb(105, 22, 74)',
-            'rgb(21, 111, 23)',
-        ]
-
-
-        // Colors
+        
+        // Change Background Colors
+        let colors = JSON.parse(JSON.stringify(COLORS))
         colors.sort(() =>  Math.ceil((Math.random() * 2) - 1) )
+        
+        let i = 0
 
         setInterval(() => {
 
             if(i >= colors.length) { 
                 
-                i = 0 
+                i = 0
                 colors.sort(() =>  Math.ceil((Math.random() * 2) - 1))
             }
 
@@ -134,49 +123,34 @@
 
         }, 30000 * (Tone.Transport.bpm.value * .01))
 
-
-        // Add wildcard css at the beginning
-        // this will be removed/readded when opening/closing the menu
-        document.styleSheets[0].insertRule('* { mix-blend-mode: difference; }', 0)
     })
-    
+
+    onDestroy(() => {
+
+        // if(IID) clearInterval(IID)
+    })
 
 
     // ON CHANGE TAB
-    
     const toggleActive = (active:boolean) => {
 
-        let nsd = Tone.Transport.nextSubdivision('8n')
-
-        
         if (active) {
-            // console.log('activate')
-            
+
             synthesizer.mute(false)
-            
-            // Tone.Transport.start(nsd)
             
             Visual.visualsEnabled = true
             
         }
         else {
-            // console.log('deactivate')
-            
-            // synthesizer.releaseKeys()
+
             synthesizer.mute(true)
-            
-            // Tone.Transport.pause(nsd)
-            // Tone.Transport.stop(nsd)
-            // Tone.Transport.cancel(nsd)
-
-            // TODO - NOT RELEASING KEYS
-
 
             Visual.visualsEnabled = false
         }
 
         synthesizer = synthesizer
     }
+
     document.addEventListener('visibilitychange', (e) => {
         
         if (document.visibilityState == "visible") {
@@ -189,6 +163,7 @@
             toggleActive(false)
         }
     })
+    // Enter/Leave browser
     window.addEventListener('focus', () => toggleActive(storedMuteState))
     window.addEventListener('blur', () => {
 
@@ -196,7 +171,7 @@
         toggleActive(false)
     })
 
-    
+    // Browser resize event
     window.addEventListener('resize', () => {
     
         G.w = window.innerWidth
@@ -213,33 +188,21 @@
         synthesizer = synthesizer
     }
 
+    /** Menu open/close flag */
     let isMenuOpen = false
+    /** Toggle menu open/close */
     const toggleMenu = (e) => {
 
-        console.log('TOGGLE MENU',)
-
         isMenuOpen = !isMenuOpen
-
-        // Add css dynamicly via document to use the wildcard  * { ... }
-        if(isMenuOpen) {
-
-            document.styleSheets[0].deleteRule(0)
-            document.styleSheets[0].insertRule('html, body {margin: 0; height: 100%; overflow: hidden }', 1) // Could use a class here too
-        }
-        else {
-
-            document.styleSheets[0].deleteRule(1) // Could use a class here too
-            document.styleSheets[0].insertRule('* { mix-blend-mode: difference; }', 0)
-        }
-
-        console.log('stylesheet', isMenuOpen, document.styleSheets[0].cssRules[0])
     }
 
+    /** Enable/Disable Visuals*/
     const toggleVisuals = (e) => {
 
         Visual.visualsEnabled = !Visual.visualsEnabled
     }
     
+    /** Save image of visuals */
     const saveVisuals = (e) => {
 
         Visual.visualsEnabled = false
@@ -249,6 +212,7 @@
         Visual.visualsEnabled = true
     }
 
+    /** Collapse visuals container */
     const collapseVisuals = (e) => {
 
         Visual.collapsed = !Visual.collapsed
@@ -300,7 +264,7 @@
 
         synthesizer = synthesizer
     }
-    // MAKE VERSIONING HERE TOO FRO COMPATIBILITY
+    // TODO - MAKE VERSIONING HERE TOO FRO COMPATIBILITY
     const serializeOut = () => {
     
         let o = synthesizer.serializeOut()
@@ -324,40 +288,50 @@
 </script>
 
 
-{#if !G.fullScreenmode }
+<div class="app-wrapper">
 
-    <div class="main-ui">
+    <Menu bind:active={isMenuOpen} on:close={toggleMenu} ></Menu>
 
-        <div class="btn" title="Remove Visuals" on:click={collapseVisuals}>&#x2715;</div>
-        <div class="btn" title="Download Visual" on:click={saveVisuals}>I</div>
-        <div class="btn" title="Visuals On/Off" on:click={toggleVisuals}>V</div>
+    <div class="content-wrapper">
 
-        <div class="btn" title="Menu On/Off" on:click={toggleMenu} style="float:right;"></div>
+        <div class="main-ui">
 
+            <div class="btn" title="Remove Visuals" on:click={collapseVisuals}>&#x2715;</div>
+            <div class="btn" title="Download Visual" on:click={saveVisuals}>I</div>
+            <div class="btn" title="Visuals On/Off" on:click={toggleVisuals}>V</div>
+
+            <div class="btn" title="Menu On/Off" on:click={toggleMenu} style="float:right;"></div>
+
+        </div>
+
+        <div id="p5-canvas-cont"></div>
+
+        <div class="synthesizer-wrapper" class:screen-offset={!Visual.collapsed}>
+
+            <Synthesizer synthesizer={synthesizer}></Synthesizer>
+
+        </div>
 
     </div>
 
-
-    <Menu bind:active={isMenuOpen} on:close={toggleMenu}></Menu>
-
-
-{/if}
-
-<div class="synthesizer-wrapper" class:screen-offset={!Visual.collapsed}>
-
-    <Synthesizer synthesizer={synthesizer}>
-        
-        
-    </Synthesizer>
-
 </div>
-
 
 <style>
 
+    .app-wrapper {
+
+        position: relative;
+    }
+
+    .app-wrapper .content-wrapper {
+        
+        position: relative;
+    }
+
     .main-ui {
 
-
+        position: relative;
+        z-index: 5;
     }
 
     .synthesizer-wrapper {

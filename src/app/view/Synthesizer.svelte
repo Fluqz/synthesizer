@@ -401,7 +401,7 @@
 
             <Oscilloscope output={synthesizer.volume} />
 
-            <DCMeter output={synthesizer.volume} />
+            <!-- <DCMeter output={synthesizer.volume} /> -->
 
             
             <div id="volume" title="Master volume">

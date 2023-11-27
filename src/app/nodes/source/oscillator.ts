@@ -265,6 +265,7 @@ export class Oscillator extends Instrument {
 
             name: this.name,
             enabled: this.enabled,
+            volume: this.volume,
             
             detune: this.detune,
             phase: this.phase,

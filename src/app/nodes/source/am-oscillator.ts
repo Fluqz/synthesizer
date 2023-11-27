@@ -286,6 +286,7 @@ export class AMOscillator extends Instrument {
 
             name: this.name,
             enabled: this.enabled,
+            volume: this.volume,
             
             modulationType: this.modulationType,
             detune: this.detune,
