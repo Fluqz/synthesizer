@@ -12,8 +12,6 @@ export const flowFieldOptions = {
   modulatorColor: {}
 }
 
-/** Try to implement this with shaders */
-
 export const flowField = (p5) => {
 
     let inc = 0.1;
@@ -23,16 +21,13 @@ export const flowField = (p5) => {
     let scl = 10;
     let cols, rows;
     let zoff = 0;
+    let fps;
     let particles = [];
-    let numParticles = 15000;
+    let numParticles = 500;
     let flowfield;
     let flowcolorfield;
     let magOff = 0;
     let showField = false;
-
-    let cFactor = 255
-
-    let clear = false
     
     p5.setup = () => {
 
@@ -55,13 +50,6 @@ export const flowField = (p5) => {
     
       flowfield = new Array(rows * cols);
       flowcolorfield = new Array(rows * cols);
-
-      // Tone.Transport.scheduleRepeat(() => {
-
-      //   console.log('soo')
-      //   p5.background(p5.color(0, 0, 0, 5));
-
-      // }, '1m')
     }
     
     function Particle() {
@@ -69,7 +57,7 @@ export const flowField = (p5) => {
       this.pos = p5.createVector(p5.random(p5.width), p5.random(p5.height));
       this.vel = p5.createVector(0, 0);
       this.acc = p5.createVector(0, 0);
-      this.maxSpeed = Tone.Transport.bpm.value / 100;
+      this.maxSpeed = 2;
     
       this.prevPos = this.pos.copy();
     
@@ -81,10 +69,6 @@ export const flowField = (p5) => {
       }
     
       this.applyForce = function(force) {
-
-        if(force == null) return
-        force.x *= 1
-        force.y *= 1
         this.acc.add(force);
       }
     
@@ -127,53 +111,21 @@ export const flowField = (p5) => {
         if (c) {
 
           // Patterns
-          if(index % flowFieldOptions.modulator == 0) 
-            p5.stroke(p5.color(0, 0, 0))
-            // p5.stroke(p5.color(c[0], c[1], c[2]))
-
-          else if(x % flowFieldOptions.modulator != 0 && y % flowFieldOptions.modulator != 0)
-            p5.stroke(p5.color(c[0], c[1], c[2]))
-
-          // else if((x + y) % flowFieldOptions.modulator == 0) 
-          //   p5.stroke(p5.color(255))
+          if(index % flowFieldOptions.modulator != 0)
+            p5.stroke(p5.color(c[0], c[1], c[2]));
 
           else p5.stroke(p5.color(
-            flowFieldOptions.modulatorColor.r, 
-            flowFieldOptions.modulatorColor.g, 
-            flowFieldOptions.modulatorColor.b
-          ))
-          // else p5.stroke(p5.color(
-          //   0,
-          //   0,
-          //   0,
-          // ))
-
-          // p5.stroke(p5.color(c[0], c[1], c[2]))
-
+              flowFieldOptions.modulatorColor.r, 
+              flowFieldOptions.modulatorColor.g, 
+              flowFieldOptions.modulatorColor.b
+            ));
         }
       }
     }
     
     p5.draw =() => {
 
-      console.log('yoo')
-
-      // if(p5.frameCount % 50 == 0) {
-        
-      //   console.log('clear')
-      //   p5.clear() 
-      // }
-
-      if(p5.frameCount % 1 == 0) {
-        
-        scl = ((scl + .2) % 15)
-
-        if(scl < 10) scl = 10
-
-
-        console.log(scl)
-
-      }
+      if(p5.frameCount % 1000 > 1000) p5.clear() 
 
       const activeNotes = Synthesizer.activeNotes.size
 
@@ -181,7 +133,7 @@ export const flowField = (p5) => {
 
         // inc = incStart / 10
         incStart = activeNotes
-        // magInc = incStart / 100
+        magInc = incStart / 100
 
         // console.log(incStart, magInc)
 
@@ -201,15 +153,12 @@ export const flowField = (p5) => {
 
 
 
+
       if (showField) {
-
-        p5.background(0)
-
+        p5.background(0);
       } else {
-
-        // Draw low opacity over everything to make it fade out 
-        p5.background(p5.color(0, 0, 0, 2));
-
+        // p5.background(p5.color(0, 0, 0, 5));
+        // p5.background(0);
       }
 
       var yoff = start;
@@ -217,9 +166,9 @@ export const flowField = (p5) => {
         let xoff = start;
         for (let x = 0; x < cols; x++) {
           let index = x + y * cols;
-          let r = p5.noise(xoff, yoff, zoff) * cFactor;
-          let g = p5.noise(xoff + 100, yoff + 100, zoff) * cFactor;
-          let b = p5.noise(xoff + 200, yoff + 200, zoff) * cFactor;
+          let r = p5.noise(xoff, yoff, zoff) * 255;
+          let g = p5.noise(xoff + 100, yoff + 100, zoff) * 255;
+          let b = p5.noise(xoff + 200, yoff + 200, zoff) * 255;
           let angle = p5.noise(xoff, yoff, zoff) * p5.TWO_PI;
           let v = p5.constructor.Vector.fromAngle(angle); // vector from angle
           let m = p5.map(p5.noise(xoff, yoff, magOff), 0, 1, -5, 5);
