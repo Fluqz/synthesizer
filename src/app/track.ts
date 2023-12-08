@@ -83,11 +83,13 @@ export class Track implements ISerialize, IComponent {
         this.id = Track.count++
 
         this.synthesizer = synthesizer
+        this.instrument = instrument
 
         this._volume = -3
-        this.nodes = []
-        this.instrument = instrument
         this.volumeNode = new Tone.Volume(this._volume)
+        
+        this.nodes = []
+
         this.isMuted = false
         this.soloEnabled = false
         this.channel = synthesizer.channel
