@@ -156,8 +156,6 @@ export const flowField = (p5) => {
     
     p5.draw =() => {
 
-      console.log('yoo')
-
       // if(p5.frameCount % 50 == 0) {
         
       //   console.log('clear')
@@ -170,9 +168,7 @@ export const flowField = (p5) => {
 
         if(scl < 10) scl = 10
 
-
-        console.log(scl)
-
+        // console.log(scl)
       }
 
       const activeNotes = Synthesizer.activeNotes.size

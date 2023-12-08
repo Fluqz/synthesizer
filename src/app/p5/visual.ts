@@ -83,10 +83,10 @@ export class Visual {
 
         const name = 'moire'
 
-        moireShaderOptions.timeMultiplier = 1
+        moireShaderOptions.timeMultiplier = .5
         const m1 = new P5(moireShader, this.container)
 
-        moireShaderOptions.timeMultiplier = 2
+        moireShaderOptions.timeMultiplier = 0
         const m2 = new P5(moireShader, this.container)
 
 
@@ -161,7 +161,7 @@ export class Visual {
         const m1 = new P5(flowField, this.container)
 
 
-        var IID = window.setInterval(() => {
+        var IID = Tone.Transport.scheduleRepeat(() => {
 
             // flowFieldOptions.modulator += 1
 
@@ -170,14 +170,16 @@ export class Visual {
             // console.log(flowFieldOptions.modulator)
 
 
-
             let colors = JSON.parse(JSON.stringify(COLORS_RGB))
 
             const rndCI = Math.round(Math.random() * (colors.length-1))
 
             flowFieldOptions.modulatorColor = colors[rndCI]
 
-        }, 1000 * (Tone.Transport.bpm.value / 50))
+            // flowFieldOptions.modulator = 2
+            // console.log('modulator', flowFieldOptions.modulator, colors[rndCI])
+
+        }, '2m')
 
         
         this.activeVisual = {
