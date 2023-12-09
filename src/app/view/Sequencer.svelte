@@ -24,18 +24,6 @@
 
     export let sequencer: Sequencer
 
-    /** Array of activated channels. Sequencer can play through all 8 channels simultaniously. */
-    let channels: boolean[] = []
-    // let channels: Channel = 0
-
-    // Fill channels array with booleans
-    for(let i = 0; i < Synthesizer.maxChannelCount; i++) channels.push(false)
-
-    // Reactive - update channel array
-    $: {
-        for(let i = 0; i < Synthesizer.maxChannelCount; i++) channels[i] = false
-        for(let c of sequencer.channels) channels[c] = true
-    }
 
     // Update position of timeline line
     let currentLinePos
@@ -51,13 +39,30 @@
 
     /** Set default note length*/
     const noteLengths: NoteLength[] = ['1', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64']
-    /** Currently selected note length */
-    let currentNoteLength: NoteLength = sequencer.noteLength
 
     /** Set default note length */
     const changeNoteLength = (noteLength: NoteLength) => {
 
-        currentNoteLength = noteLength
+        sequencer.noteLength = noteLength
+
+        sequencer = sequencer
+    }
+
+    const onNoteLength = (e: MouseEvent) => {
+
+        let i = noteLengths.indexOf(sequencer.noteLength)
+
+        if(i == -1) return sequencer.noteLength = noteLengths[0]
+
+        if(!e.shiftKey) i++
+        if(e.shiftKey) i--
+
+        if(i >= noteLengths.length) i = 0
+        else if(i < 0) i = (noteLengths.length - 1)
+
+        sequencer.noteLength = noteLengths[i]
+
+        sequencer.noteLength = sequencer.noteLength
 
         sequencer = sequencer
     }
@@ -85,7 +90,7 @@
     /** Add new note to sequencer */
     const addNote = (time: Tone.Unit.Time) => {
 
-        sequencer.addNote('C3', time, convertNoteLength(currentNoteLength), 1)
+        sequencer.addNote('C3', time, convertNoteLength(sequencer.noteLength), 1)
 
         sequencer.sequence = sequencer.sequence
 
@@ -401,6 +406,22 @@
         sequencer = sequencer
     }
 
+
+    const onChannel = (e: MouseEvent, i) => {
+
+        let channel = sequencer.channels[i]
+
+        if(!e.shiftKey) channel++
+        if(e.shiftKey) channel--
+
+        if(channel >= Synthesizer.maxChannelCount) channel = 0
+        else if(channel < 0) channel = (Synthesizer.maxChannelCount - 1) as Channel
+
+        sequencer.channels[i] = channel
+
+        sequencer = sequencer
+    }
+
     /** Activate or deactivate channels. Channelnumber and bool */
     const activateChannel = (channel: Channel, active: boolean) => {
 
@@ -449,26 +470,23 @@
 
             <div>
 
-                {#each channels as cc, i}
-                    
-                    {#if i == 7 } 
-                        <br />  
-                    {/if}
+                {#each sequencer.channels as cc, i}
 
-                    <div class="btn" class:active={cc} title="Channels to sequence" on:click={() => activateChannel(i, cc)}>{ i }</div>
+                    <div id="channel-btn" 
+                            class="btn" 
+                            title="Channel - Key: Arrow Up / Down | Click to increase | Click with SHIFT to decrease" 
+                            on:click={e => { onChannel(e, i) }}>{ cc }</div>
 
                 {/each}
+
+                <div class="btn" title="Channels to sequence">+</div>
 
             </div>
 
 
             <div class="noteLengths">
 
-                {#each noteLengths as noteLength }
-
-                    <div class="btn noteLength" class:active={currentNoteLength == noteLength} on:click={() => changeNoteLength(noteLength)}>{noteLength}</div>
-
-                {/each}
+                <div class="btn noteLength" on:click={(e) => onNoteLength(e)}>{ sequencer.noteLength }</div>
 
             </div>
 

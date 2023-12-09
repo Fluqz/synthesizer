@@ -72,7 +72,7 @@
 
       if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
 
-      scheduleID = Tone.Transport.scheduleRepeat(draw, 1 / 30, Tone.now())
+      scheduleID = Tone.Transport.scheduleRepeat(draw, 1 / 30)
     }
 
     const disconnect = () => {
