@@ -93,8 +93,6 @@ export class Synth extends Instrument {
         this.type = options.type != undefined ? options.type : this.synth.get().oscillator.type
         this.portamento = options.portamento != undefined ? options.portamento : this.synth.get().portamento
 
-        console.log(this.synth.get())
-
         this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () => { return this.volume }, set: (v) => this.volume = v, min: -70, max: 6, groupID: 0 })
         this.props.set('detune', { type: ParamType.KNOB, name: 'Detune', get: () => { return this.detune }, set: (v) => this.detune = v, min: -100, max: 100, groupID: 0 })
         this.props.set('portamento', { type: ParamType.KNOB, name: 'Portamento', get: () => { return this.portamento }, set: (v) => this.portamento = v, min: 0, max: 100, groupID: 1 })

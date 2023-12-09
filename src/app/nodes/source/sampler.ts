@@ -34,6 +34,7 @@ import cymbal1 from '../../../assets/samples/drums/cymbal/Ride.wav'
 import cymbal2 from '../../../assets/samples/drums/cymbal/WU_HH_177.wav'
 import cymbal3 from '../../../assets/samples/drums/cymbal/WU_HH_198.wav'
 import cymbal4 from '../../../assets/samples/drums/cymbal/WU_HH_199.wav'
+import { DB } from '../../core/db';
 
 // import sliced1 from '../../../assets/samples/drums/sliced/Wu-RZA-Hat-10.WAV'
 // import sliced2 from '../../../assets/samples/drums/sliced/Wu-RZA-Hat-11.WAV'
@@ -102,7 +103,6 @@ export class Sampler extends Instrument {
         this.volume = options.volume ? options.volume : .5
 
         const opts = samples.map((a) => { return a.name })
-        
         this.sample = opts[0]
 
         this.attack = this.sampler.get().attack
@@ -111,7 +111,7 @@ export class Sampler extends Instrument {
         this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () =>  this.volume, set: (v) => this.volume = v, min: -70, max: 6, groupID: 0 })
         this.props.set('attack', { type: ParamType.KNOB, name: 'Attack', get: () =>  this.attack, set: (v) => this.attack = v, min: 0, max: 1, groupID: 0 })
         this.props.set('release', { type: ParamType.KNOB, name: 'Release', get: () =>  this.release, set: (v) => this.release = v, min: 0, max: 5, groupID: 0 })
-        this.props.set('sample', { type: ParamType.DROPDOWN, name: 'Sample', get: () =>  this.sample, set: (v) => this.sample = v, options: opts,min: 0, max: 1, groupID: 0 })
+        this.props.set('sample', { type: ParamType.DROPDOWN, name: 'Sample', get: () =>  this.sample, set: (v) => this.sample = v, fileUploadHandler: this.fileUploadHandler.bind(this), options: opts, fileUpload: true, min: 0, max: 1, groupID: 0 })
     }
 
     set volume(v: number) {
@@ -124,16 +124,38 @@ export class Sampler extends Instrument {
 
     set sample(v: string) {
 
-        let { path } = samples.find(s => {
+        console.log('set sample', v)
 
-            if(s.name == v) return s.path
-        })
-
-        if(path == undefined) return
         if(v == this._sample) return
 
         this._sample = v
 
+        const path = this._getSamplePath(this._sample)
+
+        console.log('sample path', path)
+
+        if(path == undefined) {
+
+            console.log('GET FROM DB', this._sample)
+
+            DB.get(this._sample).then(path => {
+
+                console.log('RESULT', path)
+
+                this._setSampler(path)
+            })
+        }
+        else {
+
+            this._setSampler(path)
+        }
+
+    }
+    get sample() { return this._sample }
+
+    private _setSampler(path: string | Tone.ToneAudioBuffer) {
+
+        if(this.sampler != undefined) this.sampler.dispose()
         this.sampler = new Tone.Sampler({
 
             urls: {
@@ -143,11 +165,18 @@ export class Sampler extends Instrument {
 
         this.output = this.sampler
 
-        this.chain(Array.from(this.connectedInputs.values()).reverse())
-
-        // this.sampler.connect(this.gain)
+        this.chain(Array.from(this.connectedOutputs.values()).reverse())
     }
-    get sample() { return this._sample }
+
+    private _getSamplePath(key: string) {
+
+        for(let s of samples) {
+
+            if(s.name == key) return s.path
+        }
+        
+        return undefined
+    }
 
 
     get attack() { return this._attack }
@@ -163,7 +192,6 @@ export class Sampler extends Instrument {
         this._release = d
         this.sampler.set({ release: this._release })
     }
-
 
     triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
 
@@ -191,6 +219,19 @@ export class Sampler extends Instrument {
         this.sampler.releaseAll()
     }
 
+    fileUploadHandler(file: File) {
+
+        console.log('Fileuploadhandler', file)
+
+        const url = URL.createObjectURL(file)
+
+        DB.set(file.name, url)
+
+        this.sample = file.name
+    }
+
+    
+
     destroy() {
         
         this.sampler.releaseAll()
@@ -209,6 +250,8 @@ export class Sampler extends Instrument {
         if(o.name != undefined) this.name = o.name
         if(o.enabled != undefined) this.enabled = o.enabled
         if(o.volume != undefined) this.volume = o.volume
+
+        console.log('SERIALIZE IN ', o.sample)
         if(o.sample != undefined) this.sample = o.sample
     }
 

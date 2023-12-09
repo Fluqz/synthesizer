@@ -38,6 +38,8 @@ export interface KnobNodeParameter extends NodeParameter {
 export interface DropDownNodeParameter extends NodeParameter {
 
     options: any
+    fileUpload?: boolean
+    fileUploadHandler?: (file: File) => void
 }
 
 export interface SwitchNodeParameter extends NodeParameter {

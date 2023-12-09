@@ -8,7 +8,7 @@
     import { Storage } from '../util/storage'
     import { G } from '../core/globals'
 
-    import { ParamType, type Node, type NodeParameter, type NodeParameterGroup, type GroupID, Instrument, Effect } from "../nodes";
+    import { ParamType, type Node, type NodeParameter, type NodeParameterGroup, type GroupID, Instrument, Effect, type DropDownNodeParameter } from "../nodes";
 
     import Knob from "./Knob.svelte"
     import Dropdown from "./Dropdown.svelte"
@@ -78,6 +78,13 @@
         Storage.saveUndo(G.synthesizer.serializeOut())
         
         nodeParam.set(e.detail.target.value)
+    }
+
+    const onFile = (e, nodeParam: DropDownNodeParameter) => {
+        
+        Storage.saveUndo(G.synthesizer.serializeOut())
+
+        if(nodeParam.fileUploadHandler) nodeParam.fileUploadHandler(e.detail)
     }
 
     // console.log('node props', node.name, groups)
@@ -217,14 +224,14 @@
                                         name={n.name.charAt(0).toUpperCase() + n.name.slice(1)}
                                         value={n.get()}
                                         options={n.options}
+                                        fileUpload={n.fileUpload}
                                         on:onSelect={(e) => onSelect(e, n) } 
+                                        on:onFile={(e) => onFile(e, n) } 
                                     />
 
                                 {/if}
 
-
                             {/if}
-
                             
                         {/each}
 

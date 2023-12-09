@@ -21,10 +21,16 @@
 
     import Menu from './app/view/Menu.svelte';
     import { COLORS } from './app/core/colors';
+  import { DB } from './app/core/db';
 
 
     // Init globals
     G.init()
+
+    DB.get('sample').then((d) => {
+
+        console.log('DB', d)
+    })
     
     // Create Synthesizer
     let synthesizer = G.synthesizer = new Synth()
@@ -65,6 +71,7 @@
 
         // }, 1000)
 
+        // Visual.moire()
         Visual.flowField()
 
         // Set initial volume
@@ -121,7 +128,7 @@
 
             synthesizer = synthesizer
 
-        }, 30000 * (Tone.Transport.bpm.value * .01))
+        }, 20000 * (Tone.Transport.bpm.value * .01))
 
     })
 
@@ -229,7 +236,7 @@
 
 
     document.addEventListener('click', () => {
-
+            
         // Tone.start()
         // Tone.Transport.start()
 

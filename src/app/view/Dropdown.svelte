@@ -14,6 +14,9 @@
 
     export let deletableOptions: boolean = true
 
+    export let fileUpload: boolean = false
+
+
     if(value == undefined && options && options.length > 0) value = options[0]
 
     const initValue = value
@@ -29,6 +32,10 @@
 
     const onChange = (e) => {
 
+        // console.log('change', e.target.value == 'fileUpload' || e.target.classList.contains('dropdown-file-upload'), e)
+
+        if(e.target.value == 'fileUpload' || e.target.classList.contains('dropdown-file-upload')) return
+
         dispatch('onSelect', e)
 
         e.target.blur()
@@ -37,6 +44,32 @@
     const onDeleteOption = (e) => {
 
         dispatch('onDeleteOption', e)
+    }
+
+
+    let inputElement: HTMLInputElement
+    /** On selecting file upload option */
+    const selectFileUpload = (e: MouseEvent) => {
+        
+        if(inputElement) {
+
+            console.log('ye')
+
+            inputElement.click()
+        }
+    }
+
+    const onChangeUploadFileInput = (e) => {
+
+        const ele = e.target as HTMLInputElement
+
+        const file = ele.files[0]
+
+        // console.log('File incoming', e)
+
+        dispatch('onFile', file)
+
+        e.target.blur()
     }
 
 </script>
@@ -57,11 +90,22 @@
 
                     <div class="dropdown-option-text">{ o }</div>
 
-                    <div class="btn delete" on:click={onDeleteOption}>&#x2715;</div>
+                    <!-- <div class="btn delete" on:click={onDeleteOption}>&#x2715;</div> -->
+
+                </option>
+            {/each}
+        
+            {#if fileUpload == true }
+
+                <option class="dropdown-option" value="fileUpload" on:click={selectFileUpload}>
+
+                    <div class="dropdown-option-text">{ 'Upload file' }</div>
+
+                    <input type="file" class="dropdown-file-upload" name="filename" bind:this={inputElement} on:change={onChangeUploadFileInput}>
 
                 </option>
 
-            {/each}
+            {/if}
 
         </select>
 
@@ -124,6 +168,11 @@
     height: 100%;
 
     padding: 0px 10px;
+}
+
+.dropdown-option .dropdown-file-upload {
+
+
 }
 
 </style>

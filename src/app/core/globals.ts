@@ -26,7 +26,7 @@ export class G {
 
         G.w = innerWidth
         G.h = innerHeight
-        
+
         Visual.init()
     }
 
