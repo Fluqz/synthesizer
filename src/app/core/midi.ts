@@ -1,5 +1,5 @@
 import { WebMidi } from "webmidi";
-import { G } from "./globals";
+import { G } from "../globals";
 import * as Tone from "tone";
 
 

@@ -1,6 +1,6 @@
 import * as RxJs from 'rxjs'
 
-import { G } from './core/globals'
+import { G } from './globals'
 
 // @reactive()
 /** Represents a single Key on a Synthesizer */

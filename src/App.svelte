@@ -8,8 +8,8 @@
     import Synthesizer from './app/view/Synthesizer.svelte'
     
     import { Synthesizer as Synth, type ISynthesizerSerialization } from './app/synthesizer'
-    import { Storage } from './app/util/storage'
-    import { G } from './app/core/globals'
+    import { Storage } from './app/core/storage'
+    import { G } from './app/globals'
     
     import { Visual } from './app/p5/visual'
     import { Track } from './app/track';
@@ -76,6 +76,7 @@
 
         // Visual.moire()
         Visual.flowField()
+        // Visual.noise()
 
         // Set initial volume
         synthesizer.setVolume(-3)

@@ -1,5 +1,5 @@
 
-import { G } from '../core/globals'
+import { G } from '../globals'
 
 import { Synthesizer } from '../synthesizer'
 

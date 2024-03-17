@@ -1,5 +1,5 @@
 import { Synthesizer } from "../synthesizer";
-import { G } from "../core/globals";
+import { G } from "../globals";
 import { Grid } from "../util/grid";
 import { M } from "../util/math/math";
 import { Visual } from "./visual";
@@ -37,7 +37,7 @@ export const flowField = (p5) => {
     p5.createCanvas(G.w, G.h);
     p5.pixelDensity(1);
     p5.background(0);
-    p5.frameRate(30);
+    p5.frameRate(10);
 
     p5.canvas.style.position = "absolute";
     p5.canvas.style.top = "0px";

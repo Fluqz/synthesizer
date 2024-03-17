@@ -209,13 +209,8 @@ export class Synthesizer implements ISerialize {
 
         this.tracks = []
         this.addTrack(new Track(this, Synthesizer.nodes.sources.Oscillator()))
-        // this.addTrack(new Track(this, Synthesizer.nodes.sources.Synth()))
-        // this.addTrack(new Track(this, Synthesizer.nodes.sources.DuoSynth()))
-        // this.addTrack(new Track(this, Synthesizer.nodes.sources.FMSynth()))
-        // this.addTrack(new Track(this, Synthesizer.nodes.sources.AMSynth()))
 
         this.sequencers = []
-        // this.addSequencer(new Sequencer(this))
         // this.addSequencer(new Sequencer(this, ['F#2', 'D1', 'F#2', 'C#3']))
 
         this.presetManager = new PresetManager(this)
@@ -316,7 +311,7 @@ export class Synthesizer implements ISerialize {
     }
 
 
-    /** Add a track to the synthesizer. */
+    /** Add a sequencer to the synthesizer. */
     addSequencer(sequencer: Sequencer, i?: number) {
 
         if(this.sequencers.indexOf(sequencer) == -1) {
@@ -342,7 +337,7 @@ export class Synthesizer implements ISerialize {
         sequencer.index = this.components.indexOf(sequencer)
     }
 
-    /** Disconnects and removes track */
+    /** Disconnects and removes sequencer */
     removeSequencer(sequencer: Sequencer) {
 
         this.sequencers.splice(this.sequencers.indexOf(sequencer), 1)
@@ -455,6 +450,8 @@ export class Synthesizer implements ISerialize {
     releaseNotes() {
 
         for(let t of this.tracks) t.releaseNotes()
+
+        Synthesizer.activeNotes.clear()
     }
 
     /** Will release all triggered notes of all tracks with the given channel. */
@@ -470,66 +467,65 @@ export class Synthesizer implements ISerialize {
     stopSequencers() {
 
         for(let s of this.sequencers) s.stop()
-
     }
     
 
 
-    toggleArpMode(m) {
+    // toggleArpMode(m) {
 
-        this.arpMode = m == undefined ? !this.arpMode : m
+    //     this.arpMode = m == undefined ? !this.arpMode : m
 
-        this.setArpChord([])
+    //     this.setArpChord([])
 
-        // Tone.Transport.stop()
+    //     // Tone.Transport.stop()
 
-        // this.arp.stop(Tone.now())
+    //     // this.arp.stop(Tone.now())
 
-        // console.log('ARP', this.arpMode)
+    //     // console.log('ARP', this.arpMode)
 
-    }
+    // }
 
-    setArpChord(chord: string[], onTrigger?: (...args) => void, onRelease?: (...args) => void) {
+    // setArpChord(chord: string[], onTrigger?: (...args) => void, onRelease?: (...args) => void) {
 
-        // console.log('Set ARP', chord)
+    //     // console.log('Set ARP', chord)
 
-        const length = 60 / this.bpm
+    //     const length = 60 / this.bpm
 
-        this.stopArpeggiator(onRelease)
+    //     this.stopArpeggiator(onRelease)
 
-        if(!chord || chord.length == 0) return
+    //     if(!chord || chord.length == 0) return
         
-        let lastNote
-        this.arp = new Tone.Pattern((time, note) => {
+    //     let lastNote
+    //     this.arp = new Tone.Pattern((time, note) => {
 
-            console.log('PATTERN NEXT NOTE', note)
-            if(lastNote) {
+    //         console.log('PATTERN NEXT NOTE', note)
+    //         if(lastNote) {
 
-                onRelease(note)
-            }
-            if(onTrigger) onTrigger(note, length)
+    //             onRelease(note)
+    //         }
+    //         if(onTrigger) onTrigger(note, length)
 
-            lastNote = note
+    //         lastNote = note
 
-        }, chord)
+    //     }, chord)
 
-        Tone.Transport.bpm.setValueAtTime(this.bpm, Tone.now())
-        this.arp.interval = length
-        this.arp.start(Tone.now())
+    //     Tone.Transport.bpm.setValueAtTime(this.bpm, Tone.now())
+    //     this.arp.interval = length
+    //     this.arp.start(Tone.now())
 
-    }
+    // }
 
-    stopArpeggiator(onRelease) {
+    // stopArpeggiator(onRelease) {
 
-        if(this.arp) {
-            this.arp.stop()
-            this.arp.cancel()
-            this.arp.dispose()
-        }
+    //     if(this.arp) {
+    //         this.arp.stop()
+    //         this.arp.cancel()
+    //         this.arp.dispose()
+    //     }
 
-        if(onRelease) onRelease()
+    //     if(onRelease) onRelease()
 
-    }
+    // }
 
 
 

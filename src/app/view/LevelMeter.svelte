@@ -29,7 +29,7 @@
 
         console.log('yaaaaaaaa.------')
 
-        // if(output) meter.disconnect()
+        if(meter) meter.disconnect()
 
         output = output
 

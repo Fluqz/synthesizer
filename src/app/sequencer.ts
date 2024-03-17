@@ -1,6 +1,6 @@
 
 import * as Tone from 'tone'
-import { Synthesizer, type Channel, type ISerialize, type IComponent } from './synthesizer'
+import { Synthesizer, type Channel, type ISerialize, type IComponent, type ISerialization } from './synthesizer'
 
 
 export type NoteLength = '1' | '1/2' | '1/4' | '1/8' | '1/16' | '1/32' | '1/64'
@@ -16,7 +16,7 @@ export type SequenceObject = {
 }
 
 
-export interface ISequencerSerialization {
+export interface ISequencerSerialization extends ISerialization {
 
     index: number
     channel: Channel[]

@@ -16,7 +16,7 @@
     import Dropdown from "./Dropdown.svelte";
     import LevelMeter from "./LevelMeter.svelte";
     import Oscilloscope from "./Oscilloscope.svelte";
-    import { Storage } from "../util/storage";
+    import { Storage } from "../core/storage";
 
     export let track: Track
 

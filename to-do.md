@@ -6,9 +6,9 @@
 open visuals in seperate window for beaming
 gif animation lower opacity -> https://stackoverflow.com/questions/6890218/css-background-image-opacity
 
-redo/undo not working soo well
+redo/undo not working soo well. Too many saves on knob change (debounce?)
 
-upload file as sample
+upload file as sample and save in browser db
 
 Volume vs Gain
 

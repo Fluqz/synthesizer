@@ -5,8 +5,8 @@
     import { createEventDispatcher, onDestroy } from "svelte";
     import { writable, type Writable } from "svelte/store";
 
-    import { Storage } from '../util/storage'
-    import { G } from '../core/globals'
+    import { Storage } from '../core/storage'
+    import { G } from '../globals'
 
     import { ParamType, type Node, type NodeParameter, type NodeParameterGroup, type GroupID, Instrument, Effect, type DropDownNodeParameter } from "../nodes";
 

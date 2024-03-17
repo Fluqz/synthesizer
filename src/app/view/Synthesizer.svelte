@@ -19,10 +19,10 @@
     import { Instrument, Node as _Node } from '../nodes/'
     import { Synthesizer, type Channel, type Component } from '../synthesizer'
     import { writable } from 'svelte/store';
-    import { G } from '../core/globals';
+    import { G } from '../globals';
     import { DEFAULT_SESSION } from '../presets';
     import { Visual } from '../p5/visual';
-    import { Storage } from '../util/storage';
+    import { Storage } from '../core/storage';
 
     export let synthesizer: Synthesizer
 

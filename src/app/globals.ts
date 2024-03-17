@@ -1,10 +1,9 @@
 import { Subject, takeUntil } from "rxjs"
 import * as Tone from "tone"
-import type { IVisual } from "../p5/visual"
-import type { Synthesizer } from "../synthesizer"
-import { Midi } from "./midi"
-import { Visual } from "../p5/visual"
-import { Vec2 } from "../util/math"
+import type { IVisual } from "./p5/visual"
+import type { Synthesizer } from "./synthesizer"
+import { Visual } from "./p5/visual"
+import { Vec2 } from "./util/math"
 
 
 export class G {

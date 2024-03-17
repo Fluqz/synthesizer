@@ -1,5 +1,5 @@
 import { Synthesizer } from "../synthesizer"
-import { G } from "../core/globals"
+import { G } from "../globals"
 import { Grid } from "../util/grid"
 import { M } from "../util/math/math"
 import { Visual } from "./visual"

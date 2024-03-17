@@ -1,4 +1,4 @@
-import { G } from '../core/globals'
+import { G } from '../globals'
 
 export const envelope = (p5) => {
 
