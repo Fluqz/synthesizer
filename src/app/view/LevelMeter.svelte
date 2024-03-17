@@ -29,11 +29,9 @@
 
         console.log('yaaaaaaaa.------')
 
-        if(meter) meter.disconnect()
-
         output = output
-
-        if(output) output.connect(meter)
+            
+        connect()
       }
     }
 
@@ -50,15 +48,24 @@
         percentage = Math.round(M.map(min, max, 0, 100, value))
     }
 
+    const connect = () => {
+
+        if(output) output.connect(meter)
+        connectedOuput = output
+    }
+
+    const disconnect = () => {
+
+        if(connectedOuput) connectedOuput.disconnect(meter)
+        // meter.disconnect()
+    }
 
 
     onMount(() => {
 
         if(output != undefined) {
 
-            output.connect(meter)
-
-            connectedOuput = output
+            connect()
 
             if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
 
@@ -72,7 +79,8 @@
 
             if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
 
-            meter.disconnect()
+            disconnect()
+
             meter.dispose()
         }
     })
