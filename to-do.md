@@ -6,7 +6,8 @@
 open visuals in seperate window for beaming
 gif animation lower opacity -> https://stackoverflow.com/questions/6890218/css-background-image-opacity
 
-redo/undo
+redo/undo not working soo well
+
 upload file as sample
 
 Volume vs Gain
@@ -25,6 +26,7 @@ Timeline line is not synced with Transport time
 
 Keys are terrible
 
+Make keybinding class?
 
 Save Screen Shot
 

@@ -3,8 +3,9 @@
     import * as Tone from "tone";
     import { Synthesizer, type Channel } from "../synthesizer";
     import { Sequencer, type NoteLength, type SequenceObject } from "../sequencer";
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onDestroy, onMount } from "svelte";
 
+    const dispatch = createEventDispatcher()
 
     export const convertNoteLength = (n: NoteLength) => {
 
@@ -20,32 +21,62 @@
         }
     }
 
-    const dispatch = createEventDispatcher()
+
+
 
     export let sequencer: Sequencer
 
+    /** Array of activated channels. Sequencer can play through all 8 channels simultaniously. */
+    let channels: boolean[] = []
+    // let channels: Channel = 0
 
-    // Update position of timeline line
     let currentLinePos
-    Tone.Transport.scheduleRepeat((time) => {
 
-        // if(sequencer.isPlaying) console.log('pos', ((Tone.immediate() - Sequencer.startTime) % sequencer.bars))
-        // if(sequencer.isPlaying) console.log('pos',((((Tone.now() - Sequencer.startTime) % sequencer.bars)), (timelineRect.width / sequencer.bars)) - 1)
-        if(sequencer.isPlaying) currentLinePos = ((((Tone.immediate() - Sequencer.startTime) % sequencer.bars)) * (timelineRect.width / sequencer.bars))
-        else currentLinePos = 0
 
-    }, 1 / 60, Tone.now(), Number.POSITIVE_INFINITY)
+
+    onMount(() => {
+
+        console.log('onmoun', sequencer)
+        if(sequencer == undefined) return 
+
+
+        // Fill channels array with booleans
+        for(let i = 0; i < Synthesizer.maxChannelCount; i++) channels.push(false)
+
+        // Reactive - update channel array
+        $: {
+            for(let i = 0; i < Synthesizer.maxChannelCount; i++) channels[i] = false
+            for(let c of sequencer.channels) channels[c] = true
+        }
+
+        // Update position of timeline line
+        Tone.Transport.scheduleRepeat((time) => {
+
+            // if(sequencer.isPlaying) console.log('pos', ((Tone.immediate() - Sequencer.startTime) % sequencer.bars))
+            // if(sequencer.isPlaying) console.log('pos',((((Tone.now() - Sequencer.startTime) % sequencer.bars)), (timelineRect.width / sequencer.bars)) - 1)
+            if(sequencer.isPlaying) currentLinePos = ((((Tone.immediate() - Sequencer.startTime) % sequencer.bars)) * (timelineRect.width / sequencer.bars))
+            else currentLinePos = 0
+
+        }, 1 / 60, Tone.now(), Number.POSITIVE_INFINITY)
+    })
+
+    onDestroy(() => {
+
+        Tone.Transport.cancel()
+    })
 
 
     /** Set default note length*/
     const noteLengths: NoteLength[] = ['1', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64']
-
+   
     /** Set default note length */
     const changeNoteLength = (noteLength: NoteLength) => {
 
         sequencer.noteLength = noteLength
 
         sequencer = sequencer
+
+        saveUndo()
     }
 
     const onNoteLength = (e: MouseEvent) => {
@@ -65,6 +96,8 @@
         sequencer.noteLength = sequencer.noteLength
 
         sequencer = sequencer
+
+        saveUndo()
     }
 
     /** Add a new bar to sequencer */
@@ -75,6 +108,8 @@
         sequencer.sequence = sequencer.sequence
 
         sequencer = sequencer
+
+        saveUndo()
     }
 
     /** Remove one bar from sequencer */
@@ -85,6 +120,8 @@
         sequencer.sequence = sequencer.sequence
 
         sequencer = sequencer
+
+        saveUndo()
     }
 
     /** Add new note to sequencer */
@@ -95,6 +132,8 @@
         sequencer.sequence = sequencer.sequence
 
         sequencer = sequencer
+
+        saveUndo()
     }
 
     /** DblClick Timeline event */
@@ -114,6 +153,8 @@
 
         sequencer.sequence = sequencer.sequence
         sequencer = sequencer
+
+        saveUndo()
     }
 
     /** Pointerdown Timeline event */
@@ -148,6 +189,8 @@
 
         sequencer.sequence = sequencer.sequence
         sequencer = sequencer
+
+        saveUndo()
     }
 
 
@@ -208,11 +251,14 @@
 
             sequencer.sequence = sequencer.sequence
             sequencer = sequencer
+
+            saveUndo()
         }
 
         // selectedNote = null
 
         clickOffset = 0
+
     }
 
 
@@ -354,6 +400,8 @@
         note.note = Synthesizer.notes[i] + currentOctave
 
         sequencer = sequencer
+
+        saveUndo()
     }
 
     const onOctaveClick = (e, note: SequenceObject) => {
@@ -379,6 +427,8 @@
         note.note = currentNote + Synthesizer.octaves[i]
 
         sequencer = sequencer
+
+        saveUndo()
     }
 
 
@@ -406,22 +456,6 @@
         sequencer = sequencer
     }
 
-
-    const onChannel = (e: MouseEvent, i) => {
-
-        let channel = sequencer.channels[i]
-
-        if(!e.shiftKey) channel++
-        if(e.shiftKey) channel--
-
-        if(channel >= Synthesizer.maxChannelCount) channel = 0
-        else if(channel < 0) channel = (Synthesizer.maxChannelCount - 1) as Channel
-
-        sequencer.channels[i] = channel
-
-        sequencer = sequencer
-    }
-
     /** Activate or deactivate channels. Channelnumber and bool */
     const activateChannel = (channel: Channel, active: boolean) => {
 
@@ -436,6 +470,8 @@
         else sequencer.removeChannel(channel)
 
         sequencer = sequencer
+
+        saveUndo()
     }
 
     /** Duplicate Sequence */
@@ -467,26 +503,19 @@
 
             <div class="btn play" class:active={sequencer.isPlaying} title="Play" on:click={toggleStartStop}>{ !sequencer.isPlaying ? 'Play' : 'Stop'}</div>
 
+            <div class="btn noteLength" on:click={onNoteLength}>{sequencer.noteLength}</div>
 
             <div>
 
-                {#each sequencer.channels as cc, i}
+                {#each channels as cc, i}
+                    
+                    {#if i == 7 } 
+                        <br />  
+                    {/if}
 
-                    <div id="channel-btn" 
-                            class="btn" 
-                            title="Channel - Key: Arrow Up / Down | Click to increase | Click with SHIFT to decrease" 
-                            on:click={e => { onChannel(e, i) }}>{ cc }</div>
+                    <div class="btn" class:active={cc} title="Channels to sequence" on:click={() => activateChannel(i, cc)}>{ i }</div>
 
                 {/each}
-
-                <div class="btn" title="Channels to sequence">+</div>
-
-            </div>
-
-
-            <div class="noteLengths">
-
-                <div class="btn noteLength" on:click={(e) => onNoteLength(e)}>{ sequencer.noteLength }</div>
 
             </div>
 

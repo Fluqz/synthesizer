@@ -14,10 +14,13 @@ export enum InstrumentType {
 /** Represents a instrument  */
 export abstract class Instrument extends Node {
 
+    /** Source is a ToneJS Instrument */
     source: ToneInstrument<InstrumentOptions>
 
+    /** Poly or Mono type */
     type: InstrumentType
 
+    /** Flag for is playing currently */
     isPlaying: boolean
 
     constructor(name, type) {

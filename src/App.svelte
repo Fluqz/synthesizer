@@ -21,7 +21,7 @@
 
     import Menu from './app/view/Menu.svelte';
     import { COLORS } from './app/core/colors';
-  import { DB } from './app/core/db';
+    import { DB } from './app/core/db';
 
 
     // Init globals
@@ -44,6 +44,9 @@
 
     // On document ready
     onMount(() => {
+
+        document.addEventListener('pointermove', onMouseMove)
+
 
         // Create Visuals
         // let IID = setInterval(() => {
@@ -234,6 +237,20 @@
         console.log('COLL', Visual.collapsed)
     }
 
+    const onUndo = (e) => {
+
+        synthesizer.serializeIn(JSON.parse(Storage.undo()))
+
+        synthesizer = synthesizer
+    }
+
+    const onRedo = (e) => {
+
+        synthesizer.serializeIn(JSON.parse(Storage.redo()))
+
+        synthesizer = synthesizer
+    }
+
 
     document.addEventListener('click', () => {
             
@@ -287,10 +304,36 @@
 
     else serializeIn(DEFAULT_SESSION, false)
 
+    // Save Undo
+    Storage.saveUndo(storageData)
+
     synthesizer = synthesizer
     
     
+    let isUserActive: boolean = false
+    let lastActiveTime = Date.now()
+    let timeTillInactive = 1000 * 3
+    const onMouseMove = (e) => {
 
+        isUserActive = true
+
+        lastActiveTime = Date.now()
+    }
+
+    let AFID
+    const activityUpdate = () => {
+
+        if(lastActiveTime + timeTillInactive < Date.now()) {
+
+            isUserActive = false
+
+        }
+
+        window.cancelAnimationFrame(AFID)
+        AFID = window.requestAnimationFrame(activityUpdate)
+    }
+
+    activityUpdate()
 
 </script>
 
@@ -301,13 +344,24 @@
 
     <div class="content-wrapper">
 
-        <div class="main-ui">
+        {#if isUserActive }
+            
+            <div class="main-ui">
 
-            <div class="btn" title="Remove Visuals" on:click={collapseVisuals}>&#x2715;</div>
-            <div class="btn" title="Download Visual" on:click={saveVisuals}>I</div>
-            <div class="btn" title="Visuals On/Off" on:click={toggleVisuals}>V</div>
+                <div class="btn" title="Remove Visuals" on:click={collapseVisuals}>&#x2715;</div>
+                <div class="btn" title="Download Visual" on:click={saveVisuals}>I</div>
+                <div class="btn" title="Visuals On/Off" on:click={toggleVisuals}>V</div>
 
-            <div class="btn" title="Menu On/Off" on:click={toggleMenu} style="float:right;"></div>
+                <div class="btn" title="Menu On/Off" on:click={toggleMenu} style="float:right;"></div>
+
+            </div>
+
+        {/if}
+
+        <div class="footer-ui">
+                
+            <div class="btn" title="Undo" on:click={onUndo}>Un</div>
+            <div class="btn" title="Redo" on:click={onRedo}>Re</div>
 
         </div>
 
@@ -333,12 +387,28 @@
     .app-wrapper .content-wrapper {
         
         position: relative;
+        width: 100%;
+        height: 100vh;
     }
 
     .main-ui {
 
         position: relative;
         z-index: 5;
+    }
+
+    .footer-ui {
+
+        z-index: 5;
+
+        width: 10%;
+
+        display: flex;
+        justify-content: space-evenly;
+
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
     }
 
     .synthesizer-wrapper {

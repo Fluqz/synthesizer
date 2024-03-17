@@ -4,8 +4,33 @@ import { Synthesizer } from '../../synthesizer';
 import { ParamType } from '../node';
 
 
-/**  */
-export class MonoSynth extends Instrument {
+/**  
+ * 
+ * detune: 0
+​
+grainSize: 0.2
+​
+loop: false
+​
+loopEnd: 0
+​
+loopStart: 0
+​
+mute: false
+​
+onerror: function noOp()​
+onload: function noOp()
+​
+overlap: 0.1
+​
+playbackRate: 1
+​
+reverse: false
+​
+volume: 0
+ * 
+*/
+export class GrainPlayer extends Instrument {
 
     synth: Tone.PolySynth
     /** How loud */
@@ -28,13 +53,13 @@ export class MonoSynth extends Instrument {
     /** freq, detune, volume, waveform,  */
     constructor(options:any = {}) {
 
-        super('MonoSynth', InstrumentType.POLY)
+        super('GrainPlayer', InstrumentType.POLY)
 
-        this.synth = new Tone.PolySynth(Tone.MonoSynth)
+        this.synth = new Tone.PolySynth(Tone.GrainPlayer)
         this.output = this.synth
 
 
-        console.log('MonoSynth',this.synth.get())
+        console.log('GrainPlayer',this.synth.get())
 
         this.volume = options.volume ? options.volume : .5
         this.detune = options.detune ? options.detune : .5

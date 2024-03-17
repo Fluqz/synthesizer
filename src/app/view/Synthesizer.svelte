@@ -22,6 +22,7 @@
     import { G } from '../core/globals';
     import { DEFAULT_SESSION } from '../presets';
     import { Visual } from '../p5/visual';
+    import { Storage } from '../util/storage';
 
     export let synthesizer: Synthesizer
 
@@ -62,6 +63,8 @@
 
         scrollToBottom()
 
+        saveUndo()
+
         return t
     }
 
@@ -72,6 +75,8 @@
         synthesizer.removeTrack(e.detail)
 
         synthesizer = synthesizer
+
+        saveUndo()
     }
 
     const duplicateTrack = (e) => {
@@ -83,6 +88,8 @@
         duplicate.serializeIn(e.detail.serializeOut())
 
         synthesizer = synthesizer
+
+        saveUndo()
     }
 
     const addSequencer = () => {
@@ -94,6 +101,8 @@
 
         scrollToBottom()
 
+        saveUndo()
+
         return s
     }
     
@@ -102,6 +111,8 @@
         synthesizer.removeSequencer(e.detail)
 
         synthesizer = synthesizer
+
+        saveUndo()
     }
     
     const duplicateSequencer = (e) => {
@@ -115,6 +126,8 @@
         scrollToBottom()
 
         synthesizer = synthesizer
+
+        saveUndo()
     }
 
     
@@ -141,6 +154,8 @@
         else if(synthesizer.channel < 0) synthesizer.channel = (Synthesizer.maxChannelCount - 1) as Channel
 
         synthesizer = synthesizer
+
+        saveUndo()
     }
 
     const octaveDown = () => {
@@ -148,12 +163,16 @@
         synthesizer.setOctave(synthesizer.octave - 1)
 
         synthesizer = synthesizer
+
+        saveUndo()
     }
     const octaveUp = () => {
 
         synthesizer.setOctave(synthesizer.octave + 1)
 
         synthesizer = synthesizer
+
+        saveUndo()
     }
 
 
@@ -205,6 +224,8 @@
         }
 
         synthesizer = synthesizer
+
+        saveUndo()
     }
 
     /** Reset synthesizer button */
@@ -288,6 +309,8 @@
             }, 200)
             
         }, 200)
+
+        saveUndo()
     }
 
     const onDeletePresetOption = (e) => {
@@ -297,6 +320,8 @@
         synthesizer = synthesizer
 
         setPresets()
+
+        saveUndo()
     }
 
     const togglePlayStop = () => {
@@ -328,6 +353,11 @@
 
             if(s == c) return s
         }
+    }
+
+    const saveUndo = () => {
+
+        Storage.saveUndo(JSON.stringify(synthesizer.serializeOut()))
     }
 
     onDestroy(() => {

@@ -107,6 +107,9 @@
 
     transition: .4s transform;
     z-index: 0;
+
+    border: .5px solid var(--c-b);
+
 }
 .key.black {
     background-color: var(--c-b);

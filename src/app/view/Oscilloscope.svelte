@@ -4,7 +4,8 @@
     import { onDestroy, onMount } from "svelte";
 
     export let output: Tone.ToneAudioNode
-    
+
+    let connectedOuput: Tone.ToneAudioNode
 
     let scheduleID
 
@@ -20,6 +21,20 @@
     let w 
     let h
 
+
+    $: {
+
+      if(connectedOuput !== output) {
+
+        console.log('yooooooo.------')
+
+        disconnect()
+
+        output = output
+
+        connect()
+      }
+    }
 
     // let peak: number = 0
 
@@ -73,6 +88,10 @@
       if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
 
       scheduleID = Tone.Transport.scheduleRepeat(draw, 1 / 30)
+
+      console.log('Oscill')
+
+      connectedOuput = output
     }
 
     const disconnect = () => {
@@ -81,7 +100,9 @@
 
       // output.disconnect(analyser)
 
-      analyser.disconnect()
+      if(analyser) analyser.disconnect()
+
+      connectedOuput = null
     }
 
 

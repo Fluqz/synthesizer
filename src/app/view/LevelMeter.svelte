@@ -8,6 +8,8 @@
 
     export let value: number = 0
 
+    let connectedOuput: Tone.ToneAudioNode
+
     let scheduleID
 
     let meter: Tone.Meter = new Tone.Meter()
@@ -19,6 +21,22 @@
     let percentage = 0
 
     let IID
+
+
+    $: {
+
+      if(connectedOuput !== output) {
+
+        console.log('yaaaaaaaa.------')
+
+        // if(output) meter.disconnect()
+
+        output = output
+
+        if(output) output.connect(meter)
+      }
+    }
+
 
     const getValue = () => {
 
@@ -40,6 +58,8 @@
 
             output.connect(meter)
 
+            connectedOuput = output
+
             if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
 
             scheduleID = Tone.Transport.scheduleRepeat(getValue, 1 / 30, Tone.now(), 100000000)
@@ -50,8 +70,7 @@
 
         if(output != undefined) {
 
-        if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
-
+            if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
 
             meter.disconnect()
             meter.dispose()

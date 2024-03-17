@@ -5,7 +5,7 @@ import * as RxJs from 'rxjs'
 
 import { Key } from './key'
 
-import { Sampler, Synth, DuoSynth, Instrument, FMSynth, AMSynth, Delay, Tremolo, Reverb, Chorus, Distortion, Oscillator, Effect, AutoFilter, Phaser, Vibrato, FatOscillator, FMOscillator, AMOscillator, Noise, PWMOscillator, PulseOscillator} from './nodes'
+import { Sampler, Synth, DuoSynth, Instrument, FMSynth, AMSynth, Delay, Tremolo, Reverb, Chorus, Distortion, Oscillator, Effect, AutoFilter, Phaser, Vibrato, FatOscillator, FMOscillator, AMOscillator, Noise, PWMOscillator, PulseOscillator, MembraneSynth, MonoSynth, PluckSynth, MetalSynth, GrainPlayer, NoiseSynth} from './nodes'
 
 import { Track, type ITrackSerialization } from './track'
 import { PresetManager, type IPreset } from './core/preset-manager'
@@ -59,7 +59,7 @@ export class Synthesizer implements ISerialize {
         'q', '2', 'w', '3', 'e', 'r', '5', 't', '6', 'z', '7', 'u', 'i', '9', 'o', '0', 'p',
 
         //lower
-        '<','a','y','s','x','d','c','v','g','b','h','n','m','k', ',', 'l', '.', 'ö', '-',
+        '<', 'a', 'y', 's', 'x', 'd', 'c', 'v', 'g', 'b', 'h', 'n', 'm', 'k', ',', 'l', '.', 'ö', '-',
     ]
 
     /** Array of all notes */
@@ -76,9 +76,12 @@ export class Synthesizer implements ISerialize {
      */
     static activeNotes: Set<Tone.Unit.Frequency> = new Set()
 
+    /** Currently active channel */
     public channel: Channel = 0
+    /** Max number of channels */
     static maxChannelCount: number = 16
 
+    /** Object to create nodes */
     static nodes = {
         effects: {
 
@@ -97,19 +100,20 @@ export class Synthesizer implements ISerialize {
             FMSynth: () => { return new FMSynth() },
             AMSynth: () => { return new AMSynth() },
             DuoSynth: () => { return new DuoSynth() },
-            // MonoSynth: () => {},
-            // MetalSynth:	() => {},
-            // PluckSynth:	() => {},
-
             Oscillator: () => { return new Oscillator() },
             PulseOscillator: () => { return new PulseOscillator() },
             PWMOscillator: () => { return new PWMOscillator() },
             AMOscillator: () => { return new AMOscillator() },
             FMOscillator: () => { return new FMOscillator() },
             FatOscillator: () => { return new FatOscillator() },
-
             Noise: () => { return new Noise() },
             Sampler: () => { return new Sampler() },
+            MembraneSynth: () => { return new MembraneSynth() },
+            MonoSynth: () => { return new MonoSynth() },
+            PluckSynth: () => { return new PluckSynth() },
+            MetalSynth: () => { return new MetalSynth() },
+            GrainPlayer: () => { return new GrainPlayer() },
+            NoiseSynth: () => { return new NoiseSynth() },
         }
     }
 
@@ -136,12 +140,16 @@ export class Synthesizer implements ISerialize {
     /** Beats per minute */
     _bpm: number = 120
     
+    /** Array of tracks */
     tracks: Track[]
 
+    /** Array of sequencers */
     sequencers: Sequencer[]
 
+    /** Array of components. */
     components: Component[]
 
+    /** Muted flag */
     isMuted: boolean = false
 
     /** ToneJs Recorder instance */
@@ -149,6 +157,7 @@ export class Synthesizer implements ISerialize {
     /** Recording flag */
     isRecording: boolean
 
+    /** PresetManager instance */
     presetManager: PresetManager
 
     // Events

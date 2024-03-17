@@ -112,6 +112,18 @@ export class Sequencer implements ISerialize, IComponent {
         return true
     }
 
+    getUnusedChannels() {
+
+        const channels: Channel[] = []
+
+        for(let i = 0; i < Synthesizer.maxChannelCount; i++) {
+
+            if(this.channels.indexOf(i as Channel) == -1) channels.push(i as Channel) 
+        }
+
+        return channels
+    }
+
     /** Add a note to the sequence */
     addNote(note: Tone.Unit.Frequency, time: Tone.Unit.Time, length: Tone.Unit.Time, velocity: number) {
 

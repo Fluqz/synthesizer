@@ -65,26 +65,32 @@
     let groups: Writable<NodeParameter[][]> = writable(Array.from(groupNodeParameter($nodeParameters).values()))
 
 
+    let throttleChange
     // Knobs
     const onChange = (e, nodeParam: NodeParameter) => { 
 
-        Storage.saveUndo(G.synthesizer.serializeOut())
-
         nodeParam.set(e.detail)
+
+        window.clearTimeout(throttleChange)
+        throttleChange = window.setTimeout(() => {
+
+            saveUndo()
+
+        }, 250)
     }
 
     const onSelect = (e, nodeParam: NodeParameter) => {
         
-        Storage.saveUndo(G.synthesizer.serializeOut())
-        
         nodeParam.set(e.detail.target.value)
+        
+        saveUndo()
     }
 
     const onFile = (e, nodeParam: DropDownNodeParameter) => {
         
-        Storage.saveUndo(G.synthesizer.serializeOut())
-
         if(nodeParam.fileUploadHandler) nodeParam.fileUploadHandler(e.detail)
+        
+        saveUndo()
     }
 
     // console.log('node props', node.name, groups)
@@ -94,6 +100,8 @@
         dispatch('shiftForward', node)
 
         groups.set(Array.from(groupNodeParameter($nodeParameters).values()))
+
+        saveUndo()
     }
 
     const shiftBack = () => {
@@ -101,11 +109,13 @@
         dispatch('shiftBack', node)
 
         groups.set(Array.from(groupNodeParameter($nodeParameters).values()))
+
+        saveUndo()
     }
 
     const toggleShrinking = () => {
 
-        Storage.saveUndo(G.synthesizer.serializeOut())
+        saveUndo()
 
         node.collapsed = !node.collapsed
 
@@ -128,7 +138,7 @@
 
         if(isInstrument) return
 
-        Storage.saveUndo(G.synthesizer.serializeOut())
+        saveUndo()
 
         const e = (node as Effect)
 
@@ -139,6 +149,11 @@
         e.wet = isEnabled ? wet : 0
     }
 
+
+    const saveUndo = () => {
+
+        Storage.saveUndo(JSON.stringify(G.synthesizer.serializeOut()))
+    }
 
 
 

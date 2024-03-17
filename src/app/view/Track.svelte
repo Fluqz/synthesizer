@@ -16,6 +16,7 @@
     import Dropdown from "./Dropdown.svelte";
     import LevelMeter from "./LevelMeter.svelte";
     import Oscilloscope from "./Oscilloscope.svelte";
+    import { Storage } from "../util/storage";
 
     export let track: Track
 
@@ -24,11 +25,21 @@
     const sources: number[] | string[] = Object.keys(Synth.nodes.sources)
     const effects: number[] | string[] = Object.keys(Synth.nodes.effects)
 
+    $: {
+
+        console.log('react track')
+        track = track
+
+        track.volumeNode = track.volumeNode
+    }
+
 
     onMount(() => {
 
         track.volume = track.volume
         track = track
+        track.volumeNode = track.volumeNode
+
     })
     onDestroy(() => {
 
@@ -46,6 +57,8 @@
         track = track
 
         track.volumeNode = track.volumeNode
+
+        saveUndo()
     }
 
     const onChannel = (e) => {
@@ -59,6 +72,8 @@
         track.setChannel(track.channel)
 
         track = track
+
+        saveUndo()
     }
 
     const onMute = (e) => {
@@ -66,6 +81,8 @@
         track.mute(!track.isMuted)
         track.isMuted = track.isMuted
         track = track
+
+        saveUndo()
     }
 
     const onSolo = (e) => {
@@ -73,6 +90,8 @@
         track.solo(!track.soloEnabled)
         track.soloEnabled = track.soloEnabled
         track = track
+
+        saveUndo()
     }
 
     const onHold = (e) => {
@@ -90,6 +109,8 @@
             track.hold = 'OFF'
         }
         track = track
+
+        saveUndo()
     }
 
     const onDuplicate = () => {
@@ -100,8 +121,6 @@
     const onDelete = (e) => {
 
         dispatch('delete', track)
-
-        // track = track
     }
     
     const addNode = (e, name?: string) => {
@@ -112,6 +131,8 @@
         else track.addNode(Synth.nodes.effects.Delay())
 
         track = track
+
+        saveUndo()
     }
 
     const deleteNode = (e) => {
@@ -119,6 +140,8 @@
         track.removeNode(e.detail)
 
         track = track
+
+        saveUndo()
     }
 
     /** Shift node forward in array */
@@ -129,6 +152,8 @@
         track.connectNodes()
 
         track = track
+
+        saveUndo()
     }
 
     /** Shift node back in array */
@@ -139,6 +164,8 @@
         track.connectNodes()
 
         track = track
+
+        saveUndo()
     }
 
     // Change Tracks Instrument
@@ -158,6 +185,13 @@
         ele.blur()
 
         track = track
+
+        saveUndo()
+    }
+
+    const saveUndo = () => {
+
+        Storage.saveUndo(JSON.stringify(track.synthesizer.serializeOut()))
     }
 
 
