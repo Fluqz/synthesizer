@@ -27,7 +27,7 @@
 
       if(connectedOuput !== output) {
 
-        console.log('yaaaaaaaa.------')
+        // console.log('yaaaaaaaa.------')
 
         output = output
             

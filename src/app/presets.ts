@@ -304,6 +304,459 @@ export const DEFAULT_SESSION = {
 export const DEFAULT_PRESETS: IPreset[] = [
 
     {
+        "bpm": 120,
+        "volume": -3,
+        "octave": 2,
+        "channel": 14,
+        "tracks": [
+          {
+            "enabled": true,
+            "index": 0,
+            "channel": 0,
+            "volume": -3,
+            "instrument": {
+              "name": "FMSynth",
+              "enabled": true,
+              "collapsed": false,
+              "volume": 0.5,
+              "detune": 0.5,
+              "portamento": 0,
+              "harmonicity": 3,
+              "phase": 0,
+              "attack": 0.01,
+              "decay": 0.01,
+              "sustain": 1,
+              "release": 0.5
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+              "enabled": "OFF",
+              "activeKeys": [
+                "C3"
+              ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+          },
+          {
+            "enabled": true,
+            "index": 1,
+            "channel": 1,
+            "volume": -14.695555555555593,
+            "instrument": {
+              "name": "DuoSynth",
+              "enabled": true,
+              "collapsed": false,
+              "volume": -4.221388888888889,
+              "detune": 0,
+              "harmonicity": 1.5,
+              "portamento": 0,
+              "vibratoAmount": 0.5,
+              "vibratoRate": 5,
+              "attack0": 0.01,
+              "decay0": 0,
+              "release0": 0.5,
+              "sustain0": 1,
+              "attack1": 0.01,
+              "decay1": 0,
+              "release1": 0.5,
+              "sustain1": 1
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+              "enabled": "OFF",
+              "activeKeys": [
+                "C3",
+                "E3"
+              ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+          },
+          {
+            "enabled": true,
+            "index": 2,
+            "channel": 2,
+            "volume": -3,
+            "instrument": {
+              "name": "PulseOscillator",
+              "enabled": true,
+              "collapsed": false,
+              "volume": 0.6194444444444445,
+              "detune": 0,
+              "width": 0.2,
+              "phase": 0,
+              "attack": 0.01,
+              "decay": 0.1,
+              "sustain": 0.5,
+              "release": 1
+            },
+            "nodes": [
+              {
+                "name": "Delay",
+                "enabled": true,
+                "collapsed": false,
+                "wet": 1,
+                "delayTime": 0.12,
+                "feedback": 0.8
+              },
+              {
+                "name": "Chorus",
+                "enabled": true,
+                "collapsed": false,
+                "wet": 0.5,
+                "delayTime": 3.5,
+                "depth": 0.7,
+                "feedback": 0
+              },
+              {
+                "name": "Distortion",
+                "enabled": true,
+                "collapsed": false,
+                "wet": 1,
+                "gain": 1
+              },
+              {
+                "name": "AutoFilter",
+                "enabled": true,
+                "collapsed": false,
+                "wet": 1,
+                "depth": 1,
+                "octaves": 2.6,
+                "wave": "sine",
+                "wavePartial": "",
+                "baseFrequency": 200,
+                "frequency": 1
+              }
+            ],
+            "soloEnabled": false,
+            "hold": {
+              "enabled": "OFF",
+              "activeKeys": [
+                "B3",
+                "E4"
+              ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+          },
+          {
+            "enabled": true,
+            "index": 3,
+            "channel": 15,
+            "volume": -3,
+            "instrument": {
+              "name": "Sampler",
+              "enabled": true,
+              "collapsed": false,
+              "volume": 0.5,
+              "sample": "Kick3"
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+              "enabled": "OFF",
+              "activeKeys": [
+                "C3"
+              ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+          },
+          {
+            "enabled": true,
+            "index": 4,
+            "channel": 14,
+            "volume": -3,
+            "instrument": {
+              "name": "Sampler",
+              "enabled": true,
+              "collapsed": false,
+              "volume": 0.5,
+              "sample": "Snare4"
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+              "enabled": "OFF",
+              "activeKeys": [
+                "A#1",
+                "F2"
+              ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+          },
+          {
+            "enabled": true,
+            "index": 5,
+            "channel": 13,
+            "volume": -3,
+            "instrument": {
+              "name": "Sampler",
+              "enabled": true,
+              "collapsed": false,
+              "volume": 0.5,
+              "sample": "Hihat7"
+            },
+            "nodes": [],
+            "soloEnabled": false,
+            "hold": {
+              "enabled": "OFF",
+              "activeKeys": [
+                "C3"
+              ]
+            },
+            "isMuted": false,
+            "isCollapsed": false
+          }
+        ],
+        "sequencers": [
+          {
+            "index": 1,
+            "channel": [
+              0
+            ],
+            "sequence": [
+              {
+                "id": 0,
+                "note": "C3",
+                "time": 0,
+                "length": 0.242,
+                "velocity": 1
+              },
+              {
+                "id": 1,
+                "note": "C3",
+                "time": 0.746,
+                "length": "4n",
+                "velocity": 1
+              }
+            ],
+            "humanize": false,
+            "bars": 2
+          },
+          {
+            "index": 2,
+            "channel": [
+              1
+            ],
+            "sequence": [
+              {
+                "id": 0,
+                "note": "C3",
+                "time": 0.123,
+                "length": 0.127,
+                "velocity": 1
+              },
+              {
+                "id": 1,
+                "note": "E3",
+                "time": 0.377,
+                "length": 0.126,
+                "velocity": 1
+              },
+              {
+                "id": 2,
+                "note": "C3",
+                "time": 0.399,
+                "length": 0.22399999999999998,
+                "velocity": 1
+              },
+              {
+                "id": 3,
+                "note": "C3",
+                "time": 0.873,
+                "length": 0.12499999999999989,
+                "velocity": 1
+              }
+            ],
+            "humanize": false,
+            "bars": 1
+          },
+          {
+            "index": 4,
+            "channel": [
+              0
+            ],
+            "sequence": [],
+            "humanize": false,
+            "bars": 1
+          },
+          {
+            "index": 6,
+            "channel": [
+              2
+            ],
+            "sequence": [
+              {
+                "id": 0,
+                "note": "B3",
+                "time": 0,
+                "length": 3.999,
+                "velocity": 1
+              },
+              {
+                "id": 1,
+                "note": "E4",
+                "time": 4.001,
+                "length": 4.0040000000000004,
+                "velocity": 1
+              }
+            ],
+            "humanize": false,
+            "bars": 8
+          },
+          {
+            "index": 10,
+            "channel": [
+              15
+            ],
+            "sequence": [
+              {
+                "id": 0,
+                "note": "C3",
+                "time": 0,
+                "length": 0.247,
+                "velocity": 1
+              },
+              {
+                "id": 1,
+                "note": "C3",
+                "time": 0.249,
+                "length": "4n",
+                "velocity": 1
+              },
+              {
+                "id": 2,
+                "note": "C3",
+                "time": 0.999,
+                "length": 0.20200000000000018,
+                "velocity": 1
+              },
+              {
+                "id": 3,
+                "note": "C3",
+                "time": 1.248,
+                "length": "4n",
+                "velocity": 1
+              },
+              {
+                "id": 4,
+                "note": "C3",
+                "time": 0.872,
+                "length": 0.127,
+                "velocity": 1
+              }
+            ],
+            "humanize": false,
+            "bars": 2
+          },
+          {
+            "index": 11,
+            "channel": [
+              14
+            ],
+            "sequence": [
+              {
+                "id": 0,
+                "note": "A#1",
+                "time": 0.499,
+                "length": "4n",
+                "velocity": 1
+              }
+            ],
+            "humanize": false,
+            "bars": 1
+          },
+          {
+            "index": 12,
+            "channel": [
+              13
+            ],
+            "sequence": [
+              {
+                "id": 0,
+                "note": "C3",
+                "time": 0.003,
+                "length": "4n",
+                "velocity": 1
+              },
+              {
+                "id": 1,
+                "note": "C3",
+                "time": 0.498,
+                "length": "4n",
+                "velocity": 1
+              }
+            ],
+            "humanize": false,
+            "bars": 1
+          }
+        ],
+        "id": 100020,
+        "name": "Space Beat"
+      },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    {
         "volume": 0.5,
         "octave": 1,
         "channel": 0,

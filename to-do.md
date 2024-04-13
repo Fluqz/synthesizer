@@ -1,4 +1,8 @@
 #BUGS
+UI not updating after adding/removing Effects
+
+timline of sequencer resets when starting a second sequencer. Visuals not showing the real thing
+
 
 
 #Unfinished

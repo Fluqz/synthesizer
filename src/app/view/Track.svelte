@@ -27,7 +27,8 @@
 
     $: {
 
-        console.log('react track')
+        // console.log('react track')
+
         track = track
 
         track.volumeNode = track.volumeNode
@@ -171,12 +172,13 @@
     // Change Tracks Instrument
     const onChangeInstrument = (e) => {
 
+        if(track.instrument) track.instrument.releaseAll()
+
         const ele = e.detail.target
 
         const source = ele.value
 
         if(!Object.hasOwn(Synth.nodes.sources, source)) return
-
 
         const instrument: Instrument = Synth.nodes.sources[source]()
 

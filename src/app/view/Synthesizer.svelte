@@ -130,6 +130,14 @@
         saveUndo()
     }
 
+    const startAllSequencers = (e) => {
+
+        _Sequencer.startTime = Tone.now()
+
+        for(let seq of synthesizer.sequencers) seq.start()
+    }
+    
+
     
     const scrollToBottom = () => {
 
@@ -326,7 +334,7 @@
 
     const togglePlayStop = () => {
 
-        if(!synthesizer.isPlaying) {
+        if(!G.isPlaying) {
             Tone.start()
             Tone.Transport.start()
             console.log('START', Tone.Transport.now())
@@ -335,7 +343,7 @@
             Tone.Transport.stop()
         }
 
-        synthesizer.isPlaying = !synthesizer.isPlaying
+        G.isPlaying = !G.isPlaying
         synthesizer = synthesizer
     }
 
@@ -368,7 +376,7 @@
 </script>
 
 
-{#if !G.fullScreenmode }
+<!-- {#if !G.fullScreenmode } -->
 
     <div class="synthesizer">
 
@@ -380,9 +388,11 @@
 
             <div class="add-sequencer btn" title="Add Sequencer" on:click={addSequencer}>&#x2b;</div>
 
+            <div class="start-all-sequencer btn" title="Start all Sequencers" on:click={startAllSequencers}>{'>>'}</div>
+
             <div id="mute" class="btn" class:active={synthesizer.isMuted} title="Mute" on:click={mute}>M</div>
 
-            <div id="play-btn" class="btn" title="Play | Stop" class:active={synthesizer.isPlaying} on:click={togglePlayStop}>{ synthesizer.isPlaying ? '-' : '>'}</div>
+            <div id="play-btn" class="btn" title="Play | Stop" class:active={G.isPlaying} on:click={togglePlayStop}>{ G.isPlaying ? '-' : '>'}</div>
 
             <div id="bpm-btn" class="btn" title="BPM"><input type="number" bind:value={ synthesizer.bpm } pattern="[0-1]" step="1" min="1" max="400" /></div>
 
@@ -548,7 +558,7 @@
 
     </div>
 
-{/if}
+<!-- {/if} -->
 
 
 

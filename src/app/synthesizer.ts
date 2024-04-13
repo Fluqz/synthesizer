@@ -11,6 +11,7 @@ import { Track, type ITrackSerialization } from './track'
 import { PresetManager, type IPreset } from './core/preset-manager'
 import { writable, type Writable } from 'svelte/store'
 import { Sequencer, type ISequencerSerialization } from './sequencer'
+import { G } from './globals'
 
 export interface ISerialize {
 
@@ -357,18 +358,16 @@ export class Synthesizer implements ISerialize {
     }
 
 
-
-    private isPlaying = false
     /** Trigger a note - Triggers all tracks */
     triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, channel: Channel = 0, velocity:number = 1) {
 
         // note = note.replace(/[0-9]/g, '')
 
-        if(this.isPlaying == false) {
+        if(G.isPlaying == false) {
 
             Tone.start()
             Tone.Transport.start()
-            this.isPlaying = true
+            G.isPlaying = true
         }
 
         note = Tone.Frequency(note).toNote()
@@ -386,9 +385,9 @@ export class Synthesizer implements ISerialize {
     /** Triggers and releases a note - Triggers all track's triggerAttackRelease function */
     triggerAttackRelease(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, channel: Channel = 0, velocity:number = 1): void {
 
-        if(this.isPlaying == false) {
+        if(G.isPlaying == false) {
             Tone.start()
-            this.isPlaying = true
+            G.isPlaying = true
         }
 
         note = Tone.Frequency(note).toNote()

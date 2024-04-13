@@ -53,7 +53,7 @@
         
         if(inputElement) {
 
-            console.log('ye')
+            // console.log('ye')
 
             inputElement.click()
         }

@@ -118,8 +118,9 @@
 
     .menu-wrapper.active {
 
-        min-height: 100vh;
-        height: auto;
+        /* min-height: 100vh; */
+        /* height: auto; */
+        height: 100vh;
     }
 
     .menu-wrapper .btn {

@@ -1,6 +1,7 @@
 
 import * as Tone from 'tone'
 import { Synthesizer, type Channel, type ISerialize, type IComponent, type ISerialization } from './synthesizer'
+import { BeatMachine } from './beat-machine'
 
 
 export type NoteLength = '1' | '1/2' | '1/4' | '1/8' | '1/16' | '1/32' | '1/64'
@@ -33,6 +34,10 @@ export class Sequencer implements ISerialize, IComponent {
     /** Starting time of the first sequencer */
     static startTime: number
 
+    /** Starting time of this sequencer */
+    public startTime: number
+
+    /** Sequencer count */
     private count: number = 0
 
     index: number
@@ -42,7 +47,6 @@ export class Sequencer implements ISerialize, IComponent {
     id: number
 
     synthesizer: Synthesizer
-
 
     sequence: SequenceObject[]
 
@@ -211,17 +215,19 @@ export class Sequencer implements ISerialize, IComponent {
 
     start() {
 
+        BeatMachine.start()
+
         if(this.toneSequence) {
 
             this.toneSequence.cancel(Tone.now())
             this.toneSequence.stop(Tone.now())
             this.toneSequence.clear()
             this.toneSequence.dispose()
-
         }
 
         this.startSequence(this.sequence)
     }
+
 
     private lastNote: Tone.Unit.Frequency
     private startSequence(sequence: SequenceObject[]) {
@@ -268,34 +274,19 @@ export class Sequencer implements ISerialize, IComponent {
         this.toneSequence.humanize = this.humanize
         this.toneSequence.probability = 1
 
-        let startTime
+        BeatMachine.scheduleNextBeat(t => {
 
-        if(Sequencer.startTime == null) {
+            console.log('FN scheduleNextBeat', t)
+
+            this.toneSequence.start(t, 0)
+
+            if(Sequencer.startTime == undefined) Sequencer.startTime = t
             
-            Sequencer.startTime = now
-            startTime = Sequencer.startTime
+            this.startTime = t
 
-            console.log('Starting first', Sequencer.startTime)
-        }
-        else {
-            
-            const duration = (now - Tone.Time(Sequencer.startTime).toSeconds())
-            let time = Sequencer.startTime
-            while(duration > time) {
-                
-                time += Tone.Time('1m').toSeconds()
-            }
+            this.isPlaying = true
 
-            console.log('TIME', time, now)
-
-            startTime = time
-            console.log('now, startOffset, count, nextOffset, start', now, now - Tone.Time(Sequencer.startTime).toSeconds(), (now - Tone.Time(Sequencer.startTime).toSeconds()) / Tone.Time('1m').toSeconds() ,(now - Tone.Time(Sequencer.startTime).toSeconds()) % Tone.Time('1m').toSeconds(), startTime)
-            console.log('length, ', Tone.Time('1m').toSeconds(), )
-        }
-
-        this.toneSequence.start(startTime, 0)
-
-        this.isPlaying = true
+        })
 
         return this.toneSequence
     }

@@ -39,7 +39,7 @@ export class Key {
     /** On Key down */
     trigger() {
 
-        if(G.debug) console.log(`Trigger | mapping: ${this.mapping} note: ${this.note} octave: ${this.octave}`)
+        // if(G.debug) console.log(`Trigger | mapping: ${this.mapping} note: ${this.note} octave: ${this.octave}`)
 
         this.isPressed = true
 
@@ -49,7 +49,7 @@ export class Key {
     /** On Key up */
     release() {
 
-        if(G.debug) console.log(`Release | mapping: ${this.mapping} note: ${this.note} octave: ${this.octave}`)
+        // if(G.debug) console.log(`Release | mapping: ${this.mapping} note: ${this.note} octave: ${this.octave}`)
 
         // if(!this.isPressed) return
 

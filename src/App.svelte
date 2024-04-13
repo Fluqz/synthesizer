@@ -97,16 +97,16 @@
         })
 
 
-        // Scroll to bottom
-        setTimeout(() => {
+        // // Scroll to bottom
+        // setTimeout(() => {
 
-            window.scrollTo({
-                top: 100000000,
-                left: 0,
-                behavior: 'smooth',
-            })
+        //     window.scrollTo({
+        //         top: 100000000,
+        //         left: 0,
+        //         behavior: 'smooth',
+        //     })
 
-        }, 1500)
+        // }, 1500)
 
 
 
@@ -234,8 +234,6 @@
             else Visual.activeVisual.restart()
         }
         else Visual.moire()
-
-        console.log('COLL', Visual.collapsed)
     }
 
     const onUndo = (e) => {
@@ -255,8 +253,12 @@
 
     document.addEventListener('click', () => {
             
-        // Tone.start()
-        // Tone.Transport.start()
+        if(G.isPlaying) {
+
+            G.isPlaying = true
+            Tone.start()
+            Tone.Transport.start()
+        }
 
 
         // console.log('click', synthesizer.presetManager.getPresets())
@@ -408,8 +410,8 @@
         justify-content: space-evenly;
 
         position: absolute;
-        left: 0px;
-        bottom: 0px;
+        left: 50%;
+        top: 0px;
     }
 
     .synthesizer-wrapper {

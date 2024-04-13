@@ -19,6 +19,7 @@ export class G {
 
     static osc: Vec2 = new Vec2()
 
+    static isPlaying: boolean = false
 
 
     static init() {

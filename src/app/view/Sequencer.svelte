@@ -4,6 +4,9 @@
     import { Synthesizer, type Channel } from "../synthesizer";
     import { Sequencer, type NoteLength, type SequenceObject } from "../sequencer";
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
+    import { Storage } from "../core/storage";
+    import { BeatMachine } from "../beat-machine";
+
 
     const dispatch = createEventDispatcher()
 
@@ -49,15 +52,38 @@
             for(let c of sequencer.channels) channels[c] = true
         }
 
+        // // Update position of timeline line
+        // Tone.Transport.scheduleRepeat((time) => {
+
+        //     // if(sequencer.isPlaying) console.log('pos', ((Tone.immediate() - Sequencer.startTime) % sequencer.bars))
+        //     // if(sequencer.isPlaying) console.log('pos',((((Tone.now() - Sequencer.startTime) % sequencer.bars)), (timelineRect.width / sequencer.bars)) - 1)
+        //     if(sequencer.isPlaying) currentLinePos = ((((Tone.immediate() - Sequencer.startTime) % sequencer.bars)) * (timelineRect.width / sequencer.bars))
+        //     else currentLinePos = 0
+
+        // }, 1 / 60, Tone.now(), Number.POSITIVE_INFINITY)
+
+
         // Update position of timeline line
-        Tone.Transport.scheduleRepeat((time) => {
+        BeatMachine.subscribeTimeLine((t) => {
 
-            // if(sequencer.isPlaying) console.log('pos', ((Tone.immediate() - Sequencer.startTime) % sequencer.bars))
-            // if(sequencer.isPlaying) console.log('pos',((((Tone.now() - Sequencer.startTime) % sequencer.bars)), (timelineRect.width / sequencer.bars)) - 1)
-            if(sequencer.isPlaying) currentLinePos = ((((Tone.immediate() - Sequencer.startTime) % sequencer.bars)) * (timelineRect.width / sequencer.bars))
-            else currentLinePos = 0
+            console.log('starttime', Sequencer.startTime, sequencer.startTime, (Sequencer.startTime - sequencer.startTime))
 
-        }, 1 / 60, Tone.now(), Number.POSITIVE_INFINITY)
+            const startTime = sequencer.startTime - Sequencer.startTime
+
+            if(!Number.isNaN(startTime)) {
+
+                Tone.Draw.schedule(() => {
+
+                    if(sequencer.isPlaying) currentLinePos = ((((Tone.immediate() - startTime) % sequencer.bars)) * (timelineRect.width / sequencer.bars))
+                    else currentLinePos = 0
+
+                }, t)
+
+            }
+
+        })
+
+
     })
 
     onDestroy(() => {
@@ -488,6 +514,13 @@
         sequencer = sequencer
     }
 
+
+
+    const saveUndo = () => {
+
+        Storage.saveUndo(JSON.stringify(sequencer.synthesizer.serializeOut()))
+    }
+
 </script>
 
 
@@ -683,6 +716,8 @@
     .sequencer-wrapper .sequence .timeline {
 
         mix-blend-mode: color-dodge;
+        mix-blend-mode: unset;
+
         position: relative;
 
         display: inline-flex;
@@ -831,6 +866,14 @@
     .sequencer-wrapper .sequence .note .btn {
 
         z-index: 2;
+
+        background-color: transparent;
+    }
+    .sequencer-wrapper .sequence .note .btn:hover,
+    .sequencer-wrapper .sequence .note .btn:active {
+
+        background-color: transparent;
+        color: var(--c-b);
     }
 
     .sequencer-wrapper .sequence .drag-handle {

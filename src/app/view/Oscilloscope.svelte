@@ -26,7 +26,7 @@
 
       if(connectedOuput !== output) {
 
-        console.log('yooooooo.------')
+        // console.log('yooooooo.------')
 
         disconnect()
 
@@ -89,7 +89,6 @@
 
       scheduleID = Tone.Transport.scheduleRepeat(draw, 1 / 30)
 
-      console.log('Oscill')
 
       connectedOuput = output
     }
