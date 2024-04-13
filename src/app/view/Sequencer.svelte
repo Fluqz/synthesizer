@@ -66,9 +66,9 @@
         // Update position of timeline line
         BeatMachine.subscribeTimeLine((t) => {
 
-            console.log('starttime', Sequencer.startTime, sequencer.startTime, (Sequencer.startTime - sequencer.startTime))
-
-            const startTime = sequencer.startTime - Sequencer.startTime
+            
+            const startTime = sequencer.startTime
+            // console.log('starttime', Sequencer.startTime, sequencer.startTime, startTime)
 
             if(!Number.isNaN(startTime)) {
 

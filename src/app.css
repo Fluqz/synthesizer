@@ -51,9 +51,9 @@ body {
   background-color: var(--c-b);
   color: var(--c-w);
 
-  transition: 1s all;
+  /* transition: 1s all; */
 
-  /* transition: 2s background-color; */
+  transition: 2s background-color;
 
   overflow-x: hidden;
   scrollbar-width: none;

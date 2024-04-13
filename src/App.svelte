@@ -20,6 +20,7 @@
     import { isSafari } from './app/util/browser';
 
     import Menu from './app/view/Menu.svelte';
+
     import { COLORS } from './app/core/colors';
     import { DB } from './app/core/db';
 
@@ -343,7 +344,7 @@
 
 <div class="app-wrapper">
 
-    <Menu bind:active={isMenuOpen} on:close={toggleMenu} ></Menu>
+    <Menu bind:active={isMenuOpen} on:close={toggleMenu}></Menu>
 
     <div class="content-wrapper">
 
