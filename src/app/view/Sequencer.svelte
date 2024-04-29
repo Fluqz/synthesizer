@@ -151,9 +151,15 @@
     }
 
     /** Add new note to sequencer */
-    const addNote = (time: Tone.Unit.Time) => {
+    const addNote = (time: Tone.Unit.Time, note?: Tone.Unit.Frequency) => {
 
-        sequencer.addNote('C3', time, convertNoteLength(sequencer.noteLength), 1)
+        if(note == undefined) {
+
+            if(Synthesizer.lastNotePlayed != undefined) note = Synthesizer.lastNotePlayed
+            else note = 'F3'
+        }
+
+        sequencer.addNote(note, time, convertNoteLength(sequencer.noteLength), 1)
 
         sequencer.sequence = sequencer.sequence
 
@@ -245,17 +251,23 @@
         if(isDrag) return
 
         if(!selectedNote) return
-        // console.log('mousemove')
-
+        
         const bars = sequencer.bars
         const width = timelineRect.width
-        const posX = e.clientX - timelineRect.left - clickOffset
+        const stop = timelineRect.right
+        let posX = e.clientX - timelineRect.left - clickOffset
 
+        const eleRect = e.target.getBoundingClientRect()
+
+        if(timelineRect.left + posX + eleRect.width > stop) posX = stop - eleRect.width - timelineRect.left
+        
         let xInPercent = posX / width
 
         time = Math.round(bars * xInPercent * 1000) / 1000
-
+        
         if(time < 0) time = 0
+
+        // console.log('mousemove', bars, width, posX, xInPercent, clickOffset, time, selectedNote.length, stop)
 
         sequencer.updateNote(selectedNote.id, selectedNote.note, time, selectedNote.length, selectedNote.velocity)
 
@@ -338,11 +350,11 @@
         if(handle == 0) {
 
             if(time < 0) time = 0
-
+            
             l = endTime - time
-
+            
             if(l < 0) time = endTime
-
+            
             sequencer.updateNote(resizeNote.id, resizeNote.note, time, l, resizeNote.velocity)
         }
         else {

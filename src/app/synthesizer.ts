@@ -71,11 +71,10 @@ export class Synthesizer implements ISerialize {
 
     /** 
      * This array is used to keep track which notes are currently triggered. 
-     * There are some issues with polyphonic synths and releasing the note. 
-     * In some occasions you can lose track and wont be able to release the note anymore.
-     * The note will play for eternity.
      */
     static activeNotes: Set<Tone.Unit.Frequency> = new Set()
+
+    static lastNotePlayed: Tone.Unit.Frequency
 
     /** Currently active channel */
     public channel: Channel = 0
@@ -196,6 +195,8 @@ export class Synthesizer implements ISerialize {
             Synthesizer.keys.push(key)
 
             key.onTrigger.subscribe(k => {
+
+                Synthesizer.lastNotePlayed = k.note + k.octave
 
                 this.triggerAttack(k.note + k.octave, Tone.now(), this.channel)
             })
