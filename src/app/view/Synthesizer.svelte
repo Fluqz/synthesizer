@@ -23,6 +23,7 @@
     import { DEFAULT_SESSION } from '../presets';
     import { Visual } from '../p5/visual';
     import { Storage } from '../core/storage';
+  import { BeatMachine } from '../beat-machine';
 
     export let synthesizer: Synthesizer
 
@@ -132,9 +133,32 @@
 
     const startAllSequencers = (e) => {
 
+        // BeatMachine.stop()
+        
+        // Tone.Transport.position = 0
+
         _Sequencer.startTime = Tone.now()
 
         for(let seq of synthesizer.sequencers) seq.start()
+
+        synthesizer = synthesizer
+        synthesizer.sequencers = synthesizer.sequencers
+        synthesizer.components = synthesizer.components
+    }
+
+    const stopAllSequencers = (e) => {
+
+        // BeatMachine.stop()
+        
+        // Tone.Transport.position = 0
+
+        _Sequencer.startTime = undefined
+
+        for(let seq of synthesizer.sequencers) seq.stop()
+
+        synthesizer = synthesizer
+        synthesizer.sequencers = synthesizer.sequencers
+        synthesizer.components = synthesizer.components
     }
     
 
@@ -389,6 +413,7 @@
             <div class="add-sequencer btn" title="Add Sequencer" on:click={addSequencer}>&#x2b;</div>
 
             <div class="start-all-sequencer btn" title="Start all Sequencers" on:click={startAllSequencers}>{'>>'}</div>
+            <div class="stop-all-sequencer btn" title="Stop all Sequencers" on:click={stopAllSequencers}>{'<<'}</div>
 
             <div id="mute" class="btn" class:active={synthesizer.isMuted} title="Mute" on:click={mute}>M</div>
 

@@ -266,7 +266,6 @@ export class Sequencer implements ISerialize, IComponent {
             
         // }, .01)
 
-
         this.toneSequence.loop = this.loop
 
         this.toneSequence.loopEnd = this.bars
@@ -339,7 +338,10 @@ export class Sequencer implements ISerialize, IComponent {
             bars: this.bars
         }
     }
+
     serializeIn(o: ISequencerSerialization) {
+
+        this.destroy()
 
         if(o.index) this.index = o.index
         if(o.channel && o.channel.length) this.channels = o.channel

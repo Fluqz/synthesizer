@@ -16,7 +16,21 @@
   --c-gr: rgb(22, 111, 74);
 }
 
+
 /* yellow #ffcc19 */
+
+
+::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+  background: transparent; /* make scrollbar transparent */
+}
+::-moz-scrollbar {
+  display: none;
+}
+::-ms-scrollbar {
+  display: none;
+}
 
 * {
 
@@ -42,10 +56,23 @@
   user-select: none; /* Standard */
 }
 
-.synthesizer * {
+html {
+
+  overflow: -moz-scrollbars-none;
+
+  /* background-color: var(--c-b); */
+
+  font-size: 14px;
+  scrollbar-width: none;
+/* 
+  background-image: url('/src/assets/imgs/noise4.jpg');
+  background-size: 200%;
+  background-repeat: no-repeat; */
 
   mix-blend-mode: unset;
+  
 }
+
 
 body {
   background-color: var(--c-b);
@@ -64,36 +91,15 @@ body {
   /* mix-blend-mode: difference; */
 }
 
+
+
 body.safari {
 
   mix-blend-mode: unset;
 
 }
 
-::-webkit-scrollbar {
-  display: none;
-}
-::-moz-scrollbar {
-  display: none;
-}
-::-ms-scrollbar {
-  display: none;
-}
 
-html {
-
-  /* background-color: var(--c-b); */
-
-  font-size: 14px;
-  scrollbar-width: none;
-/* 
-  background-image: url('/src/assets/imgs/noise4.jpg');
-  background-size: 200%;
-  background-repeat: no-repeat; */
-
-  mix-blend-mode: unset;
-  
-}
 
 body > main {
 
@@ -142,6 +148,10 @@ input[type=number] {
 
 
 
+.synthesizer * {
+
+  mix-blend-mode: unset;
+}
 
 
 

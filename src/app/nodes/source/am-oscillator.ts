@@ -252,7 +252,6 @@ export class AMOscillator extends Instrument {
         this.osc.dispose()
         this.osc.context._timeouts.cancel(0)
 
-
         super.destroy()
     }
  

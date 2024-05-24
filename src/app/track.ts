@@ -144,8 +144,29 @@ export class Track implements ISerialize, IComponent {
 
         this.isMuted = m === true ? true : false
 
+        if(m == true && this.soloEnabled == true) this.solo(false) 
+
         if(this.isMuted) this.volumeNode.volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .15, Tone.now())
-        else this.volumeNode.volume.exponentialRampTo(this._volume, .15, Tone.now())
+        else {
+
+            // Any track left in solo mode? then only change self volume back to normal
+            let soloStillActive:boolean = false
+            for(let t of this.synthesizer.tracks) {
+
+                if(t.soloEnabled) soloStillActive = true
+            }
+
+            // Any track left in solo mode? Then keep this track shut
+            if(soloStillActive) {
+
+                // Set volume to -Infinity
+                this.volumeNode.volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .2, Tone.now())
+            }
+            else {
+
+                this.volumeNode.volume.exponentialRampTo(this._volume, .2, Tone.now())
+            }
+        }
     }
 
     /** Activates solo mode. Only tracks in solo mode can be heard. */
@@ -153,7 +174,9 @@ export class Track implements ISerialize, IComponent {
 
         this.soloEnabled = s === true ? true : false
 
-        if(this.soloEnabled) {
+        if(this.soloEnabled == true && this.isMuted == true) this.mute(false)
+
+        if(this.soloEnabled) { // SOLO
 
             // Set volume
             this.volumeNode.volume.exponentialRampTo(this._volume, .15, Tone.now())
@@ -163,12 +186,12 @@ export class Track implements ISerialize, IComponent {
                 // Ignore self
                 if(t === this) continue
                 // Ignore others in solo mode
-                else if(t.soloEnabled) continue
+                if(t.soloEnabled) continue
                 // Silence every other track
-                else t.volumeNode.volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .2, Tone.now())
+                t.volumeNode.volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .2, Tone.now())
             }
         }
-        else {
+        else { // NOT SOLO
 
             // Any track left in solo mode? then only change self volume back to normal
             let staySoloMode:boolean = false
@@ -177,11 +200,11 @@ export class Track implements ISerialize, IComponent {
                 if(t.soloEnabled) staySoloMode = true
             }
 
-            // Any track left in solo mode? then only change self volume back to normal
+            // Any track left in solo mode? Then keep this track shut
             if(staySoloMode) {
 
-                // Set volume
-                this.volumeNode.volume.exponentialRampTo(this._volume, .2, Tone.now())
+                // Set volume to -Infinity
+                this.volumeNode.volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .2, Tone.now())
 
             }
             else {
@@ -232,11 +255,17 @@ export class Track implements ISerialize, IComponent {
 
         for(let n of this.activeNotes) this.triggerRelease(n, Tone.now())
 
-        this.instrument.releaseAll()
+        if(this.instrument) this.instrument.releaseAll()
     }
 
     /** Triggers the instruments note */
     triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
+        
+        if(this.instrument == undefined) {
+            
+            console.error('track.ts releaseNotes() - instrument is undefined')
+            return
+        }
 
         // console.log('trigger attack', note, this.instrument.name)
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
@@ -247,12 +276,18 @@ export class Track implements ISerialize, IComponent {
 
         this.activeNotes.add(note)
 
+
         this.instrument.triggerAttack(note, time, velocity)
     }
 
     /** Triggers the instruments note */
     triggerAttackRelease(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
 
+        if(this.instrument == undefined) {
+            
+            console.error('track.ts releaseNotes() - instrument is undefined')
+            return
+        }
         // console.log('trigger attackr', note, this.instrument.name)
 
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
@@ -275,6 +310,11 @@ export class Track implements ISerialize, IComponent {
     /** Stops the instruments note */
     triggerRelease(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
 
+        if(this.instrument == undefined) {
+            
+            console.error('track.ts releaseNotes() - instrument is undefined')
+            return
+        }
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         if(this.hold == 'HOLD' || this.hold == 'PLAY') return
 
@@ -338,6 +378,11 @@ export class Track implements ISerialize, IComponent {
                     }
                 }
             }
+        }
+        else {
+            
+            console.error('track.ts releaseNotes() - instrument is undefined')
+            return
         }
     }
 
@@ -404,6 +449,11 @@ export class Track implements ISerialize, IComponent {
 
     serializeIn(o: ITrackSerialization) {
 
+        this.destroy()
+
+        // Release all notes from the obsolete instrument instance
+        if(this.instrument) this.releaseNotes()
+
         if(o.index != undefined) this.index = o.index
         // if(o.name) this.name = o.name
         if(o.volume != undefined) this.volume = o.volume
@@ -424,8 +474,6 @@ export class Track implements ISerialize, IComponent {
         // if(o.isCollapsed) this.isCollapsed = o.isCollapsed
 
         if(o.nodes && o.nodes.length > 0) {
-
-            for(let i = this.nodes.length; i >= 0; i--) this.removeNode(this.nodes[i])
 
             this.nodes.length = 0
             

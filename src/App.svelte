@@ -76,7 +76,7 @@
         // }, 1000)
 
         // Visual.moire()
-        Visual.flowField()
+        // Visual.flowField()
         // Visual.noise()
 
         // Set initial volume

@@ -44,14 +44,16 @@
 
     .settings-wrapper {
 
-        position: relative;
+        position: absolute;
+        top: 0px;
+        left: calc(15% / 2);
+
+        padding: 20px;
 
         overflow: hidden;
 
         width: 85%;
         height: 0px;
-
-        margin: 0 auto;
 
         font-size: 1.4rem;
 
@@ -69,7 +71,8 @@
 
         /* min-height: 100vh; */
         /* height: auto; */
-        height: 100vh;
+        min-height: 100vh;
+        overflow-y: scroll;
     }
 
     .settings-wrapper .btn {

@@ -615,6 +615,13 @@ export class Synthesizer implements ISerialize {
         this.components.length = 0
     }
 
+    destroy() {
+
+        for(let track of this.tracks) track.destroy()
+    
+        for(let sequencer of this.sequencers) sequencer.destroy()
+    }
+
     /** Disconnects everything and removes all event listeners */
     dispose() {
 
@@ -680,6 +687,8 @@ export class Synthesizer implements ISerialize {
             }
         }
 
+        for(let i = this.sequencers.length-1; i >= 0; i--) this.removeSequencer(this.sequencers[i])
+
         if(o.sequencers && o.sequencers.length > 0) {
 
             this.sequencers.length = 0
@@ -697,6 +706,8 @@ export class Synthesizer implements ISerialize {
     serializeIn = (o: ISynthesizerSerialization) => {
 
         console.log('SerializeIn', o)
+
+        this.destroy()
         
         if(o.presets && o.presets.length > 0) {
             

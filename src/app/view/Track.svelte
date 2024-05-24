@@ -25,6 +25,8 @@
     const sources: number[] | string[] = Object.keys(Synth.nodes.sources)
     const effects: number[] | string[] = Object.keys(Synth.nodes.effects)
 
+    const nodesStore = writable(track.nodes)
+    
     $: {
 
         // console.log('react track')
@@ -133,6 +135,8 @@
 
         track = track
 
+        nodesStore.set(track.nodes)
+
         saveUndo()
     }
 
@@ -141,6 +145,8 @@
         track.removeNode(e.detail)
 
         track = track
+
+        nodesStore.set(track.nodes)
 
         saveUndo()
     }
@@ -154,6 +160,8 @@
 
         track = track
 
+        nodesStore.set(track.nodes)
+
         saveUndo()
     }
 
@@ -165,6 +173,8 @@
         track.connectNodes()
 
         track = track
+
+        nodesStore.set(track.nodes)
 
         saveUndo()
     }
@@ -187,6 +197,8 @@
         ele.blur()
 
         track = track
+
+        nodesStore.set(track.nodes)
 
         saveUndo()
     }
@@ -297,7 +309,7 @@
     <Node node={track.instrument} index={0} />
 
     <!-- Nodes -->
-    {#each track.nodes as node, i }
+    {#each $nodesStore as node, i }
 
         <Node bind:node={node} collapsed={node.collapsed} index={i + 1} on:shiftForward={shiftForward} on:shiftBack={shiftBack} on:deleteNode={deleteNode} />
 

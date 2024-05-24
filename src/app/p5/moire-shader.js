@@ -233,7 +233,7 @@ export const moireShader = (p5) => {
             p5.resizeCanvas(G.w, G.h)
             grid.setSize(G.w, G.h, 9, 4)
 
-        })
+        }, 100)
     }
 
 

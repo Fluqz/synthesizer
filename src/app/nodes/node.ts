@@ -85,7 +85,7 @@ export abstract class Node/* extends Tone.ToneAudioNode*/ implements ISerialize 
     directBypass: boolean = false
 
     /** OnDelete Observable */
-    onDelete
+    onDelete: Subject<Node>
 
     /** Array of settable properties */
     props: Map<string, NodeParameterType> 
@@ -148,6 +148,7 @@ export abstract class Node/* extends Tone.ToneAudioNode*/ implements ISerialize 
         }
     }
 
+    /** Chains multiple nodes after each other starting with this */
     chain(nodes: Node[] | Tone.ToneAudioNode[]) {
 
         if(!nodes.length || nodes.length == 0) return
@@ -198,19 +199,14 @@ export abstract class Node/* extends Tone.ToneAudioNode*/ implements ISerialize 
             }
         }
     }
-    
-    delete() {
 
-        this.onDelete.next(this)
-
-        this.destroy()
-    }
-
+    /**  */
     destroy() {
 
         this.disconnect()
 
-        this.onDelete.unsubscribe()
+        // TODO unsubscribe not working?
+        // if(this.onDelete) this.onDelete.unsubscribe()
     }
 
     serializeIn(o : INodeSerialization) {

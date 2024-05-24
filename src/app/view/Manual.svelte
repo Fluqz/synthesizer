@@ -29,14 +29,82 @@
 
     <div class="h-1">Manual</div>
 
-        <div class="text-1">This is a short manual for this website.</div>
 
-        <div class="h-2">Introduction</div>
+        <div class="text-1">
 
-            <div class="text-1">This tool is a sort of synthesizer builder playable by keys or sequencers.</div>        
-            <div class="text-1">All running with ToneJS.</div>
+            This tool is sort of a synthesizer builder playable by keys or sequencers.
 
-            <div class="h-3">Interface</div>
+            Add multiple sound sources and combine them by playing them all at the same time.
+            Group them by assigning a different channel to trigger them from multiple different input sources.
+
+        </div>
+        
+        <div class="text-1">All running with ToneJS.</div>
+
+        <div class="h-3">Interface</div>
+
+
+        <div class="h-3">Tracks</div>
+
+        <div class="text-1">Create <span>tracks</span> by clicking on the first <span>+</span> Button on the main menu bar.</div>
+        
+        <div class="h-4">Track Source Dropdown</div>
+
+        <div class="text-1">Select the <span>track</span>'s sound source by selecting an item from the dropdown menu. 
+        That can be different oscillators, mono synth's, poly synth's, a sampler or noise.</div>
+
+        <div class="h-4">Volume</div>
+
+        <div class="text-1">Use the Knob to assign a different volume value. Ranging from -70 to 6 dB.</div>
+
+
+        <div class="h-4">UV Meter</div>
+
+        <div class="text-1">The UV Meter displays the track's volume.</div>
+
+
+        <div class="h-4">Oscilloscope</div>
+
+        <div class="text-1">The Oscilloscope displays the track's frequency wave.</div>
+
+
+        <div class="h-4">Channel Button</div>
+
+        <div class="text-1">The channel button can be clicked to increase the channel's value or SHIFT + clicked to decrease the value.</div>
+
+
+        <div class="h-4">Mute Button</div>
+
+        <div class="text-1">The mute button can be clicked to silence the track.</div>
+
+
+        <div class="h-4">Solo Button</div>
+
+        <div class="text-1">The solo button can be clicked to silence all other tracks but this one.</div>
+
+
+        <div class="h-4">Hold Button</div>
+
+        <div class="text-1">The hold mode has 3 modi OFF, PLAY, HOLD.
+
+            When PLAY, every note that is now played, will be played endlessly until the mode is turned back to OFF.
+            When HOLD, all notes that are playing from activating them in the PLAY mode, will continue playing, but no other notes can be activated anymore.
+            When OFF, deactivates all actively playing notes. Has no other effect.
+
+        </div>
+
+        <div class="h-4">Duplicate Button</div>
+
+        <div class="text-1">Duplicates this track with all options.</div>
+
+        <div class="h-4">X Button</div>
+
+        <div class="text-1">Deletes this track entirely.</div>
+
+
+
+
+
 
             <div class="h-4">Plus</div>
             <div class="text-1">The Menu bar lets you create Tracks and Sequencers.</div>
@@ -86,14 +154,16 @@
 
     .manual-wrapper {
 
+        position: absolute;
+        top: 0px;
+        left: calc(15% / 2);
+
+        padding: 20px;
+
         width: 85%;
         height: 0px;
 
-        margin: 0 auto;
-
         font-size: 1.4rem;
-
-        position: relative;
 
         overflow: hidden;
 
@@ -111,7 +181,8 @@
 
         /* min-height: 100vh; */
         /* height: auto; */
-        height: 100vh;
+        min-height: 100vh;
+        overflow-y: scroll;
     }
 
     .manual-wrapper .btn {
@@ -164,7 +235,13 @@
 
     .manual-wrapper .text-1 {
         
-        font-size: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .manual-wrapper .text-1 span {
+
+        font-size: 1.1rem;
+        color: var(--c-y);
     }
 
 </style>

@@ -1,11 +1,20 @@
 #BUGS
+
+add ramping master volume from 0 to normal because when hold mode is active, it will instantly play after triggering the Tone.start
+
+adding more bars sth wrong with width. Possible to drag notes end outsite the right timeline
+
 UI not updating after adding/removing Effects
 
-timline of sequencer resets when starting a second sequencer. Visuals not showing the real thing
+Sequencer.isPlaying is not Reactive when starting all 
 
+Add track octave shift!
 
+There are many places where for example serializeIn will overwrite the ToneJs Source or Effect instance without destroying the object correctly!
 
 #Unfinished
+
+add lil-gui for visual? Enable in settings?
 
 open visuals in seperate window for beaming
 gif animation lower opacity -> https://stackoverflow.com/questions/6890218/css-background-image-opacity
@@ -25,6 +34,7 @@ Menu styling and text
 Epilepsy warning on welcome
 
 Save Menu Options in LocalStorage too
+  Also save visual
 
 Timeline line is not synced with Transport time
 

@@ -55,7 +55,11 @@
 
             if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
 
-            scheduleID = Tone.Transport.scheduleRepeat(getValue, 1 / 30, Tone.now(), 1000000)
+            scheduleID = Tone.Transport.scheduleRepeat((t) => {
+
+                Tone.Draw.schedule(getValue, t)
+
+            }, 1 / 24, Tone.now(), 1000000)
         }
     })
 

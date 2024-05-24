@@ -56,7 +56,9 @@
 
     const disconnect = () => {
 
-        if(connectedOuput) connectedOuput.disconnect(meter)
+        console.log(connectedOuput, meter)
+
+        // if(connectedOuput) connectedOuput.disconnect(meter)
         // meter.disconnect()
     }
 
@@ -69,7 +71,11 @@
 
             if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
 
-            scheduleID = Tone.Transport.scheduleRepeat(getValue, 1 / 30, Tone.now(), 100000000)
+            scheduleID = Tone.Transport.scheduleRepeat((t) => {
+                
+                Tone.Draw.schedule(getValue, t)
+
+            }, 1 / 24, Tone.now(), 100000000)
         }
     })
 

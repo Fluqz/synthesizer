@@ -46,6 +46,8 @@
           
           analyser.getByteTimeDomainData(dataArray)
           
+          if(container == null) return
+
           w = container.clientWidth
           h = container.clientHeight
           
@@ -87,7 +89,11 @@
 
       if(scheduleID != undefined) Tone.Transport.clear(scheduleID)
 
-      scheduleID = Tone.Transport.scheduleRepeat(draw, 1 / 30)
+      scheduleID = Tone.Transport.scheduleRepeat((t) => {
+
+        Tone.Draw.schedule(draw, t)
+
+      }, 1 / 24)
 
 
       connectedOuput = output

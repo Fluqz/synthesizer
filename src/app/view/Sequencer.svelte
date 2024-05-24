@@ -6,6 +6,7 @@
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import { Storage } from "../core/storage";
     import { BeatMachine } from "../beat-machine";
+  import type { Subscription } from "rxjs";
 
 
     const dispatch = createEventDispatcher()
@@ -29,13 +30,16 @@
 
     export let sequencer: Sequencer
 
+    /** HTMLElement reference */
+    const notes = []
+
     /** Array of activated channels. Sequencer can play through all 8 channels simultaniously. */
     let channels: boolean[] = []
     // let channels: Channel = 0
 
     let currentLinePos
 
-
+    let timelineObserver: Subscription
 
     onMount(() => {
 
@@ -64,9 +68,8 @@
 
 
         // Update position of timeline line
-        BeatMachine.subscribeTimeLine((t) => {
+        timelineObserver = BeatMachine.subscribeTimeLine((t) => {
 
-            
             const startTime = sequencer.startTime
             // console.log('starttime', Sequencer.startTime, sequencer.startTime, startTime)
 
@@ -89,6 +92,8 @@
     onDestroy(() => {
 
         Tone.Transport.cancel()
+
+        timelineObserver.unsubscribe()
     })
 
 
@@ -189,6 +194,9 @@
         saveUndo()
     }
 
+    /** Touching note right now */
+    let touchNote = false
+
     /** Pointerdown Timeline event */
     const onTimelineClick = (e: MouseEvent) => {
 
@@ -237,6 +245,7 @@
         if(e.target instanceof HTMLInputElement) return
 
         isNoteMouseDown = true
+        touchNote = true
 
         selectedNote = note
         time = selectedNote.time
@@ -279,6 +288,7 @@
     const noteMouseUp = (e) => {
 
         isNoteMouseDown = false
+        touchNote = false
         
         if(selectedNote) {
 
@@ -313,6 +323,7 @@
         e.stopPropagation()
 
         isDrag = true
+        touchNote = true
 
         resizeNote = note
 
@@ -381,6 +392,7 @@
         // e.stopPropagation()
 
         isDrag = false
+        touchNote = false
 
         resizeNote = null
 
@@ -421,6 +433,10 @@
 
         e.stopPropagation()
 
+        if(isDrag) return
+
+        if(touchNote) return
+
         currentNote = Tone.Frequency(note.note).toNote().toString()
 
         currentOctave = currentNote[currentNote.length - 1]
@@ -446,6 +462,10 @@
 
         e.stopPropagation()
 
+        if(isDrag) return
+
+        if(touchNote) return
+
         currentNote = Tone.Frequency(note.note).toNote().toString()
 
         currentOctave = currentNote[currentNote.length - 1]
@@ -469,9 +489,42 @@
         saveUndo()
     }
 
+    const getOverlapY = (note: SequenceObject, references: HTMLElement[], index: number) => {
+
+        return 0
+        // Calculate overlapping notes with note.time and note.start
+        // Then use the note to find the position
+
+        let t1: number,
+            t2: number,
+            l1: number,
+            l2: number
 
 
+        t1 = Tone.Time(note.time).toSeconds()
+        l1 = Tone.Time(note.length).toSeconds()
 
+        for(let n2 of sequencer.sequence) {
+
+            t2 = Tone.Time(n2.time).toSeconds()
+            l2 = Tone.Time(n2.length).toSeconds()
+
+            if(t1 > t2 && t1 < t2 + l2 || t1 + l1 > t2 && t1 + l1 < t2 + l2) {
+
+                return 50
+            }
+        }
+
+        const x1 = (Tone.Time(note.time).toSeconds() / sequencer.bars) * timelineRect.width
+        const x2 = x1 + (Tone.Time(note.length).toSeconds() / sequencer.bars) * timelineRect.width
+
+        return 0
+    }
+
+    const getOverlapHeight = (note: SequenceObject, element: HTMLElement, index: number) => {
+
+        return 30
+    }
 
 
 
@@ -480,12 +533,6 @@
     const toggleStartStop = () => {
 
         if(!sequencer.isPlaying) {
-
-            Tone.Transport.scheduleOnce((time) => {
-
-
-
-            }, 0)
 
             sequencer.start()
         }
@@ -581,73 +628,83 @@
                     
                     {#if timelineRect != undefined } 
 
-                        <div class="current-line" style:left={currentLinePos + 'px'}></div>
+                        <div class="timeline-ui">
 
+                            <div class="current-line" style:left={currentLinePos + 'px'}></div>
 
-                        {#each Array(sequencer.bars) as _, bar }
+                            {#each Array(sequencer.bars) as _, bar }
 
-                            <div class="bar" 
-                                    style:width={(timelineRect.width / sequencer.bars)+'px'} 
-                                    style:left={(((timelineRect.width / sequencer.bars) * bar) - 1) + 'px'}>
+                                <div class="bar" 
+                                        style:width={(timelineRect.width / sequencer.bars)+'px'} 
+                                        style:left={(((timelineRect.width / sequencer.bars) * bar) - 1) + 'px'}>
 
-                                {#each Array(16) as _, noteLine }
+                                    {#each Array(16) as _, noteLine }
 
-                                    <div class="note-line" style:left={((((timelineRect.width / sequencer.bars) / 16) * noteLine) - .5) + 'px'}></div>
+                                        <div class="note-line" style:left={((((timelineRect.width / sequencer.bars) / 16) * noteLine) - .5) + 'px'}></div>
 
-                                {/each}
-
-                            </div>
-
-                            <div class="bar-line" style:left={(((timelineRect.width / sequencer.bars) * bar) - 1) + 'px'}></div>
-
-                        {/each}
-
-                        <div class="bar-line" style:right={'-1px'} style:left="unset"></div>
-
-                        {#each sequencer.sequence as note, i }
-
-                            <div class="note" 
-                                    class:selected={selectedNote == note}
-                                    on:pointerdown={(e) => noteMouseDown(e, note)}
-                                    on:dblclick|self={(e) => { onNoteDblClick(e, note) }}
-                                    style:left={((Tone.Time(note.time).toSeconds() / sequencer.bars) * timelineRect.width) + 'px'}
-                                    style:width={((Tone.Time(note.length).toSeconds() / sequencer.bars) * timelineRect.width) + 'px'} >
-
-                                    
-                                <div class="drag-handle drag-start" 
-                                        on:pointerdown={(e) => handleHorizontalDown(e, note, 'start')}
-                                        on:pointermove={(e) => handleHorizontalMove(e)}
-                                        on:pointerup={(e) => handleHorizontalUp(e)}></div>
-                                <div class="drag-handle drag-end" 
-                                        on:pointerdown={(e) => handleHorizontalDown(e, note, 'end')}
-                                        on:pointermove={(e) => handleHorizontalMove(e)}
-                                        on:pointerup={(e) => handleHorizontalUp(e)}></div>
-
-                                
-                                <!-- <input bind:value={ note.note } /> -->
-                                
-                                
-                                <div class="btn" 
-                                        title="Note - Click to increase; Shift - Click to decrease" 
-                                        on:dblclick|stopPropagation={e => {}} 
-                                        on:click|stopPropagation={e => onNoteClick(e, note)}>{ getNote(note) }</div>
-                                <div class="btn" 
-                                        title="Octave - Click to increase; Shift - Click to decrease" 
-                                        on:dblclick|stopPropagation={e => {}} 
-                                        on:click|stopPropagation={e => onOctaveClick(e, note)}>{ getOctave(note) }</div>
-                                
-                                <div class="velocity" class:changed={ velocity < 1 } style:height={velocity * 100 + '%'}>
-<!--                                 
-                                    <div class="drag-handle drag-velocity" 
-                                            on:pointerdown={(e) => handleHorizontalDown(e, note, 'end')}
-                                            on:pointermove={(e) => handleHorizontalMove(e)}
-                                            on:pointerup={(e) => handleHorizontalUp(e)}></div> -->
+                                    {/each}
 
                                 </div>
-                                
-                            </div>
 
-                        {/each}
+                                <div class="bar-line" style:left={(((timelineRect.width / sequencer.bars) * bar) - 1) + 'px'}></div>
+
+                            {/each}
+
+                            <div class="bar-line" style:right={'-1px'} style:left="unset"></div>
+
+                        </div>
+
+                        <div class="timeline-notes">
+
+                            {#each sequencer.sequence as note, i }
+
+                                <div class="note" 
+                                        bind:this={notes[i]}
+                                        class:selected={selectedNote == note}
+                                        on:pointerdown={(e) => noteMouseDown(e, note)}
+                                        on:dblclick|self={(e) => { onNoteDblClick(e, note) }}
+                                        style:top={(getOverlapY(note, notes, i)) + 'px'}
+                                        style:height={(getOverlapHeight(note, notes[i], i)) + 'px'}
+                                        style:left={((Tone.Time(note.time).toSeconds() / sequencer.bars) * timelineRect.width) + 'px'}
+                                        style:width={((Tone.Time(note.length).toSeconds() / sequencer.bars) * timelineRect.width) + 'px'} >
+
+                                        
+                                    <div class="drag-handle drag-start" 
+                                            on:pointerdown={(e) => handleHorizontalDown(e, note, 'start')}
+                                            on:pointermove={(e) => handleHorizontalMove(e)}
+                                            on:pointerup={(e) => handleHorizontalUp(e)}></div>
+                                    <div class="drag-handle drag-end" 
+                                            on:pointerdown={(e) => handleHorizontalDown(e, note, 'end')}
+                                            on:pointermove={(e) => handleHorizontalMove(e)}
+                                            on:pointerup={(e) => handleHorizontalUp(e)}></div>
+
+                                    
+                                    <!-- <input bind:value={ note.note } /> -->
+                                    
+                                    
+                                    <div class="btn" 
+                                            title="Note - Click to increase; Shift - Click to decrease" 
+                                            on:dblclick|stopPropagation={e => {}} 
+                                            on:click|stopPropagation={e => onNoteClick(e, note)}>{ getNote(note) }</div>
+                                    <div class="btn" 
+                                            title="Octave - Click to increase; Shift - Click to decrease" 
+                                            on:dblclick|stopPropagation={e => {}} 
+                                            on:click|stopPropagation={e => onOctaveClick(e, note)}>{ getOctave(note) }</div>
+                                    
+                                    <div class="velocity" class:changed={ velocity < 1 } style:height={velocity * 100 + '%'}>
+    <!--                                 
+                                        <div class="drag-handle drag-velocity" 
+                                                on:pointerdown={(e) => handleHorizontalDown(e, note, 'end')}
+                                                on:pointermove={(e) => handleHorizontalMove(e)}
+                                                on:pointerup={(e) => handleHorizontalUp(e)}></div> -->
+
+                                    </div>
+                                    
+                                </div>
+
+                            {/each}
+
+                        </div>
 
                     {/if}
 
@@ -704,10 +761,6 @@
 
     .sequencer-wrapper .sequence {
 
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-
         width: calc(100% - 250px);
         height: 100%;
     }
@@ -732,12 +785,21 @@
 
         position: relative;
 
-        display: inline-flex;
+        overflow: hidden;
+        
         width: 100%;
         height: 100%;
-
-        overflow: hidden;
     }
+
+    .sequencer-wrapper .sequence .timeline .timeline-notes,
+    .sequencer-wrapper .sequence .timeline .timeline-ui {
+
+        position: absolute;
+
+        width: 100%;
+        height: 100%;
+    }
+
 
     .sequencer-wrapper .sequence .bar {
 
@@ -758,10 +820,10 @@
 
         z-index: 1;
         position: absolute;
-        left: -1px;
+        left: -.5px;
         top: 0px;
         height: 100%;
-        width: 2px;
+        width: 1px;
 
         background-color: var(--c-y);
     }
