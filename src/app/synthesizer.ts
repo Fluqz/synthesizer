@@ -68,6 +68,13 @@ export class Synthesizer implements ISerialize {
 
     static octaves: number[] = [ 0, 1, 2, 3, 4, 5, 6, 7 ]
 
+    static minOctave: number = 0
+    static maxOctave: number = 7
+
+    static limitOctave = (o: number) => {
+
+        return o = Math.min(Math.max(o, this.minOctave), this.maxOctave)
+    }
 
     /** 
      * This array is used to keep track which notes are currently triggered. 

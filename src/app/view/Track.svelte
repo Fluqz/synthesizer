@@ -121,6 +121,21 @@
         dispatch('duplicate', track)
     }
 
+    const onOctaveOffset = (e) => {
+
+        track.releaseNotes()
+
+        if(!e.shiftKey) track.octaveOffset++
+        if(e.shiftKey) track.octaveOffset--
+
+        if(track.octaveOffset > 2) track.octaveOffset = -2
+        else if(track.octaveOffset < -2) track.octaveOffset = 2
+
+        track = track
+
+        saveUndo()
+    }
+
     const onDelete = (e) => {
 
         dispatch('delete', track)
@@ -295,6 +310,11 @@
                 title="Duplicate"
                 class="btn">D</div>
 
+            <!-- OctaveOffset Nr -->
+            <div 
+                on:click={onOctaveOffset}
+                class="btn"
+                title="Octave offset">{track.octaveOffset}</div>
             <!-- Delete -->
             <div 
                 class="btn"

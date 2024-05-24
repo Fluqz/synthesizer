@@ -3,6 +3,7 @@ import { Synthesizer, type ISerialization, type ISerialize, type Channel, type I
 import { Node, type INodeSerialization } from './nodes/node'
 import { InstrumentType, type Instrument, Delay } from './nodes'
 import { writable, type Writable } from 'svelte/store'
+import { Util } from './util/util'
 
 export interface ITrackSerialization extends ISerialization {
 
@@ -10,7 +11,7 @@ export interface ITrackSerialization extends ISerialization {
 
     index: number
     channel: number
-    octave: number
+    octaveOffset: number
     volume: number
     instrument: INodeSerialization
     nodes: INodeSerialization[]
@@ -51,7 +52,7 @@ export class Track implements ISerialize, IComponent {
     private _volume: number
 
     /** Overwriting Synthesizer's octave */
-    public octave: number
+    public octaveOffset: number = 0
 
     /** Channel number to port to */
     public channel: Channel
@@ -94,6 +95,7 @@ export class Track implements ISerialize, IComponent {
         this.soloEnabled = false
         this.channel = synthesizer.channel
         this._hold = 'OFF'
+        this.octaveOffset = 0
 
         if(instrument) {
 
@@ -267,17 +269,14 @@ export class Track implements ISerialize, IComponent {
             return
         }
 
-        // console.log('trigger attack', note, this.instrument.name)
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         if(this.hold == 'HOLD') return
 
-        // Cant keep track of notes. Also will stay in this octave only! Need to check (synth.octave - note.octave) + this.octave
-        // if(this.octave != undefined) note = note.replace(/[0-9]/g, '') + this.octave
+        let triggerNote = this.checkOctaveOffset(note)
 
-        this.activeNotes.add(note)
+        this.activeNotes.add(triggerNote)
 
-
-        this.instrument.triggerAttack(note, time, velocity)
+        this.instrument.triggerAttack(triggerNote, time, velocity)
     }
 
     /** Triggers the instruments note */
@@ -288,22 +287,19 @@ export class Track implements ISerialize, IComponent {
             console.error('track.ts releaseNotes() - instrument is undefined')
             return
         }
-        // console.log('trigger attackr', note, this.instrument.name)
 
-        // Prevent triggering while in HOLD Mode. Held sounds are already set 
-        // if(this.hold == 'HOLD') return
+        let triggerNote = this.checkOctaveOffset(note)
         
-        this.activeNotes.add(note)
+        this.activeNotes.add(triggerNote)
 
-        const n = note
         Tone.Transport.scheduleOnce((t) => {
 
-            Synthesizer.activeNotes.delete(n)
+            Synthesizer.activeNotes.delete(triggerNote)
 
         // }, time)
         }, Tone.Time(time).toSeconds() + Tone.Time(duration).toSeconds())
 
-        this.instrument.triggerAttackRelease(note, duration, time, velocity)
+        this.instrument.triggerAttackRelease(triggerNote, duration, time, velocity)
     }
 
 
@@ -318,18 +314,18 @@ export class Track implements ISerialize, IComponent {
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         if(this.hold == 'HOLD' || this.hold == 'PLAY') return
 
-        // if(this.octave != undefined) note = note.replace(/[0-9]/g, '') + this.octave
+        let triggerNote = this.checkOctaveOffset(note)
 
-        this.activeNotes.delete(note)
+        this.activeNotes.delete(triggerNote)
 
-        if(this.instrument.type == InstrumentType.MONO && (this.activeNotes.size > 0 && !this.activeNotes.has(note))) {
+        if(this.instrument.type == InstrumentType.MONO && (this.activeNotes.size > 0 && !this.activeNotes.has(triggerNote))) {
 
             // console.log('play other note', this.activeNotes)
             // this.triggerAttack(Array.from(this.activeNotes).pop(), time)
             return
         }
 
-        this.instrument.triggerRelease(note, time)
+        this.instrument.triggerRelease(triggerNote, time)
     }
 
     /** Adds a node to the node chain */
@@ -447,6 +443,26 @@ export class Track implements ISerialize, IComponent {
         if(this.instrument) this.instrument.destroy()
     }
 
+    /** Checks if octaveOffset should be aplied */
+    private checkOctaveOffset(note: Tone.Unit.Frequency) : Tone.Unit.Frequency {
+
+        console.log('old', note)
+
+        let _note = note.toString()
+
+        if(this.octaveOffset != 0) {
+
+            const { n, o } = Util.removeOctaveFromNote(_note.toString())
+
+            _note = n + Synthesizer.limitOctave(o + this.octaveOffset)
+
+
+            console.log('new', _note)
+        }
+
+        return _note as Tone.Unit.Frequency
+    }
+
     serializeIn(o: ITrackSerialization) {
 
         this.destroy()
@@ -457,7 +473,7 @@ export class Track implements ISerialize, IComponent {
         if(o.index != undefined) this.index = o.index
         // if(o.name) this.name = o.name
         if(o.volume != undefined) this.volume = o.volume
-        if(o.octave != undefined) this.octave = o.octave
+        if(o.octaveOffset != undefined) this.octaveOffset = o.octaveOffset
         if(o.channel != undefined) this.channel = o.channel as Channel
 
         // if(o.enabled) this.enabled = o.enabled
@@ -520,7 +536,7 @@ export class Track implements ISerialize, IComponent {
 
             index: this.index,
 
-            octave: this.octave,
+            octaveOffset: this.octaveOffset,
             channel: this.channel,
 
             volume: this.volume,
