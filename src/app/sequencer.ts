@@ -24,6 +24,7 @@ export interface ISequencerSerialization extends ISerialization {
     sequence: SequenceObject[]
     humanize: boolean
     bars: number
+    noteLength: NoteLength
 }
 
 export class Sequencer implements ISerialize, IComponent {
@@ -332,7 +333,8 @@ export class Sequencer implements ISerialize, IComponent {
             channel: this.channels,
             sequence: this.sequence,
             humanize: this.humanize,
-            bars: this.bars
+            bars: this.bars,
+            noteLength: this.noteLength
         }
     }
 
@@ -341,6 +343,7 @@ export class Sequencer implements ISerialize, IComponent {
         this.destroy()
 
         if(o.index) this.index = o.index
+        if(o.noteLength) this.noteLength = o.noteLength
         if(o.channel && o.channel.length) this.channels = o.channel
         this.sequence.length = 0
         if(o.sequence && o.sequence.length) {
