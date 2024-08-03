@@ -373,9 +373,7 @@ export class Synthesizer implements ISerialize {
 
         if(G.isPlaying == false) {
 
-            Tone.start()
-            Tone.Transport.start()
-            G.isPlaying = true
+            G.start()
         }
 
         note = Tone.Frequency(note).toNote()
@@ -394,8 +392,7 @@ export class Synthesizer implements ISerialize {
     triggerAttackRelease(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, channel: Channel = 0, velocity:number = 1): void {
 
         if(G.isPlaying == false) {
-            Tone.start()
-            G.isPlaying = true
+            G.start()
         }
 
         note = Tone.Frequency(note).toNote()

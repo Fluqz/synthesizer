@@ -1,7 +1,7 @@
 import { Subject, takeUntil } from "rxjs"
 import * as Tone from "tone"
 import type { IVisual } from "./p5/visual"
-import type { Synthesizer } from "./synthesizer"
+import { Synthesizer } from "./synthesizer"
 import { Visual } from "./p5/visual"
 import { Vec2 } from "./util/math"
 
@@ -28,8 +28,19 @@ export class G {
         G.h = innerHeight
 
         Visual.init()
+
+        Tone.Destination.volume.setValueAtTime(Number.NEGATIVE_INFINITY, Tone.now())
     }
 
+    static start() {
+
+        Tone.start()
+        Tone.Transport.start()
+
+        this.isPlaying = true
+
+        Tone.Destination.volume.exponentialRampTo(this.synthesizer.volume.volume.value, .2, Tone.now())
+    }
 
     static saveVisuals = () => {
     

@@ -23,7 +23,7 @@ export class Storage {
     static saveUndo(file) {
 
       console.log('SAVE UNDO', this.undoID)
-      console.trace()
+      // console.trace()
 
       if (Storage.undoID - Storage.undoSteps > 0) localStorage.removeItem(Storage.storeName + '-undo-' + (Storage.undoID - Storage.undoSteps))
 

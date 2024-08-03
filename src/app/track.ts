@@ -214,6 +214,9 @@ export class Track implements ISerialize, IComponent {
                 // Unsilence every track
                 for(let t of this.synthesizer.tracks) {
 
+                    if(t.isMuted) continue
+                    if(t.soloEnabled) continue
+
                     t.volumeNode.volume.exponentialRampTo(t._volume, .2, Tone.now())
                 }
             }
@@ -262,6 +265,8 @@ export class Track implements ISerialize, IComponent {
 
     /** Triggers the instruments note */
     triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, velocity: number = 1) {
+
+        if(note == undefined) return
         
         if(this.instrument == undefined) {
             
@@ -281,6 +286,8 @@ export class Track implements ISerialize, IComponent {
 
     /** Triggers the instruments note */
     triggerAttackRelease(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, velocity:number = 1): void {
+
+        if(note == undefined) return
 
         if(this.instrument == undefined) {
             
@@ -305,6 +312,8 @@ export class Track implements ISerialize, IComponent {
 
     /** Stops the instruments note */
     triggerRelease(note: Tone.Unit.Frequency, time: Tone.Unit.Time) {
+
+        if(note == undefined) return
 
         if(this.instrument == undefined) {
             

@@ -20,9 +20,7 @@ export class BeatMachine {
 
         if(G.isPlaying == false) {
 
-            Tone.start()
-            Tone.Transport.start()
-            G.isPlaying = true
+            G.start()
         }
 
         if(BeatMachine._isPlaying) return

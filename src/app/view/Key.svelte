@@ -112,7 +112,7 @@
 
 }
 .key.black {
-    background-color: var(--c-b);
+    background-color: #0000FF55;
     color: var(--c-w);
 }
 .key .key-text {

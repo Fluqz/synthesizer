@@ -12,7 +12,6 @@ export class Midi {
 
         WebMidi.enable().then(() => {
 
-
             console.log('ENABLE MIDI')
 
             // Display available MIDI input devices

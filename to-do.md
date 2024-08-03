@@ -1,6 +1,10 @@
 #BUGS
 
-add ramping master volume from 0 to normal because when hold mode is active, it will instantly play after triggering the Tone.start
+knob lowest value is 0.1 attack
+
+Make adsr release till endless
+
+Removing samples is hard. Feeling is bad
 
 adding more bars sth wrong with width. Possible to drag notes end outsite the right timeline
 
@@ -55,6 +59,7 @@ Disable Visuals completly remove() in p5 sketch
 
 #IDEAs
 
+import export json to save presets
 
 CHANNELS ARE BASICLY GROUPS? USE INDEX TO GROUP THEM VISUALLY?
 

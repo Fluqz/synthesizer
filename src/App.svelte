@@ -208,6 +208,12 @@
         isMenuOpen = !isMenuOpen
     }
 
+    /** Open visuals in new window */
+    const openVisualsInNewWindow = (e) => {
+
+        Visual.openInNewWindow()
+    }
+
     /** Enable/Disable Visuals*/
     const toggleVisuals = (e) => {
 
@@ -256,11 +262,24 @@
             
         if(G.isPlaying) {
 
-            G.isPlaying = true
-            Tone.start()
-            Tone.Transport.start()
+            G.start()
         }
 
+
+        console.log('LocalStorage')
+
+        for(let i = 0; i < 1160; i++) {
+
+            const name = 'synthesizer-undo-' + i
+            const item:ISynthesizerSerialization = JSON.parse(window.localStorage.getItem(name))
+
+            if(item == undefined) continue
+            if(item.currentSession == undefined) continue
+            if(item.currentSession.sequencers.length == 0) continue
+            if(item.currentSession.sequencers.length == 2)
+
+            console.log(name, item)
+        }
 
         // console.log('click', synthesizer.presetManager.getPresets())
 
@@ -339,6 +358,8 @@
 
     activityUpdate()
 
+
+
 </script>
 
 
@@ -355,6 +376,7 @@
                 <div class="btn" title="Remove Visuals" on:click={collapseVisuals}>&#x2715;</div>
                 <div class="btn" title="Download Visual" on:click={saveVisuals}>I</div>
                 <div class="btn" title="Visuals On/Off" on:click={toggleVisuals}>V</div>
+                <div class="btn" title="Open visuals in new window" on:click={openVisualsInNewWindow}>W</div>
 
                 <div class="btn" title="Menu On/Off" on:click={toggleMenu} style="float:right;"></div>
 

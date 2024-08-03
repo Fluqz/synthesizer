@@ -359,8 +359,7 @@
     const togglePlayStop = () => {
 
         if(!G.isPlaying) {
-            Tone.start()
-            Tone.Transport.start()
+            G.start()
             console.log('START', Tone.Transport.now())
         }
         else {

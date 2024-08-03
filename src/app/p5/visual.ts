@@ -209,4 +209,14 @@ export class Visual {
 
         this.play(name, this.activeVisual)
     }
+
+
+    static openInNewWindow() {
+
+        console.log('openInNewWindow')
+
+        const win = window.open('./visual.html', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes')
+
+    }
+
 }

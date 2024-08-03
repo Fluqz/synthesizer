@@ -84,7 +84,8 @@ export class Oscillator extends Instrument {
 
         this._frequency = f
 
-        this.osc.frequency.value = this._frequency
+        this.osc.frequency.setValueAtTime(this._frequency, Tone.now())
+        // this.osc.frequency.exponentialRampToValueAtTime(this._frequency, Tone.now())
     }
 
     get volume() { return this._volume }

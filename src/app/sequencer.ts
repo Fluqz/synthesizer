@@ -322,9 +322,6 @@ export class Sequencer implements ISerialize, IComponent {
         this.stop()
 
         if(this.toneSequence) this.toneSequence.dispose()
-
-        delete this.channels
-        delete this.sequence
     }
 
     serializeOut(): ISequencerSerialization {
