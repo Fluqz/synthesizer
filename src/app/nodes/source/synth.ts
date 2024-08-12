@@ -54,7 +54,7 @@ export class Synth extends Instrument {
     /** Partial Count */
     _partialCount: number
     /** Wave Type */
-    _type: string
+    _waveType: string
     /** Phase */
     _phase: number
     /** Gliding */
@@ -90,7 +90,7 @@ export class Synth extends Instrument {
         this.partialCount = options.partialCount != undefined ? options.partialCount : this.synth.get().oscillator.partialCount
         this.partials = options.partials != undefined ? options.partials : this.synth.get().oscillator.partials
         this.phase = options.phase != undefined ? options.phase : this.synth.get().oscillator.phase
-        this.type = options.type != undefined ? options.type : this.synth.get().oscillator.type
+        this.waveType = options.type != undefined ? options.type : this.synth.get().oscillator.type
         this.portamento = options.portamento != undefined ? options.portamento : this.synth.get().portamento
 
         this.props.set('volume', { type: ParamType.KNOB, name: 'Volume', get: () => { return this.volume }, set: (v) => this.volume = v, min: -70, max: 6, groupID: 0 })
@@ -106,7 +106,7 @@ export class Synth extends Instrument {
         this.props.set('sustain', { type: ParamType.KNOB, name: 'Sustain', get: () => { return this.sustain }, set: (v) => { this.sustain = v }, min: 0, max: 1, groupID: 1 })
         this.props.set('phase', { type: ParamType.KNOB, name: 'Phase', get: () => { return this.phase }, set: (v) => { this.phase = v }, min: 0, max: 100, groupID: 2 })
 
-        this.props.set('wave', { type: ParamType.DROPDOWN, name: 'Wave', get: () => this.type, set: (v:string) => this.type = v, options: [ 'sine', 'square', 'sawtooth', 'triangle', 'pulse', ], groupID: 2 })
+        this.props.set('wave', { type: ParamType.DROPDOWN, name: 'Wave', get: () => this.waveType, set: (v:string) => this.waveType = v, options: [ 'sine', 'square', 'sawtooth', 'triangle', 'pulse', ], groupID: 2 })
         this.props.set('wavePartial', { type: ParamType.DROPDOWN, name: 'Wave Partial', get: () => this.partials, set: (v) => this.partials = v, options: ['', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], group: 2 })
         this.props.set('partialCount', { type: ParamType.KNOB, name: 'PartialCount', get: () => { return this.partialCount }, set: (v) => { this.partialCount = v }, min: 0, max: 1, steps: '1', groupID: 2 })
     }
@@ -189,11 +189,11 @@ export class Synth extends Instrument {
         this.synth.set({ oscillator: { phase: this._phase } })
     }
 
-    get type() { return this._type }
-    set type(p) {
+    get waveType() { return this._waveType }
+    set waveType(p) {
 
-        this._type = p
-        this.synth.set({ oscillator: { type: this._type } })
+        this._waveType = p
+        this.synth.set({ oscillator: { type: this._waveType } })
     }
 
     get portamento() { return this._portamento }

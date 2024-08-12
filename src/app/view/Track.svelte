@@ -125,11 +125,13 @@
 
         track.releaseNotes()
 
+        const maxOffset = 5
+
         if(!e.shiftKey) track.octaveOffset++
         if(e.shiftKey) track.octaveOffset--
 
-        if(track.octaveOffset > 2) track.octaveOffset = -2
-        else if(track.octaveOffset < -2) track.octaveOffset = 2
+        if(track.octaveOffset > maxOffset) track.octaveOffset = -maxOffset
+        else if(track.octaveOffset < -maxOffset) track.octaveOffset = maxOffset
 
         track = track
 

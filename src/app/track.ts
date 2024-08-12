@@ -277,7 +277,7 @@ export class Track implements ISerialize, IComponent {
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         if(this.hold == 'HOLD') return
 
-        let triggerNote = this.checkOctaveOffset(note)
+        let triggerNote = this.applyOctaveOffset(note)
 
         this.activeNotes.add(triggerNote)
 
@@ -295,7 +295,7 @@ export class Track implements ISerialize, IComponent {
             return
         }
 
-        let triggerNote = this.checkOctaveOffset(note)
+        let triggerNote = this.applyOctaveOffset(note)
         
         this.activeNotes.add(triggerNote)
 
@@ -323,7 +323,7 @@ export class Track implements ISerialize, IComponent {
         // Prevent triggering while in HOLD Mode. Held sounds are already set 
         if(this.hold == 'HOLD' || this.hold == 'PLAY') return
 
-        let triggerNote = this.checkOctaveOffset(note)
+        let triggerNote = this.applyOctaveOffset(note)
 
         this.activeNotes.delete(triggerNote)
 
@@ -453,9 +453,7 @@ export class Track implements ISerialize, IComponent {
     }
 
     /** Checks if octaveOffset should be aplied */
-    private checkOctaveOffset(note: Tone.Unit.Frequency) : Tone.Unit.Frequency {
-
-        console.log('old', note)
+    private applyOctaveOffset(note: Tone.Unit.Frequency) : Tone.Unit.Frequency {
 
         let _note = note.toString()
 
@@ -463,7 +461,7 @@ export class Track implements ISerialize, IComponent {
 
             const { n, o } = Util.removeOctaveFromNote(_note.toString())
 
-            _note = n + Synthesizer.limitOctave(o + this.octaveOffset)
+            _note = n + Synthesizer.applyOctaveLimit(o + this.octaveOffset)
 
 
             console.log('new', _note)

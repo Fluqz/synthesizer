@@ -76,7 +76,7 @@
         // }, 1000)
 
         // Visual.moire()
-        // Visual.flowField()
+        Visual.flowField()
         // Visual.noise()
 
         // Set initial volume
@@ -263,22 +263,6 @@
         if(G.isPlaying) {
 
             G.start()
-        }
-
-
-        console.log('LocalStorage')
-
-        for(let i = 0; i < 1160; i++) {
-
-            const name = 'synthesizer-undo-' + i
-            const item:ISynthesizerSerialization = JSON.parse(window.localStorage.getItem(name))
-
-            if(item == undefined) continue
-            if(item.currentSession == undefined) continue
-            if(item.currentSession.sequencers.length == 0) continue
-            if(item.currentSession.sequencers.length == 2)
-
-            console.log(name, item)
         }
 
         // console.log('click', synthesizer.presetManager.getPresets())

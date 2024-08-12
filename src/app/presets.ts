@@ -2,13 +2,12 @@ import type { IPreset } from "./core/preset-manager"
 
 
 export const DEFAULT_SESSION = {
-  "presets": [
-  ],
+  "presets": [],
   "currentSession": {
     "bpm": 120,
-    "volume": -3,
-    "octave": 3,
-    "channel": 1,
+    "volume": -10.874444444444421,
+    "octave": 2,
+    "channel": 0,
     "tracks": [
       {
         "enabled": true,
@@ -38,7 +37,8 @@ export const DEFAULT_SESSION = {
             "F#2",
             "A#2",
             "D#3",
-            "F#3"
+            "F#3",
+            "F3"
           ]
         },
         "isMuted": false,
@@ -80,7 +80,8 @@ export const DEFAULT_SESSION = {
             "F#1",
             "A#1",
             "D#2",
-            "F#2"
+            "F#2",
+            "F2"
           ]
         },
         "isMuted": false,
@@ -116,7 +117,8 @@ export const DEFAULT_SESSION = {
             "F#0",
             "A#0",
             "D#1",
-            "F#1"
+            "F#1",
+            "F1"
           ]
         },
         "isMuted": false,
@@ -167,7 +169,8 @@ export const DEFAULT_SESSION = {
             "F#1",
             "A#1",
             "D#2",
-            "F#2"
+            "F#2",
+            "F2"
           ]
         },
         "isMuted": false,
@@ -201,7 +204,8 @@ export const DEFAULT_SESSION = {
             "F#1",
             "A#1",
             "D#2",
-            "F#2"
+            "F#2",
+            "F2"
           ]
         },
         "isMuted": false,
@@ -221,7 +225,7 @@ export const DEFAULT_SESSION = {
           "detune": 1,
           "harmonicity": 1,
           "portamento": 0,
-          "vibratoAmount": 0.45,
+          "vibratoAmount": 0.13611111111111182,
           "vibratoRate": 1,
           "attack0": 0.01,
           "decay0": 0,
@@ -238,8 +242,8 @@ export const DEFAULT_SESSION = {
             "enabled": true,
             "collapsed": false,
             "wet": 0,
-            "delayTime": 0.08277777777777702,
-            "feedback": 0.6216666666666661
+            "delayTime": 0.12944444444444583,
+            "feedback": 0.7227777777777771
           }
         ],
         "soloEnabled": false,
@@ -249,7 +253,8 @@ export const DEFAULT_SESSION = {
             "F#1",
             "A#1",
             "D#2",
-            "F#2"
+            "F#2",
+            "F2"
           ]
         },
         "isMuted": false,
@@ -283,7 +288,8 @@ export const DEFAULT_SESSION = {
             "F#2",
             "A#2",
             "D#3",
-            "F#3"
+            "F#3",
+            "F3"
           ]
         },
         "isMuted": false,
@@ -294,13 +300,13 @@ export const DEFAULT_SESSION = {
         "index": 7,
         "octaveOffset": 0,
         "channel": 15,
-        "volume": 3.523333333333334,
+        "volume": 2.9322222222222236,
         "instrument": {
           "name": "Sampler",
           "enabled": true,
           "collapsed": false,
           "volume": 0.5,
-          "sample": "Kick1"
+          "sample": "Kick3"
         },
         "nodes": [],
         "soloEnabled": false,
@@ -319,7 +325,7 @@ export const DEFAULT_SESSION = {
         "index": 8,
         "octaveOffset": 0,
         "channel": 14,
-        "volume": 2.7844444444444476,
+        "volume": 1.4333333333333365,
         "instrument": {
           "name": "Sampler",
           "enabled": true,
@@ -332,15 +338,30 @@ export const DEFAULT_SESSION = {
             "name": "Distortion",
             "enabled": true,
             "collapsed": false,
-            "wet": 1,
-            "gain": 0.5
+            "wet": 0.8405555555555548,
+            "gain": 0.5030555555555545
+          },
+          {
+            "name": "Delay",
+            "enabled": true,
+            "collapsed": false,
+            "wet": 0.5830555555555552,
+            "delayTime": 0.3844444444444451,
+            "feedback": 0.3925000000000005
           }
         ],
         "soloEnabled": false,
         "hold": {
           "enabled": "OFF",
           "activeKeys": [
-            "F1"
+            "A#3",
+            "C3",
+            "B2",
+            "G#3",
+            "G#2",
+            "F#2",
+            "G2",
+            "F2"
           ]
         },
         "isMuted": false,
@@ -351,7 +372,7 @@ export const DEFAULT_SESSION = {
         "index": 9,
         "octaveOffset": 0,
         "channel": 13,
-        "volume": -14.231111111111062,
+        "volume": -2.9999999999999716,
         "instrument": {
           "name": "Sampler",
           "enabled": true,
@@ -359,14 +380,22 @@ export const DEFAULT_SESSION = {
           "volume": 0.5,
           "sample": "Hihat2"
         },
-        "nodes": [],
+        "nodes": [
+          {
+            "name": "Distortion",
+            "enabled": true,
+            "collapsed": false,
+            "wet": 0.9302777777777778,
+            "gain": 1
+          }
+        ],
         "soloEnabled": false,
         "hold": {
           "enabled": "OFF",
           "activeKeys": [
             "F3",
             "A2",
-            "F2"
+            "G2"
           ]
         },
         "isMuted": false,
@@ -431,7 +460,8 @@ export const DEFAULT_SESSION = {
           }
         ],
         "humanize": false,
-        "bars": 1
+        "bars": 1,
+        "noteLength": "1/16"
       },
       {
         "index": 9,
@@ -462,7 +492,8 @@ export const DEFAULT_SESSION = {
           }
         ],
         "humanize": false,
-        "bars": 1
+        "bars": 1,
+        "noteLength": "1/16"
       },
       {
         "index": 11,
@@ -472,14 +503,71 @@ export const DEFAULT_SESSION = {
         "sequence": [
           {
             "id": 0,
-            "note": "F1",
-            "time": 0.5,
+            "note": "F2",
+            "time": 1.5,
             "length": "8n",
+            "velocity": 1
+          },
+          {
+            "id": 1,
+            "note": "A#3",
+            "time": 0,
+            "length": "16n",
+            "velocity": 1
+          },
+          {
+            "id": 2,
+            "note": "C3",
+            "time": 0.126,
+            "length": 0.14300000000000002,
+            "velocity": 1
+          },
+          {
+            "id": 3,
+            "note": "A#3",
+            "time": 0.25,
+            "length": "16n",
+            "velocity": 1
+          },
+          {
+            "id": 4,
+            "note": "B2",
+            "time": 0.495,
+            "length": "16n",
+            "velocity": 1
+          },
+          {
+            "id": 5,
+            "note": "G#2",
+            "time": 0.811,
+            "length": "32n",
+            "velocity": 1
+          },
+          {
+            "id": 6,
+            "note": "F#2",
+            "time": 0.873,
+            "length": 0.11699999999999999,
+            "velocity": 1
+          },
+          {
+            "id": 7,
+            "note": "G#3",
+            "time": 0.749,
+            "length": "32n",
+            "velocity": 1
+          },
+          {
+            "id": 8,
+            "note": "G2",
+            "time": 0.999,
+            "length": 0.03950000000000009,
             "velocity": 1
           }
         ],
         "humanize": false,
-        "bars": 1
+        "bars": 2,
+        "noteLength": "1/16"
       },
       {
         "index": 13,
@@ -507,10 +595,18 @@ export const DEFAULT_SESSION = {
             "time": 0,
             "length": 0.124,
             "velocity": 1
+          },
+          {
+            "id": 4,
+            "note": "G2",
+            "time": 0.756,
+            "length": 0.244,
+            "velocity": 1
           }
         ],
         "humanize": false,
-        "bars": 1
+        "bars": 1,
+        "noteLength": "1/16"
       }
     ]
   }

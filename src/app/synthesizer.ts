@@ -71,7 +71,7 @@ export class Synthesizer implements ISerialize {
     static minOctave: number = 0
     static maxOctave: number = 7
 
-    static limitOctave = (o: number) => {
+    static applyOctaveLimit = (o: number) => {
 
         return o = Math.min(Math.max(o, this.minOctave), this.maxOctave)
     }
@@ -367,7 +367,7 @@ export class Synthesizer implements ISerialize {
 
 
     /** Trigger a note - Triggers all tracks */
-    triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, channel: Channel = 0, velocity:number = 1) {
+    triggerAttack(note: Tone.Unit.Frequency, time: Tone.Unit.Time, channel: Channel, velocity:number = 1) {
 
         // note = note.replace(/[0-9]/g, '')
 
@@ -389,7 +389,7 @@ export class Synthesizer implements ISerialize {
     }
     
     /** Triggers and releases a note - Triggers all track's triggerAttackRelease function */
-    triggerAttackRelease(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, channel: Channel = 0, velocity:number = 1): void {
+    triggerAttackRelease(note: Tone.Unit.Frequency, duration: Tone.Unit.Time, time: Tone.Unit.Time, channel: Channel, velocity:number = 1): void {
 
         if(G.isPlaying == false) {
             G.start()
@@ -417,7 +417,7 @@ export class Synthesizer implements ISerialize {
     }
 
     /** Releases note of all tracks */
-    triggerRelease(note: Tone.Unit.Frequency, time: Tone.Unit.Time, channel: Channel = 0) {
+    triggerRelease(note: Tone.Unit.Frequency, time: Tone.Unit.Time, channel: Channel) {
 
         Tone.Frequency(note).toNote()
         

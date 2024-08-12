@@ -6,7 +6,8 @@
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import { Storage } from "../core/storage";
     import { BeatMachine } from "../beat-machine";
-  import type { Subscription } from "rxjs";
+    import type { Subscription } from "rxjs";
+  import { writable } from "svelte/store";
 
 
     const dispatch = createEventDispatcher()
@@ -26,9 +27,10 @@
     }
 
 
-
-
+    
     export let sequencer: Sequencer
+    
+    const sequence = writable(sequencer.sequence)
 
     /** HTMLElement reference */
     const notes = []
@@ -41,31 +43,38 @@
 
     let timelineObserver: Subscription
 
+    let velocity = .7
+    
+    let rows: number = 1
+
+    let noteHeight: number = 100
+
+    let wrapperHeight: number = 100
+
+    $: {
+
+        timelineRect = timelineRect
+        onResizeTimeline()
+        getRows()
+        getNoteHeight()
+        sequencer.sequence = sequencer.sequence
+    }
+
+    // Fill channels array with booleans
+    for(let i = 0; i < Synthesizer.maxChannelCount; i++) channels.push(false)
+
+    // Reactive - update channel array
+    $: {
+        for(let i = 0; i < Synthesizer.maxChannelCount; i++) channels[i] = false
+        for(let c of sequencer.channels) channels[c] = true
+    }
+
     onMount(() => {
+
+        onResizeTimeline()
 
         console.log('onmoun', sequencer)
         if(sequencer == undefined) return 
-
-
-        // Fill channels array with booleans
-        for(let i = 0; i < Synthesizer.maxChannelCount; i++) channels.push(false)
-
-        // Reactive - update channel array
-        $: {
-            for(let i = 0; i < Synthesizer.maxChannelCount; i++) channels[i] = false
-            for(let c of sequencer.channels) channels[c] = true
-        }
-
-        // // Update position of timeline line
-        // Tone.Transport.scheduleRepeat((time) => {
-
-        //     // if(sequencer.isPlaying) console.log('pos', ((Tone.immediate() - Sequencer.startTime) % sequencer.bars))
-        //     // if(sequencer.isPlaying) console.log('pos',((((Tone.now() - Sequencer.startTime) % sequencer.bars)), (timelineRect.width / sequencer.bars)) - 1)
-        //     if(sequencer.isPlaying) currentLinePos = ((((Tone.immediate() - Sequencer.startTime) % sequencer.bars)) * (timelineRect.width / sequencer.bars))
-        //     else currentLinePos = 0
-
-        // }, 1 / 60, Tone.now(), Number.POSITIVE_INFINITY)
-
 
         // Update position of timeline line
         timelineObserver = BeatMachine.subscribeTimeLine((t) => {
@@ -81,34 +90,23 @@
                     else currentLinePos = 0
 
                 }, t)
-
             }
-
         })
 
-
+        updateWrapperHeight()
     })
 
     onDestroy(() => {
 
-        Tone.Transport.cancel()
-
         timelineObserver.unsubscribe()
+
+        Tone.Transport.cancel()
     })
 
 
     /** Set default note length*/
     const noteLengths: NoteLength[] = ['1', '1/2', '1/4', '1/8', '1/16', '1/32', '1/64']
-   
-    /** Set default note length */
-    const changeNoteLength = (noteLength: NoteLength) => {
 
-        sequencer.noteLength = noteLength
-
-        sequencer = sequencer
-
-        saveUndo()
-    }
 
     const onNoteLength = (e: MouseEvent) => {
 
@@ -136,9 +134,7 @@
 
         sequencer.addBar()
 
-        sequencer.sequence = sequencer.sequence
-
-        sequencer = sequencer
+        onResizeTimeline()
 
         saveUndo()
     }
@@ -148,9 +144,7 @@
 
         sequencer.removeBar()
 
-        sequencer.sequence = sequencer.sequence
-
-        sequencer = sequencer
+        onResizeTimeline()
 
         saveUndo()
     }
@@ -166,9 +160,9 @@
 
         sequencer.addNote(note, time, convertNoteLength(sequencer.noteLength), 1)
 
-        sequencer.sequence = sequencer.sequence
+        updateWrapperHeight()
 
-        sequencer = sequencer
+        sequence.set(sequencer.sequence)
 
         saveUndo()
     }
@@ -208,26 +202,29 @@
     /** Timeline's client rect object */
     let timelineRect: DOMRect
     /** Resize Timeline event - need to get clientRect from timeline */
-    const onResizeTimeline = (e) => {
+    const onResizeTimeline = (e?) => {
 
-        if(e instanceof Event) timelineRect = (e.target as HTMLElement).getBoundingClientRect()
-        else timelineRect = e.getBoundingClientRect()
-        
-        timelineRect = timelineRect
+        // if(e instanceof Event) timelineRect = (e.target as HTMLElement).getBoundingClientRect()
+        // else timelineRect = e.getBoundingClientRect()
+
+        if(timeline == undefined) return
+
+        timelineRect = timeline.getBoundingClientRect()
     }
     
     /** DblClick Note Event  */
     const onNoteDblClick = (e, note: SequenceObject) => {
 
-        if(isDrag) return
+        if(isDragNoteResize) return
 
         e.stopPropagation()
 
-        console.log('why')
-
         sequencer.removeNote(note.id)
 
-        sequencer.sequence = sequencer.sequence
+        updateWrapperHeight()
+
+        sequence.set(sequencer.sequence)
+
         sequencer = sequencer
 
         saveUndo()
@@ -236,37 +233,39 @@
 
     let isNoteMouseDown = false
     let selectedNote: SequenceObject
+    let noteEle: HTMLElement
     let clickOffset: number = 0
-    let time: Tone.Unit.Time
+    let time: Tone.Unit.Time = 0
     const noteMouseDown = (e, note: SequenceObject) => {
 
         e.stopPropagation()
 
         if(e.target instanceof HTMLInputElement) return
+        
+        noteEle = e.target.closest('.note')
 
         isNoteMouseDown = true
         touchNote = true
 
         selectedNote = note
         time = selectedNote.time
-
-        clickOffset = e.pageX - e.target.getBoundingClientRect().left
+        clickOffset = e.pageX - noteEle.getBoundingClientRect().left
     }
 
     const noteMouseMove = (e) => {
 
         if(!isNoteMouseDown) return
-
-        if(isDrag) return
-
+        if(!noteEle) return
+        if(isDragNoteResize) return
         if(!selectedNote) return
-        
+
+        const eleRect = noteEle.getBoundingClientRect()
+
         const bars = sequencer.bars
         const width = timelineRect.width
         const stop = timelineRect.right
-        let posX = e.clientX - timelineRect.left - clickOffset
 
-        const eleRect = e.target.getBoundingClientRect()
+        let posX = e.clientX - timelineRect.left - clickOffset
 
         if(timelineRect.left + posX + eleRect.width > stop) posX = stop - eleRect.width - timelineRect.left
         
@@ -276,13 +275,13 @@
         
         if(time < 0) time = 0
 
-        // console.log('mousemove', bars, width, posX, xInPercent, clickOffset, time, selectedNote.length, stop)
-
         sequencer.updateNote(selectedNote.id, selectedNote.note, time, selectedNote.length, selectedNote.velocity)
 
-        sequencer = sequencer
+        updateWrapperHeight()
 
-        sequencer.sequence = sequencer.sequence
+        sequence.set(sequencer.sequence)
+        
+        sequencer = sequencer
     }
 
     const noteMouseUp = (e) => {
@@ -296,8 +295,10 @@
             // sequencer.addNote(selectedNote.note, selectedNote.time, selectedNote.length, selectedNote.velocity)
             sequencer.updateNote(selectedNote.id, selectedNote.note, time, selectedNote.length, selectedNote.velocity)
 
+            updateWrapperHeight()
 
-            sequencer.sequence = sequencer.sequence
+            sequence.set(sequencer.sequence)
+
             sequencer = sequencer
 
             saveUndo()
@@ -311,18 +312,19 @@
 
 
     
-    let isDrag = false
+    let isDragNoteResize = false
     let resizeNote: SequenceObject
     let startTime: number = 0
     let endTime: number = 0
     let dragOffset: number = 0
     let handle = 0
+    /** Resizing note - Mouse down event */
     const handleHorizontalDown = (e, note: SequenceObject, which: 'start' | 'end') => {
         // console.log('handle down', note)
 
         e.stopPropagation()
 
-        isDrag = true
+        isDragNoteResize = true
         touchNote = true
 
         resizeNote = note
@@ -335,11 +337,12 @@
         handle = which == 'start' ? 0 : 1
     }
 
+    /** Resizing note - Mouse move event */
     const handleHorizontalMove = (e) => {
 
         // e.stopPropagation()
 
-        if(!isDrag) return
+        if(!isDragNoteResize) return
         
         if(!resizeNote) return
         
@@ -381,17 +384,20 @@
             sequencer.updateNote(resizeNote.id, resizeNote.note, resizeNote.time, l, resizeNote.velocity)
         }
 
+        updateWrapperHeight()
+
         sequencer = sequencer
 
         sequencer.sequence = sequencer.sequence
     }
 
+    /** Resizing note - Mouse up event */
     const handleHorizontalUp = (e) => {
         // console.log('up')
         
         // e.stopPropagation()
 
-        isDrag = false
+        isDragNoteResize = false
         touchNote = false
 
         resizeNote = null
@@ -403,7 +409,6 @@
     }
 
 
-    let velocity = .7
 
 
     let currentNote: string
@@ -433,7 +438,7 @@
 
         e.stopPropagation()
 
-        if(isDrag) return
+        if(isDragNoteResize) return
 
         if(touchNote) return
 
@@ -462,7 +467,7 @@
 
         e.stopPropagation()
 
-        if(isDrag) return
+        if(isDragNoteResize) return
 
         if(touchNote) return
 
@@ -489,43 +494,98 @@
         saveUndo()
     }
 
-    const getOverlapY = (note: SequenceObject, references: HTMLElement[], index: number) => {
+    const getRows = () => {
 
-        return 0
-        // Calculate overlapping notes with note.time and note.start
-        // Then use the note to find the position
+        // rows = getMaxDifferentNotes(sequencer.sequence).length
+
+        rows = sequencer.sequence.length
+
+        console.log('rows',rows)
+        return rows
+    }
+
+    /** Returns the maximal amount of overlaps of the array */
+    const getMaxDifferentNotes = (notes: SequenceObject[]) => {
+
+        let _notes = []
+        for(let n of notes) {
+
+            if(_notes.indexOf(n.note) == -1) _notes.push(n.note)
+        }
+
+        return _notes
+    }    
+
+    /** Returns an array with all notes (including the passed in note) that overlap with the passed in note. */
+    const getYOverlappingNotesByNote = (() => {
 
         let t1: number,
             t2: number,
             l1: number,
             l2: number
+    
+        return (note: SequenceObject) => {
+        
+            const notes: SequenceObject[] = [ note ]
 
+            t1 = Tone.Time(note.time).toSeconds()
+            l1 = Tone.Time(note.length).toSeconds()
 
-        t1 = Tone.Time(note.time).toSeconds()
-        l1 = Tone.Time(note.length).toSeconds()
+            for(let n2 of sequencer.sequence) {
 
-        for(let n2 of sequencer.sequence) {
+                t2 = Tone.Time(n2.time).toSeconds()
+                l2 = Tone.Time(n2.length).toSeconds()
 
-            t2 = Tone.Time(n2.time).toSeconds()
-            l2 = Tone.Time(n2.length).toSeconds()
+                if(t1 > t2 && t1 < t2 + l2 || t1 + l1 > t2 && t1 + l1 < t2 + l2) {
 
-            if(t1 > t2 && t1 < t2 + l2 || t1 + l1 > t2 && t1 + l1 < t2 + l2) {
-
-                return 50
+                    notes.push(n2)
+                }
             }
+
+            return notes
         }
+    })()
 
-        const x1 = (Tone.Time(note.time).toSeconds() / sequencer.bars) * timelineRect.width
-        const x2 = x1 + (Tone.Time(note.length).toSeconds() / sequencer.bars) * timelineRect.width
+    /** Returns the Y position for the passed in note. Y position is for HTML */
+    const getNoteY = (note: SequenceObject) => {
 
-        return 0
+        // const diffNotes = getMaxDifferentNotes(sequencer.sequence)
+
+        // diffNotes.sort((a, b) => {
+
+        //     return Tone.Frequency(a.note).toFrequency() - Tone.Frequency(b.note).toFrequency() 
+        // })
+
+        // let i = diffNotes.indexOf(note.note)
+
+        // console.log('y', note.note, i, wrapperHeight, rows,(wrapperHeight / rows) * i)
+        // return (wrapperHeight / rows) * i
+
+        sequencer.sequence.sort((a, b) => {
+
+            return Tone.Frequency(a.note).toFrequency() - Tone.Frequency(b.note).toFrequency() 
+        })
+
+        let i = sequencer.sequence.indexOf(note)
+
+        console.log('y', note.note, i, wrapperHeight, rows,(wrapperHeight / rows) * i)
+        return (wrapperHeight / rows) * i
     }
 
-    const getOverlapHeight = (note: SequenceObject, element: HTMLElement, index: number) => {
+    /** Returns the HTML height for the passed in note */
+    const getNoteHeight = () => {
 
-        return 30
+        getRows()
+
+        return noteHeight = wrapperHeight / rows
     }
 
+    const updateWrapperHeight = () => {
+
+        getRows()
+        if(rows < 3) return wrapperHeight = 100
+        wrapperHeight = rows * 33
+    }
 
 
 
@@ -549,8 +609,6 @@
 
         channels[channel] = active
 
-        console.log(channel, active)
-
         if(active) sequencer.addChannel(channel)
         else sequencer.removeChannel(channel)
 
@@ -573,8 +631,6 @@
         sequencer = sequencer
     }
 
-
-
     const saveUndo = () => {
 
         Storage.saveUndo(JSON.stringify(sequencer.synthesizer.serializeOut()))
@@ -585,7 +641,7 @@
 
 {#if sequencer != undefined } 
 
-    <div class="sequencer-wrapper">
+    <div class="sequencer-wrapper" style:height={wrapperHeight+'px'}>
 
         <div class="sequencer-menu">
 
@@ -656,15 +712,15 @@
 
                         <div class="timeline-notes">
 
-                            {#each sequencer.sequence as note, i }
+                            {#each $sequence as note, i }
 
                                 <div class="note" 
                                         bind:this={notes[i]}
                                         class:selected={selectedNote == note}
                                         on:pointerdown={(e) => noteMouseDown(e, note)}
                                         on:dblclick|self={(e) => { onNoteDblClick(e, note) }}
-                                        style:top={(getOverlapY(note, notes, i)) + 'px'}
-                                        style:height={(getOverlapHeight(note, notes[i], i)) + 'px'}
+                                        style:top={getNoteY(note) + 'px'}
+                                        style:height={noteHeight + 'px'}
                                         style:left={((Tone.Time(note.time).toSeconds() / sequencer.bars) * timelineRect.width) + 'px'}
                                         style:width={((Tone.Time(note.length).toSeconds() / sequencer.bars) * timelineRect.width) + 'px'} >
 
@@ -893,17 +949,18 @@
         background-color: var(--c-y);
         color: var(--c-o);
 
-        opacity: .5;
+        /* opacity: .5; */
 
         text-align: center;
 
         display: inline-flex;
         justify-content: center;
-        align-items: center;
+        align-items: end;
 
         cursor: grab !important;
 
-        /* border: 1px solid var(--c-o); */
+        mix-blend-mode: unset;
+        border: .5px solid var(--c-w);
     }
 
     .sequencer-wrapper .sequence .note.selected {
@@ -999,7 +1056,7 @@
     .sequencer-wrapper .sequence .velocity.changed {
 
         background-color: #fff;
-        opacity: .2;
+        opacity: .7;
     }
 
 </style>
