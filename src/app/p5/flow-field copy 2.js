@@ -27,7 +27,7 @@ export const flowField = (p5) => {
   let flowfield;
   let flowcolorfield;
   let magOff = 0;
-  let showField = false;
+  let showField = true;
 
   let cFactor = 255;
 
@@ -125,13 +125,14 @@ export const flowField = (p5) => {
         // Patterns
         if (index % flowFieldOptions.modulator == 0) {
 
-          p5.stroke(
-            p5.color(
-              flowFieldOptions.modulatorColor.r,
-              flowFieldOptions.modulatorColor.g,
-              flowFieldOptions.modulatorColor.b
-            )
-          ) 
+          // p5.stroke(
+          //   p5.color(
+          //     flowFieldOptions.modulatorColor.r,
+          //     flowFieldOptions.modulatorColor.g,
+          //     flowFieldOptions.modulatorColor.b
+          //   )
+          // ) 
+          console.log('modulator color')
 
           // p5.stroke(p5.color(0, 0, 0));
         }
@@ -140,7 +141,8 @@ export const flowField = (p5) => {
 
           // p5.stroke(p5.color(0, 0, 0));
 
-          p5.stroke(p5.color(c[0], c[1], c[2]));
+          console.log('color color')
+          // p5.stroke(p5.color(c[0], c[1], c[2]));
         }
         // else if((x + y) % flowFieldOptions.modulator == 0)
         //   p5.stroke(p5.color(255))
@@ -148,8 +150,9 @@ export const flowField = (p5) => {
          
           // p5.stroke(p5.color(c[0], c[1], c[2]));
 
+          console.log('black color')
 
-          p5.stroke(p5.color(0, 0, 0));
+          // p5.stroke(p5.color(0, 0, 0));
 
           // p5.stroke(
           //   p5.color(
@@ -164,6 +167,8 @@ export const flowField = (p5) => {
         //   0,
         //   0,
         // ))
+
+        p5.stroke(p5.color(c[0], c[1], c[2]));
 
         // p5.stroke(p5.color(c[0], c[1], c[2]))
       }
@@ -184,6 +189,8 @@ export const flowField = (p5) => {
 
       if (scl < 10) scl = 10
     }
+
+    scl = 10
 
     // if(p5.frameCount % 1 == 0) {
 
@@ -242,8 +249,8 @@ export const flowField = (p5) => {
         let m = p5.map(p5.noise(xoff, yoff, magOff), 0, 1, -5, 5)
         v.setMag(m)
 
-        // magOff++
-        // magOff = magOff % 2
+        magOff++
+        magOff = magOff % 2
 
         if (showField) {
 
@@ -285,7 +292,7 @@ export const flowField = (p5) => {
         particles[i].show();
       }
 
-      if (p5.random(10) > 5 && particles.length < 2000) {
+      if (p5.random(10) > 5 && particles.length < 200) {
         let rnd = p5.floor(p5.noise(zoff) * 20);
         for (let i = 0; i < rnd; i++) {
           particles.push(new Particle());

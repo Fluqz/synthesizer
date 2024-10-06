@@ -1,7 +1,15 @@
+import { Util } from "../util/util"
 
 
+export const getChannelColor = (channel: number = 0) => {
 
-export const COLORS = [
+    const colors: string[] = JSON.parse(JSON.stringify(COLORS))
+
+    return colors[channel].slice()
+}
+
+export const COLORS: string[] = [
+    '#ffcc15',
         
     // '#FFFFFF', '#FFFF00', '#00FFFF', '#FF00FF', '#FF0000', '#00FF00',
 
@@ -21,7 +29,9 @@ export const COLORS = [
     // 'rgb(128, 122, 255)',
 
 
-
+    '#ffcc15',
+    '#ffcc15',
+    '#ffcc15',
 ]
 
 

@@ -1,6 +1,6 @@
 import * as Tone from "tone"
 import { G } from "./globals"
-import { Subject } from "rxjs"
+import { Observable, Subject } from "rxjs"
 
 export class BeatMachine {
 

@@ -254,7 +254,7 @@
 
                 {/each}
 
-                <LevelMeter output={node.output} />
+                <!-- <LevelMeter output={node.output} /> -->
 
             </div>
 

@@ -147,7 +147,6 @@
     background-color: var(--c-bl);
     color: var(--c-y);
 
-    transition: .2s background-color;
 
     mix-blend-mode: unset;
 

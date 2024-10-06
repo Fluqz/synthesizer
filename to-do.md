@@ -1,5 +1,15 @@
 #BUGS
 
+
+Add button to stop all animations!!!
+  including css transitions
+  gifs
+  visual?
+
+Replace SVG animations with canvas stuff
+
+clear sequencer button
+
 knob lowest value is 0.1 attack
 
 Make adsr release till endless

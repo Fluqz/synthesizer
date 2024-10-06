@@ -355,7 +355,6 @@
   -ms-user-select: none;      
   user-select: none;
 
-  transition: .4s background-color, .4s color;
   mix-blend-mode: difference;
 
   z-index: 100;
@@ -400,7 +399,7 @@
 
 .knob-wrapper .knob-value input {
 
-    width: 25px;
+    width: 40px;
     height: auto;
     line-height: inherit;
     padding: 0px;

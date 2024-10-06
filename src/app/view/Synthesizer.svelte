@@ -135,9 +135,12 @@
 
         // BeatMachine.stop()
         
-        // Tone.Transport.position = 0
-
         _Sequencer.startTime = Tone.now()
+        console.log('Transport pos',Tone.Transport.position)
+        console.log('Transport prog',Tone.Transport.progress)
+
+        // Tone.Transport.position = '0:0:0'
+        // Tone.Transport.loop = true
 
         for(let seq of synthesizer.sequencers) seq.start()
 
@@ -210,7 +213,7 @@
 
     const onArpChange = (e) => {
 
-        synthesizer.toggleArpMode(e.target.checked)
+        // synthesizer.toggleArpMode(e.target.checked)
 
         synthesizer = synthesizer
     }
@@ -463,7 +466,7 @@
 
 
 
-            <Oscilloscope output={synthesizer.volume} />
+            <!-- <Oscilloscope output={synthesizer.volume} /> -->
 
             <!-- <DCMeter output={synthesizer.volume} /> -->
 
@@ -478,52 +481,12 @@
                 on:onChange={(e) => synthesizer.setVolume(e.detail)} />
             </div>
             
-            <LevelMeter output={synthesizer.volume} value={synthesizer.volume.volume.value} />
+            <!-- <LevelMeter output={synthesizer.volume} value={synthesizer.volume.volume.value} /> -->
             
             <div id="reset" class="btn" title="ALT - Delete; Click: SHIFT -> DEFAULT, META -> RESET PRESETS" on:click={reset}>&#x2715;</div>
 
 
         </div>
-
-        
-        <!-- <div class="mixer">
-
-            <div class="tracks">
-
-                {#each synthesizer.tracks as track}
-                    
-                    <div class="track">
-
-                        <Track bind:track={track} on:delete={deleteTrack} on:duplicate={duplicateTrack} />
-
-                    </div>
-
-                {/each}
-
-            </div>
-
-
-            {#if !sequencersCollapsed }
-                
-                <div class="sequencers">
-
-                    
-                    {#each synthesizer.sequencers as sequencer, i}
-                        
-                        <Sequencer sequencer={sequencer} on:deleteSequencer={deleteSequencer} on:duplicate={duplicateSequencer}/>
-
-                    {/each}
-
-
-                </div>
-                
-            {/if}
-
-        </div> -->
-
-
-
-
 
 
         <div class="mixer">

@@ -3,7 +3,6 @@ import * as Tone from 'tone'
 import { Synthesizer, type Channel, type ISerialize, type IComponent, type ISerialization } from './synthesizer'
 import { BeatMachine } from './beat-machine'
 
-
 export type NoteLength = '1' | '1/2' | '1/4' | '1/8' | '1/16' | '1/32' | '1/64'
 
 export type REST = ''
@@ -15,7 +14,6 @@ export type SequenceObject = {
     length: Tone.Unit.Time,
     velocity?: number
 }
-
 
 export interface ISequencerSerialization extends ISerialization {
 
@@ -96,14 +94,14 @@ export class Sequencer implements ISerialize, IComponent {
     }
 
     /** Add a channel to send through */
-    addChannel(channel: Channel) {
+    activateChannel(channel: Channel) {
 
         if(this.channels.indexOf(channel) != -1) return
 
         this.channels.push(channel)
     }
     /** Remove a channel */
-    removeChannel(channel: Channel) {
+    deactivateChannel(channel: Channel) {
 
         if(this.channels.indexOf(channel) == -1) return false
 
@@ -252,7 +250,7 @@ export class Sequencer implements ISerialize, IComponent {
 
             // console.log('t', time.toFixed(5), Tone.now().toFixed(5), this.toneSequence.progress.toFixed(5), this.toneSequence.toSeconds().toFixed(5))
 
-            console.log('time', this.id, time, Sequencer.startTime)
+            // console.log('time', this.id, time, Sequencer.startTime)
 
             for(let channel of this.channels) {
 

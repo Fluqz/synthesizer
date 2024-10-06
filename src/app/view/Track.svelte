@@ -17,8 +17,11 @@
     import LevelMeter from "./LevelMeter.svelte";
     import Oscilloscope from "./Oscilloscope.svelte";
     import { Storage } from "../core/storage";
+    import { getChannelColor } from "../core/colors";
 
     export let track: Track
+
+    let color: string = getChannelColor(track.channel)
 
     const dispatch = createEventDispatcher()
 
@@ -75,6 +78,8 @@
         track.setChannel(track.channel)
 
         track = track
+
+        color = getChannelColor(track.channel)
 
         saveUndo()
     }
@@ -234,7 +239,6 @@
 
     }
 
-
     const onClick = (e) => {
 
         // if(!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) e.preventDefault()
@@ -249,7 +253,7 @@
 
 <div class="track-wrapper" on:wheel={onScroll} on:click={onClick}>
 
-    <div class="node track-options" class:playing={false}> <!-- todo - not reactive -->
+    <div class="node track-options" style="background-color: {color}" class:playing={false} > <!-- todo - not reactive -->
 
         <!-- { track.number } -->
         <!-- { track.id } -->
@@ -271,9 +275,9 @@
             max={6} 
             on:onChange={onVolumeChange} />
 
-        <LevelMeter output={track.volumeNode} />
+        <!-- <LevelMeter output={track.volumeNode} /> -->
 
-        <Oscilloscope output={track.volumeNode} />
+        <!-- <Oscilloscope output={track.volumeNode} /> -->
 
 
         <div class="track-btns">
