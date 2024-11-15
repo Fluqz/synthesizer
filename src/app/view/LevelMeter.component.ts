@@ -173,9 +173,9 @@ export class LevelMeterComponent implements AfterViewInit, OnDestroy {
 
             this.connect()
 
-            if(this.scheduleID != undefined) Tone.Transport.clear(this.scheduleID)
+            if(this.scheduleID != undefined) Tone.getTransport.clear(this.scheduleID)
 
-                this.scheduleID = Tone.Transport.scheduleRepeat((t) => {
+                this.scheduleID = Tone.getTransport.scheduleRepeat((t) => {
                 
                 Tone.Draw.schedule(this.getValue, t)
 
@@ -187,7 +187,7 @@ export class LevelMeterComponent implements AfterViewInit, OnDestroy {
 
         if(this.output != undefined) {
 
-            if(this.scheduleID != undefined) Tone.Transport.clear(this.scheduleID)
+            if(this.scheduleID != undefined) Tone.getTransport.clear(this.scheduleID)
 
                 this.disconnect()
 

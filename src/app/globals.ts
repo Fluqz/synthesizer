@@ -35,7 +35,7 @@ export class G {
     static start() {
 
         Tone.start()
-        Tone.Transport.start()
+        Tone.getTransport.start()
 
         this.isPlaying = true
 

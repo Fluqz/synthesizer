@@ -262,7 +262,7 @@ export class Sequencer implements ISerialize<ISequencerSerialization>, IComponen
         }, sequence)
 
 
-        // Tone.Transport.scheduleRepeat((time) => {
+        // Tone.getTransport.scheduleRepeat((time) => {
 
         //     console.log('progress', 
             

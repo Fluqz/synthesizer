@@ -302,7 +302,7 @@ export class Track implements ISerialize<ITrackSerialization>, IComponent {
 
         this.activeNotes.add(triggerNote)
 
-        Tone.Transport.scheduleOnce((t) => {
+        Tone.getTransport.scheduleOnce((t) => {
 
             Synthesizer.activeNotes.delete(triggerNote)
 

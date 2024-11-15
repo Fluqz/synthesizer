@@ -271,7 +271,7 @@ export class AppComponent implements AfterViewInit, OnDestroy{
 
             i++
 
-        }, 20000 * (Tone.Transport.bpm.value * .01))
+        }, 20000 * (Tone.getTransport.bpm.value * .01))
 
 
 
@@ -308,6 +308,8 @@ export class AppComponent implements AfterViewInit, OnDestroy{
             Storage.save(this.serializeOut())
 
             this.synthesizer.mute(true)
+
+            Tone.getTransport().pause()
         }
 
         document.addEventListener('click', () => {
@@ -353,13 +355,16 @@ export class AppComponent implements AfterViewInit, OnDestroy{
             this.synthesizer.mute(false)
             
             Visual.visualsEnabled = true
-            
+
+            Tone.getTransport().start(Tone.getContext().currentTime)
         }
         else {
 
             this.synthesizer.mute(true)
 
             Visual.visualsEnabled = false
+
+            Tone.getTransport().pause(Tone.getContext().currentTime)
         }
 
         this.synthesizer = this.synthesizer

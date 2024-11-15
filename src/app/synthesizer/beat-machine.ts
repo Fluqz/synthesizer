@@ -6,9 +6,9 @@ export class BeatMachine {
 
     private static _isPlaying: boolean = false
 
-    /** Tone.Loop() - Fires every bar along the Tone.Transport class */
+    /** Tone.Loop() - Fires every bar along the Tone.getTransport class */
     private static loop: Tone.Loop
-    /** Tone.Loop() - Fixed update loop running every ~3ms along the Tone.Transport class 
+    /** Tone.Loop() - Fixed update loop running every ~3ms along the Tone.getTransport class 
      * TODO - What about AnimationFrame?
     */
     private static timeLine: Tone.Loop

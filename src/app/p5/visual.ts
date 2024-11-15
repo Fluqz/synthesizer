@@ -161,11 +161,11 @@ export class Visual {
         const m1 = new P5(flowField, this.container)
 
 
-        var IID = Tone.Transport.scheduleRepeat(() => {
+        var IID = Tone.getTransport.scheduleRepeat(() => {
 
             // flowFieldOptions.modulator += 1
 
-            if(Tone.Transport.state == 'started') flowFieldOptions.modulator = Math.round(Math.random() * 100)
+            if(Tone.getTransport.state == 'started') flowFieldOptions.modulator = Math.round(Math.random() * 100)
 
             // console.log(flowFieldOptions.modulator)
 

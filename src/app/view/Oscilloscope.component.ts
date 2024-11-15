@@ -128,9 +128,9 @@ export class OscilloscopeComponent {
 
     this.output = this.output
 
-    if(this.scheduleID != undefined) Tone.Transport.clear(this.scheduleID)
+    if(this.scheduleID != undefined) Tone.getTransport.clear(this.scheduleID)
 
-      this.scheduleID = Tone.Transport.scheduleRepeat((t) => {
+      this.scheduleID = Tone.getTransport.scheduleRepeat((t) => {
 
       Tone.Draw.schedule(this.draw, t)
 
@@ -141,7 +141,7 @@ export class OscilloscopeComponent {
 
   disconnect = () => {
 
-    if(this.scheduleID != undefined) Tone.Transport.clear(this.scheduleID)
+    if(this.scheduleID != undefined) Tone.getTransport.clear(this.scheduleID)
 
     // output.disconnect(analyser)
 

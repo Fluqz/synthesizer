@@ -336,11 +336,11 @@ export class SynthesizerComponent {
         // BeatMachine.stop()
         
         _Sequencer.startTime = Tone.getContext().currentTime
-        console.log('Transport pos',Tone.Transport.position)
-        console.log('Transport prog',Tone.Transport.progress)
+        console.log('Transport pos',Tone.getTransport.position)
+        console.log('Transport prog',Tone.getTransport.progress)
 
-        // Tone.Transport.position = '0:0:0'
-        // Tone.Transport.loop = true
+        // Tone.getTransport.position = '0:0:0'
+        // Tone.getTransport.loop = true
 
         for(let seq of this.synthesizer.sequencers) seq.start()
 
@@ -353,7 +353,7 @@ export class SynthesizerComponent {
 
         // BeatMachine.stop()
         
-        // Tone.Transport.position = 0
+        // Tone.getTransport.position = 0
 
         _Sequencer.startTime = undefined
 
@@ -543,10 +543,10 @@ export class SynthesizerComponent {
 
         if(!G.isPlaying) {
             G.start()
-            console.log('START', Tone.Transport.now())
+            console.log('START', Tone.getTransport.now())
         }
         else {
-            Tone.Transport.stop()
+            Tone.getTransport.stop()
         }
 
         G.isPlaying = !G.isPlaying
