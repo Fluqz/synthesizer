@@ -1,20 +1,53 @@
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
-  "extends": "@tsconfig/svelte/tsconfig.json",
+  "compileOnSave": false,
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "resolveJsonModule": true,
-    /**
-     * Typecheck JS in `.svelte` and `.js` files by default.
-     * Disable checkJs if you'd like to use dynamic types in JS.
-     * Note that setting allowJs false does not prevent the use
-     * of JS in `.svelte` files.
-     */
-    "allowJs": false,
-    "checkJs": false,
-    "isolatedModules": true
+    "outDir": "./dist/out-tsc",
+    "strict": false,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "strictPropertyInitialization": false,
+    "strictNullChecks": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "moduleResolution": "bundler",
+    "strictFunctionTypes": false,
+    "strictBindCallApply": false,
+    "noImplicitThis": false,
+    "alwaysStrict": false,
+    "forceConsistentCasingInFileNames": true,
+    "emitDecoratorMetadata": false,
+    "importHelpers": true,
+    "allowJs": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+
+    "lib": [
+      "ES2022",
+      "dom"
+    ]
   },
-  "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": false,
+    "fullTemplateTypeCheck": false,
+    "strictDomEventTypes": false,
+    "noImplicitReturns": false,
+  },
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts"
+  ]
 }

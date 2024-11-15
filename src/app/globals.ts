@@ -1,7 +1,7 @@
 import { Subject, takeUntil } from "rxjs"
 import * as Tone from "tone"
 import type { IVisual } from "./p5/visual"
-import { Synthesizer } from "./synthesizer"
+import { Synthesizer } from "./synthesizer/synthesizer"
 import { Visual } from "./p5/visual"
 import { Vec2 } from "./util/math"
 
@@ -29,7 +29,7 @@ export class G {
 
         Visual.init()
 
-        Tone.Destination.volume.setValueAtTime(Number.NEGATIVE_INFINITY, Tone.now())
+        Tone.Destination.volume.setValueAtTime(Number.NEGATIVE_INFINITY, Tone.getContext().currentTime)
     }
 
     static start() {
@@ -39,19 +39,19 @@ export class G {
 
         this.isPlaying = true
 
-        Tone.Destination.volume.exponentialRampTo(this.synthesizer.volume.volume.value, .2, Tone.now())
+        Tone.Destination.volume.exponentialRampTo(this.synthesizer.volume.volume.value, .2, Tone.getContext().currentTime)
     }
 
     static saveVisuals = () => {
     
         let main: HTMLElement = document.body.getElementsByTagName('main')[0]
     
-        let canvases = main.querySelectorAll('canvas')
+        let canvases: NodeListOf<HTMLCanvasElement> = main.querySelectorAll('canvas')
 
 
         let imgs = []
 
-        for(let c of canvases) {
+        for(let c of Array.from(canvases)) {
 
             let src = c.toDataURL('image/png')
 

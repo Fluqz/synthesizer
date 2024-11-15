@@ -1,4 +1,4 @@
-import { Synthesizer } from "../synthesizer";
+import { Synthesizer } from "./../synthesizer/synthesizer"
 import { G } from "../globals";
 import { Grid } from "../util/grid";
 import { M } from "../util/math/math";

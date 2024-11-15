@@ -1,4 +1,4 @@
-import { Synthesizer } from "../synthesizer"
+import { Synthesizer } from "./../synthesizer/synthesizer"
 import { G } from "../globals"
 import { Grid } from "../util/grid"
 import { M } from "../util/math/math"
@@ -76,16 +76,16 @@ export const moireShader = (p5) => {
 
         shader.setUniform("u_resolution", [G.w, G.h])
         shader.setUniform("u_time", (p5.millis() / 200.0) * timeMultiplier)
-        // shader.setUniform("u_color1", M.map(-1, 1, 0, 1, Math.cos((Tone.now() * .5))))
-        // shader.setUniform("u_color2", M.map(-1, 1, 0, 1, Math.sin((Tone.now()) + 2)))
-        // shader.setUniform("u_color3", M.map(-1, 1, 0, 1, Math.cos((Tone.now()) + 5)))
+        // shader.setUniform("u_color1", M.map(-1, 1, 0, 1, Math.cos((Tone.getContext().currentTime * .5))))
+        // shader.setUniform("u_color2", M.map(-1, 1, 0, 1, Math.sin((Tone.getContext().currentTime) + 2)))
+        // shader.setUniform("u_color3", M.map(-1, 1, 0, 1, Math.cos((Tone.getContext().currentTime) + 5)))
         shader.setUniform("u_color1", M.map(-1, 1, 0, 1, Math.cos((0 * .5))))
         shader.setUniform("u_color2", M.map(-1, 1, 0, 1, Math.sin((0) + 2)))
         shader.setUniform("u_color3", M.map(-1, 1, 0, 1, Math.cos((0) + 5)))
         shader.setUniform("u_activeNotes", M.map(0, 3, .5, 1.5, Synthesizer.activeNotes.size))
         shader.setUniform("u_osc", G.osc.y)
 
-        // console.log(M.map(-1, 1, 0.99, 1, Math.sin(Tone.now())))
+        // console.log(M.map(-1, 1, 0.99, 1, Math.sin(Tone.getContext().currentTime)))
 
         if(true) {
 

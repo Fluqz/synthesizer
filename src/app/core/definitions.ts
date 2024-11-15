@@ -1,4 +1,4 @@
-import type { ISerialization } from "../synthesizer";
+import type { ISerialization } from "../synthesizer/synthesizer";
 
 
 

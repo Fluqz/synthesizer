@@ -31,8 +31,8 @@ export const sinewave = (p5) => {
         p5.clear()
 
         points.push({
-            x: Tone.now(),
-            y: M.map(-1, 1, 0, 1, Math.cos(Tone.now())),
+            x: Tone.getContext().currentTime,
+            y: M.map(-1, 1, 0, 1, Math.cos(Tone.getContext().currentTime)),
         })
 
         // console.log(points[points.length-1])

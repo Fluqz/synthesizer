@@ -37,7 +37,7 @@ export class M {
 
     static getDirectionVector = (() => {
 
-        let v = {}
+        let v: any = {}
         
         return (v1, v2) => {
 
@@ -50,7 +50,7 @@ export class M {
 
     static getNormalizedVector = (() => {
 
-        let n = {}
+        let n: any = {}
         
         return (v) => {
 

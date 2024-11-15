@@ -21,7 +21,7 @@ export class Util {
     /**
      * Returns a random number between min (inclusive) and max (exclusive)
      */
-    static getRandomFloat(min, max) {
+    static getRandomFloat(min:number, max:number) {
         return Math.random() * (max - min) + min;
     }
 
@@ -32,7 +32,7 @@ export class Util {
      * lower than max if max isn't an integer).
      * Using Math.round() will give you a non-uniform distribution!
      */
-    static getRandomInt(min, max) {
+    static getRandomInt(min:number, max:number) {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;

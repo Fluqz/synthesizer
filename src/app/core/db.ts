@@ -1,4 +1,4 @@
-import { get, set } from 'idb-keyval';
+// import { get, set } from 'idb-keyval';
 
 export class DB {
 
@@ -10,11 +10,11 @@ export class DB {
 
     static set(key: string, data: any) {
 
-        return set(key, data)
+        // return set(key, data)
     }
 
     static get(key: string) {
 
-        return get(key)
+        // return get(key)
     }
 }

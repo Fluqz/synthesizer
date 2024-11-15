@@ -1,6 +1,6 @@
 import { Subject } from "rxjs"
-import type { ISession, Synthesizer } from "../synthesizer"
-import { DEFAULT_SESSION, DEFAULT_PRESETS } from "../presets"
+import type { ISession, Synthesizer } from "../synthesizer/synthesizer"
+import { DEFAULT_SESSION, DEFAULT_PRESETS } from "../synthesizer/presets"
 
 
 
@@ -29,6 +29,7 @@ export class PresetManager {
 
         this.presets = []
 
+        // @ts-ignore
         this.default = {
             name: 'default',
             id: -1,
