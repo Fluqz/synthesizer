@@ -258,10 +258,10 @@ export class Synthesizer implements ISerialize<ISynthesizerSerialization> {
 
         this.isMuted = m === true ? true : false
 
-        if(this.isMuted) Tone.Destination.volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .2, Tone.getContext().currentTime)
-        else Tone.Destination.volume.exponentialRampTo(this.volume.volume.value, .2, Tone.getContext().currentTime)
+        if(this.isMuted) Tone.getDestination().volume.exponentialRampTo(Number.NEGATIVE_INFINITY, .2, Tone.getContext().currentTime)
+        else Tone.getDestination().volume.exponentialRampTo(this.volume.volume.value, .2, Tone.getContext().currentTime)
 
-        // Tone.Destination.mute = this.isMuted
+        // Tone.getDestination().mute = this.isMuted
     }
 
     /** Set the octave number */
@@ -565,7 +565,7 @@ export class Synthesizer implements ISerialize<ISynthesizerSerialization> {
 
         if(!this.recorder) this.recorder = new Tone.Recorder()
 
-        Tone.Destination.connect(this.recorder)
+        Tone.getDestination().connect(this.recorder)
 
         this.recorder.start()
 
@@ -593,7 +593,7 @@ export class Synthesizer implements ISerialize<ISynthesizerSerialization> {
             anchor.href = url;
             anchor.click();
 
-            Tone.Destination.disconnect(this.recorder)
+            Tone.getDestination().disconnect(this.recorder)
 
         }, 0)
     }

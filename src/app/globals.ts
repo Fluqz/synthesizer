@@ -29,7 +29,7 @@ export class G {
 
         Visual.init()
 
-        Tone.Destination.volume.setValueAtTime(Number.NEGATIVE_INFINITY, Tone.getContext().currentTime)
+        Tone.getDestination().volume.setValueAtTime(Number.NEGATIVE_INFINITY, Tone.getContext().currentTime)
     }
 
     static start() {
@@ -39,7 +39,7 @@ export class G {
 
         this.isPlaying = true
 
-        Tone.Destination.volume.exponentialRampTo(this.synthesizer.volume.volume.value, .2, Tone.getContext().currentTime)
+        Tone.getDestination().volume.exponentialRampTo(this.synthesizer.volume.volume.value, .2, Tone.getContext().currentTime)
     }
 
     static saveVisuals = () => {
