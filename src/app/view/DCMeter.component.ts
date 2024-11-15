@@ -110,9 +110,9 @@ export class DCMeterComponent {
             
             this.connect()
             
-            if(this.scheduleID != undefined) Tone.getTransport.clear(this.scheduleID)
+            if(this.scheduleID != undefined) Tone.getTransport().clear(this.scheduleID)
             
-                this.scheduleID = Tone.getTransport.scheduleRepeat((t) => {
+                this.scheduleID = Tone.getTransport().scheduleRepeat((t) => {
                 
                 Tone.Draw.schedule(this.getValue.bind(this), t)
                     
@@ -124,7 +124,7 @@ export class DCMeterComponent {
 
         if(this.output != undefined) {
 
-            if(this.scheduleID != undefined) Tone.getTransport.clear(this.scheduleID)
+            if(this.scheduleID != undefined) Tone.getTransport().clear(this.scheduleID)
 
             this.meter.disconnect()
             this.meter.dispose()

@@ -271,7 +271,7 @@ export class AppComponent implements AfterViewInit, OnDestroy{
 
             i++
 
-        }, 20000 * (Tone.getTransport.bpm.value * .01))
+        }, 20000 * (Tone.getTransport().bpm.value * .01))
 
 
 

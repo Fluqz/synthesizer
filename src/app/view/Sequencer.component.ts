@@ -190,7 +190,7 @@ export class SequencerComponent implements AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        Tone.getTransport.cancel()
+        Tone.getTransport().cancel()
     }
 
     getChannelColor(i) {

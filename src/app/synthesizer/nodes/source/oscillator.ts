@@ -172,7 +172,7 @@ export class Oscillator extends Instrument {
 
         this.isPlaying = true
 
-        Tone.getTransport.scheduleOnce((time) => {
+        Tone.getTransport().scheduleOnce((time) => {
 
             this.isPlaying = false
             

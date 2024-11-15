@@ -238,13 +238,13 @@ export class Synthesizer implements ISerialize<ISynthesizerSerialization> {
         this.setVolume(-3)
     }
 
-    get bpm() { return Tone.getTransport.bpm.value }
+    get bpm() { return Tone.getTransport().bpm.value }
     set bpm(bpm:number) { 
 
         if(bpm == null) bpm = 1
         // TODO - WTF Decimals all the time
-        Tone.getTransport.bpm.value = bpm
-        console.log('bpm', Tone.getTransport.bpm.value)
+        Tone.getTransport().bpm.value = bpm
+        console.log('bpm', Tone.getTransport().bpm.value)
     }
 
     /** Set Master Volume */
@@ -412,7 +412,7 @@ export class Synthesizer implements ISerialize<ISynthesizerSerialization> {
         Synthesizer.activeNotes.add(note)
 
         const n = note
-        Tone.getTransport.scheduleOnce((t) => {
+        Tone.getTransport().scheduleOnce((t) => {
 
             Synthesizer.activeNotes.delete(n)
 
@@ -493,7 +493,7 @@ export class Synthesizer implements ISerialize<ISynthesizerSerialization> {
 
     //     this.setArpChord([])
 
-    //     // Tone.getTransport.stop()
+    //     // Tone.getTransport().stop()
 
     //     // this.arp.stop(Tone.getContext().currentTime)
 
@@ -525,7 +525,7 @@ export class Synthesizer implements ISerialize<ISynthesizerSerialization> {
 
     //     }, chord)
 
-    //     Tone.getTransport.bpm.setValueAtTime(this.bpm, Tone.getContext().currentTime)
+    //     Tone.getTransport().bpm.setValueAtTime(this.bpm, Tone.getContext().currentTime)
     //     this.arp.interval = length
     //     this.arp.start(Tone.getContext().currentTime)
 

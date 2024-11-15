@@ -361,7 +361,7 @@ export class TimelineComponent implements OnChanges {
 
         this.timelineObserver.unsubscribe()
 
-        Tone.getTransport.cancel()
+        Tone.getTransport().cancel()
     }
 
     update() {

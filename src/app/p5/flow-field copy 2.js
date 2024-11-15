@@ -54,7 +54,7 @@ export const flowField = (p5) => {
     flowfield = new Array(rows * cols);
     flowcolorfield = new Array(rows * cols);
 
-    // Tone.getTransport.scheduleRepeat(() => {
+    // Tone.getTransport().scheduleRepeat(() => {
 
     //   console.log('soo')
     //   p5.background(p5.color(0, 0, 0, 5));
@@ -66,7 +66,7 @@ export const flowField = (p5) => {
     this.pos = p5.createVector(p5.random(p5.width), p5.random(p5.height));
     this.vel = p5.createVector(0, 0);
     this.acc = p5.createVector(0, 0);
-    this.maxSpeed = Tone.getTransport.bpm.value / 100;
+    this.maxSpeed = Tone.getTransport().bpm.value / 100;
 
     this.prevPos = this.pos.copy();
 
