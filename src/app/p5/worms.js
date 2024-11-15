@@ -1,12 +1,5 @@
-
-
-
-import * as Tone from 'tone'
-
-
-import { G } from '../core/globals'
-import { M } from '../core/math'
-import { Keyboard } from '../keyboard'
+import { G } from '../globals'
+import { Synthesizer } from '../synthesizer'
 import { ElectricFuzz } from './electric-fuzz'
 
 export const worms = (p5) => {
@@ -33,7 +26,7 @@ export const worms = (p5) => {
 
 
         // // DOTS
-        // for(let n of Keyboard.activeNotes) {
+        // for(let n of Synthesizer.activeNotes) {
 
         //     for(let i = 0; i < 200; i++) {
 
@@ -51,12 +44,12 @@ export const worms = (p5) => {
         // }
 
         // // Electric fuzz
-        // if(Keyboard.activeNotes.length > 0) {
+        // if(Synthesizer.activeNotes.length > 0) {
 
         //     ef = new ElectricFuzz(
         //         G.w / 2, 
         //         G.h / 2, 
-        //         (Math.random() * 20 + 20) * Keyboard.activeNotes.length, 
+        //         (Math.random() * 20 + 20) * Synthesizer.activeNotes.length, 
         //         2, 
         //         10,
         //         undefined,
@@ -76,7 +69,7 @@ export const worms = (p5) => {
 
 
 
-        if(Keyboard.activeNotes.length > 0) {
+        if(Synthesizer.activeNotes.size > 0) {
 
             if(init) {
 
@@ -85,7 +78,7 @@ export const worms = (p5) => {
                 let x = Math.random() * G.w, 
                     y = Math.random() * G.h
 
-                for(let n of Keyboard.activeNotes) {
+                for(let n of Synthesizer.activeNotes) {
 
                     for(let i = 0; i < 20; i++) {
 
@@ -100,7 +93,7 @@ export const worms = (p5) => {
                             1,
                             10,
                             // '#'+Math.floor(Math.random()*16777215).toString(16),
-                            '#fed33a',
+                            '#fed33a44',
                             (px, py, nx, ny, vs, c) => {
 
                                 // p5.stroke(c)
@@ -108,13 +101,13 @@ export const worms = (p5) => {
                                 // p5.line(px, py, nx, ny)
 
 
-                                p5.fill('#990099')
+                                p5.fill('#44004444')
                                 p5.noStroke()
-                                p5.circle(nx+1, ny, 2)
+                                p5.rect(nx+1, ny+1, 2, 2)
 
                                 p5.fill(c)
                                 p5.noStroke()
-                                p5.circle(nx, ny, 2)
+                                p5.rect(nx, ny, 2, 2)
                                 // for(let i = 1; i < vs.length; i++) {
 
                                 //     p5.stroke(c)

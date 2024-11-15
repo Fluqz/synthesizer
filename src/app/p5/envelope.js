@@ -1,4 +1,4 @@
-import { G } from '../core/globals'
+import { G } from '../globals'
 
 export const envelope = (p5) => {
 
@@ -27,22 +27,22 @@ export const envelope = (p5) => {
         p5.stroke('#ffffff')
         
         p5.circle(x, y, 20)
-        p5.circle(x + (xStep * 1), y - (G.keyboard.synth.options.voice0.envelope.attack * yStep), 20)
-        p5.circle(x + (xStep * 2), y - (G.keyboard.synth.options.voice0.envelope.decay * yStep), 20)
-        p5.circle(x + (xStep * 3), y - (G.keyboard.synth.options.voice0.envelope.sustain * yStep), 20)
-        p5.circle(x + (xStep * 4), y - (G.keyboard.synth.options.voice0.envelope.release * yStep), 20)
+        p5.circle(x + (xStep * 1), y - (G.synthesizer.synth.options.voice0.envelope.attack * yStep), 20)
+        p5.circle(x + (xStep * 2), y - (G.synthesizer.synth.options.voice0.envelope.decay * yStep), 20)
+        p5.circle(x + (xStep * 3), y - (G.synthesizer.synth.options.voice0.envelope.sustain * yStep), 20)
+        p5.circle(x + (xStep * 4), y - (G.synthesizer.synth.options.voice0.envelope.release * yStep), 20)
 
 
-        p5.line(x, y, x + (xStep * 1), y - (G.keyboard.synth.options.voice0.envelope.attack * yStep))
-        p5.line(x + (xStep * 1), y - (G.keyboard.synth.options.voice0.envelope.attack * yStep), x + (xStep * 2), y - (G.keyboard.synth.options.voice0.envelope.decay * yStep))
-        p5.line(x + (xStep * 2), y - (G.keyboard.synth.options.voice0.envelope.decay * yStep), x + (xStep * 3), y - (G.keyboard.synth.options.voice0.envelope.sustain * yStep))
-        p5.line(x + (xStep * 3), y - (G.keyboard.synth.options.voice0.envelope.sustain * yStep), x + (xStep * 4), y - (G.keyboard.synth.options.voice0.envelope.release * yStep))
-        p5.line(x + (xStep * 4), y - (G.keyboard.synth.options.voice0.envelope.release * yStep), G.w, G.h)
+        p5.line(x, y, x + (xStep * 1), y - (G.synthesizer.synth.options.voice0.envelope.attack * yStep))
+        p5.line(x + (xStep * 1), y - (G.synthesizer.synth.options.voice0.envelope.attack * yStep), x + (xStep * 2), y - (G.synthesizer.synth.options.voice0.envelope.decay * yStep))
+        p5.line(x + (xStep * 2), y - (G.synthesizer.synth.options.voice0.envelope.decay * yStep), x + (xStep * 3), y - (G.synthesizer.synth.options.voice0.envelope.sustain * yStep))
+        p5.line(x + (xStep * 3), y - (G.synthesizer.synth.options.voice0.envelope.sustain * yStep), x + (xStep * 4), y - (G.synthesizer.synth.options.voice0.envelope.release * yStep))
+        p5.line(x + (xStep * 4), y - (G.synthesizer.synth.options.voice0.envelope.release * yStep), G.w, G.h)
 
-        // console.log('ENV', G.keyboard.envelope.attack, G.keyboard.envelope.decay, G.keyboard.envelope.sustain, G.keyboard.envelope.release)
+        // console.log('ENV', G.synthesizer.envelope.attack, G.synthesizer.envelope.decay, G.synthesizer.envelope.sustain, G.synthesizer.envelope.release)
                         
         // const waveform = new Tone.Waveform()
-        // G.keyboard.synth.connect(waveform)
+        // G.synthesizer.synth.connect(waveform)
 
         // console.log(waveform, waveform.getValue())
 

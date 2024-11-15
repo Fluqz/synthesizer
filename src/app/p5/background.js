@@ -1,7 +1,7 @@
 
-import { G } from '../core/globals'
+import { G } from '../globals'
 
-import { Keyboard } from '../keyboard'
+import { Synthesizer } from '../synthesizer'
 
 class Tween {
 
@@ -57,7 +57,9 @@ export const keyVisualizer = (p5) => {
 
     p5.setup = () => {
 
-        p5.createCanvas(G.w, G.h)
+        let p5Canvas = p5.createCanvas(G.w, G.h)
+        p5Canvas.parent("p5-canvas-cont");
+
         p5.background('#161616')
 
         p5.canvas.style.position = 'absolute'
@@ -137,10 +139,10 @@ export const keyVisualizer = (p5) => {
         let startSize = (G.w / 10)
         let endSize = (G.w / 7)
         
-        if(Keyboard.activeNotes.length > 0) {
+        if(Synthesizer.activeNotes.length > 0) {
 
-            let i = Keyboard.activeNotes.length
-            for(let n of Keyboard.activeNotes) {
+            let i = Synthesizer.activeNotes.size
+            for(let n of Synthesizer.activeNotes) {
 
                 let t
                 if(!noteAnimationMap.has(n)) {
@@ -168,15 +170,15 @@ export const keyVisualizer = (p5) => {
             }
         }
 
-        if(Keyboard.activeNotes.length !== activeNoteslength) noteAnimationMap.clear()
-        activeNoteslength = Keyboard.activeNotes.length
+        if(Synthesizer.activeNotes.size !== activeNoteslength) noteAnimationMap.clear()
+        activeNoteslength = Synthesizer.activeNotes.size
 
         // Remove keys from map
         let keys = []
         for(let k of noteAnimationMap.keys()) keys.push(k)
         for(let k of keys) {
 
-            if(Keyboard.activeNotes.indexOf(k) == -1) {
+            if(Synthesizer.activeNotes.has(k) == -1) {
                 noteAnimationMap.delete(k)
                 continue
             }

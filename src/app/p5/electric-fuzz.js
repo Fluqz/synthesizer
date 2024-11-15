@@ -1,5 +1,5 @@
 
-import { Keyboard } from '../keyboard'
+import { Synthesizer } from '../synthesizer'
 
 export class ElectricFuzz {
 
@@ -56,7 +56,7 @@ export class ElectricFuzz {
     grow() {
 
         // Create random length between min, max
-        this.distance = (Math.random() * ((this.maxLength - this.minLength) + this.minLength)) * (Keyboard.activeNotes.length / 2)
+        this.distance = (Math.random() * ((this.maxLength - this.minLength) + this.minLength)) * (Synthesizer.activeNotes.size / 2)
 
         // Create random normalized vector for direction
         this.normalX = (Math.random() * 2) - 1
