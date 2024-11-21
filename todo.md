@@ -1,6 +1,9 @@
 #BUGS
 
 
+getter values that are used by knobs are called constantly!! All of the nodes are used like that
+
+
 Add button to stop all animations!!!
   including css transitions
   gifs

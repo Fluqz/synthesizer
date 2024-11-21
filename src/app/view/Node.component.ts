@@ -105,7 +105,7 @@ import { CommonModule } from '@angular/common';
 
 
     /* Nodes */
-    :host .node {
+    ::ng-deep .node {
 
         display: inline-flex;
 
@@ -129,13 +129,13 @@ import { CommonModule } from '@angular/common';
 
         margin: 0px .5px;
     }
-    :host .node:nth-child(1),
-    :host .node:nth-child(2) {
+    ::ng-deep .node:nth-child(1),
+    ::ng-deep .node:nth-child(2) {
 
         margin: 0px;
         padding: 0px;
     }
-    :host .node:last-child {
+    ::ng-deep .node:last-child {
 
         margin-right: 0px;
         padding-right: 0px;
@@ -151,7 +151,7 @@ import { CommonModule } from '@angular/common';
         align-items: center;
     }
 
-    :host .node .level-meter {
+    ::ng-deep .node .level-meter {
 
         margin: 0px 5px;
     }

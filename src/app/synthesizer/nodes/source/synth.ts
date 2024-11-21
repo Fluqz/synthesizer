@@ -132,7 +132,7 @@ export class Synth extends Instrument {
         this._attack = d
         this.synth.set({ envelope: { attack: this._attack } })
     }
-    get attack() { console.log('synth attack');return this._attack }
+    get attack() { return this._attack }
 
     set attackCurve(d) {
         this._attackCurve = d

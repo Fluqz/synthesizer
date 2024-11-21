@@ -292,6 +292,12 @@ export class TimelineComponent implements OnChanges {
     
     constructor(public cdr: ChangeDetectorRef) {}
 
+    @HostListener('window:resize', ['$event'])
+    private onResize(e) {
+
+        this.update()
+    }
+
     ngAfterViewInit() {
 
         this.onResizeTimeline()
@@ -353,7 +359,7 @@ export class TimelineComponent implements OnChanges {
     ngOnChanges() {
 
         this.update()
-        if(this.selectedNote) this.getSequenceObject(this.selectedNote)
+        // if(this.selectedNote) this.getSequenceObject(this.selectedNote)
     }
 
 
@@ -499,8 +505,10 @@ export class TimelineComponent implements OnChanges {
         }
     }
 
-    @HostListener('mousemove', ['$event'])
+    @HostListener('document:mousemove', ['$event'])
     onMouseMove(e) {
+        
+        e.stopPropagation()
 
         this.notePointerMove(e)
         this.resizeNoteMoveHandler(e)
@@ -515,58 +523,11 @@ export class TimelineComponent implements OnChanges {
 
         this.isNoteDrag = true
 
+        console.log('DRAGGING MOVE')
+
         const width = this.timelineRect.width
         const stop = this.timelineRect.right
         const start = 0
-
-        // const noteHeight = this.getNoteHeight()
-        // const noteY = this.getNoteY(this.selectedNote)
-
-        // // Vertical drag
-        // let posY = e.clientY - this.timelineRect.top - this.clickOffsetY
-
-        // if(posY > noteY) {
-
-        //     const i = sequencer.sequence.indexOf(selectedNote)
-
-        //     // If not exist Or first element
-        //     if(i != -1 && i != 0) {
-
-        //         newIndex = i - 1
-                
-        //         console.log('ABOVE', posY, noteY, posY > noteY, selectedNote.id, i, newIndex)
-
-        //         // Remove
-        //         sequencer.sequence.splice(i, 1)
-        //         // Insert
-        //         sequencer.sequence.splice(newIndex, 0, selectedNote)
-        //         // Update
-        //         sequence.set(sequencer.sequence)
-        //     }
-        // }
-        // else if(posY < noteY + noteHeight) {
-
-        //     const i = sequencer.sequence.indexOf(selectedNote)
-
-        //     // If not exist Or first element
-        //     if(i != -1 && i != sequencer.sequence.length) {
-
-        //         newIndex = i + 1
-                
-        //         console.log('BELOW', posY, noteY + noteHeight, posY < noteY + noteHeight, selectedNote.id, i, newIndex)
-                
-        //         // Remove
-        //         sequencer.sequence.splice(i, 1)
-        //         // Insert
-        //         sequencer.sequence.splice(newIndex, 0, selectedNote)
-        //         // Update
-        //         sequence.set(sequencer.sequence)
-        //     }
-        // }
-        // else {
-
-        //     console.log('NOTHING')
-        // }
 
         // Horizontal drag
         let posX = e.clientX - this.timelineRect.left - this.clickOffsetX
@@ -581,13 +542,19 @@ export class TimelineComponent implements OnChanges {
         // Left boundary
         if(time < start) time = start
 
-        this.alteredSequenceObject.time = time
+        if(this.alteredSequenceObject.time != time) {
+
+            this.alteredSequenceObject.time = time
+            this.cdr.detectChanges()
+        } 
 
         this.updateWrapperHeight()
     }
 
-    @HostListener('mouseup')
+    @HostListener('document:mouseup', ['$event'])
     onMouseUp(e) {
+
+        e.stopPropagation()
 
         this.notePointerUp(e)
         this.resizeNoteEndHandler(e)
@@ -595,7 +562,7 @@ export class TimelineComponent implements OnChanges {
 
     notePointerUp = (e) => {
 
-        console.log('notePointerUp')
+        // console.log('notePointerUp')
 
         this.isPointerDown = false
         
@@ -610,7 +577,7 @@ export class TimelineComponent implements OnChanges {
                     this.alteredSequenceObject.length, 
                     this.alteredSequenceObject.velocity
                 )
-                
+
                 this.updateWrapperHeight()
                 
                 this.saveUndo()
@@ -750,6 +717,7 @@ export class TimelineComponent implements OnChanges {
      * without manipulating the real sequence of the sequencer. */
     getSequenceObject(note: SequenceObject) : SequenceObject {
 
+        console.log(this.alteredSequenceObject && this.alteredSequenceObject.id == note.id)
         if(this.alteredSequenceObject && this.alteredSequenceObject.id == note.id) return this.alteredSequenceObject
         return note
     }

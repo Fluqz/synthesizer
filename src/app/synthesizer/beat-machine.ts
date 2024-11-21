@@ -51,7 +51,7 @@ export class BeatMachine {
 
             last = time
 
-        }, Tone.Time('1b').toSeconds() / 20 )
+        }, Tone.Time('1b').toSeconds() / 15 )
 
         this.loop.start(0)
         this.timeLine.start(0)
