@@ -51,7 +51,7 @@ export const keyVisualizer = (p5) => {
 
     p5.preload = () => {
 
-        img = p5.loadImage("./assets/imgs/idioma.jpg");
+        img = p5.loadImage("/assets/imgs/idioma.jpg");
 
     }
 

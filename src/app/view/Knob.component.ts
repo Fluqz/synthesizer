@@ -101,7 +101,7 @@ import { CommonModule } from "@angular/common";
     }
     .knob:hover {
         
-        background-image: url('/src/assets/imgs/circle-monochrome-yellow.gif');
+        background-image: url('/assets/imgs/circle-monochrome-yellow.gif');
 
         /* background-image: none; */
     }

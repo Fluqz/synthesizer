@@ -66,7 +66,7 @@
     font-size: 14px;
     scrollbar-width: none;
   /* 
-    background-image: url('/src/assets/imgs/noise4.jpg');
+    background-image: url('/assets/imgs/noise4.jpg');
     background-size: 200%;
     background-repeat: no-repeat; */
   
@@ -87,7 +87,7 @@
     scrollbar-width: none;
     -ms-scrollbar: none;
   
-    /* cursor: url('/src/assets/imgs/circle-sepia.gif'); */
+    /* cursor: url('/assets/imgs/circle-sepia.gif'); */
   
     /* mix-blend-mode: difference; */
   }
@@ -185,7 +185,7 @@
   
     color: var(--c-y);
   
-    background-image: url('/src/assets/imgs/circle-monochrome.gif');
+    background-image: url('/assets/imgs/circle-monochrome.gif');
     background-size: 1000%;
     background-position: center;
     background-repeat: no-repeat;
@@ -242,8 +242,8 @@
   
     /* background-blend-mode: difference; */
   /* 
-    background-image: url('/src/assets/imgs/circle-noir.gif');
-    background-image: url('/src/assets/imgs/circle-monochrome-yellow.gif');
+    background-image: url('/assets/imgs/circle-noir.gif');
+    background-image: url('/assets/imgs/circle-monochrome-yellow.gif');
     background-size: 400%;
     background-position: center;
     background-repeat: no-repeat; */
