@@ -98,23 +98,21 @@ styles: `
         justify-content: center;
         align-items: end;
 
-        cursor: grab !important;
 
         mix-blend-mode: unset;
         /* border: .5px solid var(--c-w); */
 
         overflow: hidden;
+        cursor: grab;
     }
 
     .note.selected {
         background-color: var(--c-o);
-        cursor: grabbing !important;
         z-index: 4;
     }
 
     .note.note.selected input {
 
-        cursor: grabbing !important;
     }
 
     .note input {
@@ -152,7 +150,7 @@ styles: `
         color: var(--c-b);
     }
 
-    .note :global(.drag-handle)  {
+    ::ng-deep .note .drag-handle {
 
         z-index: 3;
 
@@ -169,18 +167,18 @@ styles: `
         opacity: .3;
     }
 
-    .note :global(.drag-start)  {
+    ::ng-deep .note .drag-start {
 
         left: 0px;
 
     }
 
-    .note :global(.drag-end) {
+    ::ng-deep .note .drag-end {
 
         right: 0px;
     }
 
-    .note :global(.drag-velocity)  {
+    ::ng-deep .note .drag-velocity {
 
         left: 0px;
 
@@ -190,7 +188,7 @@ styles: `
         cursor: row-resize;
     }
 
-    .note :global(.velocity) {
+    ::ng-deep .note .velocity {
 
         position:absolute;
         bottom: 0px;
@@ -198,7 +196,7 @@ styles: `
         width: 100%;
         height: 100%;
     }
-    .note :global(.velocity.changed) {
+    ::ng-deep .note .velocity.changed {
 
         background-color: #fff;
         opacity: .7;
@@ -271,7 +269,7 @@ export class NoteComponent implements OnDestroy {
 
     getNoteWidth() {
 
-        this.width = ((Tone.Time(this.note.length).toSeconds() / this.sequencer.bars) * this.timelineRect.width)
+        return this.width = ((Tone.Time(this.note.length).toSeconds() / this.sequencer.bars) * this.timelineRect.width)
     }
 
     getOctave(note: SequenceObject) {

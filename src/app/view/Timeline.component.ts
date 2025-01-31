@@ -477,7 +477,7 @@ export class TimelineComponent implements OnChanges {
 
     notePointerDown(e, note: SequenceObject) {
 
-        // console.log('notePointerDown')
+        console.log('notePointerDown')
 
         e.stopPropagation()
 
@@ -521,9 +521,10 @@ export class TimelineComponent implements OnChanges {
         if(this.isDragNoteResize) return
         if(!this.selectedNote) return
 
-        this.isNoteDrag = true
+        console.log('notePointerMove')
 
-        console.log('DRAGGING MOVE')
+        this.isNoteDrag = true
+        document.body.style.cssText = 'cursor: grabbing !important;'
 
         const width = this.timelineRect.width
         const stop = this.timelineRect.right
@@ -562,9 +563,14 @@ export class TimelineComponent implements OnChanges {
 
     notePointerUp = (e) => {
 
-        // console.log('notePointerUp')
+        if(this.isDragNoteResize) return
+
+
+        console.log('notePointerUp')
 
         this.isPointerDown = false
+        document.body.style.cursor = 'default'
+
         
         if(this.selectedNote && this.selectedNote.id == this.alteredSequenceObject.id) {
 
@@ -628,7 +634,7 @@ export class TimelineComponent implements OnChanges {
 
         this.dragOffset = e.pageX - e.target.getBoundingClientRect().left
 
-        this.handle = which == 'start' ? 0 : 1
+        this.handle = (which == 'start' ? 0 : 1)
     }
 
     /** Resizing note - Mouse move event */
@@ -640,7 +646,7 @@ export class TimelineComponent implements OnChanges {
         
         if(!this.selectedNote) return
         
-        // console.log('move')
+        console.log('resizeNoteMoveHandler')
 
         const width = this.timelineRect.width
         const posX = e.clientX - this.timelineRect.left + (this.handle == 0 ? -this.dragOffset : this.dragOffset)
@@ -671,24 +677,32 @@ export class TimelineComponent implements OnChanges {
         }
 
         this.alteredSequenceObject.time = time
-        this.alteredSequenceObject.length = l
+        
+        if(this.alteredSequenceObject.time != l) {
+
+            this.alteredSequenceObject.length = l
+            this.cdr.detectChanges()
+        }
+
+        console.log('l', l)
     }
 
     /** Resizing note - Mouse up event */
     resizeNoteEndHandler = (e) => {
-        console.log('resizeNoteEndHandler', this.selectedNote, this.alteredSequenceObject)
+
+        if(!this.isDragNoteResize) return
         
-        // e.stopPropagation()
+        console.log('resizeNoteEndHandler', this.selectedNote, this.alteredSequenceObject)
 
         if(this.selectedNote && this.selectedNote.id == this.alteredSequenceObject.id) {
 
             console.log('resizeNoteEndHandler update !!PONASFO')
             this.sequencer.updateNote(
-                this.alteredSequenceObject.id, 
-                this.alteredSequenceObject.note, 
-                this.alteredSequenceObject.time, 
-                this.alteredSequenceObject.length, 
-                this.alteredSequenceObject.velocity
+                this.selectedNote.id = this.alteredSequenceObject.id, 
+                this.selectedNote.note = this.alteredSequenceObject.note, 
+                this.selectedNote.time = this.alteredSequenceObject.time, 
+                this.selectedNote.length = this.alteredSequenceObject.length, 
+                this.selectedNote.velocity = this.alteredSequenceObject.velocity
             )
             
             this.updateWrapperHeight()
@@ -697,18 +711,17 @@ export class TimelineComponent implements OnChanges {
         }
 
 
-        if(this.isDragNoteResize) {
+        this.isDragNoteResize = false
+        
+        this.selectedNote = null
+        this.alteredSequenceObject = null
+        
+        this.dragOffset = 0
+        
+        this.startTime = 0
+        this.endTime = 0
 
-            this.isDragNoteResize = false
-            
-            this.selectedNote = null
-            this.alteredSequenceObject = null
-            
-            this.dragOffset = 0
-            
-            this.startTime = 0
-            this.endTime = 0
-        }
+        // this.cdr.detectChanges()
     }
 
 
@@ -717,7 +730,6 @@ export class TimelineComponent implements OnChanges {
      * without manipulating the real sequence of the sequencer. */
     getSequenceObject(note: SequenceObject) : SequenceObject {
 
-        console.log(this.alteredSequenceObject && this.alteredSequenceObject.id == note.id)
         if(this.alteredSequenceObject && this.alteredSequenceObject.id == note.id) return this.alteredSequenceObject
         return note
     }
