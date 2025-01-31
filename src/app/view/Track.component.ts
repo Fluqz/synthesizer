@@ -16,10 +16,8 @@ import { CommonModule } from "@angular/common";
 
 
 @Component({
-
     selector: 'sy-track',
-    standalone: true,
-    imports: [ CommonModule, DropdownComponent, KnobComponent, NodeComponent ],
+    imports: [CommonModule, DropdownComponent, KnobComponent, NodeComponent],
     template: `
 
     <div class="track-wrapper" (wheel)="onScroll($event)" (click)="onClick($event)">
@@ -278,7 +276,7 @@ import { CommonModule } from "@angular/common";
         background-color: var(--c-bl);
         color: var(--c-w);
     }
-`,
+`
 })
 export class TrackComponent implements AfterViewInit, OnDestroy {
 

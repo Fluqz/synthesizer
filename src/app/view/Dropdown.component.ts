@@ -8,8 +8,7 @@ import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@
 
 @Component({
     selector: 'sy-dropdown',
-    standalone: true,
-    imports: [ CommonModule ],
+    imports: [CommonModule],
     template: `
     
 

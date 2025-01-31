@@ -25,10 +25,8 @@ export const convertNoteLength = (n: NoteLength) => {
 }
 
 @Component({
-
     selector: 'sy-timeline',
-    standalone: true,
-    imports: [ CommonModule, NoteComponent ],
+    imports: [CommonModule, NoteComponent],
     template: `
 
 
@@ -210,8 +208,7 @@ export const convertNoteLength = (n: NoteLength) => {
 
 `,
     host: {
-
-        // '(pointermove)': 'notePointerMove($event)',
+    // '(pointermove)': 'notePointerMove($event)',
     }
 })
 export class TimelineComponent implements OnChanges {

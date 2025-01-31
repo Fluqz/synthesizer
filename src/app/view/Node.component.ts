@@ -12,10 +12,8 @@ import { CommonModule } from '@angular/common';
 
 
 @Component({
-
     selector: 'sy-node',
-    standalone: true,
-    imports: [ CommonModule, DropdownComponent, KnobComponent ],
+    imports: [CommonModule, DropdownComponent, KnobComponent],
     template: `
     
 
@@ -99,7 +97,6 @@ import { CommonModule } from '@angular/common';
 
 
     `,
-
     styles: `
     
 
@@ -308,8 +305,7 @@ import { CommonModule } from '@angular/common';
 
 
     
-    `,
-
+    `
 })
 export class NodeComponent implements OnDestroy {
 

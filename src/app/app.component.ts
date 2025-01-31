@@ -22,10 +22,9 @@ import { BeatMachine } from './synthesizer/beat-machine';
 
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [ CommonModule, SynthesizerComponent, MenuComponent],
-  template: `
+    selector: 'app-root',
+    imports: [CommonModule, SynthesizerComponent, MenuComponent],
+    template: `
   
   
 
@@ -68,7 +67,7 @@ import { BeatMachine } from './synthesizer/beat-machine';
     
   
   `,
-  styles: `
+    styles: `
   
   
   .app-wrapper {

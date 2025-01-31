@@ -28,11 +28,8 @@ export const convertNoteLength = (n: NoteLength) => {
 
 
 @Component({
-
-
     selector: 'sy-sequencer',
-    standalone: true,
-    imports: [ CommonModule, TimelineComponent ],
+    imports: [CommonModule, TimelineComponent],
     template: `
 
     <div *ngIf="sequencer != undefined" class="sequencer-wrapper">
@@ -152,7 +149,7 @@ export const convertNoteLength = (n: NoteLength) => {
     }
 
 
-`,
+`
 })
 export class SequencerComponent implements AfterViewInit, OnDestroy {
 

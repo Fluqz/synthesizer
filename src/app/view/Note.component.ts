@@ -9,10 +9,8 @@ import { CommonModule } from "@angular/common";
 
 
 @Component({
-
     selector: 'sy-note',
-    standalone: true,
-    imports: [ CommonModule ],
+    imports: [CommonModule],
     template: `
         
 <div *ngIf="sequencer != undefined" class="note-wrapper">
@@ -67,8 +65,7 @@ import { CommonModule } from "@angular/common";
 </div>
 
 `,
-
-styles: `
+    styles: `
 
     :host {
 
@@ -210,8 +207,7 @@ styles: `
         height: 25px;
     }
 
-    `,
-
+    `
 })
 export class NoteComponent implements OnDestroy {
 

@@ -11,10 +11,8 @@ import { CommonModule } from "@angular/common";
 
 
 @Component({
-
     selector: 'sy-knob',
-    standalone: true,
-    imports: [ CommonModule],
+    imports: [CommonModule],
     template: `
     
 
@@ -55,7 +53,6 @@ import { CommonModule } from "@angular/common";
         </div>
     
     `,
-
     styles: `
     
         
@@ -200,7 +197,7 @@ import { CommonModule } from "@angular/common";
 
     
     
-    `,
+    `
 }) 
 export class KnobComponent {
 

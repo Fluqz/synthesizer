@@ -9,10 +9,8 @@ import { CommonModule } from '@angular/common';
 
 
 @Component({
-
     selector: 'sy-menu',
-    standalone: true,
-    imports: [ CommonModule, SettingsComponent, ManualComponent ],
+    imports: [CommonModule, SettingsComponent, ManualComponent],
     template: `
     
 
@@ -43,7 +41,6 @@ import { CommonModule } from '@angular/common';
     </div>
 
 `,
-
     styles: `
     
     

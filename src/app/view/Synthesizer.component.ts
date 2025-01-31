@@ -16,10 +16,8 @@ import { CommonModule } from '@angular/common'
 import { Key } from '../synthesizer/key'
 
 @Component({
-
     selector: 'sy-synthesizer',
-    standalone: true,
-    imports: [ CommonModule, DropdownComponent, KnobComponent, TrackComponent, SequencerComponent, KeyComponent ],
+    imports: [CommonModule, DropdownComponent, KnobComponent, TrackComponent, SequencerComponent, KeyComponent],
     template: `
 
 
@@ -233,8 +231,7 @@ import { Key } from '../synthesizer/key'
         background-color: var(--c-w);
         color: var(--c-b);
     }
-`,
-
+`
 })
 export class SynthesizerComponent implements AfterViewInit, AfterContentInit {
 
