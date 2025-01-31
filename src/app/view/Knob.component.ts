@@ -37,7 +37,10 @@ import { CommonModule } from "@angular/common";
             (dblclick)="toggleReset()"
             [style]="getTransformStyle()">
 
-                <div class="knob-pointer"></div>
+                <div class="knob-pointer">
+
+                    <div class="knob-mini-pointer"></div>
+                </div>
                 
         </div>
 
@@ -108,33 +111,53 @@ import { CommonModule } from "@angular/common";
 
     .knob .knob-pointer {
 
-    position: absolute;
-    top: 0px;
-    left: calc(50% - (10% / 2));
+        position: absolute;
+        top: 0px;
+        left: calc(50% - (10% / 2));
 
-    width: 100%;
-    height: 100%;
+        width: 100%;
+        height: 100%;
 
-    border-radius: 100%;
+        border-radius: 100%;
 
-    /* transform: inherit; */
-    
-    mix-blend-mode: difference;
-    background-color: var(--c-bl);
+        /* transform: inherit; */
+        
+        mix-blend-mode: difference;
+        background-color: var(--c-bl);
+
+        display:flex;
+        justify-content: center;
+        align-items: center;
+
+        overflow: hidden;
+    }
+
+    .knob .knob-pointer .knob-mini-pointer {
+
+        width: 8px;
+        height: 8px;
+
+        border-radius: 100%;
+
+        /* transform: inherit; */
+        
+        mix-blend-mode: difference;
+        background-color: var(--c-y);
+
     }
 
     .knob .knob-value {
-    /* .knob > .knob-value { */
-    /* 
-        position: absolute;
+        /* .knob > .knob-value { */
+        /* 
+            position: absolute;
 
-    width: 100%;
-    height: 100%;
-    line-height: inherit;
+        width: 100%;
+        height: 100%;
+        line-height: inherit;
 
-    text-align: center;
+        text-align: center;
 
-    z-index: 10; */
+        z-index: 10; */
     }
 
     .knob-wrapper .knob-value input {

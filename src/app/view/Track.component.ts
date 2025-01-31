@@ -438,7 +438,7 @@ export class TrackComponent implements AfterViewInit, OnDestroy {
 
         if(this.track.instrument) this.track.instrument.releaseAll()
 
-        const ele = e.detail.target
+        const ele = e.target
 
         const source = ele.value
 

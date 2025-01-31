@@ -238,15 +238,15 @@
     background-color: var(--c-w);
   }
   
-  .shifting-GIF {
+  .shifting-GIF.enabled {
   
     /* background-blend-mode: difference; */
-  /* 
+  
     background-image: url('/assets/imgs/circle-noir.gif');
     background-image: url('/assets/imgs/circle-monochrome-yellow.gif');
     background-size: 400%;
     background-position: center;
-    background-repeat: no-repeat; */
+    background-repeat: no-repeat;
   }
   
   

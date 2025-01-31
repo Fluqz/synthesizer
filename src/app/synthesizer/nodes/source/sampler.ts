@@ -2,38 +2,39 @@ import * as Tone from 'tone'
 import { Instrument, InstrumentType } from './instrument';
 import { ParamType } from '../node';
 import { DB } from './../../../core/db';
+import { G } from '../../../globals';
 
 const samples = [
 
-    { path: '/assets/samples/synth/SweepFm7.wav', name: 'Sweep Fm7' },
-    { path: '/assets/samples/synth/Back_Home_F_01.wav', name: 'Back Home F'},
-    { path: '/assets/samples/drums/kick/Boxed_Ear_Vertice_11.wav', name: 'Kick1'},
-    { path: '/assets/samples/drums/kick/grit_3.wav', name: 'Kick2'},
-    { path: '/assets/samples/drums/kick/hip-hop-kick.wav', name: 'Kick3'},
-    { path: '/assets/samples/drums/snare/Wu_1p.wav', name: 'Snare1'},
-    { path: '/assets/samples/drums/snare/dilla_snare.wav', name: 'Snare2'},
-    { path: '/assets/samples/drums/snare/g.wav', name: 'Snare3'},
-    { path: '/assets/samples/drums/snare/snare2.wav', name: 'Snare4'},
-    { path: '/assets/samples/drums/snare/snare5.wav', name: 'Snare5'},
-    { path: '/assets/samples/drums/snare/snare6.wav', name: 'Snare6'},
+    { path: G.PATH + 'assets/samples/synth/SweepFm7.wav', name: 'Sweep Fm7' },
+    { path: G.PATH + 'assets/samples/synth/Back_Home_F_01.wav', name: 'Back Home F'},
+    { path: G.PATH + 'assets/samples/drums/kick/Boxed_Ear_Vertice_11.wav', name: 'Kick1'},
+    { path: G.PATH + 'assets/samples/drums/kick/grit_3.wav', name: 'Kick2'},
+    { path: G.PATH + 'assets/samples/drums/kick/hip-hop-kick.wav', name: 'Kick3'},
+    { path: G.PATH + 'assets/samples/drums/snare/Wu_1p.wav', name: 'Snare1'},
+    { path: G.PATH + 'assets/samples/drums/snare/dilla_snare.wav', name: 'Snare2'},
+    { path: G.PATH + 'assets/samples/drums/snare/g.wav', name: 'Snare3'},
+    { path: G.PATH + 'assets/samples/drums/snare/snare2.wav', name: 'Snare4'},
+    { path: G.PATH + 'assets/samples/drums/snare/snare5.wav', name: 'Snare5'},
+    { path: G.PATH + 'assets/samples/drums/snare/snare6.wav', name: 'Snare6'},
 
-    { path: '/assets/samples/drums/hihat/WU_HH_179.wav', name: 'Hihat1'},
-    { path: '/assets/samples/drums/hihat/Wu_1p1.wav', name: 'Hihat2'},
-    { path: '/assets/samples/drums/hihat/Wu_1p2.wav', name: 'Hihat3'},
-    { path: '/assets/samples/drums/hihat/Wu_1p3.wav', name: 'Hihat4'},
-    { path: '/assets/samples/drums/hihat/hat_1.wav', name: 'Hihat5'},
-    { path: '/assets/samples/drums/hihat/hat_3.wav', name: 'Hihat6'},
-    { path: '/assets/samples/drums/hihat/hat_4.wav', name: 'Hihat7'},
+    { path: G.PATH + 'assets/samples/drums/hihat/WU_HH_179.wav', name: 'Hihat1'},
+    { path: G.PATH + 'assets/samples/drums/hihat/Wu_1p1.wav', name: 'Hihat2'},
+    { path: G.PATH + 'assets/samples/drums/hihat/Wu_1p2.wav', name: 'Hihat3'},
+    { path: G.PATH + 'assets/samples/drums/hihat/Wu_1p3.wav', name: 'Hihat4'},
+    { path: G.PATH + 'assets/samples/drums/hihat/hat_1.wav', name: 'Hihat5'},
+    { path: G.PATH + 'assets/samples/drums/hihat/hat_3.wav', name: 'Hihat6'},
+    { path: G.PATH + 'assets/samples/drums/hihat/hat_4.wav', name: 'Hihat7'},
 
-    { path: '/assets/samples/drums/perc/Boxed_Ear_Vertice_72.wav', name: 'perc1'},
-    { path: '/assets/samples/drums/perc/Percussion_08.wav', name: 'perc2'},
-    { path: '/assets/samples/drums/perc/WU_HH_191.wav', name: 'perc3'},
-    { path: '/assets/samples/drums/perc/perc5.wav', name: 'perc4'},
+    { path: G.PATH + 'assets/samples/drums/perc/Boxed_Ear_Vertice_72.wav', name: 'perc1'},
+    { path: G.PATH + 'assets/samples/drums/perc/Percussion_08.wav', name: 'perc2'},
+    { path: G.PATH + 'assets/samples/drums/perc/WU_HH_191.wav', name: 'perc3'},
+    { path: G.PATH + 'assets/samples/drums/perc/perc5.wav', name: 'perc4'},
 
-    { path: '/assets/samples/drums/cymbal/Ride.wav', name: 'Cymbal1'},
-    { path: '/assets/samples/drums/cymbal/WU_HH_177.wav', name: 'Cymbal2'},
-    { path: '/assets/samples/drums/cymbal/WU_HH_198.wav', name: 'Cymbal3'},
-    { path: '/assets/samples/drums/cymbal/WU_HH_199.wav', name: 'Cymbal4'},
+    { path: G.PATH + 'assets/samples/drums/cymbal/Ride.wav', name: 'Cymbal1'},
+    { path: G.PATH + 'assets/samples/drums/cymbal/WU_HH_177.wav', name: 'Cymbal2'},
+    { path: G.PATH + 'assets/samples/drums/cymbal/WU_HH_198.wav', name: 'Cymbal3'},
+    { path: G.PATH + 'assets/samples/drums/cymbal/WU_HH_199.wav', name: 'Cymbal4'},
 ]
 
 export class Sampler extends Instrument {

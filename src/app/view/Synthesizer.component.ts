@@ -6,7 +6,7 @@ import { Node as _Node } from '../synthesizer/nodes/'
 import { Synthesizer, type Channel, type ComponentType } from '../synthesizer/synthesizer'
 import { G } from '../globals';
 import { Storage } from '../core/storage';
-import { Component, HostListener, Input } from '@angular/core'
+import { AfterContentInit, AfterViewInit, Component, HostListener, Input } from '@angular/core'
 import { DropdownComponent } from './Dropdown.component'
 import { KnobComponent } from './Knob.component'
 import { TrackComponent } from './Track.component'
@@ -21,7 +21,10 @@ import { Key } from '../synthesizer/key'
     standalone: true,
     imports: [ CommonModule, DropdownComponent, KnobComponent, TrackComponent, SequencerComponent, KeyComponent ],
     template: `
-<!-- {#if !G.fullScreenmode } -->
+
+
+@if (synthesizer != undefined) {
+    
 
     <div class="synthesizer">
 
@@ -38,7 +41,7 @@ import { Key } from '../synthesizer/key'
 
             <div id="mute" class="btn" [class.active]="synthesizer.isMuted" title="Mute" (click)="mute()">M</div>
 
-            <div id="play-btn" class="btn" title="Play | Stop" [class.active]="g.isPlaying" (click)="togglePlayStop()">{{ g.isPlaying ? '-' : '>'}}</div>
+            <div id="play-btn" class="btn" title="Play | Stop" [class.active]="isPlaying" (click)="togglePlayStop()">{{ isPlaying ? '-' : '>'}}</div>
 
             <div id="bpm-btn" class="btn" title="BPM"><input type="number" [value]="synthesizer.bpm" pattern="[0-1]" step="1" min="1" max="400" /></div>
 
@@ -144,6 +147,9 @@ import { Key } from '../synthesizer/key'
 
     </div>
 
+
+}
+
 `,
     styles: `
 
@@ -230,7 +236,7 @@ import { Key } from '../synthesizer/key'
 `,
 
 })
-export class SynthesizerComponent {
+export class SynthesizerComponent implements AfterViewInit, AfterContentInit {
 
     @Input('synthesizer') synthesizer: Synthesizer
 
@@ -247,7 +253,12 @@ export class SynthesizerComponent {
 
     keys: Key[]
 
-    g = G
+    get isPlaying() : boolean { return G.isPlaying }
+
+
+    constructor() {
+
+    }
 
     ngAfterViewInit() {
 
@@ -258,11 +269,16 @@ export class SynthesizerComponent {
             this.components = c
         })
 
-        this.setPresets()
+        // this.setPresets()
         
         // Events
         // document.addEventListener('keydown', onKeyDown, false)
         // document.addEventListener('keyup', onKeyUp, false)
+    }
+
+    ngAfterContentInit(): void {
+
+        this.setPresets()
     }
 
     addTrack() {
@@ -453,10 +469,11 @@ export class SynthesizerComponent {
     }
 
 
-    @HostListener('document:keydown')
+    @HostListener('document:keydown', ['$event'])
     /** Keydown event */
     onKeyDown(e) {
 
+        console.log('YOOO', e.key == ' ')
         if(!e) return
         if(e.repeat) return
         if(e.target instanceof HTMLInputElement) return
@@ -465,10 +482,10 @@ export class SynthesizerComponent {
 
         if(e.key == 'ArrowRight') this.synthesizer.setOctave(this.synthesizer.octave + 1)
         if(e.key == 'ArrowLeft') this.synthesizer.setOctave(this.synthesizer.octave - 1)
-        if(e.key == ' ') this.synthesizer.toggleRecording()
+        if(e.key == ' ') this.toggleRecording(e)
     }
 
-    @HostListener('document:keyup')
+    @HostListener('document:keyup', ['$event'])
     /** Keyup event */
     onKeyUp(e) {
 

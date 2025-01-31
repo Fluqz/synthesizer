@@ -21,6 +21,7 @@ export class G {
 
     static isPlaying: boolean = false
 
+    static PATH = window.location.origin + window.location.pathname
 
     static init() {
 

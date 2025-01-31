@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostListener, NgZone, OnDestroy } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Component, HostListener, NgZone, OnDestroy } from '@angular/core';
 
 import * as Tone from 'tone'
 import { WebMidi, type NoteMessageEvent } from "webmidi";
@@ -133,7 +133,7 @@ import { BeatMachine } from './synthesizer/beat-machine';
   
   `
 })
-export class AppComponent implements AfterViewInit, OnDestroy{
+export class AppComponent implements AfterViewInit, AfterContentInit, OnDestroy{
 
     synthesizer: Synthesizer
 
@@ -150,59 +150,15 @@ export class AppComponent implements AfterViewInit, OnDestroy{
 
     constructor(private ngZone: NgZone) {
 
-      // Create Synthesizer
-      this.synthesizer = G.synthesizer = new Synthesizer()
+        // Create Synthesizer
+        this.synthesizer = G.synthesizer = new Synthesizer()
 
-      this.storedMuteState = !this.synthesizer.isMuted
-
-      BeatMachine.subscribeTimeLine((t) => {
-
-      })
-    }
-
-    // On document ready
-    ngAfterViewInit() {
-
-        // document.addEventListener('pointermove', onMouseMove)
-
+        this.storedMuteState = !this.synthesizer.isMuted
 
         // Init globals
         G.init()
         G.w = window.innerWidth
         G.h = window.innerHeight
-
-        
-
-        // DB.get('sample').then((d) => {
-
-        //     console.log('DB', d)
-        // })
-        
-        // Create Visuals
-        // let IID = setInterval(() => {
-
-        //     const rnd = Math.round(Math.random() * 3)
-
-        //     Visual.activeVisual.remove()
-
-        //     console.log('rnd', rnd)
-        //     switch(rnd) {
-
-        //         case 0:
-        //             Visual.flowField()
-        //         break
-        //         case 1:
-        //             Visual.noise()
-        //         break
-        //         case 2:
-        //             Visual.moire()
-        //         break
-        //         case 3:
-        //             Visual.flowField()
-        //         break
-        //     }
-
-        // }, 1000)
 
         // Visual.moire()
         Visual.flowField()
@@ -214,31 +170,10 @@ export class AppComponent implements AfterViewInit, OnDestroy{
         // Safari css support
         if(isSafari()) { document.body.classList.add('safari') }
 
+    }
 
-        // Add midi support
-        Midi.init((e: NoteMessageEvent) => {
-
-          // @ts-ignore
-            this.synthesizer.triggerAttack(e.note.identifier, Tone.getContext().currentTime, this.synthesizer.channel, e.note.velocity)
-            
-        },
-        (e) => {
-    
-            this.synthesizer.triggerRelease(e.note.identifier, Tone.getContext().currentTime, this.synthesizer.channel)
-        })
-
-
-        // // Scroll to bottom
-        // setTimeout(() => {
-
-        //     window.scrollTo({
-        //         top: 100000000,
-        //         left: 0,
-        //         behavior: 'smooth',
-        //     })
-
-        // }, 1500)
-
+    ngAfterViewInit(): void {
+        
 
         /** LOAD FROM LOCAL STORAGE */
         const storageData = Storage.load()
@@ -249,9 +184,7 @@ export class AppComponent implements AfterViewInit, OnDestroy{
 
         // Save Undo
         Storage.saveUndo(storageData)
-        
 
-        
         // Change Background Colors
         let colors = JSON.parse(JSON.stringify(COLORS))
         colors.sort(() =>  Math.ceil((Math.random() * 2) - 1) )
@@ -275,71 +208,47 @@ export class AppComponent implements AfterViewInit, OnDestroy{
 
 
 
-        document.addEventListener('visibilitychange', (e) => {
+        // Add midi support
+        Midi.init((e: NoteMessageEvent) => {
+
+        // @ts-ignore
+            this.synthesizer.triggerAttack(e.note.identifier, Tone.getContext().currentTime, this.synthesizer.channel, e.note.velocity)
             
-            if (document.visibilityState == "visible") {
-                
-                this.toggleActive(this.storedMuteState)
-            }
-            else {
-                
-              this.storedMuteState = !this.synthesizer.isMuted
-              this.toggleActive(false)
-            }
+        },
+        (e) => {
+    
+            this.synthesizer.triggerRelease(e.note.identifier, Tone.getContext().currentTime, this.synthesizer.channel)
         })
-        // Enter/Leave browser
-        window.addEventListener('focus', () => this.toggleActive(this.storedMuteState))
-        window.addEventListener('blur', () => {
-
-            this.storedMuteState = !this.synthesizer.isMuted
-            this.toggleActive(false)
-        })
-
-        // Browser resize event
-        window.addEventListener('resize', () => {
-        
-            G.w = window.innerWidth
-            G.h = window.innerHeight
-        })
-        
-        // ON UNLOAD
-        window.onbeforeunload = () => {
-
-            Storage.save(this.serializeOut())
-
-            this.synthesizer.mute(true)
-
-            Tone.getTransport().pause()
-        }
-
-        document.addEventListener('click', () => {
-            
-          if(G.isPlaying) {
-  
-              G.start()
-          }
-  
-          // console.log('click', synthesizer.presetManager.getPresets())
-  
-          // synthesizer.tracks.forEach(track => {
-  
-          //     console.log('Instrument', track.instrument.name, track.instrument.connectedInputs, track.instrument.connectedOutputs)
-          //     track.nodes.forEach(node => {
-  
-          //         console.log('Node', node.name, node.connectedInputs, node.connectedOutputs)
-          //     })
-          // })
-      })
   
       this.ngZone.runOutsideAngular(() => {
       
         this.activityUpdate()
       })
     }
+    // On document ready
+    ngAfterContentInit() {
+
+        // document.addEventListener('pointermove', onMouseMove)
+
+        // // Scroll to bottom
+        // setTimeout(() => {
+
+        //     window.scrollTo({
+        //         top: 100000000,
+        //         left: 0,
+        //         behavior: 'smooth',
+        //     })
+
+        // }, 1500)
+
+
+    }
 
     ngOnDestroy() {
 
         // if(IID) clearInterval(IID)
+
+        Storage.save(this.serializeOut())
     }
 
     get isCollapsed() {
@@ -447,7 +356,7 @@ export class AppComponent implements AfterViewInit, OnDestroy{
     }
 
 
-    @HostListener('document:pointermove')
+    @HostListener('document:pointermove', ['$event'])
     onMouseMove = (e) => {
 
         this.isUserActive = true
@@ -465,6 +374,73 @@ export class AppComponent implements AfterViewInit, OnDestroy{
         
         window.cancelAnimationFrame(this.AFID)
         this.AFID = window.requestAnimationFrame(this.activityUpdate.bind(this))
+    }
+
+    
+    @HostListener('document:visibilitychange', ['$event'])
+    /** Mute when visibility is changing */
+    onVisibilityChange = (e) => {
+            
+        if (document.visibilityState == "visible") {
+            
+            this.toggleActive(this.storedMuteState)
+        }
+        else {
+            
+          this.storedMuteState = !this.synthesizer.isMuted
+          this.toggleActive(false)
+        }
+    }
+
+
+    // Enter/Leave browser Mute
+    @HostListener('window:focus', ['$event'])
+    private onWindowFocus = () => {
+
+        this.toggleActive(this.storedMuteState)
+    }
+    @HostListener('window:blur', ['$event'])
+    private onWindowBlur = () => {
+
+        this.storedMuteState = !this.synthesizer.isMuted
+        this.toggleActive(false)
+    }
+
+    // Browser resize event
+    @HostListener('window:resize', ['$event'])
+    private onWindowResize = () => {
+    
+        G.w = window.innerWidth
+        G.h = window.innerHeight
+    }
+
+    // ON UNLOAD
+    @HostListener('window:onbeforeunload', ['$event'])
+    private onbeforeunload = () => {
+
+        // Storage.save(this.serializeOut())
+
+        this.synthesizer.mute(true)
+
+        Tone.getTransport().pause()
+    }
+
+    @HostListener('document:click', ['$event'])
+    // Start on click
+    private onClick = () => {
+        
+        if(!G.isPlaying) G.start()
+
+        // console.log('click', synthesizer.presetManager.getPresets())
+
+        // synthesizer.tracks.forEach(track => {
+
+        //     console.log('Instrument', track.instrument.name, track.instrument.connectedInputs, track.instrument.connectedOutputs)
+        //     track.nodes.forEach(node => {
+
+        //         console.log('Node', node.name, node.connectedInputs, node.connectedOutputs)
+        //     })
+        // })
     }
   }
 
